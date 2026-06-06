@@ -4,7 +4,6 @@ import ShopClient from "./ShopClient";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { t } from "@/lib/translations";
-export const dynamic = 'force-dynamic';
 export default async function Shop() {
   const categories = await fetchCategories();
   const products = await fetchProducts();

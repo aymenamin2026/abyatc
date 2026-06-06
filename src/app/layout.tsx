@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import  { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -26,34 +26,42 @@ import { CartProvider } from "@/components/CartContext";
 import { WishlistProvider } from "@/components/WishlistContext";
 import PopupManager from "@/components/PopupManager";
 
+
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await fetchSettings();
-  
-  const siteName = settings?.site_name || "لؤلؤة للزي الموحد | Luluh Uniform | luluh.sa";
-  const desc = settings?.site_description || "وجهتكم الأولى في السعودية للزي الموحد الطبي، المدرسي، الفندقي، وزي الشركات بجودة استثنائية.";
-  const favicon = settings?.favicon_path ? getImageUrl(settings.favicon_path) : undefined;
+  // القيم الافتراضية الثابتة في حال فشل جلب البيانات من السيرفر أثناء الـ Build
+  const defaultTitle = "لؤلؤة للزي الموحد | Luluh Uniform | api.luluh.sa";
+  const defaultDesc = "وجهتكم الأولى في السعودية للزي الموحد الطبي، المدرسي، الفندقي، وزي الشركات بجودة استثنائية.";
 
-  return {
-    title: siteName,
-    description: desc,
-    icons: favicon ? { icon: favicon } : undefined,
-    keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform", "الزي الموحد الخبر"],
-    verification: {
-      google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U",
-    },
+  try {
+    // محاولة جلب الإعدادات من السيرفر بنظام الكاشno-store لمنع التخزين وقت الـ Build
+    const settings = await fetchSettings();
     
-    robots: "index, follow",
-  };
-}
-// الشكل الجديد الصحيح
-export const metadata = {
-  title: "Abyatc",
-};
+    const siteName = settings?.site_name || defaultTitle;
+    const desc = settings?.site_description || defaultDesc;
+    const favicon = settings?.favicon_path ? getImageUrl(settings.favicon_path) : undefined;
 
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-};
+    return {
+      title: siteName,
+      description: desc,
+      icons: favicon ? { icon: favicon } : undefined,
+      keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform", "الزي الموحد الخبر"],
+      verification: {
+        google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U",
+      },
+      robots: "index, follow",
+    };
+  } catch (error) {
+    // في حال حدث خطأ أو كان السيرفر لا يستجيب أثناء الـ Build، يتم تمرير البيانات الافتراضية لينجح الـ Build
+    console.error("Error generating metadata, using defaults:", error);
+    return {
+      title: defaultTitle,
+      description: defaultDesc,
+      keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform"],
+      robots: "index, follow",
+    };
+  }
+}
+
 
 export default async function RootLayout({
   children,

@@ -1,7 +1,6 @@
 import { fetchProductBySlug, fetchProducts, fetchSettings, fetchAttributes } from "@/lib/api";
 import ProductClient from "./ProductClient";
 import { notFound } from "next/navigation";
-export const dynamic = 'force-dynamic';
 export async function generateStaticParams() {
   const products = await fetchProducts();
   if (!Array.isArray(products)) return [];
