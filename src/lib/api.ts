@@ -7,19 +7,23 @@ const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || '';
 export function getImageUrl(path: string | undefined | null): string {
   if (!path) return '/no-image.jpg';
   
-  // Replace local URLs with live domain if they exist in the path from database
-  if (path.startsWith('http')) {
-    // return path.replace(/http:\/\/127\.0\.0\.1:8000/g, 'https://api.luluh.sa')
-    //            .replace(/http:\/\/localhost:8000/g, 'https://api.luluh.sa');
-    return path.replace("https://api.abyatc.com/api/storage", "/storage/");
+  // الرابط الأساسي للسيرفر (بدون كلمة api في النهاية لعرض ملفات الميديا)
+  const imageBase = 'https://api.abyatc.com';
 
+  // 1. إذا كان الرابط قادماً من الباك اند كـ URL كامل ويبدأ بـ http
+  if (path.startsWith('http')) {
+    // إذا كان يحتوي على بادئة الـ api بالخطأ وسط مسار الصور نقوم بتنظيفها
+    let cleanUrl = path.replace('https://api.abyatc.com/api/storage', 'https://api.abyatc.com/storage');
+    // تنظيف أي روابط لوكال قديمة لو كانت مخزنة في قاعدة البيانات
+    cleanUrl = cleanUrl.replace(/http:\/\/127\.0\.0\.1:8000/g, imageBase)
+                       .replace(/http:\/\/localhost:8000/g, imageBase)
+                       .replace('https://api.luluh.sa', imageBase); // التحويل من الدومين القديم للجديد
+    return cleanUrl;
   }
   
-  // const cleanPath = path.replace(/^\/?(storage\/)?/, '');
-  // const imageBase = process.env.NEXT_PUBLIC_IMAGE_URL || 'https://api.luluh.sa/storage/';
-  // return `${imageBase}${cleanPath}`;
-
-  return path.startsWith("/") ? path : `/${path}`;
+  // 2. إذا كان الرابط قادماً كمسار نسبي فقط (مثل storage/media/...) أو (/storage/media/...)
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${imageBase}${cleanPath}`;
 }
 
 // Ensure safe token retrieval from cookies-next or native
