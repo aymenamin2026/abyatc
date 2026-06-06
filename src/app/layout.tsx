@@ -41,10 +41,19 @@ export async function generateMetadata(): Promise<Metadata> {
     verification: {
       google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U",
     },
-    viewport: "width=device-width, initial-scale=1",
+    
     robots: "index, follow",
   };
 }
+// الشكل الجديد الصحيح
+export const metadata = {
+  title: "Abyatc",
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export default async function RootLayout({
   children,
