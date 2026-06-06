@@ -1,6 +1,6 @@
 import { env } from 'process';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.luluh.sa/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.abyatc.com/api';
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || '';
 
@@ -11,7 +11,7 @@ export function getImageUrl(path: string | undefined | null): string {
   if (path.startsWith('http')) {
     // return path.replace(/http:\/\/127\.0\.0\.1:8000/g, 'https://api.luluh.sa')
     //            .replace(/http:\/\/localhost:8000/g, 'https://api.luluh.sa');
-    return path.replace("https://api.luluh.sa/storage/", "/storage/");
+    return path.replace("https://api.abyatc.com/api/storage", "/storage/");
 
   }
   
@@ -526,7 +526,7 @@ export async function submitComment(articleId: number | string, commentData: { c
     endpointSuffix = '/comments';
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.luluh.sa/api'}/articles/${articleId}${endpointSuffix}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.abyatc.com/api'}/articles/${articleId}${endpointSuffix}`, {
     method: 'POST',
     headers: requestHeaders,
     body: JSON.stringify(commentData)
