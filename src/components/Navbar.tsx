@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { ShoppingBag, User, LayoutDashboard, LogOut, Sun, Moon, ChevronDown, Search, X, Heart, Menu } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import CartDrawer from "./CartDrawer";
@@ -28,6 +27,11 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
   const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
   const [shouldBeTransparent, setShouldBeTransparent] = useState(initialTransparent);
+  
+  // Mouse interaction state for Light Follow effect
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ x: 50, y: 50 });
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -43,7 +47,6 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
     if (pathname === '/') {
       fetchSliders('home_hero').then(sliders => {
         const hasActiveHero = sliders.some((s: any) => s.is_active);
-        const hasCoverHeader = sliders.some((s: any) => s.is_active && (s.cover_header || true)); // Defaulting home_hero to transparent
         setShouldBeTransparent(hasActiveHero ? true : false);
       });
     } else {
@@ -59,12 +62,26 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on route change
+  // Track mouse move for background light glow
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      if (!headerRef.current) return;
+      const rect = headerRef.current.getBoundingClientRect();
+      setPos({
+        x: ((e.clientX - rect.left) / rect.width) * 100,
+        y: ((e.clientY - rect.top) / rect.height) * 100,
+      });
+    };
+
+    const el = headerRef.current;
+    el?.addEventListener("mousemove", handleMove);
+    return () => el?.removeEventListener("mousemove", handleMove);
+  }, []);
+
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -134,252 +151,313 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
 
   return (
     <>
-      <header className={`${shouldBeTransparent && !isScrolled ? "fixed" : "sticky"} top-0 z-[60] w-full transition-all duration-300 ${shouldBeTransparent && !isScrolled
-        ? "bg-transparent border-transparent pt-4"
-        : "bg-background/80 backdrop-blur-md border-b border-border/40 py-0"
-        }`}>
-        <div className={`container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between ${shouldBeTransparent && !isScrolled ? "text-white" : (theme === 'dark' ? "text-white" : "text-foreground")
-          }`}>
+      <header 
+        ref={headerRef}
+        className={`fixed top-0 z-[60] w-full transition-all duration-500 overflow-hidden ${
+          shouldBeTransparent && !isScrolled
+            ? "bg-transparent border-transparent pt-6"
+            : "bg-background text-foreground border-b border-border/40"
+        }`}
+      >
+        {/* LIGHT FOLLOW EFFECT */}
+        <div
+          className="pointer-events-none absolute inset-0 transition-opacity duration-500"
+          style={{
+            background: `radial-gradient(400px circle at ${pos.x}% ${pos.y}%, rgba(var(--primary-rgb),0.15), transparent 50%)`,
+          }}
+        />
 
-          {/* Logo */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2 font-serif text-xl sm:text-2xl font-bold tracking-tight">
-              {logoUrl ? (
-                <img src={logoUrl} alt={siteName} className={`h-8 sm:h-10 w-auto object-contain transition-all ${shouldBeTransparent && !isScrolled ? "brightness-0 invert" : ""}`} />
-              ) : (
-                <span className={shouldBeTransparent && !isScrolled ? "text-white" : "text-foreground"}>{siteName}</span>
-              )}
-            </Link>
-          </div>
+        {/* BACKGROUND AMBIENT LAYERS */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[-50%] left-[-5%] w-[400px] h-[400px] bg-primary/10 blur-[80px] rounded-full" />
+          <div className="absolute top-[-50%] right-[-5%] w-[400px] h-[400px] bg-cyan-500/10 blur-[90px] rounded-full" />
+          <div className="absolute inset-0 opacity-[0.03] bg-[url('/noise.png')]" />
+        </div>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-2 text-sm font-medium">
-            {navLinks.map((link) => {
-              const active = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-4 py-2 rounded-2xl transition-all duration-300 ${active
-                      ? (shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : (theme === 'dark' ? "bg-primary/20 text-white" : "bg-primary/10 text-primary"))
-                      : (shouldBeTransparent && !isScrolled
-                        ? "text-white/80 hover:bg-white/10 hover:text-white"
-                        : (theme === 'dark' ? "text-white/70 hover:bg-white/10 hover:text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground"))
-                    }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
+        {/* MAIN CONTAINER */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12 py-3">
+          
+          {/* FLOATING HEADER CARD TO MATCH FOOTER STYLE */}
+          <div className={`
+            relative w-full transition-all duration-500 relative z-10
+            ${shouldBeTransparent && !isScrolled 
+              ? "rounded-[24px] border border-white/10 bg-white/5 backdrop-blur-2xl shadow-xl px-6 h-20" 
+              : "rounded-[24px] border border-border bg-card/60 backdrop-blur-3xl shadow-lg px-6 h-16"
+            }
+            flex items-center justify-between
+          `}>
 
-          {/* Right Side Icons */}
-          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {/* Search */}
-            <div className="flex items-center" ref={searchBarRef}>
-              <AnimatePresence>
-                {isSearchOpen ? (
-                  <div className="relative">
-                    <motion.form
-                      initial={{ width: 0, opacity: 0 }}
-                      animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 160 : 280, opacity: 1 }}
-                      exit={{ width: 0, opacity: 0 }}
-                      onSubmit={handleSearch}
-                      className="relative flex items-center"
-                    >
-                      <input
-                        ref={searchInputRef}
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder={lang === 'en' ? 'Search...' : 'بحث...'}
-                        className="w-full h-9 sm:h-10 pl-3 sm:pl-4 pr-8 sm:pr-10 bg-muted/80 backdrop-blur-sm border border-border rounded-full text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-inner text-foreground"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setIsSearchOpen(false)}
-                        className="absolute right-2 sm:right-3 p-1 text-muted-foreground hover:text-foreground"
-                      >
-                        <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      </button>
-                    </motion.form>
-
-                    <AnimatePresence>
-                      {filteredSuggestions.length > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className={`absolute top-full ${lang === 'ar' ? 'left-0' : 'right-0'} mt-2 w-[260px] sm:w-[350px] bg-background border border-border shadow-2xl rounded-2xl overflow-hidden z-[70] p-2`}
-                        >
-                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold px-3 py-2 border-b border-border/50 mb-1">
-                            {lang === 'en' ? 'Suggestions' : 'اقتراحات'}
-                          </p>
-                          <div className="space-y-1">
-                            {filteredSuggestions.map((p) => (
-                              <Link
-                                key={p.id}
-                                href={`/shop/${p.slug}`}
-                                onClick={() => setIsSearchOpen(false)}
-                                className="flex items-center gap-3 p-2 hover:bg-muted rounded-xl transition-colors group"
-                              >
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0 relative">
-                                  <img
-                                    src={getImageUrl(p.images?.[0] || p.image_path || p.thumbnail_path || p.image)}
-                                    alt={p.name?.[lang] || p.name?.en || p.name}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                    onError={(e) => {
-                                      (e.target as HTMLImageElement).src = '/no-image.jpg';
-                                    }}
-                                  />
-                                </div>
-                                <div className="flex-1 min-w-0 text-left">
-                                  <h5 className="text-xs sm:text-sm font-medium text-foreground truncate">
-                                    {p.name?.[lang] || p.name?.en || p.name}
-                                  </h5>
-                                  <p className="text-xs text-primary font-bold flex items-center">
-                                    {p.base_price || p.price}
-                                  </p>
-                                </div>
-                              </Link>
-                            ))}
-                          </div>
-                          <button
-                            onClick={handleSearch}
-                            className="w-full mt-2 py-2 text-xs font-semibold text-center border-t border-border/50 hover:bg-muted transition-colors rounded-b-xl"
-                          >
-                            {lang === 'en' ? 'View all results' : 'عرض جميع النتائج'}
-                          </button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+            {/* Logo */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link href="/" className="flex items-center gap-2 font-serif text-xl sm:text-2xl font-bold tracking-[0.15em]">
+                {logoUrl ? (
+                  <img 
+                    src={logoUrl} 
+                    alt={siteName} 
+                    className={`h-8 sm:h-9 w-auto object-contain transition-all ${
+                      shouldBeTransparent && !isScrolled ? "brightness-0 invert" : ""
+                    }`} 
+                  />
                 ) : (
-                  <button
-                    onClick={() => setIsSearchOpen(true)}
-                    className={`p-2 rounded-full transition-colors ${shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
-                      }`}
-                  >
-                    <Search className="w-5 h-5" />
-                  </button>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Language Toggle */}
-            <div className="hidden sm:flex items-center gap-1 sm:gap-2">
-              <LanguageToggle />
-              {!user && (
-                <ThemeToggle
-                  className={shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"}
-                />
-              )}
-            </div>
-
-            {/* Wishlist Heart */}
-            <Link
-              href="/account?tab=wishlist"
-              className={`p-2 rounded-full transition-colors relative ${shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
-                }`}
-            >
-              <Heart className={`w-5 h-5 ${wishlistCount > 0 ? "fill-red-500 text-red-500" : ""}`} />
-              {wishlistCount > 0 && (
-                <span className="absolute top-0 right-0 w-4 h-4 text-[10px] font-bold bg-red-500 text-white rounded-full flex items-center justify-center">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
-
-            {/* Cart */}
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className={`p-2 rounded-full transition-colors relative ${shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
-                }`}
-            >
-              <ShoppingBag className="w-5 h-5" />
-              {totalQuantity > 0 && (
-                <span className="absolute top-0 right-0 w-4 h-4 text-[10px] font-bold bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-                  {totalQuantity}
-                </span>
-              )}
-            </button>
-
-            {/* User Account - Desktop */}
-            <div className="relative hidden sm:block" ref={dropdownRef}>
-              {user ? (
-                <button
-                  onClick={() => setAccountOpen(!accountOpen)}
-                  className={`flex items-center gap-1.5 p-1.5 rounded-full transition-all border border-transparent ${shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10 hover:border-white/20" : "text-foreground hover:bg-muted hover:border-border"
-                    }`}
-                >
-                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : "bg-foreground/10 text-foreground"
-                    }`}>
-                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </div>
-                  <span className="hidden md:block text-sm font-medium mr-1 uppercase">
-                    {user.first_name}
+                  <span className={shouldBeTransparent && !isScrolled ? "text-white" : "text-foreground"}>
+                    {siteName}
                   </span>
-                  <ChevronDown className={`w-3 h-3 transition-transform ${accountOpen ? 'rotate-180' : ''}`} />
-                </button>
-              ) : (
-                <Link href="/login" className={`p-2 rounded-full transition-colors flex items-center gap-2 ${shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
-                  }`}>
-                  <User className="w-5 h-5" />
-                </Link>
-              )}
-
-              {accountOpen && user && (
-                <div className={`absolute ${lang === 'ar' ? 'left-0' : 'right-0'} mt-2 w-56 bg-background border border-border rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[60]`}>
-                  <div className="px-4 py-3 border-b border-border bg-muted/50">
-                    <p className="text-sm font-semibold">{user.first_name} {user.last_name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                  </div>
-
-                  <div className="p-2">
-                    <Link
-                      href="/account"
-                      onClick={() => setAccountOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
-                    >
-                      <LayoutDashboard className="w-4 h-4" />
-                      <span>{lang === 'en' ? 'Dashboard' : 'لوحة التحكم'}</span>
-                    </Link>
-
-                    <button
-                      onClick={() => {
-                        setTheme(theme === 'dark' ? 'light' : 'dark');
-                        setAccountOpen(false);
-                      }}
-                      className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
-                    >
-                      {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                      <span>{theme === 'dark'
-                        ? (lang === 'en' ? 'Light Mode' : 'الوضع الفاتح')
-                        : (lang === 'en' ? 'Dark Mode' : 'الوضع الداكن')}</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setAccountOpen(false);
-                        setIsLogoutModalOpen(true);
-                      }}
-                      className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors mt-1 border-t border-border pt-3"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      <span>{lang === 'en' ? 'Logout' : 'تسجيل الخروج'}</span>
-                    </button>
-                  </div>
-                </div>
-              )}
+                )}
+              </Link>
             </div>
 
-            {/* Mobile Hamburger */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`lg:hidden p-2 rounded-full transition-colors ${shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"}`}
-            >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Desktop Nav Links */}
+            <nav className="hidden lg:flex items-center gap-1 text-sm font-medium">
+              {navLinks.map((link) => {
+                const active = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`px-4 py-2 rounded-xl tracking-wide transition-all duration-300 ${
+                      active
+                        ? (shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : (theme === 'dark' ? "bg-primary/20 text-white" : "bg-primary/10 text-primary"))
+                        : (shouldBeTransparent && !isScrolled
+                          ? "text-white/80 hover:bg-white/10 hover:text-white"
+                          : (theme === 'dark' ? "text-white/70 hover:bg-white/10 hover:text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground"))
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Right Side Icons */}
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              
+              {/* Search */}
+              <div className="flex items-center" ref={searchBarRef}>
+                <AnimatePresence>
+                  {isSearchOpen ? (
+                    <div className="relative">
+                      <motion.form
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 150 : 260, opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        onSubmit={handleSearch}
+                        className="relative flex items-center"
+                      >
+                        <input
+                          ref={searchInputRef}
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder={lang === 'en' ? 'Search...' : 'بحث...'}
+                          className="w-full h-9 pl-3 sm:pl-4 pr-8 sm:pr-10 bg-muted/40 backdrop-blur-sm border border-border rounded-full text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-inner text-foreground"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setIsSearchOpen(false)}
+                          className="absolute right-2 sm:right-3 p-1 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        </button>
+                      </motion.form>
+
+                      <AnimatePresence>
+                        {filteredSuggestions.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className={`absolute top-full ${lang === 'ar' ? 'left-0' : 'right-0'} mt-2 w-[260px] sm:w-[350px] bg-background/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl overflow-hidden z-[70] p-2`}
+                          >
+                            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold px-3 py-2 border-b border-border/50 mb-1">
+                              {lang === 'en' ? 'Suggestions' : 'اقتراحات'}
+                            </p>
+                            <div className="space-y-1">
+                              {filteredSuggestions.map((p) => (
+                                <Link
+                                  key={p.id}
+                                  href={`/shop/${p.slug}`}
+                                  onClick={() => setIsSearchOpen(false)}
+                                  className="flex items-center gap-3 p-2 hover:bg-muted rounded-xl transition-colors group"
+                                >
+                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0 relative">
+                                    <img
+                                      src={getImageUrl(p.images?.[0] || p.image_path || p.thumbnail_path || p.image)}
+                                      alt={p.name?.[lang] || p.name?.en || p.name}
+                                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                      onError={(e) => {
+                                        (e.target as HTMLImageElement).src = '/no-image.jpg';
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0 text-left">
+                                    <h5 className="text-xs sm:text-sm font-medium text-foreground truncate">
+                                      {p.name?.[lang] || p.name?.en || p.name}
+                                    </h5>
+                                    <p className="text-xs text-primary font-bold flex items-center">
+                                      {p.base_price || p.price}
+                                    </p>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                            <button
+                              onClick={handleSearch}
+                              className="w-full mt-2 py-2 text-xs font-semibold text-center border-t border-border/50 hover:bg-muted transition-colors rounded-b-xl"
+                            >
+                              {lang === 'en' ? 'View all results' : 'عرض جميع النتائج'}
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setIsSearchOpen(true)}
+                      className={`p-2 rounded-full border border-transparent transition-all duration-300 ${
+                        shouldBeTransparent && !isScrolled 
+                          ? "text-white hover:bg-white/10 hover:border-white/10" 
+                          : "text-foreground hover:bg-muted hover:border-border"
+                      }`}
+                    >
+                      <Search className="w-4 h-4 sm:w-5 h-5" />
+                    </button>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Language Toggle */}
+              <div className="hidden sm:flex items-center gap-1 sm:gap-2">
+                <LanguageToggle />
+                {!user && (
+                  <ThemeToggle
+                    className={shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"}
+                  />
+                )}
+              </div>
+
+              {/* Wishlist Heart */}
+              <Link
+                href="/account?tab=wishlist"
+                className={`p-2 rounded-full border border-transparent transition-all duration-300 ${
+                  shouldBeTransparent && !isScrolled 
+                    ? "text-white hover:bg-white/10 hover:border-white/10" 
+                    : "text-foreground hover:bg-muted hover:border-border"
+                }`}
+              >
+                <Heart className={`w-4 h-4 sm:w-5 h-5 ${wishlistCount > 0 ? "fill-red-500 text-red-500" : ""}`} />
+                {wishlistCount > 0 && (
+                  <span className="absolute top-0 right-0 w-4 h-4 text-[10px] font-bold bg-red-500 text-white rounded-full flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+
+              {/* Cart */}
+              <button
+                onClick={() => setIsCartOpen(true)}
+                className={`p-2 rounded-full border border-transparent transition-all duration-300 relative ${
+                  shouldBeTransparent && !isScrolled 
+                    ? "text-white hover:bg-white/10 hover:border-white/10" 
+                    : "text-foreground hover:bg-muted hover:border-border"
+                }`}
+              >
+                <ShoppingBag className="w-4 h-4 sm:w-5 h-5" />
+                {totalQuantity > 0 && (
+                  <span className="absolute top-0 right-0 w-4 h-4 text-[10px] font-bold bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                    {totalQuantity}
+                  </span>
+                )}
+              </button>
+
+              {/* User Account - Desktop */}
+              <div className="relative hidden sm:block" ref={dropdownRef}>
+                {user ? (
+                  <button
+                    onClick={() => setAccountOpen(!accountOpen)}
+                    className={`flex items-center gap-1.5 p-1.5 rounded-full transition-all border ${
+                      shouldBeTransparent && !isScrolled 
+                        ? "text-white border-white/10 bg-white/5 hover:bg-white/20" 
+                        : "text-foreground border-border bg-muted/30 hover:bg-muted"
+                    }`}
+                  >
+                    <div className={`w-6 h-6 sm:w-7 h-7 rounded-full flex items-center justify-center ${
+                      shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : "bg-foreground/10 text-foreground"
+                    }`}>
+                      <User className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="hidden md:block text-xs font-semibold mr-1 uppercase tracking-wider">
+                      {user.first_name}
+                    </span>
+                    <ChevronDown className={`w-3 h-3 transition-transform ${accountOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                ) : (
+                  <Link 
+                    href="/login" 
+                    className={`p-2 rounded-full border border-transparent transition-all duration-300 flex items-center gap-2 ${
+                      shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <User className="w-4 h-4 sm:w-5 h-5" />
+                  </Link>
+                )}
+
+                {accountOpen && user && (
+                  <div className={`absolute ${lang === 'ar' ? 'left-0' : 'right-0'} mt-3 w-56 bg-background/95 backdrop-blur-xl border border-border rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[60]`}>
+                    <div className="px-4 py-3 border-b border-border bg-muted/50">
+                      <p className="text-sm font-semibold">{user.first_name} {user.last_name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    </div>
+
+                    <div className="p-2">
+                      <Link
+                        href="/account"
+                        onClick={() => setAccountOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        <span>{lang === 'en' ? 'Dashboard' : 'لوحة التحكم'}</span>
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          setTheme(theme === 'dark' ? 'light' : 'dark');
+                          setAccountOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
+                      >
+                        {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                        <span>{theme === 'dark'
+                          ? (lang === 'en' ? 'Light Mode' : 'الوضع الفاتح')
+                          : (lang === 'en' ? 'Dark Mode' : 'الوضع الداكن')}</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setAccountOpen(false);
+                          setIsLogoutModalOpen(true);
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors mt-1 border-t border-border pt-3"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>{lang === 'en' ? 'Logout' : 'تسجيل الخروج'}</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Hamburger */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className={`lg:hidden p-2 rounded-full border border-transparent transition-all ${
+                  shouldBeTransparent && !isScrolled 
+                    ? "text-white hover:bg-white/10 hover:border-white/10" 
+                    : "text-foreground hover:bg-muted hover:border-border"
+                }`}
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -394,7 +472,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] lg:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-[55] lg:hidden"
             />
             {/* Menu Panel */}
             <motion.div
@@ -402,11 +480,11 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               animate={{ x: 0 }}
               exit={{ x: lang === 'ar' ? '-100%' : '100%' }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`fixed top-0 ${lang === 'ar' ? 'left-0' : 'right-0'} h-full w-[280px] sm:w-[320px] bg-background z-[56] flex flex-col shadow-2xl lg:hidden`}
+              className={`fixed top-0 ${lang === 'ar' ? 'left-0' : 'right-0'} h-full w-[280px] sm:w-[320px] bg-background/95 backdrop-blur-2xl z-[56] flex flex-col shadow-2xl lg:hidden`}
             >
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between p-5 border-b border-border">
-                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="font-serif text-lg font-bold">
+                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="font-serif text-lg font-bold tracking-wider">
                   {logoUrl ? (
                     <img src={logoUrl} alt={siteName} className="h-8 w-auto object-contain" />
                   ) : (
@@ -490,7 +568,6 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
 
               {/* Mobile Menu Footer */}
               <div className="border-t border-border p-4 space-y-3">
-                {/* Language + Theme Row */}
                 <div className="flex items-center justify-between">
                   <LanguageToggle />
                   <button
@@ -522,16 +599,17 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
 
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
+      {/* Logout Confirmation Modal */}
       <AnimatePresence>
         {isLogoutModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-background rounded-2xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col p-6 border border-border text-left"
+              className="bg-background border border-border rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col p-6 text-left"
             >
-              <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-500/10 text-red-600 flex items-center justify-center mb-4">
                 <LogOut className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2 font-serif">{t('confirm_logout_title', lang)}</h3>
