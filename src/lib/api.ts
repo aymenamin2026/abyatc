@@ -306,7 +306,11 @@ export async function fetchSettings() {
   try {
     const res = await fetch(`${API_URL}/settings`, { 
       headers: getHeaders(),
-      next: { revalidate: 0, tags: ['settings'] }
+      next: { 
+        // نغيرها من 0 إلى 3600 (ساعة) أو 86400 (يوم) للسماح بالـ Static Generation وقت البناء
+        revalidate: 3600, 
+        tags: ['settings'] 
+      }
     });
     
     if (!res.ok) throw new Error('Failed to fetch settings');
