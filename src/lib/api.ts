@@ -286,23 +286,18 @@ export async function fetchProductBySlug(slug: string) {
   }
 }
 
-export async function fetchSliders(endpoint: string, params?: Record<string, string>) {
-  // بناء الرابط
-  const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`);
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => url.searchParams.append(key, value));
-  }
+export async function fetchSliders(position: string) {
+  // 1. لا تتصل بالسيرفر الخارجي مباشرة، اتصل بالجسر الخاص بك /api/
+  // نقوم بتمرير الـ position كمعامل للرابط
+  const url = `/api/sliders?position=${position}`;
   
   try {
-    // نستخدم fetch مباشرة للرابط الخارجي (أو للـ Proxy الخاص بك)
-    const res = await fetch(url.toString(), {
-      headers: {
-         'x-api-key': process.env.NEXT_PUBLIC_SECRET_KEY || ''
-      }
-    });
+    const res = await fetch(url);
+    if (!res.ok) return [];
     return await res.json();
   } catch (error) {
-    return null;
+    console.error("Error fetching sliders:", error);
+    return [];
   }
 }
 
