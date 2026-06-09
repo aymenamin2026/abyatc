@@ -288,10 +288,11 @@ export async function fetchProductBySlug(slug: string) {
 
 export async function fetchSliders(position?: string) {
   try {
-    // نستخدم الرابط النسبي دائماً (يبدأ بـ /api/)
-    // هذا الرابط سيفهمه المتصفح في جهازك، وستفهمه Vercel في الاستضافة
-    const query = position ? `?position=${position}` : '';
-    const url = `/api/proxy-sliders${query}`; 
+    // استخدم الرابط الكامل، مع تغيير 3001 إذا كان المنفذ سيتغير
+    const baseUrl = 'http://localhost:3001'; 
+    const url = position 
+      ? `${baseUrl}/api/sliders?position=${position}` 
+      : `${baseUrl}/api/sliders`;
     
     const res = await fetch(url);
     if (!res.ok) return [];
