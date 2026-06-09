@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request, { params }: { params: any }) {
+export async function GET(request: Request) {
   try {
-    const resolvedParams = await params;
-    const pathArray = resolvedParams.path || [];
-    const path = pathArray.join('/');
-    const { searchParams } = new URL(request.url);
+    // 1. استخراج المسار مباشرة من الرابط بدلاً من الاعتماد على params
+    const { pathname, search } = new URL(request.url);
+    // نقوم بإزالة /api/ من بداية المسار لنحصل على (sliders)
+    const path = pathname.replace('/api/', ''); 
     
-    // تأكد من وجود الرابط الأساسي
     const baseUrl = process.env.API_URL;
     if (!baseUrl) {
-      return NextResponse.json({ error: "API_URL is not configured" }, { status: 500 });
+      return NextResponse.json({ error: "API_URL configuration missing" }, { status: 500 });
     }
 
-    const targetUrl = `${baseUrl}/${path}?${searchParams.toString()}`;
+    // 2. بناء الرابط النهائي
+    const targetUrl = `${baseUrl}/${path}${search}`;
 
     const res = await fetch(targetUrl, {
       headers: {
@@ -22,13 +22,9 @@ export async function GET(request: Request, { params }: { params: any }) {
       },
     });
 
-    if (!res.ok) {
-      // إرجاع الخطأ الحقيقي من السيرفر الخارجي لتراه في Network Tab
-      return NextResponse.json({ error: `External API error: ${res.status}` }, { status: res.status });
-    }
-
     const data = await res.json();
     return NextResponse.json(data);
+    
   } catch (error: any) {
     console.error("Proxy Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
