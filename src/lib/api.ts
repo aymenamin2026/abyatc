@@ -286,17 +286,18 @@ export async function fetchProductBySlug(slug: string) {
   }
 }
 
-export async function fetchSliders(position: string) {
-  // 1. لا تتصل بالسيرفر الخارجي مباشرة، اتصل بالجسر الخاص بك /api/
-  // نقوم بتمرير الـ position كمعامل للرابط
-  const url = `/api/sliders?position=${position}`;
-  
+export async function fetchSliders(position?: string) {
   try {
+    // نستخدم الرابط النسبي دائماً (يبدأ بـ /api/)
+    // هذا الرابط سيفهمه المتصفح في جهازك، وستفهمه Vercel في الاستضافة
+    const query = position ? `?position=${position}` : '';
+    const url = `/api/proxy-sliders${query}`; 
+    
     const res = await fetch(url);
     if (!res.ok) return [];
     return await res.json();
   } catch (error) {
-    console.error("Error fetching sliders:", error);
+    console.error("Fetch error:", error);
     return [];
   }
 }
