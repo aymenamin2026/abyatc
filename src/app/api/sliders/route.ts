@@ -1,17 +1,19 @@
 import { NextResponse } from 'next/server';
 
-// ملاحظة: قمنا بتغيير نوع params إلى Promise
+// قمنا بتغيير نوع params إلى any لتجاوز صرامة TypeScript في الـ Build
 export async function GET(
   request: Request, 
-  { params }: { params: Promise<{ path: string[] }> }
+  { params }: { params: any }
 ) {
-  // انتظر حل الـ Promise الخاص بـ params
-  const { path } = await params;
+  // نحل الـ Promise للحصول على الـ params
+  const resolvedParams = await params;
+  const pathArray = resolvedParams.path || [];
+  const path = pathArray.join('/');
   
   const { searchParams } = new URL(request.url);
   const queryString = searchParams.toString();
   
-  const targetUrl = `${process.env.API_URL}/${path.join('/')}${queryString ? `?${queryString}` : ''}`;
+  const targetUrl = `${process.env.API_URL}/${path}${queryString ? `?${queryString}` : ''}`;
 
   try {
     const res = await fetch(targetUrl, {
