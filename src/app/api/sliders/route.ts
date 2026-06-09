@@ -1,21 +1,36 @@
 import { NextResponse } from 'next/server';
 
-// قمنا بتغيير نوع params إلى any لتجاوز صرامة TypeScript في الـ Build
-// src/app/api/[...path]/route.ts
 export async function GET(request: Request, { params }: { params: any }) {
-  const { path } = await params;
-  const { searchParams } = new URL(request.url);
-  const targetUrl = `${process.env.API_URL}/${path.join('/')}?${searchParams.toString()}`;
+  try {
+    const resolvedParams = await params;
+    const pathArray = resolvedParams.path || [];
+    const path = pathArray.join('/');
+    const { searchParams } = new URL(request.url);
+    
+    // تأكد من وجود الرابط الأساسي
+    const baseUrl = process.env.API_URL;
+    if (!baseUrl) {
+      return NextResponse.json({ error: "API_URL is not configured" }, { status: 500 });
+    }
 
-  const res = await fetch(targetUrl, {
-    headers: { 'x-api-key': process.env.NEXT_PUBLIC_SECRET_KEY || '' },
-  });
+    const targetUrl = `${baseUrl}/${path}?${searchParams.toString()}`;
 
-  const rawData = await res.json();
+    const res = await fetch(targetUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'x-api-key': process.env.NEXT_PUBLIC_SECRET_KEY || '',
+      },
+    });
 
-  // "تجميل البيانات": هنا نتأكد أننا نرسل مصفوفة للسلايدر دائماً
-  // إذا كانت البيانات داخل كائن باسم data، نستخرجه
-  const finalData = Array.isArray(rawData) ? rawData : (rawData.data || []);
-  
-  return NextResponse.json(finalData);
+    if (!res.ok) {
+      // إرجاع الخطأ الحقيقي من السيرفر الخارجي لتراه في Network Tab
+      return NextResponse.json({ error: `External API error: ${res.status}` }, { status: res.status });
+    }
+
+    const data = await res.json();
+    return NextResponse.json(data);
+  } catch (error: any) {
+    console.error("Proxy Error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
