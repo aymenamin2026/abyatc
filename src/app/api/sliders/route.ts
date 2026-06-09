@@ -1,31 +1,21 @@
 import { NextResponse } from 'next/server';
 
 // قمنا بتغيير نوع params إلى any لتجاوز صرامة TypeScript في الـ Build
-export async function GET(
-  request: Request, 
-  { params }: { params: any }
-) {
-  // نحل الـ Promise للحصول على الـ params
-  const resolvedParams = await params;
-  const pathArray = resolvedParams.path || [];
-  const path = pathArray.join('/');
-  
+// src/app/api/[...path]/route.ts
+export async function GET(request: Request, { params }: { params: any }) {
+  const { path } = await params;
   const { searchParams } = new URL(request.url);
-  const queryString = searchParams.toString();
+  const targetUrl = `${process.env.API_URL}/${path.join('/')}?${searchParams.toString()}`;
+
+  const res = await fetch(targetUrl, {
+    headers: { 'x-api-key': process.env.NEXT_PUBLIC_SECRET_KEY || '' },
+  });
+
+  const rawData = await res.json();
+
+  // "تجميل البيانات": هنا نتأكد أننا نرسل مصفوفة للسلايدر دائماً
+  // إذا كانت البيانات داخل كائن باسم data، نستخرجه
+  const finalData = Array.isArray(rawData) ? rawData : (rawData.data || []);
   
-  const targetUrl = `${process.env.API_URL}/${path}${queryString ? `?${queryString}` : ''}`;
-
-  try {
-    const res = await fetch(targetUrl, {
-      headers: {
-        'Accept': 'application/json',
-        'x-api-key': process.env.NEXT_PUBLIC_SECRET_KEY || '',
-      },
-    });
-
-    const data = await res.json();
-    return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json({ error: 'Proxy failed' }, { status: 500 });
-  }
+  return NextResponse.json(finalData);
 }
