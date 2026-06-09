@@ -289,7 +289,7 @@ export async function fetchProductBySlug(slug: string) {
 export async function fetchSliders(position?: string) {
   try {
     // استخدم الرابط الكامل، مع تغيير 3001 إذا كان المنفذ سيتغير
-    const baseUrl = 'http://localhost:3001'; 
+    const baseUrl = 'https://abyatc.vercel.app/'; 
     const url = position 
       ? `${baseUrl}/api/sliders?position=${position}` 
       : `${baseUrl}/api/sliders`;
