@@ -71,7 +71,6 @@ export default function ProductClient({
   let displayPrice = parseFloat(product.base_price || "0").toFixed(2);
 
   const [activeImage, setActiveImage] = useState(0);
-  const [currentVariation, setCurrentVariation] = useState<any>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
