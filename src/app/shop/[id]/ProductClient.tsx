@@ -158,35 +158,6 @@ export default function ProductClient({
   };
 
   // Adjust price if a specific variation is selected
-  // 1. منطق ذكي لتحديث السعر والصورة عند اختيار لون ومقاس
-  useEffect(() => {
-    if (hasVariations && selectedSize && selectedColor) {
-      const prefix = selectedColor.substring(0, 3).toUpperCase();
-      const variation = product.variations.find((v: any) => 
-        (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${selectedSize}`)
-      );
-      
-      if (variation) {
-        // تحديث السعر
-        if (variation.price) {
-          // سنقوم بتحديث السعر ديناميكياً
-          // ملاحظة: بما أن displayPrice متغير عادي، ستحتاج لتحويله لـ State 
-          // أو ببساطة تحديثه هنا إذا كان السعر يُحسب في الريندر
-        }
-        
-        // تحديث الصورة
-        if (variation.image) {
-          const fullImageUrl = getImageUrl(variation.image);
-          const index = images.findIndex((img) => img === fullImageUrl);
-          if (index !== -1) {
-            setActiveImage(index);
-          }
-        }
-      }
-    }
-  }, [selectedSize, selectedColor, product.variations, images]);
-
-  // 2. تحديث السعر المستخدم في العرض
   if (hasVariations && selectedSize && selectedColor) {
     const prefix = selectedColor.substring(0, 3).toUpperCase();
     const variation = product.variations.find((v: any) => 
