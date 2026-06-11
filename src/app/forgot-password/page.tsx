@@ -34,7 +34,7 @@ export default function ForgotPasswordPage() {
 
     try {
       // API call would go here
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.luluh.sa/api'}/auth/forgot-password`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.abyatc.com/api'}/auth/forgot-password`, {
         method: 'POST',
         headers: getHeaders(),
         body: JSON.stringify({ email })

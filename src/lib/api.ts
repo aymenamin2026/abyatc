@@ -7,22 +7,14 @@ const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || '';
 export function getImageUrl(path: string | undefined | null): string {
   if (!path) return '/no-image.jpg';
   
-  // الرابط الأساسي للسيرفر (بدون كلمة api في النهاية لعرض ملفات الميديا)
-  const imageBase = 'https://api.abyatc.com';
-
-  // 1. إذا كان الرابط قادماً من الباك اند كـ URL كامل ويبدأ بـ http
+  // Replace local URLs with live domain if they exist in the path from database
   if (path.startsWith('http')) {
-    // إذا كان يحتوي على بادئة الـ api بالخطأ وسط مسار الصور نقوم بتنظيفها
-    let cleanUrl = path.replace('https://api.abyatc.com/api/storage', 'https://api.abyatc.com/storage');
-    // تنظيف أي روابط لوكال قديمة لو كانت مخزنة في قاعدة البيانات
-    cleanUrl = cleanUrl.replace(/http:\/\/127\.0\.0\.1:8000/g, imageBase)
-                       .replace(/http:\/\/localhost:8000/g, imageBase)
-                       .replace('https://api.luluh.sa', imageBase); // التحويل من الدومين القديم للجديد
-    return cleanUrl;
+    return path.replace(/http:\/\/127\.0\.0\.1:8000/g, 'https://api.abyatc.com')
+               .replace(/http:\/\/localhost:8000/g, 'https://api.abyatc.com');
   }
   
-  // 2. إذا كان الرابط قادماً كمسار نسبي فقط (مثل storage/media/...) أو (/storage/media/...)
-  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const cleanPath = path.replace(/^\/?(storage\/)?/, '');
+  const imageBase = process.env.NEXT_PUBLIC_IMAGE_URL || 'https://api.abyatc.com/storage/';
   return `${imageBase}${cleanPath}`;
 }
 
@@ -39,22 +31,7 @@ export function getHeaders() {
     'X-Language': typeof lang === 'string' ? lang : 'en'
   };
 }
-export async function fetchOrderStatus(orderId: string | number) {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}/status`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${token}` // أضف التوكن إذا كان المسار محمي في الباك آند
-      },
-    });
-    if (!response.ok) throw new Error('فشل في جلب حالة الطلب');
-    return await response.json(); // يتوقع إرجاع { status: 'processing' } مثلاً
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
+
 export async function fetchCustomerAddresses() {
   const token = getCookie('auth_token');
   if (!token) return [];
@@ -288,17 +265,16 @@ export async function fetchProductBySlug(slug: string) {
 
 export async function fetchSliders(position?: string) {
   try {
-    // استخدم الرابط الكامل، مع تغيير 3001 إذا كان المنفذ سيتغير
-    const baseUrl = 'https://abyatc.vercel.app/'; 
-    const url = position 
-      ? `${baseUrl}/api/sliders?position=${position}` 
-      : `${baseUrl}/api/sliders`;
+    const url = position ? `${API_URL}/sliders?position=${position}` : `${API_URL}/sliders`;
+    const res = await fetch(url, { 
+      headers: getHeaders(),
+      next: { revalidate: 60 }
+    });
     
-    const res = await fetch(url);
-    if (!res.ok) return [];
-    return await res.json();
+    if (!res.ok) throw new Error('Failed to fetch sliders');
+    return res.json();
   } catch (error) {
-    console.error("Fetch error:", error);
+    console.error('Error fetching sliders:', error);
     return [];
   }
 }
@@ -307,11 +283,7 @@ export async function fetchSettings() {
   try {
     const res = await fetch(`${API_URL}/settings`, { 
       headers: getHeaders(),
-      next: { 
-        // نغيرها من 0 إلى 3600 (ساعة) أو 86400 (يوم) للسماح بالـ Static Generation وقت البناء
-        revalidate: 3600, 
-        tags: ['settings'] 
-      }
+      next: { revalidate: 0, tags: ['settings'] }
     });
     
     if (!res.ok) throw new Error('Failed to fetch settings');
