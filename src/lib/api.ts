@@ -26,8 +26,8 @@ export function getHeaders() {
   return {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'x-api-key': API_KEY,      // تغيير إلى أحرف صغيرة
-    'x-secret-key': SECRET_KEY, // تغيير إلى أحرف صغيرة
+    'x-api-key': API_KEY,      
+    'x-secret-key': SECRET_KEY, 
     'x-language': typeof lang === 'string' ? lang : 'en' // تغيير إلى أحرف صغيرة
   };
 }
