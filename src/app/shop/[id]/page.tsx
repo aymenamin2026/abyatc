@@ -40,7 +40,6 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
       attributes={attributes} 
       currencySymbol={currencySymbol} 
       relatedProducts={relatedProducts}
-      settings={settings} // <-- قمنا بإضافة تمرير الإعدادات هنا لكي يستقبلها ملف العميل بنجاح
     />
   );
 }
