@@ -168,7 +168,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
         {/* BACKGROUND AMBIENT LAYERS */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[-50%] left-[-5%] w-[400px] h-[400px] bg-primary/10 blur-[80px] rounded-full" />
-          <div className="absolute top-[-50%] right-[-5%] w-[400px] h-[400px] bg-cyan-500/10 blur-[90px] rounded-full" />
+          <div className="absolute top-[-50%] right-[-5%] w-[400px] h-[400px] bg-cyan-500/25 blur-[90px] rounded-full" />
           <div className="absolute inset-0 opacity-[0.03] bg-[url('/noise.png')]" />
         </div>
 

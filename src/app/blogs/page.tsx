@@ -55,7 +55,7 @@ export default function ArticlesPage() {
         {/* طبقات الإضاءة الملونة الجانبية المتوهجة */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full" />
-          <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/10 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/20 blur-[120px] rounded-full" />
           <div className="absolute inset-0 opacity-[0.02] bg-[url('/noise.png')]" />
         </div>
 

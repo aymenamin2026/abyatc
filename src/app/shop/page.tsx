@@ -23,7 +23,7 @@ export default async function Shop() {
       {/* BACKGROUND LAYERS (الفخامة البصرية المتناسقة مع الـ Footer) */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] right-[-10%] w-[600px] md:w-[800px] h-[600px] md:h-[800px] bg-primary/5 blur-[140px] rounded-full" />
-        <div className="absolute top-[30%] left-[-20%] w-[700px] md:w-[900px] h-[700px] md:h-[900px] bg-cyan-500/5 blur-[180px] rounded-full" />
+        <div className="absolute top-[30%] left-[-20%] w-[700px] md:w-[900px] h-[700px] md:h-[900px] bg-cyan-500/15 blur-[180px] rounded-full" />
         <div className="absolute inset-0 opacity-[0.03] bg-[url('/noise.png')]" />
       </div>
 

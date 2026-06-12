@@ -165,7 +165,7 @@ export default function ArticleDetailPage() {
       {/* BACKGROUND AMBIENT LAYERS - لضمان نفس روح الأنيميشن الفخم */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-primary/5 blur-[130px] rounded-full" />
-        <div className="absolute top-[50%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/5 blur-[130px] rounded-full" />
+        <div className="absolute top-[50%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/15 blur-[130px] rounded-full" />
         <div className="absolute inset-0 opacity-[0.015] bg-[url('/noise.png')]" />
       </div>
 

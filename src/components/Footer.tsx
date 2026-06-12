@@ -86,7 +86,7 @@ export default function Footer({ settings }: { settings?: any }) {
       {/* BACKGROUND LAYERS */}
       <div className="absolute inset-0">
         <div className="absolute top-[-25%] left-[-10%] w-[800px] h-[800px] bg-primary/10 blur-[160px] rounded-full" />
-        <div className="absolute bottom-[-35%] right-[-10%] w-[900px] h-[900px] bg-cyan-500/10 blur-[200px] rounded-full" />
+        <div className="absolute bottom-[-35%] right-[-10%] w-[900px] h-[900px] bg-cyan-500/20 blur-[200px] rounded-full" />
         <div className="absolute inset-0 opacity-[0.04] bg-[url('/noise.png')]" />
       </div>
 
