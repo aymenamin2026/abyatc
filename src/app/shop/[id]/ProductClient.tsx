@@ -40,14 +40,12 @@ export default function ProductClient({
   product, 
   attributes = [],
   currencySymbol = "$",
-  relatedProducts = [],
-  settings // <-- تم إضافتها هنا بشكل صحيح داخل التفكيك لكي يتعرف عليها الكود بالأسفل
+  relatedProducts = []
 }: { 
   product: any, 
   attributes?: any[],
   currencySymbol?: string,
-  relatedProducts?: any[],
-  settings?: any; // <-- تم تعريفها هنا للتوافق مع الـ TypeScript وإخفاء خطأ ملف page.tsx
+  relatedProducts?: any[]
 }) {
   const { lang } = useLanguage();
 
@@ -55,15 +53,6 @@ export default function ProductClient({
   const images = product.images && product.images.length > 0 
     ? product.images.map((img: string) => getImageUrl(img))
     : ["/no-image.jpg"];
-
-  // --- تجهيز رابط الواتساب الديناميكي لصفحة التفاصيل ---
-  const rawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || settings?.contact_phone || "";
-  const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000"; 
-
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
-  const productName = product.name?.[lang] || product.name?.en || product.name || "";
-  const messageText = `مرحباً، أود الاستفسار عن منتج: ${productName}\nرابط المنتج: ${currentUrl}`;
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   const name = product.name?.[lang] || product.name?.en || product.name || "Product Name";
   const desc = product.description?.[lang] || product.description?.en || product.description || "No description available.";
@@ -101,7 +90,9 @@ export default function ProductClient({
     const cEn = color.value?.en || color.value;
     const prefix = cEn.substring(0, 3).toUpperCase();
     return product.variations.some((v: any) => v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`));
-  }) : [];  useEffect(() => {
+  }) : [];
+
+  useEffect(() => {
     if (availableSizes.length > 0 && !selectedSize) {
       setSelectedSize(availableSizes[0].value?.en || availableSizes[0].value);
     }
@@ -241,13 +232,11 @@ export default function ProductClient({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  
                   <Image
                     src={images[activeImage]}
                     alt={name}
                     width={1000}
                     height={1250}
-                    unoptimized={true} // <--- أضف هذا السطر هنا
                     className="w-full h-auto object-contain transition-transform duration-200 ease-out"
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -372,9 +361,9 @@ export default function ProductClient({
                 </div>
               </div>
             )}
-            
-          {/* Actions */}
-            <div className="flex gap-4 mb-4"> {/* قمنا بتقليل الـ mb من 8 إلى 4 لتناسق المساحة */}
+
+            {/* Actions */}
+            <div className="flex gap-4 mb-8">
               <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
                 <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">-</button>
                 <span className="w-10 text-center font-medium">{quantity}</span>
@@ -406,21 +395,6 @@ export default function ProductClient({
               <button className="w-14 h-14 bg-secondary flex items-center justify-center rounded-full text-foreground hover:bg-muted transition-colors border border-border">
                 <Heart className="w-5 h-5" />
               </button>
-            </div>
-
-            {/* زر الواتساب الديناميكي المنسق لصفحة التفاصيل */}
-            <div className="mb-8">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg rounded-full shadow-lg transition-all transform hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 text-center"
-              >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M12.21 2c-5.464 0-9.91 4.39-9.91 9.782 0 1.723.454 3.407 1.316 4.898L2 22l5.485-1.422a9.96 9.96 0 004.723 1.185c5.464 0 9.91-4.39 9.91-9.781C22.12 6.39 17.674 2 12.21 2zm5.727 13.914c-.244.68-1.22 1.332-1.83 1.4-.61.07-1.373.13-3.832-.86-2.46-.99-4.04-3.46-4.162-3.62-.122-.17-1.012-1.33-1.012-2.53 0-1.2.634-1.8.854-2.03.22-.24.488-.3.653-.3.164 0 .33.01.47.01.147 0 .348-.06.543.4.195.47.67 1.61.73 1.73.061.12.1.26.02.42-.08.17-.183.28-.317.43-.134.15-.28.34-.4.48-.135.15-.275.31-.116.58.16.27.707 1.15 1.513 1.86.1.09.81.72 1.636 1.05.25.1.445.08.61-.09.214-.22.915-1.05 1.16-1.41.244-.36.488-.3.824-.18.335.12 2.122.99 2.488 1.17.366.18.61.27.695.41.085.15.085.86-.159 1.54z" clipRule="evenodd" />
-                </svg>
-                {lang === 'ar' ? 'طلب واستفسار عبر الواتساب' : 'Inquire via WhatsApp'}
-              </a>
             </div>
 
             {/* Guarantees */}
