@@ -28,7 +28,6 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
   const [isScrolled, setIsScrolled] = useState(false);
   const [shouldBeTransparent, setShouldBeTransparent] = useState(initialTransparent);
   
-  // Mouse interaction state for Light Follow effect
   const headerRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: 50, y: 50 });
 
@@ -62,7 +61,6 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Track mouse move for background light glow
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
       if (!headerRef.current) return;
@@ -155,8 +153,8 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
         ref={headerRef}
         className={`fixed top-0 z-[60] w-full transition-all duration-500 overflow-hidden ${
           shouldBeTransparent && !isScrolled
-            ? "bg-transparent border-transparent pt-6"
-            : "bg-background text-foreground border-b border-border/40"
+            ? "bg-transparent border-transparent pt-4 sm:pt-6"
+            : "bg-transparent pt-3" // المحافظة على الهيكل العائم حتى عند السكرول في الموبايل
         }`}
       >
         {/* LIGHT FOLLOW EFFECT */}
@@ -175,33 +173,31 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
         </div>
 
         {/* MAIN CONTAINER */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12 py-3">
+        <div className="container mx-auto px-3 sm:px-6 lg:px-12">
           
-          {/* FLOATING HEADER CARD TO MATCH FOOTER STYLE */}
+          {/* FLOATING HEADER CARD */}
           <div className={`
-            relative w-full transition-all duration-500 relative z-10
+            relative w-full transition-all duration-500 z-10
+            rounded-[24px] border shadow-lg px-4 sm:px-6 h-14 sm:h-16 lg:h-20 flex items-center justify-between
             ${shouldBeTransparent && !isScrolled 
-              ? "rounded-[24px] border border-white/10 bg-white/5 backdrop-blur-2xl shadow-xl px-6 h-20" 
-              : "rounded-[24px] border border-border bg-card/60 backdrop-blur-3xl shadow-lg px-6 h-16"
+              ? "border-white/10 bg-white/5 backdrop-blur-2xl text-white" 
+              : "border-border bg-card/70 backdrop-blur-3xl text-foreground"
             }
-            flex items-center justify-between
           `}>
 
             {/* Logo */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Link href="/" className="flex items-center gap-2 font-serif text-xl sm:text-2xl font-bold tracking-[0.15em]">
+              <Link href="/" className="flex items-center gap-2 font-serif text-lg sm:text-2xl font-bold tracking-[0.15em]">
                 {logoUrl ? (
                   <img 
                     src={logoUrl} 
                     alt={siteName} 
-                    className={`h-8 sm:h-9 w-auto object-contain transition-all ${
+                    className={`h-7 sm:h-9 w-auto object-contain transition-all ${
                       shouldBeTransparent && !isScrolled ? "brightness-0 invert" : ""
                     }`} 
                   />
                 ) : (
-                  <span className={shouldBeTransparent && !isScrolled ? "text-white" : "text-foreground"}>
-                    {siteName}
-                  </span>
+                  <span>{siteName}</span>
                 )}
               </Link>
             </div>
@@ -238,7 +234,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                     <div className="relative">
                       <motion.form
                         initial={{ width: 0, opacity: 0 }}
-                        animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 150 : 260, opacity: 1 }}
+                        animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 130 : 260, opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
                         onSubmit={handleSearch}
                         className="relative flex items-center"
@@ -249,7 +245,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           placeholder={lang === 'en' ? 'Search...' : 'بحث...'}
-                          className="w-full h-9 pl-3 sm:pl-4 pr-8 sm:pr-10 bg-muted/40 backdrop-blur-sm border border-border rounded-full text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-inner text-foreground"
+                          className="w-full h-8 sm:h-9 pl-3 sm:pl-4 pr-8 sm:pr-10 bg-muted/40 backdrop-blur-sm border border-border rounded-full text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
                         />
                         <button
                           type="button"
@@ -266,7 +262,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className={`absolute top-full ${lang === 'ar' ? 'left-0' : 'right-0'} mt-2 w-[260px] sm:w-[350px] bg-background/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl overflow-hidden z-[70] p-2`}
+                            className={`absolute top-full ${lang === 'ar' ? 'left-0' : 'right-0'} mt-2 w-[240px] sm:w-[350px] bg-background/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl overflow-hidden z-[70] p-2`}
                           >
                             <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold px-3 py-2 border-b border-border/50 mb-1">
                               {lang === 'en' ? 'Suggestions' : 'اقتراحات'}
@@ -325,7 +321,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                 </AnimatePresence>
               </div>
 
-              {/* Language Toggle */}
+              {/* Language Toggle - Desktop Only */}
               <div className="hidden sm:flex items-center gap-1 sm:gap-2">
                 <LanguageToggle />
                 {!user && (
@@ -338,7 +334,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               {/* Wishlist Heart */}
               <Link
                 href="/account?tab=wishlist"
-                className={`p-2 rounded-full border border-transparent transition-all duration-300 ${
+                className={`p-2 rounded-full border border-transparent transition-all duration-300 relative ${
                   shouldBeTransparent && !isScrolled 
                     ? "text-white hover:bg-white/10 hover:border-white/10" 
                     : "text-foreground hover:bg-muted hover:border-border"
@@ -346,7 +342,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               >
                 <Heart className={`w-4 h-4 sm:w-5 h-5 ${wishlistCount > 0 ? "fill-red-500 text-red-500" : ""}`} />
                 {wishlistCount > 0 && (
-                  <span className="absolute top-0 right-0 w-4 h-4 text-[10px] font-bold bg-red-500 text-white rounded-full flex items-center justify-center">
+                  <span className="absolute top-0 right-0 w-3.5 h-3.5 text-[9px] font-bold bg-red-500 text-white rounded-full flex items-center justify-center">
                     {wishlistCount}
                   </span>
                 )}
@@ -363,7 +359,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               >
                 <ShoppingBag className="w-4 h-4 sm:w-5 h-5" />
                 {totalQuantity > 0 && (
-                  <span className="absolute top-0 right-0 w-4 h-4 text-[10px] font-bold bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                  <span className="absolute top-0 right-0 w-3.5 h-3.5 text-[9px] font-bold bg-primary text-primary-foreground rounded-full flex items-center justify-center">
                     {totalQuantity}
                   </span>
                 )}
@@ -466,45 +462,46 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop شفاف بفلتر ضبابي ناعم */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-md z-[55] lg:hidden"
+              className="fixed inset-0 bg-black/40 backdrop-blur-md z-[55] lg:hidden"
             />
-            {/* Menu Panel */}
+            
+            {/* Menu Panel - تم تحويلها لكارد عائم زجاجي فخم ذو حواف دائرية كبيرة */}
             <motion.div
-              initial={{ x: lang === 'ar' ? '-100%' : '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: lang === 'ar' ? '-100%' : '100%' }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`fixed top-0 ${lang === 'ar' ? 'left-0' : 'right-0'} h-full w-[280px] sm:w-[320px] bg-background/95 backdrop-blur-2xl z-[56] flex flex-col shadow-2xl lg:hidden`}
+              initial={{ y: "-20%", opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: "-20%", opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", damping: 30, stiffness: 250 }}
+              className="fixed top-4 inset-x-4 max-h-[85vh] md:hidden bg-card/85 backdrop-blur-3xl z-[56] flex flex-col shadow-2xl rounded-[32px] border border-border/80 overflow-hidden"
             >
               {/* Mobile Menu Header */}
-              <div className="flex items-center justify-between p-5 border-b border-border">
+              <div className="flex items-center justify-between p-5 border-b border-border/40 bg-muted/20">
                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="font-serif text-lg font-bold tracking-wider">
                   {logoUrl ? (
-                    <img src={logoUrl} alt={siteName} className="h-8 w-auto object-contain" />
+                    <img src={logoUrl} alt={siteName} className="h-7 w-auto object-contain" />
                   ) : (
                     <span className="text-foreground">{siteName}</span>
                   )}
                 </Link>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-muted rounded-full transition-colors">
-                  <X className="w-5 h-5" />
+                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-muted/80 rounded-full transition-colors border border-border/50">
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Mobile User Info */}
               {user && (
-                <div className="px-5 py-4 border-b border-border bg-muted/30">
+                <div className="px-5 py-4 border-b border-border/40 bg-muted/40 backdrop-blur-sm">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-foreground/10 text-foreground flex items-center justify-center">
-                      <User className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+                      <User className="w-4 h-4" />
                     </div>
-                    <div>
-                      <p className="font-semibold text-sm">{user.first_name} {user.last_name}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-sm text-foreground truncate">{user.first_name} {user.last_name}</p>
                       <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                     </div>
                   </div>
@@ -512,24 +509,26 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               )}
 
               {/* Mobile Nav Links */}
-              <nav className="flex-1 overflow-y-auto py-4 px-3">
-                <div className="space-y-1">
-                  {navLinks.map((link) => (
+              <nav className="flex-1 overflow-y-auto py-4 px-4 space-y-1">
+                {navLinks.map((link) => {
+                  const active = pathname === link.href;
+                  return (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${pathname === link.href
-                          ? (theme === 'dark' ? 'bg-primary/20 text-white' : 'bg-primary/10 text-primary')
-                          : 'text-foreground hover:bg-muted'
-                        }`}
+                      className={`flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-300 ${
+                        active
+                          ? 'bg-primary text-primary-foreground shadow-md shadow-primary/10 font-semibold scale-[1.02]'
+                          : 'text-foreground/80 hover:bg-muted/60 hover:text-foreground'
+                      }`}
                     >
                       {link.label}
                     </Link>
-                  ))}
-                </div>
+                  );
+                })}
 
-                <div className="border-t border-border my-4" />
+                <div className="border-t border-border/40 my-3" />
 
                 {/* Mobile Account Links */}
                 {user ? (
@@ -537,20 +536,20 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                     <Link
                       href="/account"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-muted transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl text-foreground/80 hover:bg-muted/60 transition-colors"
                     >
-                      <LayoutDashboard className="w-4 h-4" />
+                      <LayoutDashboard className="w-4 h-4 text-muted-foreground" />
                       {lang === 'en' ? 'Dashboard' : 'لوحة التحكم'}
                     </Link>
                     <Link
                       href="/account?tab=wishlist"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-muted transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl text-foreground/80 hover:bg-muted/60 transition-colors"
                     >
-                      <Heart className="w-4 h-4" />
+                      <Heart className="w-4 h-4 text-muted-foreground" />
                       {lang === 'en' ? 'Wishlist' : 'المفضلة'}
                       {wishlistCount > 0 && (
-                        <span className="ml-auto text-[10px] font-bold bg-red-500 text-white px-1.5 py-0.5 rounded-full">{wishlistCount}</span>
+                        <span className="ml-auto text-[10px] font-bold bg-red-500 text-white px-2 py-[2px] rounded-full">{wishlistCount}</span>
                       )}
                     </Link>
                   </div>
@@ -558,24 +557,26 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                   <Link
                     href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-muted transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl text-foreground/80 hover:bg-muted/60 transition-colors"
                   >
-                    <User className="w-4 h-4" />
+                    <User className="w-4 h-4 text-muted-foreground" />
                     {lang === 'en' ? 'Login' : 'تسجيل الدخول'}
                   </Link>
                 )}
               </nav>
 
               {/* Mobile Menu Footer */}
-              <div className="border-t border-border p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <LanguageToggle />
+              <div className="border-t border-border/40 p-4 bg-muted/20 space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center justify-center bg-background/50 border border-border/60 rounded-xl px-2">
+                    <LanguageToggle />
+                  </div>
                   <button
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                    className="flex items-center gap-2 px-3 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
+                    className="flex items-center justify-center gap-2 px-3 py-2.5 text-sm rounded-xl bg-background/50 border border-border/60 text-foreground hover:bg-muted transition-colors"
                   >
-                    {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                    <span className="text-xs">{theme === 'dark' ? (lang === 'en' ? 'Light' : 'فاتح') : (lang === 'en' ? 'Dark' : 'داكن')}</span>
+                    {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+                    <span className="text-xs font-medium">{theme === 'dark' ? (lang === 'en' ? 'Light' : 'فاتح') : (lang === 'en' ? 'Dark' : 'داكن')}</span>
                   </button>
                 </div>
 
@@ -585,7 +586,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                       setIsMobileMenuOpen(false);
                       setIsLogoutModalOpen(true);
                     }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm rounded-xl text-rose-500 border border-rose-200 dark:border-rose-500/20 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl text-rose-500 border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     {lang === 'en' ? 'Logout' : 'تسجيل الخروج'}
@@ -607,7 +608,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-background border border-border rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col p-6 text-left"
+              className="bg-background border border-border rounded-[28px] shadow-2xl w-full max-w-sm overflow-hidden flex flex-col p-6 text-left"
             >
               <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-500/10 text-red-600 flex items-center justify-center mb-4">
                 <LogOut className="w-6 h-6" />
