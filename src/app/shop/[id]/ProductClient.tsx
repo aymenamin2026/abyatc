@@ -297,7 +297,7 @@ export default function ProductClient({
     </>
   ) : (
     <div className="text-lg font-medium text-amber-600 bg-amber-50 px-4 py-2 rounded-full border border-amber-200">
-      {lang === 'ar' ? 'السعر غير معروض - راسلنا للاستفسار' : 'Price not shown - Contact us'}
+      {lang === 'ar' ? 'لمعرفه السعر شرفنا علئ الوتساب' : 'To know price text us in whatsapp'}
     </div>
   )}
 </div>
