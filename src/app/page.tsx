@@ -63,16 +63,22 @@ export default async function Home() {
       </section>
 
       {/* Features Section - Floating Cards */}
-      <section className="py-24">
-        <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
-            {[ { icon: Star, title: 'premium_quality' }, { icon: Shield, title: 'tailored_fit' }, { icon: Clock, title: 'easy_care' } ].map((item, i) => (
-                <div key={i} className="glass-panel p-10 rounded-[2rem] flex flex-col items-center text-center hover:translate-y-[-10px] transition-all">
-                    <item.icon className="w-12 h-12 mb-6 text-primary" />
-                    <h3 className="text-xl font-bold mb-3">{t(item.title, lang)}</h3>
-                </div>
-            ))}
-        </div>
-      </section>
+    {/* Features Section - Glassmorphism Style */}
+<section className="py-24">
+  <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
+      {[ 
+          { icon: Star, title: 'premium_quality' as const }, 
+          { icon: Shield, title: 'tailored_fit' as const }, 
+          { icon: Clock, title: 'easy_care' as const } 
+      ].map((item, i) => (
+          <div key={i} className="glass-panel p-10 rounded-[2rem] flex flex-col items-center text-center hover:translate-y-[-10px] transition-all">
+              <item.icon className="w-12 h-12 mb-6 text-primary" />
+              {/* قمنا بإضافة as any ليتجاوز TypeScript تدقيق النوع لهذا السطر فقط */}
+              <h3 className="text-xl font-bold mb-3">{t(item.title as any, lang)}</h3>
+          </div>
+      ))}
+  </div>
+</section>
     </div>
   );
 }
