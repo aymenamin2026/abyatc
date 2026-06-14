@@ -1,5 +1,5 @@
 "use client";
-
+import { t } from "@/lib/translations";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 // استيراد دالة معالجة روابط الصور من مكتبة الـ API الخاصة بك
@@ -24,8 +24,7 @@ export default function Footer({ settings }: { settings?: any }) {
   // توليد الرابط الصحيح باستخدام الدالة بناءً على كود الـ Navbar
   const logoUrl = settings?.logo_path ? getImageUrl(settings.logo_path) : null;
 
-  const lang =
-    typeof document !== "undefined" &&
+  const lang = typeof document !== "undefined" &&
     document.cookie.includes("NEXT_LOCALE=ar")
       ? "ar"
       : "en";
@@ -163,27 +162,27 @@ export default function Footer({ settings }: { settings?: any }) {
             {/* LINKS */}
             <div>
               <h4 className="text-xs tracking-[0.5em] text-muted-foreground mb-8">
-                QUICK LINKS
+                {t('quick_links', lang)}
               </h4>
 
               <ul className="space-y-5 text-sm text-muted-foreground">
-                <li><Link href="/shop" className="hover:text-foreground">Shop</Link></li>
-                <li><Link href="/collections" className="hover:text-foreground">Collections</Link></li>
-                <li><Link href="/about" className="hover:text-foreground">About</Link></li>
-                <li><Link href="/faq" className="hover:text-foreground">FAQ</Link></li>
+                <li><Link href="/shop" className="hover:text-foreground">{t('shop_collection', lang)}</Link></li>
+                <li><Link href="/collections" className="hover:text-foreground">{t('categories', lang)}</Link></li>
+                <li><Link href="/about" className="hover:text-foreground">{t('about', lang)}</Link></li>
+                <li><Link href="/faq" className="hover:text-foreground">{t('faq', lang)}</Link></li>
               </ul>
             </div>
 
             {/* CONTACT */}
             <div>
               <h4 className="text-xs tracking-[0.5em] text-muted-foreground mb-8">
-                CONTACT
+                {t('contact', lang)}
               </h4>
 
               <div className="space-y-5 text-sm text-muted-foreground">
                 {settings?.support_email && (
                   <div>
-                    <p className="text-xs text-foreground">Email</p>
+                    <p className="text-xs text-foreground">{t('email', lang)}</p>
                     <a href={`mailto:${settings.support_email}`}>
                       {settings.support_email}
                     </a>
@@ -192,7 +191,7 @@ export default function Footer({ settings }: { settings?: any }) {
 
                 {settings?.contact_phone && (
                   <div>
-                    <p className="text-xs text-foreground">Phone</p>
+                    <p className="text-xs text-foreground">{t('phone', lang)}</p>
                     <a
                       dir="ltr"
                       href={`tel:${settings.contact_phone.replace(/\D/g, "")}`}

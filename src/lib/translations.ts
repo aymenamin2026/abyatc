@@ -1,7 +1,7 @@
 export const translations = {
   en: {
     // Navbar
-    shop: "Shop",
+    shop: "Services",
     categories: "Categories",
     about: "About Us",
     contact: "Contact",
@@ -257,7 +257,7 @@ export const translations = {
   },
   ar: {
     // Navbar
-    shop: "المتجر",
+    shop: "خدماتنا",
     categories: "الفئات",
     about: "من نحن",
     contact: "اتصل بنا",
