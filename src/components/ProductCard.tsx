@@ -41,6 +41,9 @@ export default function ProductCard({
   const isFav = isInWishlist(product.id);
   const isTogglingThis = isToggling === product.id;
 
+  // 🛠️ فحص هل يتوجب إظهار السعر بناءً على القيمة القادمة من الباك اند
+  const shouldShowPrice = product.show_price !== false && product.show_price !== 0;
+
   const getDisplayPrice = () => {
     if (product.variations && product.variations.length > 0) {
       return parseFloat(
@@ -67,8 +70,8 @@ export default function ProductCard({
     e.stopPropagation();
     setShowQuickView(true);
   };
+
   // --- تجهيز رابط الواتساب ---
-  // نتحقق من وجود الرقم في الـ settings بكافة المسميات المحتملة
   const rawNumber =
     settings?.whatsapp ||
     settings?.whatsapp_phone ||
@@ -85,10 +88,14 @@ export default function ProductCard({
     typeof window !== "undefined" ? window.location.origin : "https://luluh.sa";
   const productUrl = `${siteUrl}/shop/${product.slug || product.id}`;
 
-
-  const messageText = `مرحباً، أود الاستفسار عن منتج: ${name}\nرابط المنتج: ${productUrl}`;
+  // تكييف نص الرسالة بناءً على ما إذا كان السعر معروضاً أو مخفياً لطلب تسعيرة
+  const messageText = shouldShowPrice
+    ? `مرحباً، أود الاستفسار عن منتج: ${name}\nرابط المنتج: ${productUrl}`
+    : `مرحباً، أود طلب تسعيرة للمنتج: ${name}\nالسعر غير معروض بالمتجر.\nرابط المنتج: ${productUrl}`;
+    
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
-return (
+
+  return (
     <>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -112,7 +119,7 @@ return (
             />
           </Link>
 
-          {/* WISHLIST HEART BUTTON - TOP RIGHT (GLASS LOOK) */}
+          {/* WISHLIST HEART BUTTON */}
           <button
             onClick={handleWishlistToggle}
             disabled={isTogglingThis}
@@ -132,30 +139,31 @@ return (
             />
           </button>
 
-          {/* LUXURY HOVER ACTIONS CONTAINER - INVISIBLE BY DEFAULT, POPS UP ON HOVER/TOUCH */}
+          {/* LUXURY HOVER ACTIONS CONTAINER */}
           <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 bg-card/80 backdrop-blur-xl border border-border/40 py-2.5 px-4 sm:py-3.5 sm:px-6 rounded-xl sm:rounded-2xl flex justify-center items-center gap-3 sm:gap-4 z-20 shadow-xl transition-all duration-300 ease-out
-            /* التعديل الجوهري هنا: مخفية تماماً بصرياً ومصغرة، وتظهر بكامل أناقتها عند التمرير واللمس */
             opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto"
           >
-            {/* 1. SHOPPING CART BUTTON */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                addToCart({
-                  product_id: product.id,
-                  name: product.name || name,
-                  image: image,
-                  color: "Default",
-                  size: "Default",
-                  price: parseFloat(price),
-                  quantity: 1,
-                });
-              }}
-              className="w-8 h-8 sm:w-9 sm:h-9 bg-foreground text-background rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm hover:scale-105 active:scale-95"
-              title={t("add_to_cart" as any, lang as any)}
-            >
-              <ShoppingCart className="w-3.5 h-3.5" />
-            </button>
+            {/* 1. SHOPPING CART BUTTON - 🛠️ يظهر فقط عند تفعيل إظهار السعر */}
+            {shouldShowPrice && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart({
+                    product_id: product.id,
+                    name: product.name || name,
+                    image: image,
+                    color: "Default",
+                    size: "Default",
+                    price: parseFloat(price),
+                    quantity: 1,
+                  });
+                }}
+                className="w-8 h-8 sm:w-9 sm:h-9 bg-foreground text-background rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm hover:scale-105 active:scale-95"
+                title={t("add_to_cart" as any, lang as any)}
+              >
+                <ShoppingCart className="w-3.5 h-3.5" />
+              </button>
+            )}
 
             {/* 2. QUICK VIEW EYE BUTTON */}
             <button
@@ -212,32 +220,41 @@ return (
             </h3>
           </Link>
 
-          {/* DYNAMIC PRICE DETAILS */}
+          {/* DYNAMIC PRICE DETAILS - 🛠️ تم تعديله ليدعم شروط الإخفاء */}
           <div className="mt-auto font-medium text-xs sm:text-sm text-foreground flex items-center tracking-wider">
-            {currencySymbol === "/riyal-light.svg" ||
-            currencySymbol === "/riyal-dark.svg" ? (
-              <div className="flex items-center">
-                <Image
-                  src="/riyal-dark.svg"
-                  alt="SAR"
-                  width={12}
-                  height={12}
-                  className={`inline-block theme-light-only ${lang === "ar" ? "ml-1" : "mr-1"}`}
-                />
-                <Image
-                  src="/riyal-light.svg"
-                  alt="SAR"
-                  width={12}
-                  height={12}
-                  className={`theme-dark-only ${lang === "ar" ? "ml-1" : "mr-1"}`}
-                />
-              </div>
+            {shouldShowPrice ? (
+              <>
+                {currencySymbol === "/riyal-light.svg" ||
+                currencySymbol === "/riyal-dark.svg" ? (
+                  <div className="flex items-center">
+                    <Image
+                      src="/riyal-dark.svg"
+                      alt="SAR"
+                      width={12}
+                      height={12}
+                      className={`inline-block theme-light-only ${lang === "ar" ? "ml-1" : "mr-1"}`}
+                    />
+                    <Image
+                      src="/riyal-light.svg"
+                      alt="SAR"
+                      width={12}
+                      height={12}
+                      className={`theme-dark-only ${lang === "ar" ? "ml-1" : "mr-1"}`}
+                    />
+                  </div>
+                ) : (
+                  <span className={`font-light text-muted-foreground ${lang === "ar" ? "ml-1" : "mr-1"}`}>
+                    {currencySymbol}
+                  </span>
+                )}
+                <span className="text-sm sm:text-base font-semibold text-foreground/90">{price}</span>
+              </>
             ) : (
-              <span className={`font-light text-muted-foreground ${lang === "ar" ? "ml-1" : "mr-1"}`}>
-                {currencySymbol}
+              /* 🛠️ التصميم البديل في حال تم إخفاء السعر من الباك اند */
+              <span className="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 italic tracking-normal bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
+                {lang === "ar" ? "السعر عند الطلب" : "Price on Request"}
               </span>
             )}
-            <span className="text-sm sm:text-base font-semibold text-foreground/90">{price}</span>
           </div>
         </div>
       </motion.div>

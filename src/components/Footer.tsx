@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+// استيراد دالة معالجة روابط الصور من مكتبة الـ API الخاصة بك
+import { getImageUrl } from "@/lib/api"; 
 import {
   Facebook,
   Instagram,
@@ -18,6 +20,9 @@ export default function Footer({ settings }: { settings?: any }) {
   const [pos, setPos] = useState({ x: 50, y: 50 });
 
   const siteName = settings?.site_name || "Luluh.sa";
+  
+  // توليد الرابط الصحيح باستخدام الدالة بناءً على كود الـ Navbar
+  const logoUrl = settings?.logo_path ? getImageUrl(settings.logo_path) : null;
 
   const lang =
     typeof document !== "undefined" &&
@@ -104,11 +109,24 @@ export default function Footer({ settings }: { settings?: any }) {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-20 relative z-10">
 
-            {/* BRAND */}
+            {/* BRAND - تم تعديله ليحتوي على الشعار والنص معاً بدون إلغاء */}
             <div className="md:col-span-2">
-              <h2 className="text-3xl tracking-[0.35em] font-light mb-6">
-                {siteName}
-              </h2>
+              <div className="flex flex-col items-start gap-4 mb-6">
+                <Link href="/" className="flex flex-col items-start gap-3 tracking-[0.15em]">
+                  {/* عرض الشعار إذا كان موجوداً */}
+                  {logoUrl && (
+                    <img 
+                      src={logoUrl} 
+                      alt={siteName} 
+                      className="h-12 w-auto object-contain transition-all" 
+                    />
+                  )}
+                  {/* عرض النص دائماً لضمان عدم اختفائه كمطالبة للهوية */}
+                  <h2 className="text-2xl md:text-3xl tracking-[0.25em] font-light font-serif mt-2 leading-tight">
+                    {siteName}
+                  </h2>
+                </Link>
+              </div>
 
               <div
                 className="text-sm text-muted-foreground max-w-md leading-relaxed"
