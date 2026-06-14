@@ -250,9 +250,9 @@ export default function ProductCard({
                 <span className="text-sm sm:text-base font-semibold text-foreground/90">{price}</span>
               </>
             ) : (
-              /* 🛠️ التصميم البديل في حال تم إخفاء السعر من الباك اند */
+             
               <span className="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 italic tracking-normal bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
-                {lang === "ar" ? "السعر عند الطلب" : "Price on Request"}
+                {lang === "ar" ? "راسلنا لمعرفه السعر" : "Text Us For Price "}
               </span>
             )}
           </div>
