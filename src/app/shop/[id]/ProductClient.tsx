@@ -50,7 +50,7 @@ export default function ProductClient({
   settings?: any; 
 }) {
   const { lang } = useLanguage();
-
+  const shouldShowPrice = product.show_price !== false && product.show_price !== 0;
   // Process images
   const images = product.images && product.images.length > 0 
     ? product.images.map((img: string) => getImageUrl(img))
@@ -262,7 +262,7 @@ export default function ProductClient({
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2">{name}</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2"> {name}</h1>
             
             {/* SKU */}
             {(() => {
@@ -282,17 +282,25 @@ export default function ProductClient({
             })()}
 
             <div className="flex items-center gap-4 mb-6">
-              <div className="text-2xl font-semibold flex items-center">
-                {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                  <>
-                    <Image src="/riyal-dark.svg" alt="SAR" width={20} height={20} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
-                    <Image src="/riyal-light.svg" alt="SAR" width={20} height={20} className={`theme-dark-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
-                  </>
-                ) : (
-                  <span className={lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}>{currencySymbol}</span>
-                )}
-                <span>{displayPrice}</span>
-              </div>
+             <div className="text-2xl font-semibold flex items-center">
+  {shouldShowPrice ? (
+    <>
+      {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+        <>
+          <Image src="/riyal-dark.svg" alt="SAR" width={20} height={20} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+          <Image src="/riyal-light.svg" alt="SAR" width={20} height={20} className={`theme-dark-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+        </>
+      ) : (
+        <span className={lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}>{currencySymbol}</span>
+      )}
+      <span>{displayPrice}</span>
+    </>
+  ) : (
+    <div className="text-lg font-medium text-amber-600 bg-amber-50 px-4 py-2 rounded-full border border-amber-200">
+      {lang === 'ar' ? 'السعر غير معروض - راسلنا للاستفسار' : 'Price not shown - Contact us'}
+    </div>
+  )}
+</div>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <div className="flex text-amber-500">
                   {(() => {
@@ -374,39 +382,52 @@ export default function ProductClient({
             )}
             
           {/* Actions */}
-            <div className="flex gap-4 mb-4"> {/* قمنا بتقليل الـ mb من 8 إلى 4 لتناسق المساحة */}
-              <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">-</button>
-                <span className="w-10 text-center font-medium">{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">+</button>
-              </div>
-              <button 
-                onClick={handleAddToCart}
-                className={`flex-1 h-14 rounded-full font-medium text-lg transition-all shadow-lg flex items-center justify-center
-                  ${isAddedToCart 
-                    ? 'bg-green-600 text-white hover:bg-green-700' 
-                    : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'
-                  }`}
-                disabled={!selectedColor || !selectedSize || isAddedToCart}
-              >
-                {isAddedToCart ? (
-                   <span className="flex items-center gap-2"><Check className="w-5 h-5"/> {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}</span>
-                ) : (
-                  <>
-                    {t('add_to_cart', lang)} - 
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                      <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className={`inline-block ${lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}`} />
-                    ) : (
-                      <span className={lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}>{currencySymbol}</span>
-                    )}
-                    {(parseFloat(displayPrice) * quantity).toFixed(2)}
-                  </>
-                )}
-              </button>
-              <button className="w-14 h-14 bg-secondary flex items-center justify-center rounded-full text-foreground hover:bg-muted transition-colors border border-border">
-                <Heart className="w-5 h-5" />
-              </button>
-            </div>
+         <div className="flex gap-4 mb-4">
+  {/* إظهار اختيار الكمية فقط إذا كان السعر متاحاً */}
+  {shouldShowPrice && (
+    <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
+      <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">-</button>
+      <span className="w-10 text-center font-medium">{quantity}</span>
+      <button onClick={() => setQuantity(quantity + 1)} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">+</button>
+    </div>
+  )}
+
+  {/* زر إضافة للسلة يظهر فقط إذا كان السعر متاحاً */}
+  {shouldShowPrice ? (
+    <button 
+      onClick={handleAddToCart}
+      className={`flex-1 h-14 rounded-full font-medium text-lg transition-all shadow-lg flex items-center justify-center
+        ${isAddedToCart 
+          ? 'bg-green-600 text-white hover:bg-green-700' 
+          : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'
+        }`}
+      disabled={!selectedColor || !selectedSize || isAddedToCart}
+    >
+      {isAddedToCart ? (
+         <span className="flex items-center gap-2"><Check className="w-5 h-5"/> {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}</span>
+      ) : (
+        <>
+          {t('add_to_cart', lang)} - 
+          {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+            <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className={`inline-block ${lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}`} />
+          ) : (
+            <span className={lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}>{currencySymbol}</span>
+          )}
+          {(parseFloat(displayPrice) * quantity).toFixed(2)}
+        </>
+      )}
+    </button>
+  ) : (
+    // بديل في حال كان السعر مخفياً (اختياري: يمكنك حذف هذا الجزء إذا أردت فقط إخفاء الزر)
+    <div className="flex-1 h-14 rounded-full border border-amber-500/30 bg-amber-500/5 flex items-center justify-center text-amber-600 font-medium">
+      {lang === 'ar' ? 'السعر متاح عند الطلب' : 'Price available on request'}
+    </div>
+  )}
+
+  <button className="w-14 h-14 bg-secondary flex items-center justify-center rounded-full text-foreground hover:bg-muted transition-colors border border-border">
+    <Heart className="w-5 h-5" />
+  </button>
+</div>
 
             {/* زر الواتساب الديناميكي المنسق لصفحة التفاصيل */}
             <div className="mb-8">
