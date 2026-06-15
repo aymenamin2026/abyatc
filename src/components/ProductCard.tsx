@@ -85,14 +85,14 @@ export default function ProductCard({
     : "966500000000";
 
   const siteUrl =
-    typeof window !== "undefined" ? window.location.origin : "https://luluh.sa";
+    typeof window !== "undefined" ? window.location.origin : "https://abyatc.vercel.app";
   const productUrl = `${siteUrl}/shop/${product.slug || product.id}`;
 
   // تكييف نص الرسالة بناءً على ما إذا كان السعر معروضاً أو مخفياً لطلب تسعيرة
   const messageText = shouldShowPrice
     ? `مرحباً، أود الاستفسار عن منتج: ${name}\nرابط المنتج: ${productUrl}`
     : `مرحباً، أود طلب تسعيرة للمنتج: ${name}\nالسعر غير معروض بالمتجر.\nرابط المنتج: ${productUrl}`;
-    
+
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   return (
@@ -123,11 +123,10 @@ export default function ProductCard({
           <button
             onClick={handleWishlistToggle}
             disabled={isTogglingThis}
-            className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md shadow-sm ${
-              isFav
+            className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md shadow-sm ${isFav
                 ? "bg-red-500 text-white border-red-500 hover:bg-red-600"
                 : "bg-card/40 text-foreground/70 border-border/40 hover:bg-card hover:text-red-500"
-            } ${isTogglingThis ? "scale-90 opacity-70" : "hover:scale-110 active:scale-95"}`}
+              } ${isTogglingThis ? "scale-90 opacity-70" : "hover:scale-110 active:scale-95"}`}
             title={
               isFav
                 ? t("remove_from_wishlist" as any, lang as any)
@@ -212,7 +211,7 @@ export default function ProductCard({
               product.categories?.[0]?.name?.en ||
               "Category"}
           </div>
-          
+
           {/* PRODUCT NAME TITLE */}
           <Link href={`/shop/${product.slug}`}>
             <h3 className="font-light text-sm sm:text-base text-foreground hover:text-primary tracking-wide transition-colors line-clamp-1 mb-2">
@@ -225,7 +224,7 @@ export default function ProductCard({
             {shouldShowPrice ? (
               <>
                 {currencySymbol === "/riyal-light.svg" ||
-                currencySymbol === "/riyal-dark.svg" ? (
+                  currencySymbol === "/riyal-dark.svg" ? (
                   <div className="flex items-center">
                     <Image
                       src="/riyal-dark.svg"
@@ -250,7 +249,7 @@ export default function ProductCard({
                 <span className="text-sm sm:text-base font-semibold text-foreground/90">{price}</span>
               </>
             ) : (
-             
+
               <span className="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 italic tracking-normal bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
                 {lang === "ar" ? "راسلنا لمعرفه السعر" : "Text Us For Price "}
               </span>

@@ -36,34 +36,23 @@ const colorClassMap: Record<string, string> = {
 import { useLanguage } from "@/components/LanguageContext";
 import { t } from "@/lib/translations";
 
-export default function ProductClient({ 
-  product, 
+export default function ProductClient({
+  product,
   attributes = [],
   currencySymbol = "$",
-  relatedProducts = [],
-  settings 
-}: { 
-  product: any, 
+  relatedProducts = []
+}: {
+  product: any,
   attributes?: any[],
   currencySymbol?: string,
-  relatedProducts?: any[],
-  settings?: any; 
+  relatedProducts?: any[]
 }) {
   const { lang } = useLanguage();
-  const shouldShowPrice = product.show_price !== false && product.show_price !== 0;
+
   // Process images
-  const images = product.images && product.images.length > 0 
+  const images = product.images && product.images.length > 0
     ? product.images.map((img: string) => getImageUrl(img))
     : ["/no-image.jpg"];
-
-  // --- تجهيز رابط الواتساب الديناميكي لصفحة التفاصيل ---
-  const rawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || settings?.contact_phone || "";
-  const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000"; 
-
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
-  const productName = product.name?.[lang] || product.name?.en || product.name || "";
-  const messageText = `مرحباً، أود الاستفسار عن منتج: ${productName}\nرابط المنتج: ${currentUrl}`;
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   const name = product.name?.[lang] || product.name?.en || product.name || "Product Name";
   const desc = product.description?.[lang] || product.description?.en || product.description || "No description available.";
@@ -88,10 +77,10 @@ export default function ProductClient({
   // Extract from API
   const sizeAttr = attributes?.find((a: any) => a.slug === 'size' || a.name?.en === 'Size');
   const colorAttr = attributes?.find((a: any) => a.slug === 'color' || a.name?.en === 'Color');
-  
+
   // Filter available options based on product variations
   const hasVariations = product.variations && product.variations.length > 0;
-  
+
   const availableSizes = hasVariations && sizeAttr ? sizeAttr.values.filter((size: any) => {
     const sEn = size.value?.en || size.value;
     return product.variations.some((v: any) => v.sku?.endsWith(`-${sEn}`));
@@ -101,7 +90,9 @@ export default function ProductClient({
     const cEn = color.value?.en || color.value;
     const prefix = cEn.substring(0, 3).toUpperCase();
     return product.variations.some((v: any) => v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`));
-  }) : [];  useEffect(() => {
+  }) : [];
+
+  useEffect(() => {
     if (availableSizes.length > 0 && !selectedSize) {
       setSelectedSize(availableSizes[0].value?.en || availableSizes[0].value);
     }
@@ -136,7 +127,7 @@ export default function ProductClient({
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newReview.comment.length < 5) return;
-    
+
     setIsSubmittingReview(true);
     try {
       await submitReview({
@@ -159,7 +150,7 @@ export default function ProductClient({
   // Adjust price if a specific variation is selected
   if (hasVariations && selectedSize && selectedColor) {
     const prefix = selectedColor.substring(0, 3).toUpperCase();
-    const variation = product.variations.find((v: any) => 
+    const variation = product.variations.find((v: any) =>
       (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${selectedSize}`)
     );
     if (variation && variation.price) {
@@ -169,7 +160,7 @@ export default function ProductClient({
 
   const handleAddToCart = async () => {
     if (!selectedSize || !selectedColor) return;
-    
+
     setIsAddedToCart(true);
     const colorValueObj = availableColors.find((c: any) => (c.value?.en || c.value) === selectedColor)?.value;
     const sizeValueObj = availableSizes.find((s: any) => (s.value?.en || s.value) === selectedSize)?.value;
@@ -199,7 +190,7 @@ export default function ProductClient({
   return (
     <div className="flex flex-col min-h-screen pt-4 pb-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Breadcrumb */}
         <nav className="flex items-center text-sm text-muted-foreground mb-8">
           <Link href="/" className="hover:text-foreground transition-colors">{t('shop', lang) === 'Shop' ? 'Home' : 'الرئيسية'}</Link>
@@ -210,13 +201,13 @@ export default function ProductClient({
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
-          
+
           {/* Image Gallery */}
           <div className="flex flex-col-reverse md:flex-row gap-3 md:gap-3 md:sticky md:top-24 h-fit">
             {/* Thumbnails */}
             <div className={`flex ${images.length > 8 ? 'md:grid md:grid-cols-2 md:w-[104px]' : 'md:flex-col md:w-12'} gap-2 overflow-x-auto flex-shrink-0 scrollbar-hide select-none h-fit self-start`}>
               {images.map((img: string, idx: number) => (
-                <button 
+                <button
                   key={idx}
                   onClick={() => setActiveImage(idx)}
                   className={`relative w-10 h-14 md:w-12 md:h-16 rounded-lg overflow-hidden border transition-all flex-shrink-0 ${activeImage === idx ? 'border-primary ring-1 ring-primary/20' : 'border-border/50 hover:border-primary/50'}`}
@@ -225,9 +216,9 @@ export default function ProductClient({
                 </button>
               ))}
             </div>
-            
+
             {/* Main Image */}
-            <div 
+            <div
               className="relative flex-1 rounded-2xl overflow-hidden cursor-zoom-in group/main h-fit"
               onMouseMove={handleMouseMove}
               onMouseEnter={() => setIsZoomed(true)}
@@ -241,13 +232,11 @@ export default function ProductClient({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  
                   <Image
                     src={images[activeImage]}
                     alt={name}
                     width={1000}
                     height={1250}
-                    unoptimized={true} // <--- أضف هذا السطر هنا
                     className="w-full h-auto object-contain transition-transform duration-200 ease-out"
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -262,14 +251,14 @@ export default function ProductClient({
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2"> {name}</h1>
-            
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2">{name}</h1>
+
             {/* SKU */}
             {(() => {
               let currentSku = product.sku || '';
               if (hasVariations && selectedSize && selectedColor) {
                 const prefix = selectedColor.substring(0, 3).toUpperCase();
-                const variation = product.variations.find((v: any) => 
+                const variation = product.variations.find((v: any) =>
                   (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${selectedSize}`)
                 );
                 if (variation?.sku) currentSku = variation.sku;
@@ -282,35 +271,27 @@ export default function ProductClient({
             })()}
 
             <div className="flex items-center gap-4 mb-6">
-             <div className="text-2xl font-semibold flex items-center">
-  {shouldShowPrice ? (
-    <>
-      {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-        <>
-          <Image src="/riyal-dark.svg" alt="SAR" width={20} height={20} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
-          <Image src="/riyal-light.svg" alt="SAR" width={20} height={20} className={`theme-dark-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
-        </>
-      ) : (
-        <span className={lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}>{currencySymbol}</span>
-      )}
-      <span>{displayPrice}</span>
-    </>
-  ) : (
-    <div className="text-lg font-medium text-amber-600 bg-amber-50 px-4 py-2 rounded-full border border-amber-200">
-      {lang === 'ar' ? 'لمعرفه السعر شرفنا علئ الوتساب' : 'To know price text us in whatsapp'}
-    </div>
-  )}
-</div>
+              <div className="text-2xl font-semibold flex items-center">
+                {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                  <>
+                    <Image src="/riyal-dark.svg" alt="SAR" width={20} height={20} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+                    <Image src="/riyal-light.svg" alt="SAR" width={20} height={20} className={`theme-dark-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+                  </>
+                ) : (
+                  <span className={lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}>{currencySymbol}</span>
+                )}
+                <span>{displayPrice}</span>
+              </div>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <div className="flex text-amber-500">
                   {(() => {
-                    const avg = reviews.length > 0 
-                      ? reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length 
+                    const avg = reviews.length > 0
+                      ? reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length
                       : 0;
                     return [...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-4 h-4 ${i < Math.round(avg) ? 'fill-current' : 'text-muted-foreground opacity-30'}`} 
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${i < Math.round(avg) ? 'fill-current' : 'text-muted-foreground opacity-30'}`}
                       />
                     ));
                   })()}
@@ -326,7 +307,7 @@ export default function ProductClient({
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-3">
                   <span className="font-medium text-foreground">
-                    {colorAttr?.name?.[lang] || colorAttr?.name?.en || "Color"}: 
+                    {colorAttr?.name?.[lang] || colorAttr?.name?.en || "Color"}:
                     <span className="text-muted-foreground font-normal ml-2">
                       {availableColors.find((c: any) => (c.value?.en || c.value) === selectedColor)?.value?.[lang] || selectedColor}
                     </span>
@@ -339,7 +320,7 @@ export default function ProductClient({
                     const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
 
                     return (
-                      <button 
+                      <button
                         key={color.id}
                         onClick={() => setSelectedColor(cEn)}
                         className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${selectedColor === cEn ? 'ring-2 ring-primary ring-offset-2' : 'hover:scale-110'}`}
@@ -367,7 +348,7 @@ export default function ProductClient({
                     const sLocal = size.value?.[lang] || sEn;
 
                     return (
-                      <button 
+                      <button
                         key={size.id}
                         onClick={() => setSelectedSize(sEn)}
                         className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
@@ -380,64 +361,40 @@ export default function ProductClient({
                 </div>
               </div>
             )}
-            
-          {/* Actions */}
-         <div className="flex gap-4 mb-4">
-  <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
-    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">-</button>
-    <span className="w-10 text-center font-medium">{quantity}</span>
-    <button onClick={() => setQuantity(quantity + 1)} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">+</button>
-  </div>
 
-  <button 
-    onClick={handleAddToCart}
-    className={`flex-1 h-14 rounded-full font-medium text-lg transition-all shadow-lg flex items-center justify-center
-      ${isAddedToCart 
-        ? 'bg-green-600 text-white hover:bg-green-700' 
-        : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'
-      }`}
-    disabled={!selectedColor || !selectedSize || isAddedToCart}
-  >
-    {isAddedToCart ? (
-       <span className="flex items-center gap-2"><Check className="w-5 h-5"/> {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}</span>
-    ) : (
-      <>
-        {t('add_to_cart', lang)}
-        
-        {/* السعر يظهر فقط إذا كان shouldShowPrice صحيحاً */}
-        {shouldShowPrice && (
-          <>
-            <span className="mx-2">-</span>
-            {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-              <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className={`inline-block ${lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}`} />
-            ) : (
-              <span className={lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}>{currencySymbol}</span>
-            )}
-            {(parseFloat(displayPrice) * quantity).toFixed(2)}
-          </>
-        )}
-      </>
-    )}
-  </button>
-  
-  <button className="w-14 h-14 bg-secondary flex items-center justify-center rounded-full text-foreground hover:bg-muted transition-colors border border-border">
-    <Heart className="w-5 h-5" />
-  </button>
-</div>
-
-            {/* زر الواتساب الديناميكي المنسق لصفحة التفاصيل */}
-            <div className="mb-8">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg rounded-full shadow-lg transition-all transform hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 text-center"
+            {/* Actions */}
+            <div className="flex gap-4 mb-8">
+              <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">-</button>
+                <span className="w-10 text-center font-medium">{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">+</button>
+              </div>
+              <button
+                onClick={handleAddToCart}
+                className={`flex-1 h-14 rounded-full font-medium text-lg transition-all shadow-lg flex items-center justify-center
+                  ${isAddedToCart
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'
+                  }`}
+                disabled={!selectedColor || !selectedSize || isAddedToCart}
               >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M12.21 2c-5.464 0-9.91 4.39-9.91 9.782 0 1.723.454 3.407 1.316 4.898L2 22l5.485-1.422a9.96 9.96 0 004.723 1.185c5.464 0 9.91-4.39 9.91-9.781C22.12 6.39 17.674 2 12.21 2zm5.727 13.914c-.244.68-1.22 1.332-1.83 1.4-.61.07-1.373.13-3.832-.86-2.46-.99-4.04-3.46-4.162-3.62-.122-.17-1.012-1.33-1.012-2.53 0-1.2.634-1.8.854-2.03.22-.24.488-.3.653-.3.164 0 .33.01.47.01.147 0 .348-.06.543.4.195.47.67 1.61.73 1.73.061.12.1.26.02.42-.08.17-.183.28-.317.43-.134.15-.28.34-.4.48-.135.15-.275.31-.116.58.16.27.707 1.15 1.513 1.86.1.09.81.72 1.636 1.05.25.1.445.08.61-.09.214-.22.915-1.05 1.16-1.41.244-.36.488-.3.824-.18.335.12 2.122.99 2.488 1.17.366.18.61.27.695.41.085.15.085.86-.159 1.54z" clipRule="evenodd" />
-                </svg>
-                {lang === 'ar' ? 'طلب واستفسار عبر الواتساب' : 'Inquire via WhatsApp'}
-              </a>
+                {isAddedToCart ? (
+                  <span className="flex items-center gap-2"><Check className="w-5 h-5" /> {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}</span>
+                ) : (
+                  <>
+                    {t('add_to_cart', lang)} -
+                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                      <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className={`inline-block ${lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}`} />
+                    ) : (
+                      <span className={lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}>{currencySymbol}</span>
+                    )}
+                    {(parseFloat(displayPrice) * quantity).toFixed(2)}
+                  </>
+                )}
+              </button>
+              <button className="w-14 h-14 bg-secondary flex items-center justify-center rounded-full text-foreground hover:bg-muted transition-colors border border-border">
+                <Heart className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Guarantees */}
@@ -445,7 +402,7 @@ export default function ProductClient({
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Truck className="w-5 h-5 text-foreground" />
                 <span className="flex items-center gap-1 flex-wrap">
-                  {lang === 'ar' ? 'شحن مجاني للطلبات فوق' : 'Free shipping over'} 
+                  {lang === 'ar' ? 'شحن مجاني للطلبات فوق' : 'Free shipping over'}
                   <span className="font-semibold flex items-center gap-1">
                     {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
                       <>
@@ -584,10 +541,10 @@ export default function ProductClient({
               </motion.div>
             </AnimatePresence>
           </div>
+        </div>
       </div>
-    </div>
 
-    {/* Related Products - Full Width Section Matching Home Featured */}
+      {/* Related Products - Full Width Section Matching Home Featured */}
       {relatedProducts.length > 0 && (
         <section className="py-24 bg-background border-t border-border/50 mt-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -601,17 +558,17 @@ export default function ProductClient({
                 </p>
               </div>
               <Link href="/shop" className="hidden md:flex items-center gap-1 text-foreground font-medium hover:text-foreground/80 transition-colors">
-                {t('view_all_products' as any, lang as any)} 
+                {t('view_all_products' as any, lang as any)}
                 <ChevronRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
               </Link>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {relatedProducts.map((p: any, i: number) => (
-                <ProductCard 
-                  key={p.id} 
-                  product={p} 
-                  currencySymbol={currencySymbol} 
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  currencySymbol={currencySymbol}
                   index={i}
                 />
               ))}
