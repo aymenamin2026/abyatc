@@ -1,0 +1,151 @@
+[33mcommit 10b389ea0c77cf31d6321336917438412b622401[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 05:37:42 2026 +0300
+
+    fix add card button
+
+src/app/shop/[id]/ProductClient.tsx
+src/components/ProductCard.tsx
+
+[33mcommit 7674db5d1cdc5a2bcd65462c6f20d1cdc90aa689[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 03:07:07 2026 +0300
+
+    layout and page edte 3 original
+
+src/app/layout.tsx
+src/app/page.tsx
+
+[33mcommit 602a40ec513bf7ff6cb8a5ad5cdf1674d1e12325[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 03:04:14 2026 +0300
+
+    layout and page edte 2
+
+src/app/layout.tsx
+src/app/page.tsx
+
+[33mcommit c1c105d7b706048780da613d792ee5d74b13feeb[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 02:58:05 2026 +0300
+
+    layout and page edte 1
+
+src/app/page.tsx
+
+[33mcommit b32d3ec3eee5af12f63f2c3eb9c3a0cdb135a757[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 02:54:51 2026 +0300
+
+    layout and page edte
+
+src/app/globals.css
+src/app/layout.tsx
+src/app/page.tsx
+
+[33mcommit 559c7103fc970807f47c442220470b1390c3abde[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 02:42:09 2026 +0300
+
+    category slider 5 original
+
+src/components/CategoriesSlider.tsx
+
+[33mcommit 1266ce9c95c82285ba6ee5d15cc256a6ea864844[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 02:38:29 2026 +0300
+
+    category slider 4
+
+src/components/CategoriesSlider.tsx
+
+[33mcommit 08fd26dd128c1782f2b235f2e8883208aa675d9a[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 02:34:56 2026 +0300
+
+    category slider 3
+
+src/components/CategoriesSlider.tsx
+
+[33mcommit 1e8d6d32cf1145ebd5f6961ced2118b6c8cd1133[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 02:18:23 2026 +0300
+
+    category slider
+
+src/components/CategoriesSlider.tsx
+
+[33mcommit c99b4bf8f9837ceb5b4da29ee5f6996111bf777b[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Mon Jun 15 02:01:04 2026 +0300
+
+    footer lang
+
+src/components/Footer.tsx
+src/lib/translations.ts
+
+[33mcommit 46a2fb17cf5594c01bb8d156803c5bf99c058b00[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Sun Jun 14 09:52:31 2026 +0300
+
+    price hide 3
+
+src/app/shop/[id]/ProductClient.tsx
+
+[33mcommit 1ed1f22bb58bc296800f984eeea2fd90d524a6fe[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Sun Jun 14 09:48:26 2026 +0300
+
+    price hide 2
+
+src/app/shop/[id]/ProductClient.tsx
+
+[33mcommit 8824c327f3570770fef69539874326c6afa65791[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Sun Jun 14 09:41:27 2026 +0300
+
+    price hide
+
+src/app/shop/[id]/ProductClient.tsx
+
+[33mcommit 9caf0ceff89a4e3ba0a05c09af2f046fc14ae661[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Sun Jun 14 09:12:48 2026 +0300
+
+    multple image
+
+src/app/layout.tsx
+
+[33mcommit e8287c7c1b58d5af4b2ec3003ed3fdc8a88314b4[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Sun Jun 14 07:31:40 2026 +0300
+
+    navbar edit color 3
+
+src/components/Navbar.tsx
+
+[33mcommit df7776286831a2b842bbb30ed752d1039c66b6a0[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Sun Jun 14 07:18:23 2026 +0300
+
+    navbar edit color 2
+
+src/components/Navbar.tsx
+
+[33mcommit 1a5e2f18bce886e0bff7294961f48e5007a3c14d[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Sun Jun 14 07:10:04 2026 +0300
+
+    navbar edit color
+
+src/components/Navbar.tsx
+src/components/ProductCard.tsx
+
+[33mcommit a7e31ef81a37aaa7212d680f72a5a9b3c407efdc[m
+Author: aymenamin2026 <aye122men122@gmail.com>
+Date:   Sun Jun 14 07:00:50 2026 +0300
+
+    Edit Price
+
+src/components/Footer.tsx
+src/components/ProductCard.tsx
