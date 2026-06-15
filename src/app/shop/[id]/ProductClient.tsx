@@ -412,7 +412,7 @@ export default function ProductClient({
                     ) : (
                       <span className={lang === 'ar' ? 'mr-2 ml-1' : 'ml-2 mr-1'}>{currencySymbol}</span>
                     )}
-                    {(parseFloat(displayPrice) * quantity).toFixed(2)}
+
                   </>
                 )}
               </button>
