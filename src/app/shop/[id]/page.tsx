@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 export async function generateStaticParams() {
   const products = await fetchProducts();
   if (!Array.isArray(products)) return [];
-  
+
   return products.map((product: any) => ({
     id: product.slug,
   }));
@@ -25,20 +25,20 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
 
   // Filter related products (same category, excluding current product)
   const categoryId = product.categories?.[0]?.id;
-  const relatedProducts = Array.isArray(allProducts) 
-    ? allProducts.filter((p: any) => 
-        p.id !== product.id && 
-        p.categories?.some((cat: any) => cat.id === categoryId)
-      ).slice(0, 4)
+  const relatedProducts = Array.isArray(allProducts)
+    ? allProducts.filter((p: any) =>
+      p.id !== product.id &&
+      p.categories?.some((cat: any) => cat.id === categoryId)
+    ).slice(0, 4)
     : [];
 
   const currencySymbol = settings?.currency_symbol || "$";
 
   return (
-    <ProductClient 
-      product={product} 
-      attributes={attributes} 
-      currencySymbol={currencySymbol} 
+    <ProductClient
+      product={product}
+      attributes={attributes}
+      currencySymbol={currencySymbol}
       relatedProducts={relatedProducts}
       settings={settings} // <-- قمنا بإضافة تمرير الإعدادات هنا لكي يستقبلها ملف العميل بنجاح
     />
