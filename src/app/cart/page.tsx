@@ -217,7 +217,127 @@ export default function CartPage() {
 
         {/* Order Summary & Checkout */}
 
+        <div className="lg:col-span-1">
 
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm sticky top-24">
+            <h2 className="text-xl font-bold mb-6 font-serif">{t('order_summary', lang)}</h2>
+
+            {/* Promo Code section */}
+            {/* <div className="mb-6 pb-6 border-b border-border">
+              {appliedCoupon ? (
+                <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-3 rounded-lg flex items-center justify-between border border-green-200 dark:border-green-800">
+                  <div className="flex items-center gap-2">
+                    <Tag className="w-4 h-4" />
+                    <span className="font-semibold">{appliedCoupon.code}</span>
+                    <span className="text-sm">({appliedCoupon.type === 'percent' ? `${appliedCoupon.value}%` : `${appliedCoupon.value} ${currencySymbol}`} off)</span>
+                  </div>
+                  <button onClick={removeCoupon} className="hover:text-red-500 transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder={t('coupon_code', lang)}
+                      value={couponCode}
+                      onChange={(e) => {
+                        setCouponCode(e.target.value);
+                        if (couponError) setCouponError(null);
+                      }}
+                      className="flex-1 w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                    <button 
+                      type="submit"
+                      disabled={isApplyingCoupon || !couponCode}
+                      className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50 whitespace-nowrap"
+                    >
+                      {isApplyingCoupon ? "..." : t('apply', lang)}
+                    </button>
+                  </form>
+                  {couponError && (
+                    <p className="text-red-500 text-xs mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                      {couponError}
+                    </p>
+                  )}
+                </>
+              )}
+            </div> */}
+
+            {/* Totals table */}
+            <div className="space-y-3 mb-6">
+              {/* <div className="flex justify-between text-muted-foreground items-center">
+                <span>{t('subtotal', lang)}</span>
+                <span className="font-medium text-foreground flex items-center gap-1">
+                  {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                    <>
+                      <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
+                      <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
+                    </>
+                  ) : (
+                    <span>{currencySymbol}</span>
+                  )}
+                  {subtotal.toFixed(2)}
+                </span>
+              </div> */}
+
+              {/* {appliedCoupon && (
+                <div className="flex justify-between text-green-600 dark:text-green-400 items-center">
+                  <span>{t('discount', lang)} ({appliedCoupon.code})</span>
+                  <span className="flex items-center gap-1">-
+                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                      <>
+                        <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
+                        <Image src="/riyal-light.svg" alt="SAR" width={12} height={12} className="theme-dark-only" />
+                      </>
+                    ) : (
+                      <span>{currencySymbol}</span>
+                    )}
+                    {discountValue.toFixed(2)}
+                  </span>
+                </div>
+              )} */}
+
+              <div className="flex justify-between text-muted-foreground">
+                <span>{t('shipping', lang)}</span>
+                <span>{t('calculated_at_checkout', lang)}</span>
+              </div>
+              <div className="flex justify-between text-muted-foreground">
+                <span>{t('taxes', lang)}</span>
+                <span>{t('calculated_at_checkout', lang)}</span>
+              </div>
+
+              {/* <div className="pt-4 mt-4 border-t border-border flex justify-between items-center text-xl font-bold">
+                <span>{t('total', lang)}</span>
+                <span className="flex items-center gap-1">
+                  {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                    <>
+                      <Image src="/riyal-dark.svg" alt="SAR" width={16} height={16} className="inline-block theme-light-only" />
+                      <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className="theme-dark-only" />
+                    </>
+                  ) : (
+                    <span>{currencySymbol}</span>
+                  )}
+                  {total.toFixed(2)}
+                </span>
+              </div> */}
+            </div>
+
+            <Link
+              href="/checkout"
+              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition-all shadow-md hover:shadow-lg group"
+            >
+              {t('secure_checkout', lang)} <ArrowRight className={`w-5 h-5 transition-transform ${lang === 'ar' ? 'group-hover:-translate-x-1 rotate-180' : 'group-hover:translate-x-1'}`} />
+            </Link>
+
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <ShieldCheck className="w-4 h-4 text-green-600" />
+              {t('secure_payment_info', lang)}
+            </div>
+          </div>
+
+        </div>
       </div>
 
       {/* Remove Confirmation Modal */}
