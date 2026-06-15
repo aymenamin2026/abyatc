@@ -216,14 +216,13 @@ export default function CartPage() {
         </div>
 
         {/* Order Summary & Checkout */}
-
         <div className="lg:col-span-1">
 
           <div className="bg-card border border-border rounded-2xl p-6 shadow-sm sticky top-24">
             <h2 className="text-xl font-bold mb-6 font-serif">{t('order_summary', lang)}</h2>
 
             {/* Promo Code section */}
-            {/* <div className="mb-6 pb-6 border-b border-border">
+            <div className="mb-6 pb-6 border-b border-border">
               {appliedCoupon ? (
                 <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-3 rounded-lg flex items-center justify-between border border-green-200 dark:border-green-800">
                   <div className="flex items-center gap-2">
@@ -248,7 +247,7 @@ export default function CartPage() {
                       }}
                       className="flex-1 w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                     />
-                    <button 
+                    <button
                       type="submit"
                       disabled={isApplyingCoupon || !couponCode}
                       className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50 whitespace-nowrap"
@@ -263,11 +262,11 @@ export default function CartPage() {
                   )}
                 </>
               )}
-            </div> */}
+            </div>
 
             {/* Totals table */}
             <div className="space-y-3 mb-6">
-              {/* <div className="flex justify-between text-muted-foreground items-center">
+              <div className="flex justify-between text-muted-foreground items-center">
                 <span>{t('subtotal', lang)}</span>
                 <span className="font-medium text-foreground flex items-center gap-1">
                   {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
@@ -280,9 +279,9 @@ export default function CartPage() {
                   )}
                   {subtotal.toFixed(2)}
                 </span>
-              </div> */}
+              </div>
 
-              {/* {appliedCoupon && (
+              {appliedCoupon && (
                 <div className="flex justify-between text-green-600 dark:text-green-400 items-center">
                   <span>{t('discount', lang)} ({appliedCoupon.code})</span>
                   <span className="flex items-center gap-1">-
@@ -297,7 +296,7 @@ export default function CartPage() {
                     {discountValue.toFixed(2)}
                   </span>
                 </div>
-              )} */}
+              )}
 
               <div className="flex justify-between text-muted-foreground">
                 <span>{t('shipping', lang)}</span>
@@ -308,7 +307,7 @@ export default function CartPage() {
                 <span>{t('calculated_at_checkout', lang)}</span>
               </div>
 
-              {/* <div className="pt-4 mt-4 border-t border-border flex justify-between items-center text-xl font-bold">
+              <div className="pt-4 mt-4 border-t border-border flex justify-between items-center text-xl font-bold">
                 <span>{t('total', lang)}</span>
                 <span className="flex items-center gap-1">
                   {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
@@ -321,7 +320,7 @@ export default function CartPage() {
                   )}
                   {total.toFixed(2)}
                 </span>
-              </div> */}
+              </div>
             </div>
 
             <Link
@@ -336,7 +335,6 @@ export default function CartPage() {
               {t('secure_payment_info', lang)}
             </div>
           </div>
-
         </div>
       </div>
 
