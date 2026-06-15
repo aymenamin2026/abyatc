@@ -406,7 +406,7 @@ export default function ProductClient({
                   <span className="flex items-center gap-2"><Check className="w-5 h-5" /> {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}</span>
                 ) : (
                   <>
-
+                    {t('add_to_cart', lang)}
 
                   </>
                 )}
