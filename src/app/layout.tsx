@@ -27,12 +27,16 @@ import { CartProvider } from "@/components/CartContext";
 import { WishlistProvider } from "@/components/WishlistContext";
 import PopupManager from "@/components/PopupManager";
 
+
 export async function generateMetadata(): Promise<Metadata> {
+  // القيم الافتراضية الثابتة في حال فشل جلب البيانات من السيرفر أثناء الـ Build
   const defaultTitle = "لؤلؤة للزي الموحد | Luluh Uniform | api.luluh.sa";
   const defaultDesc = "وجهتكم الأولى في السعودية للزي الموحد الطبي، المدرسي، الفندقي، وزي الشركات بجودة استثنائية.";
 
   try {
+    // محاولة جلب الإعدادات من السيرفر بنظام الكاشno-store لمنع التخزين وقت الـ Build
     const settings = await fetchSettings();
+
     const siteName = settings?.site_name || defaultTitle;
     const desc = settings?.site_description || defaultDesc;
     const favicon = settings?.favicon_path ? getImageUrl(settings.favicon_path) : undefined;
@@ -42,10 +46,14 @@ export async function generateMetadata(): Promise<Metadata> {
       description: desc,
       icons: favicon ? { icon: favicon } : undefined,
       keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform", "الزي الموحد الخبر"],
-      verification: { google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U" },
+      verification: {
+        google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U",
+      },
       robots: "index, follow",
     };
   } catch (error) {
+    // في حال حدث خطأ أو كان السيرفر لا يستجيب أثناء الـ Build، يتم تمرير البيانات الافتراضية لينجح الـ Build
+    console.error("Error generating metadata, using defaults:", error);
     return {
       title: defaultTitle,
       description: defaultDesc,
@@ -55,13 +63,14 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // استخدام Promise.all لتحسين سرعة تحميل البيانات بالتوازي
-  const [settings, popups] = await Promise.all([fetchSettings(), fetchPopups()]);
+  const settings = await fetchSettings();
+  const popups = await fetchPopups();
 
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("NEXT_LOCALE");
@@ -87,6 +96,7 @@ export default async function RootLayout({
           src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js"
           strategy="beforeInteractive"
         />
+
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -97,8 +107,7 @@ export default async function RootLayout({
           `}
         </Script>
       </head>
-      {/* تم إضافة فئة إضافية للتحكم بالخلفية لضمان تناسق Dark Mode */}
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col transition-colors duration-300`} style={themeStyles as React.CSSProperties}>
+      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col`} style={themeStyles as React.CSSProperties}>
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-P69C8QCM"
@@ -113,14 +122,13 @@ export default async function RootLayout({
             <AuthProvider>
               <CartProvider>
                 <WishlistProvider>
-                  {/* حاوية الـ Layout الرئيسية لضمان أن كل العناصر في مكانها */}
-                  <div className="relative flex flex-col min-h-screen">
-                    <Navbar settings={settings} />
-                    <main className="flex-1">{children}</main>
-                    <Footer settings={settings} />
-                    <MobileBottomNav />
-                  </div>
+                  <Navbar settings={settings} />
+                  <main className="flex-1">{children}</main>
+                  <Footer settings={settings} />
+                  <MobileBottomNav />
                   <PopupManager popups={popups} settings={settings} />
+
+                  {/* زر الواتساب العائم */}
                   <WhatsAppFloat settings={settings} />
                 </WishlistProvider>
               </CartProvider>
