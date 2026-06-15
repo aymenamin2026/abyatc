@@ -16,7 +16,7 @@ export default function CartPage() {
   const [couponCode, setCouponCode] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponError, setCouponError] = useState<string | null>(null);
-  
+
   // Modal state
   const [itemToRemove, setItemToRemove] = useState<string | number | null>(null);
 
@@ -31,26 +31,26 @@ export default function CartPage() {
   const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!couponCode) return;
-    
+
     setCouponError(null);
     setIsApplyingCoupon(true);
-    
+
     try {
-        const result = await validateCoupon(couponCode, subtotal);
-        if (result.success) {
-            setAppliedCoupon(result.coupon);
-            setCouponError(null);
-        } else {
-            let errorMsg = t(result.message as any, lang);
-            if (result.message === 'min_spend_not_reached') {
-                errorMsg = errorMsg.replace('{min}', result.min_spend.toString());
-            }
-            setCouponError(errorMsg);
+      const result = await validateCoupon(couponCode, subtotal);
+      if (result.success) {
+        setAppliedCoupon(result.coupon);
+        setCouponError(null);
+      } else {
+        let errorMsg = t(result.message as any, lang);
+        if (result.message === 'min_spend_not_reached') {
+          errorMsg = errorMsg.replace('{min}', result.min_spend.toString());
         }
+        setCouponError(errorMsg);
+      }
     } catch (err) {
-        setCouponError(t('invalid_coupon', lang));
+      setCouponError(t('invalid_coupon', lang));
     } finally {
-        setIsApplyingCoupon(false);
+      setIsApplyingCoupon(false);
     }
   };
 
@@ -62,17 +62,17 @@ export default function CartPage() {
 
   const calculateDiscountValue = () => {
     if (!appliedCoupon) return 0;
-    
+
     let discount = 0;
     if (appliedCoupon.type === 'percent') {
-        discount = subtotal * (appliedCoupon.value / 100);
-        if (appliedCoupon.max_discount && discount > appliedCoupon.max_discount) {
-            discount = appliedCoupon.max_discount;
-        }
+      discount = subtotal * (appliedCoupon.value / 100);
+      if (appliedCoupon.max_discount && discount > appliedCoupon.max_discount) {
+        discount = appliedCoupon.max_discount;
+      }
     } else {
-        discount = appliedCoupon.value;
+      discount = appliedCoupon.value;
     }
-    
+
     return Math.min(discount, subtotal); // Cannot discount more than subtotal
   };
 
@@ -89,8 +89,8 @@ export default function CartPage() {
         <p className="text-muted-foreground mb-8 max-w-sm">
           {t('empty_cart', lang)}
         </p>
-        <Link 
-          href="/shop" 
+        <Link
+          href="/shop"
           className="bg-primary text-primary-foreground px-8 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors"
         >
           {t('shop_collection', lang)}
@@ -118,21 +118,21 @@ export default function CartPage() {
             {/* Header row (desktop) */}
             <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <div className="col-span-6">{t('product', lang)}</div>
-              <div className="col-span-2 text-center">{t('price', lang)}</div>
+              {/* <div className="col-span-2 text-center">{t('price', lang)}</div> */}
               <div className="col-span-2 text-center">{t('quantity', lang)}</div>
-              <div className="col-span-2 text-right">{t('total', lang)}</div>
+              {/* <div className="col-span-2 text-right">{t('total', lang)}</div> */}
             </div>
 
             {/* Item rows */}
             <div className="divide-y divide-border">
               {items.map((item) => {
-                const itemName = typeof item.name === 'object' && item.name !== null 
+                const itemName = typeof item.name === 'object' && item.name !== null
                   ? (item.name[lang] || item.name.en || "Product Name")
                   : (item.name || "Product Name");
 
                 return (
                   <div key={item.cart_item_id} className="p-4 sm:p-6 flex flex-col sm:grid sm:grid-cols-12 gap-4 sm:items-center">
-                    
+
                     {/* Mobile Product Header */}
                     <div className="flex justify-between sm:hidden mb-2">
                       <span className="font-medium">{itemName}</span>
@@ -140,7 +140,7 @@ export default function CartPage() {
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
-  
+
                     {/* Product Details (Desktop: Col 6) */}
                     <div className="sm:col-span-6 flex items-start gap-4">
                       <div className="w-20 h-28 sm:w-24 sm:h-32 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
@@ -150,21 +150,21 @@ export default function CartPage() {
                         <Link href={`/shop/${item.product_id}`} className="hidden sm:block font-medium hover:text-primary transition-colors mb-1 truncate">
                           {itemName}
                         </Link>
-                      <div className="text-sm text-muted-foreground">
-                        {typeof item.color === 'object' && item.color !== null ? (item.color[lang] || item.color.en) : item.color} | {t('size', lang)} {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
+                        <div className="text-sm text-muted-foreground">
+                          {typeof item.color === 'object' && item.color !== null ? (item.color[lang] || item.color.en) : item.color} | {t('size', lang)} {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
+                        </div>
+                        {/* Mobile Delete */}
+                        <button
+                          onClick={() => setItemToRemove(item.cart_item_id)}
+                          className="hidden sm:flex mt-4 text-xs text-muted-foreground hover:text-red-500 items-center gap-1 transition-colors"
+                        >
+                          <Trash2 className="w-3 h-3" /> {t('delete', lang)}
+                        </button>
                       </div>
-                      {/* Mobile Delete */}
-                      <button 
-                        onClick={() => setItemToRemove(item.cart_item_id)}
-                        className="hidden sm:flex mt-4 text-xs text-muted-foreground hover:text-red-500 items-center gap-1 transition-colors"
-                      >
-                        <Trash2 className="w-3 h-3" /> {t('delete', lang)}
-                      </button>
                     </div>
-                  </div>
 
-                  {/* Price (Desktop: Col 2) */}
-                  <div className="hidden sm:flex sm:col-span-2 justify-center items-center gap-1 font-medium">
+                    {/* Price (Desktop: Col 2) */}
+                    {/* <div className="hidden sm:flex sm:col-span-2 justify-center items-center gap-1 font-medium">
                     {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
                       <>
                         <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
@@ -174,52 +174,52 @@ export default function CartPage() {
                       <span>{currencySymbol}</span>
                     )}
                     {item.price.toFixed(2)}
-                  </div>
+                  </div> */}
 
-                  {/* Quantity (Desktop: Col 2) */}
-                  <div className="sm:col-span-2 flex justify-between sm:justify-center items-center mt-2 sm:mt-0">
-                    <span className="sm:hidden text-muted-foreground text-sm">{t('quantity', lang)}:</span>
-                    <div className="flex items-center border border-border rounded-full h-9 bg-background w-fit">
-                      <button 
-                        onClick={() => updateQuantity(item.cart_item_id, item.quantity - 1)}
-                        disabled={item.quantity <= 1}
-                        className="w-8 h-full flex items-center justify-center text-lg hover:text-primary transition-colors disabled:opacity-30"
-                      >-</button>
-                      <span className="w-8 text-center text-sm font-medium border-x border-border h-full flex items-center justify-center">
-                        {item.quantity}
-                      </span>
-                      <button 
-                        onClick={() => updateQuantity(item.cart_item_id, item.quantity + 1)}
-                        className="w-8 h-full flex items-center justify-center text-lg hover:text-primary transition-colors"
-                      >+</button>
+                    {/* Quantity (Desktop: Col 2) */}
+                    <div className="sm:col-span-2 flex justify-between sm:justify-center items-center mt-2 sm:mt-0">
+                      <span className="sm:hidden text-muted-foreground text-sm">{t('quantity', lang)}:</span>
+                      <div className="flex items-center border border-border rounded-full h-9 bg-background w-fit">
+                        <button
+                          onClick={() => updateQuantity(item.cart_item_id, item.quantity - 1)}
+                          disabled={item.quantity <= 1}
+                          className="w-8 h-full flex items-center justify-center text-lg hover:text-primary transition-colors disabled:opacity-30"
+                        >-</button>
+                        <span className="w-8 text-center text-sm font-medium border-x border-border h-full flex items-center justify-center">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.cart_item_id, item.quantity + 1)}
+                          className="w-8 h-full flex items-center justify-center text-lg hover:text-primary transition-colors"
+                        >+</button>
+                      </div>
+                    </div>
+
+                    {/* Total (Desktop: Col 2) */}
+                    <div className="sm:col-span-2 flex justify-between sm:justify-end items-center mt-2 sm:mt-0 font-semibold text-lg sm:text-base gap-1">
+                      <span className="sm:hidden text-muted-foreground text-sm font-normal">{t('total', lang)}:</span>
+                      {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                        <>
+                          <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
+                          <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
+                        </>
+                      ) : (
+                        <span>{currencySymbol}</span>
+                      )}
+                      {(item.price * item.quantity).toFixed(2)}
                     </div>
                   </div>
-
-                  {/* Total (Desktop: Col 2) */}
-                  <div className="sm:col-span-2 flex justify-between sm:justify-end items-center mt-2 sm:mt-0 font-semibold text-lg sm:text-base gap-1">
-                    <span className="sm:hidden text-muted-foreground text-sm font-normal">{t('total', lang)}:</span>
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                      <>
-                        <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
-                        <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
-                      </>
-                    ) : (
-                      <span>{currencySymbol}</span>
-                    )}
-                    {(item.price * item.quantity).toFixed(2)}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
 
         {/* Order Summary & Checkout */}
         <div className="lg:col-span-1">
           <div className="bg-card border border-border rounded-2xl p-6 shadow-sm sticky top-24">
             <h2 className="text-xl font-bold mb-6 font-serif">{t('order_summary', lang)}</h2>
-            
+
             {/* Promo Code section */}
             <div className="mb-6 pb-6 border-b border-border">
               {appliedCoupon ? (
@@ -246,7 +246,7 @@ export default function CartPage() {
                       }}
                       className="flex-1 w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                     />
-                    <button 
+                    <button
                       type="submit"
                       disabled={isApplyingCoupon || !couponCode}
                       className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50 whitespace-nowrap"
@@ -279,7 +279,7 @@ export default function CartPage() {
                   {subtotal.toFixed(2)}
                 </span>
               </div>
-              
+
               {appliedCoupon && (
                 <div className="flex justify-between text-green-600 dark:text-green-400 items-center">
                   <span>{t('discount', lang)} ({appliedCoupon.code})</span>
@@ -296,7 +296,7 @@ export default function CartPage() {
                   </span>
                 </div>
               )}
-              
+
               <div className="flex justify-between text-muted-foreground">
                 <span>{t('shipping', lang)}</span>
                 <span>{t('calculated_at_checkout', lang)}</span>
@@ -305,7 +305,7 @@ export default function CartPage() {
                 <span>{t('taxes', lang)}</span>
                 <span>{t('calculated_at_checkout', lang)}</span>
               </div>
-              
+
               <div className="pt-4 mt-4 border-t border-border flex justify-between items-center text-xl font-bold">
                 <span>{t('total', lang)}</span>
                 <span className="flex items-center gap-1">
@@ -322,13 +322,13 @@ export default function CartPage() {
               </div>
             </div>
 
-            <Link 
-              href="/checkout" 
+            <Link
+              href="/checkout"
               className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition-all shadow-md hover:shadow-lg group"
             >
               {t('secure_checkout', lang)} <ArrowRight className={`w-5 h-5 transition-transform ${lang === 'ar' ? 'group-hover:-translate-x-1 rotate-180' : 'group-hover:translate-x-1'}`} />
             </Link>
-            
+
             <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <ShieldCheck className="w-4 h-4 text-green-600" />
               {t('secure_payment_info', lang)}
@@ -346,13 +346,13 @@ export default function CartPage() {
               {t('remove_item_confirm', lang)}
             </p>
             <div className="flex gap-3">
-              <button 
+              <button
                 onClick={() => setItemToRemove(null)}
                 className="flex-1 px-4 py-3 border border-border rounded-xl font-medium hover:bg-secondary transition-colors"
               >
                 {t('cancel', lang)}
               </button>
-              <button 
+              <button
                 onClick={() => {
                   removeFromCart(itemToRemove!);
                   setItemToRemove(null);
