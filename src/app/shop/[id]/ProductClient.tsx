@@ -282,7 +282,7 @@ export default function ProductClient({
             })()}
 
             <div className="flex items-center gap-4 mb-6">
-              <div className="text-2xl font-semibold flex items-center">
+              {/* <div className="text-2xl font-semibold flex items-center">
                 {shouldShowPrice ? (
                   <>
                     {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
@@ -300,7 +300,7 @@ export default function ProductClient({
                     {lang === 'ar' ? 'السعر غير معروض - راسلنا للاستفسار' : 'Price not shown - Contact us'}
                   </div>
                 )}
-              </div>
+              </div> */}
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <div className="flex text-amber-500">
                   {(() => {
