@@ -27,14 +27,14 @@ export default async function Home() {
   const testimonials = await fetchTestimonials();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col w-full">
       <HomeClientWrapper featuredProducts={featuredProducts} currencySymbol={currencySymbol} lang={lang} />
 
       {/* Hero Section */}
       {hasSliders ? (
         <Slider position="home_hero" lang={lang} />
       ) : (
-        <section className="relative w-full h-screen overflow-hidden -mt-20">
+        <section className="relative w-full h-screen overflow-hidden">
           <div className="absolute inset-0 z-0 bg-slate-900">
             <Image
               src="/no-image.jpg"
