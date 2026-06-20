@@ -156,7 +156,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
         ref={headerRef}
         className={`fixed top-0 z-[60] w-full transition-all duration-500 overflow-hidden ${shouldBeTransparent && !isScrolled
           ? "bg-transparent border-transparent pt-4 sm:pt-6"
-          : "bg-transparent pt-3"
+          : "bg-white/80 backdrop-blur-md shadow-sm"
           }`}
       >
         {/* LIGHT FOLLOW EFFECT */}

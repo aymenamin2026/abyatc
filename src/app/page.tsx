@@ -34,7 +34,7 @@ export default async function Home() {
       {hasSliders ? (
         <Slider position="home_hero" lang={lang} />
       ) : (
-        <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <section className="relative w-full h-screen overflow-hidden -mt-20">
           <div className="absolute inset-0 z-0 bg-slate-900">
             <Image
               src="/no-image.jpg"
