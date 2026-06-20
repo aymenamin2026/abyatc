@@ -7,6 +7,7 @@ export const translations = {
     contact: "Contact",
     search_placeholder: "Search...",
     track_order: "Track Order",
+    request_quote:"Request a quote",
     
     // Account Dashboard
     dashboard: "Dashboard",
@@ -71,16 +72,17 @@ export const translations = {
     hero_subtitle: "Experience unmatched comfort and style with our premium collection of uniforms designed for the modern professional.",
     shop_collection: "Shop the Collection",
     shop_by_category: "Shop by Category",
-    featured_products: "Featured Products",
-    view_all_products: "View All Products",
+    featured_products: "Featured Services",
+    view_all_products: "View All Services",
     
     // Features
-    premium_quality: "Premium Quality",
-    premium_quality_desc: "Expertly crafted with durable, breathable fabrics that withstand the test of time.",
-    tailored_fit: "Tailored Fit",
-    tailored_fit_desc: "Designed specifically for the female silhouette to ensure maximum comfort and mobility.",
-    easy_care: "Easy Care",
-    easy_care_desc: "Wrinkle-resistant and stain-repellent materials that look flawless shift after shift.",
+    
+premium_quality: "High Quality",
+premium_quality_desc: "We are committed to providing the highest quality at every stage of the project.",
+tailored_fit: "Strict Commitment",
+tailored_fit_desc: "We are committed to implementing projects according to agreed schedules and budgets.",
+easy_care: "Innovative Solutions",
+easy_care_desc: "We provide innovative solutions that meet the needs of our customers and enhance the value of their projects.",
     testimonials_title: "What Our Customers Say",
     testimonials_subtitle: "Real reviews and experiences from our valued customers",
     
@@ -263,6 +265,7 @@ export const translations = {
     contact: "اتصل بنا",
     search_placeholder: "ابحث هنا...",
     track_order: "تتبع الطلب",
+    request_quote:"طلب تسعيره",
     
     // Account Dashboard
     dashboard: "لوحة التحكم",
@@ -327,16 +330,16 @@ export const translations = {
     hero_subtitle: "اكتشف الراحة والأناقة التي لا ميل لها مع مجموعتنا المميزة من الأزياء الموحدة المصممة للمحترفين العصريين.",
     shop_collection: "تسوق المجموعة",
     shop_by_category: "تسوق حسب الفئة",
-    featured_products: "منتجات مميزة",
-    view_all_products: "عرض كل المنتجات",
+    featured_products: "خدمات مميزة",
+    view_all_products: "عرض كل الخدمات",
     
     // Features
-    premium_quality: "جودة ممتازة",
-    premium_quality_desc: "صُنعت ببراعة من أقمشة متينة وتسمح بمرور الهواء وتتحمل اختبار الزمن.",
-    tailored_fit: "قصة مخصصة",
-    tailored_fit_desc: "مصمم خصيصاً لجسم الأنثى لضمان أقصى قدر من الراحة وحرية الحركة.",
-    easy_care: "سهولة في العناية",
-    easy_care_desc: "مواد مقاومة للتجاعيد وطاردة للبقع تبدو خالية من العيوب وردية بعد وردية.",
+    premium_quality: "جودة عالية",
+    premium_quality_desc: "نلتزم بتقديم أعلى مستويات الجودة في كل مرحلة من مراحل المشروع.",
+    tailored_fit: "التزام دقيق",
+    tailored_fit_desc: "نلتزم بتنفيذ المشاريع وفقاً للجداول الزمنية والميزانيات المتفق عليها.",
+    easy_care: "حلول مبتكرة",
+    easy_care_desc: "نقدم حلولاً مبتكرة تلبي احتياجات عملائنا وتعزز من قيمة مشاريعهم.",
     testimonials_title: "ماذا يقول عملاؤنا",
     testimonials_subtitle: "آراء وتجارب عملائنا الحقيقية",
     

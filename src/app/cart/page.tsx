@@ -266,7 +266,7 @@ export default function CartPage() {
 
             {/* Totals table */}
             <div className="space-y-3 mb-6">
-              <div className="flex justify-between text-muted-foreground items-center">
+              {/* <div className="flex justify-between text-muted-foreground items-center">
                 <span>{t('subtotal', lang)}</span>
                 <span className="font-medium text-foreground flex items-center gap-1">
                   {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
@@ -279,7 +279,7 @@ export default function CartPage() {
                   )}
                   {subtotal.toFixed(2)}
                 </span>
-              </div>
+              </div> */}
 
               {appliedCoupon && (
                 <div className="flex justify-between text-green-600 dark:text-green-400 items-center">
@@ -307,7 +307,7 @@ export default function CartPage() {
                 <span>{t('calculated_at_checkout', lang)}</span>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-border flex justify-between items-center text-xl font-bold">
+              {/* <div className="pt-4 mt-4 border-t border-border flex justify-between items-center text-xl font-bold">
                 <span>{t('total', lang)}</span>
                 <span className="flex items-center gap-1">
                   {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
@@ -320,7 +320,7 @@ export default function CartPage() {
                   )}
                   {total.toFixed(2)}
                 </span>
-              </div>
+              </div> */}
             </div>
 
             <Link

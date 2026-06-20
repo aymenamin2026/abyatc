@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Shield, Clock, Star } from "lucide-react";
+import { ArrowRight, Award, CalendarClock, Lightbulb } from "lucide-react";
 import { fetchCategories, fetchProducts, fetchSettings, getImageUrl, fetchSliders, fetchTestimonials } from "@/lib/api";
 import { cookies } from "next/headers";
 import { t } from "@/lib/translations";
@@ -180,30 +180,34 @@ export default async function Home() {
       )}
 
       {/* Features/Why Choose Us */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center text-foreground mb-6">
-                <Star className="w-8 h-8" />
+
+
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            {[
+              { icon: Award, title: t('premium_quality', lang), desc: t('premium_quality_desc', lang) },
+              { icon: CalendarClock, title: t('tailored_fit', lang), desc: t('tailored_fit_desc', lang) },
+              { icon: Lightbulb, title: t('easy_care', lang), desc: t('easy_care_desc', lang) }
+            ].map((item, index) => (
+              <div key={index} className="relative p-[2px] rounded-[32px] overflow-hidden group">
+
+                {/* عنصر الضوء الدوار (الخلفية المضيئة) */}
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 animate-spin-border opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                {/* محتوى البطاقة */}
+                <div className="relative bg-white p-8 rounded-[30px] h-full shadow-lg">
+                  <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <item.icon className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+                </div>
+
               </div>
-              <h3 className="font-serif text-xl font-bold mb-3">{t('premium_quality', lang)}</h3>
-              <p className="text-muted-foreground">{t('premium_quality_desc', lang)}</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center text-foreground mb-6">
-                <Shield className="w-8 h-8" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-3">{t('tailored_fit', lang)}</h3>
-              <p className="text-muted-foreground">{t('tailored_fit_desc', lang)}</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center text-foreground mb-6">
-                <Clock className="w-8 h-8" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-3">{t('easy_care', lang)}</h3>
-              <p className="text-muted-foreground">{t('easy_care_desc', lang)}</p>
-            </div>
+            ))}
+
           </div>
         </div>
       </section>

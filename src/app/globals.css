@@ -90,3 +90,10 @@ body {
 .glass-panel {
   @apply bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-lg;
 }
+@keyframes spin-border {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-border {
+  animation: spin-border 3s linear infinite;
+}

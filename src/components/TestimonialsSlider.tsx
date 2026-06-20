@@ -103,7 +103,8 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
                     />
                   </div>
                 ) : (
-                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-4 ring-primary/10 shadow-lg">
+                  // تم تعديل الخلفية هنا إلى اللون السماوي (bg-cyan-500)
+                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-cyan-500 flex items-center justify-center ring-4 ring-primary/10 shadow-lg">
                     <span className="text-3xl md:text-4xl font-bold text-white">
                       {name.charAt(0).toUpperCase()}
                     </span>
@@ -118,17 +119,16 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-5 h-5 ${
-                        i < testimonial.rating
-                          ? "fill-amber-400 text-amber-400"
-                          : "fill-muted text-muted-foreground/30"
-                      }`}
+                      className={`w-5 h-5 ${i < testimonial.rating
+                        ? "fill-amber-400 text-amber-400"
+                        : "fill-muted text-muted-foreground/30"
+                        }`}
                     />
                   ))}
                 </div>
 
                 {/* Testimonial Text */}
-                <blockquote 
+                <blockquote
                   className="text-foreground text-lg md:text-xl leading-relaxed mb-6 font-medium"
                   dangerouslySetInnerHTML={{ __html: `&ldquo;${content}&rdquo;` }}
                 />
@@ -175,11 +175,10 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
-                  className={`rounded-full transition-all duration-300 ${
-                    i === current
-                      ? "w-8 h-2.5 bg-primary"
-                      : "w-2.5 h-2.5 bg-muted-foreground/25 hover:bg-muted-foreground/40"
-                  }`}
+                  className={`rounded-full transition-all duration-300 ${i === current
+                    ? "w-8 h-2.5 bg-primary"
+                    : "w-2.5 h-2.5 bg-muted-foreground/25 hover:bg-muted-foreground/40"
+                    }`}
                   aria-label={`Go to testimonial ${i + 1}`}
                 />
               ))}

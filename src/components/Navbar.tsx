@@ -27,7 +27,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
   const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
   const [shouldBeTransparent, setShouldBeTransparent] = useState(initialTransparent);
-  
+
   const headerRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: 50, y: 50 });
 
@@ -142,20 +142,22 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
   const navLinks = [
     { href: "/", label: lang === 'en' ? 'Home' : 'الرئيسية' },
     { href: "/shop", label: t('shop', lang) },
-    { href: "/track", label: t('track_order', lang) },
+    { href: "/track", label: t('request_quote', lang) },
+
     { href: "/about", label: t('about', lang) },
+    // { href: "/track", label: t('track_order', lang) },
+
     { href: "/blogs", label: lang === 'en' ? 'Blogs' : 'المدونة' },
   ];
 
   return (
     <>
-      <header 
+      <header
         ref={headerRef}
-        className={`fixed top-0 z-[60] w-full transition-all duration-500 overflow-hidden ${
-          shouldBeTransparent && !isScrolled
-            ? "bg-transparent border-transparent pt-4 sm:pt-6"
-            : "bg-transparent pt-3" // المحافظة على الهيكل العائم حتى عند السكرول في الموبايل
-        }`}
+        className={`fixed top-0 z-[60] w-full transition-all duration-500 overflow-hidden ${shouldBeTransparent && !isScrolled
+          ? "bg-transparent border-transparent pt-4 sm:pt-6"
+          : "bg-transparent pt-3"
+          }`}
       >
         {/* LIGHT FOLLOW EFFECT */}
         <div
@@ -174,13 +176,13 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
 
         {/* MAIN CONTAINER */}
         <div className="container mx-auto px-3 sm:px-6 lg:px-12">
-          
+
           {/* FLOATING HEADER CARD */}
           <div className={`
             relative w-full transition-all duration-500 z-10
             rounded-[24px] border shadow-lg px-4 sm:px-6 h-14 sm:h-16 lg:h-20 flex items-center justify-between
-            ${shouldBeTransparent && !isScrolled 
-              ? "border-white/10 bg-white/5 backdrop-blur-2xl text-white" 
+            ${shouldBeTransparent && !isScrolled
+              ? "border-white/10 bg-white/5 backdrop-blur-2xl text-white"
               : "border-border bg-card/70 backdrop-blur-3xl text-foreground"
             }
           `}>
@@ -189,12 +191,12 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
             <div className="flex items-center gap-2 flex-shrink-0">
               <Link href="/" className="flex items-center gap-2 font-serif text-lg sm:text-2xl font-bold tracking-[0.15em]">
                 {logoUrl ? (
-                  <img 
-                    src={logoUrl} 
-                    alt={siteName} 
-                    className={`h-7 sm:h-9 w-auto object-contain transition-all ${
-                      shouldBeTransparent && !isScrolled ? "brightness-0 invert" : ""
-                    }`} 
+                  <img
+                    src={logoUrl}
+                    alt={siteName}
+                    // تم زيادة الارتفاع هنا: h-14 للشاشات الصغيرة، و h-20 للشاشات الكبيرة
+                    className={`h-14 sm:h-20 w-auto object-contain transition-all drop-shadow-lg p-1 ${shouldBeTransparent && !isScrolled ? "brightness-0 invert" : ""
+                      }`}
                   />
                 ) : (
                   <span>{siteName}</span>
@@ -210,13 +212,12 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`px-4 py-2 rounded-xl tracking-wide transition-all duration-300 ${
-                      active
-                        ? (shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : (theme === 'dark' ? "bg-primary/20 text-white" : "bg-primary/10 text-primary"))
-                        : (shouldBeTransparent && !isScrolled
-                          ? "text-white/80 hover:bg-white/10 hover:text-white"
-                          : (theme === 'dark' ? "text-white/70 hover:bg-white/10 hover:text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground"))
-                    }`}
+                    className={`px-4 py-2 rounded-xl tracking-wide transition-all duration-300 ${active
+                      ? (shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : (theme === 'dark' ? "bg-primary/20 text-white" : "bg-primary/10 text-primary"))
+                      : (shouldBeTransparent && !isScrolled
+                        ? "text-white/80 hover:bg-white/10 hover:text-white"
+                        : (theme === 'dark' ? "text-white/70 hover:bg-white/10 hover:text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground"))
+                      }`}
                   >
                     {link.label}
                   </Link>
@@ -226,7 +227,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
 
             {/* Right Side Icons */}
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-              
+
               {/* Search */}
               <div className="flex items-center" ref={searchBarRef}>
                 <AnimatePresence>
@@ -309,11 +310,10 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                   ) : (
                     <button
                       onClick={() => setIsSearchOpen(true)}
-                      className={`p-2 rounded-full border border-transparent transition-all duration-300 ${
-                        shouldBeTransparent && !isScrolled 
-                          ? "text-white hover:bg-white/10 hover:border-white/10" 
-                          : "text-foreground hover:bg-muted hover:border-border"
-                      }`}
+                      className={`p-2 rounded-full border border-transparent transition-all duration-300 ${shouldBeTransparent && !isScrolled
+                        ? "text-white hover:bg-white/10 hover:border-white/10"
+                        : "text-foreground hover:bg-muted hover:border-border"
+                        }`}
                     >
                       <Search className="w-4 h-4 sm:w-5 h-5" />
                     </button>
@@ -334,11 +334,10 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               {/* Wishlist Heart */}
               <Link
                 href="/account?tab=wishlist"
-                className={`p-2 rounded-full border border-transparent transition-all duration-300 relative ${
-                  shouldBeTransparent && !isScrolled 
-                    ? "text-white hover:bg-white/10 hover:border-white/10" 
-                    : "text-foreground hover:bg-muted hover:border-border"
-                }`}
+                className={`p-2 rounded-full border border-transparent transition-all duration-300 relative ${shouldBeTransparent && !isScrolled
+                  ? "text-white hover:bg-white/10 hover:border-white/10"
+                  : "text-foreground hover:bg-muted hover:border-border"
+                  }`}
               >
                 <Heart className={`w-4 h-4 sm:w-5 h-5 ${wishlistCount > 0 ? "fill-red-500 text-red-500" : ""}`} />
                 {wishlistCount > 0 && (
@@ -351,11 +350,10 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               {/* Cart */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className={`p-2 rounded-full border border-transparent transition-all duration-300 relative ${
-                  shouldBeTransparent && !isScrolled 
-                    ? "text-white hover:bg-white/10 hover:border-white/10" 
-                    : "text-foreground hover:bg-muted hover:border-border"
-                }`}
+                className={`p-2 rounded-full border border-transparent transition-all duration-300 relative ${shouldBeTransparent && !isScrolled
+                  ? "text-white hover:bg-white/10 hover:border-white/10"
+                  : "text-foreground hover:bg-muted hover:border-border"
+                  }`}
               >
                 <ShoppingBag className="w-4 h-4 sm:w-5 h-5" />
                 {totalQuantity > 0 && (
@@ -370,15 +368,13 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                 {user ? (
                   <button
                     onClick={() => setAccountOpen(!accountOpen)}
-                    className={`flex items-center gap-1.5 p-1.5 rounded-full transition-all border ${
-                      shouldBeTransparent && !isScrolled 
-                        ? "text-white border-white/10 bg-white/5 hover:bg-white/20" 
-                        : "text-foreground border-border bg-muted/30 hover:bg-muted"
-                    }`}
+                    className={`flex items-center gap-1.5 p-1.5 rounded-full transition-all border ${shouldBeTransparent && !isScrolled
+                      ? "text-white border-white/10 bg-white/5 hover:bg-white/20"
+                      : "text-foreground border-border bg-muted/30 hover:bg-muted"
+                      }`}
                   >
-                    <div className={`w-6 h-6 sm:w-7 h-7 rounded-full flex items-center justify-center ${
-                      shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : "bg-foreground/10 text-foreground"
-                    }`}>
+                    <div className={`w-6 h-6 sm:w-7 h-7 rounded-full flex items-center justify-center ${shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : "bg-foreground/10 text-foreground"
+                      }`}>
                       <User className="w-3.5 h-3.5" />
                     </div>
                     <span className="hidden md:block text-xs font-semibold mr-1 uppercase tracking-wider">
@@ -387,11 +383,10 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                     <ChevronDown className={`w-3 h-3 transition-transform ${accountOpen ? 'rotate-180' : ''}`} />
                   </button>
                 ) : (
-                  <Link 
-                    href="/login" 
-                    className={`p-2 rounded-full border border-transparent transition-all duration-300 flex items-center gap-2 ${
-                      shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
-                    }`}
+                  <Link
+                    href="/login"
+                    className={`p-2 rounded-full border border-transparent transition-all duration-300 flex items-center gap-2 ${shouldBeTransparent && !isScrolled ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
+                      }`}
                   >
                     <User className="w-4 h-4 sm:w-5 h-5" />
                   </Link>
@@ -445,11 +440,10 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               {/* Mobile Hamburger */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`lg:hidden p-2 rounded-full border border-transparent transition-all ${
-                  shouldBeTransparent && !isScrolled 
-                    ? "text-white hover:bg-white/10 hover:border-white/10" 
-                    : "text-foreground hover:bg-muted hover:border-border"
-                }`}
+                className={`lg:hidden p-2 rounded-full border border-transparent transition-all ${shouldBeTransparent && !isScrolled
+                  ? "text-white hover:bg-white/10 hover:border-white/10"
+                  : "text-foreground hover:bg-muted hover:border-border"
+                  }`}
               >
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -470,7 +464,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               onClick={() => setIsMobileMenuOpen(false)}
               className="fixed inset-0 bg-black/40 backdrop-blur-md z-[55] lg:hidden"
             />
-            
+
             {/* Menu Panel - تم تحويلها لكارد عائم زجاجي فخم ذو حواف دائرية كبيرة */}
             <motion.div
               initial={{ y: "-20%", opacity: 0, scale: 0.95 }}
@@ -517,11 +511,10 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                       key={link.href}
                       href={link.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-300 ${
-                        active
-                          ? 'bg-primary text-primary-foreground shadow-md shadow-primary/10 font-semibold scale-[1.02]'
-                          : 'text-foreground/80 hover:bg-muted/60 hover:text-foreground'
-                      }`}
+                      className={`flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-300 ${active
+                        ? 'bg-primary text-primary-foreground shadow-md shadow-primary/10 font-semibold scale-[1.02]'
+                        : 'text-foreground/80 hover:bg-muted/60 hover:text-foreground'
+                        }`}
                     >
                       {link.label}
                     </Link>
