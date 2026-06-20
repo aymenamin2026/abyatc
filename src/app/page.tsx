@@ -34,7 +34,7 @@ export default async function Home() {
       {hasSliders ? (
         <Slider position="home_hero" lang={lang} />
       ) : (
-        <section className="relative w-full h-screen overflow-hidden">
+        <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0 bg-slate-900">
             <Image
               src="/no-image.jpg"
@@ -46,7 +46,7 @@ export default async function Home() {
             <div className="absolute inset-0 bg-black/40" />
           </div>
 
-          <div className="container relative z-10 px-4 sm:px-6 lg:px-8 text-center text-white">
+          <div className="container relative z-10 px-4 pt-20 text-center text-white">
             <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 drop-shadow-lg animate-in fade-in slide-in-from-bottom-5 duration-1000">
               {t('hero_title', lang)}
             </h1>
