@@ -194,7 +194,8 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                   <img
                     src={logoUrl}
                     alt={siteName}
-                    className={`h-10 sm:h-14 w-auto object-contain transition-all drop-shadow-md p-1 ${shouldBeTransparent && !isScrolled ? "brightness-0 invert" : ""
+                    // تم زيادة الارتفاع هنا: h-14 للشاشات الصغيرة، و h-20 للشاشات الكبيرة
+                    className={`h-14 sm:h-20 w-auto object-contain transition-all drop-shadow-lg p-1 ${shouldBeTransparent && !isScrolled ? "brightness-0 invert" : ""
                       }`}
                   />
                 ) : (

@@ -43,18 +43,20 @@ export default function Footer({ settings }: { settings?: any }) {
     !html ? "" : html.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
 
   const socialLinks = [
-    { href: settings?.tiktok_url, icon: Music },
+    { href: settings?.facebook_url, icon: Facebook },
+    { href: settings?.instagram_url, icon: Instagram },
+    { href: settings?.twitter_url, icon: Twitter },
+    { href: settings?.tiktok_url, icon: Video },
     { href: settings?.snapchat_url, icon: Ghost },
+    { href: settings?.youtube_url, icon: Youtube },
+    { href: settings?.linkedin_url, icon: Linkedin },
     {
       href: settings?.whatsapp_number
         ? `https://wa.me/${settings.whatsapp_number.replace(/\D/g, "")}`
         : null,
-      icon: MessageCircle
+      icon: MessageCircle,
     },
-    { href: settings?.facebook_url, icon: Facebook },
-    { href: settings?.instagram_url, icon: Instagram },
-    { href: settings?.twitter_url, icon: X },
-  ].filter((link) => link.href);
+  ].filter(Boolean);
 
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
@@ -148,20 +150,17 @@ export default function Footer({ settings }: { settings?: any }) {
                     key={i}
                     href={s.href}
                     target="_blank"
-                    rel="noopener noreferrer"
                     className="
-        w-12 h-12 flex items-center justify-center
-        rounded-full
-        bg-muted/30
-        border border-border
-        text-muted-foreground
-        hover:bg-primary/10
-        hover:text-primary
-        hover:border-primary/40
-        hover:shadow-lg
-        hover:scale-110
-        transition-all duration-300
-      "
+                      w-12 h-12 flex items-center justify-center
+                      rounded-full
+                      bg-muted/30
+                      border border-border
+                      text-muted-foreground
+                      hover:text-foreground
+                      hover:border-primary/40
+                      hover:shadow-lg
+                      transition-all duration-300
+                    "
                   >
                     <s.icon className="w-5 h-5" />
                   </a>
