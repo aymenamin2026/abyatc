@@ -129,7 +129,7 @@ const content = {
 export default function PrivacyPolicyPage() {
   const { lang } = useLanguage();
   const text = content[lang as keyof typeof content];
-  
+
   const [storeEmail, setStoreEmail] = useState("support@elegance.com");
   const [storePhone, setStorePhone] = useState("+966 50 000 0000");
 
@@ -147,12 +147,12 @@ export default function PrivacyPolicyPage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen pt-32">
       {/* Hero Section */}
       <section className="bg-muted py-20 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary via-background to-background"></div>
         <div className="relative z-10 max-w-3xl mx-auto">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -160,7 +160,7 @@ export default function PrivacyPolicyPage() {
           >
             {text.heroTitle}
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -200,7 +200,7 @@ export default function PrivacyPolicyPage() {
             <div className="pt-8 border-t border-border">
               <h2 className="font-serif text-2xl font-bold text-foreground mb-4">{text.contactTitle}</h2>
               <p className="text-muted-foreground mb-4">{text.contactIntro}</p>
-              
+
               <div className="flex flex-col gap-2 font-medium">
                 <p>
                   <span className="text-foreground">{text.emailLabel}:</span> <a href={`mailto:${storeEmail}`} className="text-primary hover:underline">{storeEmail}</a>
