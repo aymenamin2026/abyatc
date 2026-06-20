@@ -76,7 +76,7 @@ export default function Slider({ position, lang }: SliderProps) {
             animation: activeSlider.animation || 'fade',
             height: activeSlider.height || (position === 'home_hero' ? 'full' : 'medium')
           });
-          
+
           const allSlides = sliders.flatMap((slider: any) => slider.slides || []);
           setSlides(allSlides);
         }
@@ -140,7 +140,7 @@ export default function Slider({ position, lang }: SliderProps) {
         {slides.map((slide, index) => {
           const vAlign = (slide as any).settings?.v_align || 'center';
           const hAlign = (slide as any).settings?.h_align || 'center';
-          
+
           return index === current && (
             <motion.div
               key={slide.id}
@@ -176,11 +176,11 @@ export default function Slider({ position, lang }: SliderProps) {
                         allow="autoplay; fullscreen"
                       />
                     ) : (
-                      <video 
-                        src={getImageUrl(slide.video_path)} 
-                        autoPlay 
-                        muted 
-                        loop 
+                      <video
+                        src={getImageUrl(slide.video_path)}
+                        autoPlay
+                        muted
+                        loop
                         playsInline
                         className="w-full h-full object-cover"
                       />
@@ -192,14 +192,14 @@ export default function Slider({ position, lang }: SliderProps) {
 
               {/* Content */}
               <div className={`container relative z-10 px-4 sm:px-6 lg:px-8 flex flex-col text-white ${hAlignMap[hAlign] || 'text-center items-center'} ${sliderSettings.cover_header ? "pt-24" : ""}`}>
-                <motion.h2 
+                <motion.h2
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                   className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 drop-shadow-2xl"
                   dangerouslySetInnerHTML={{ __html: slide.title?.[lang] || slide.title?.en }}
                 />
-                <motion.p 
+                <motion.p
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.6, duration: 0.8 }}
@@ -212,8 +212,8 @@ export default function Slider({ position, lang }: SliderProps) {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.8, duration: 0.8 }}
                   >
-                    <Link 
-                      href={slide.btn_link} 
+                    <Link
+                      href={slide.btn_link}
                       className="group inline-flex items-center gap-3 bg-white text-black hover:bg-black hover:text-white px-10 py-5 rounded-full font-bold transition-all duration-300 shadow-2xl hover:scale-105 active:scale-95"
                     >
                       <span>{slide.btn_text?.[lang] || slide.btn_text?.en || 'Shop Now'}</span>
@@ -230,13 +230,13 @@ export default function Slider({ position, lang }: SliderProps) {
       {/* Controls */}
       {slides.length > 1 && (
         <>
-          <button 
+          <button
             onClick={prevSlide}
             className="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-xl border border-white/10 hover:bg-white hover:text-black transition-all duration-300 group"
           >
             <ChevronLeft className="w-6 h-6 transition-transform group-hover:scale-110" />
           </button>
-          <button 
+          <button
             onClick={nextSlide}
             className="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-xl border border-white/10 hover:bg-white hover:text-black transition-all duration-300 group"
           >
