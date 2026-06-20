@@ -155,8 +155,8 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
       <header
         ref={headerRef}
         className={`fixed top-0 z-[60] w-full transition-all duration-500 ${shouldBeTransparent && !isScrolled
-            ? "bg-transparent"
-            : "bg-white/80 backdrop-blur-md shadow-sm"
+          ? "bg-transparent"
+          : "bg-white/80 backdrop-blur-md shadow-sm"
           }`}
       >
         {/* LIGHT FOLLOW EFFECT */}
@@ -176,16 +176,14 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
 
         {/* MAIN CONTAINER */}
         <div className="container mx-auto px-3 sm:px-6 lg:px-12 pt-4">
-
           {/* FLOATING HEADER CARD */}
           <div className={`
-            relative w-full transition-all duration-500 z-10
-            rounded-[24px] border shadow-lg px-4 sm:px-6 h-14 sm:h-16 lg:h-20 flex items-center justify-between
-            ${shouldBeTransparent && !isScrolled
+      relative w-full h-14 sm:h-16 lg:h-20 flex items-center justify-between px-4 sm:px-6 rounded-[24px] border transition-all duration-500
+      ${shouldBeTransparent && !isScrolled
               ? "border-white/10 bg-white/5 backdrop-blur-2xl text-white"
               : "border-border bg-card/70 backdrop-blur-3xl text-foreground"
             }
-          `}>
+    `}>
 
             {/* Logo */}
             <div className="flex items-center gap-2 flex-shrink-0">
