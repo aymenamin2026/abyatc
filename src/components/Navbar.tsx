@@ -179,9 +179,8 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
 
           {/* FLOATING HEADER CARD */}
           <div className={`
-            absolute top-4 left-4 right-4 sm:top-6 sm:left-6 sm:right-6 lg:left-12 lg:right-12 z-10
+            relative w-full transition-all duration-500 z-10
             rounded-[24px] border shadow-lg px-4 sm:px-6 h-14 sm:h-16 lg:h-20 flex items-center justify-between
-            transition-all duration-500
             ${shouldBeTransparent && !isScrolled
               ? "border-white/10 bg-white/5 backdrop-blur-2xl text-white"
               : "border-border bg-card/70 backdrop-blur-3xl text-foreground"
