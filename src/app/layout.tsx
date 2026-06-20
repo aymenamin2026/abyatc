@@ -123,7 +123,7 @@ export default async function RootLayout({
               <CartProvider>
                 <WishlistProvider>
                   <Navbar settings={settings} />
-                  <main className="flex-1">{children}</main>
+                  <main className="fflex-1 pt-20 pb-20">{children}</main>
                   <Footer settings={settings} />
                   <MobileBottomNav />
                   <PopupManager popups={popups} settings={settings} />
