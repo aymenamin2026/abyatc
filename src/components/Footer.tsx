@@ -3,7 +3,7 @@ import { t } from "@/lib/translations";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 // استيراد دالة معالجة روابط الصور من مكتبة الـ API الخاصة بك
-import { getImageUrl } from "@/lib/api"; 
+import { getImageUrl } from "@/lib/api";
 import {
   Facebook,
   Instagram,
@@ -11,8 +11,13 @@ import {
   Linkedin,
   MessageCircle,
   Video,
+  Phone,
+  Music,
   Ghost,
+  MapPin,
+  Mail,
   Twitter,
+  X,
 } from "lucide-react";
 
 export default function Footer({ settings }: { settings?: any }) {
@@ -20,14 +25,14 @@ export default function Footer({ settings }: { settings?: any }) {
   const [pos, setPos] = useState({ x: 50, y: 50 });
 
   const siteName = settings?.site_name || "Luluh.sa";
-  
+
   // توليد الرابط الصحيح باستخدام الدالة بناءً على كود الـ Navbar
   const logoUrl = settings?.logo_path ? getImageUrl(settings.logo_path) : null;
 
   const lang = typeof document !== "undefined" &&
     document.cookie.includes("NEXT_LOCALE=ar")
-      ? "ar"
-      : "en";
+    ? "ar"
+    : "en";
 
   const desc =
     lang === "ar"
@@ -40,18 +45,18 @@ export default function Footer({ settings }: { settings?: any }) {
   const socialLinks = [
     { href: settings?.facebook_url, icon: Facebook },
     { href: settings?.instagram_url, icon: Instagram },
-    { href: settings?.twitter_url, icon: Twitter },
-    { href: settings?.tiktok_url, icon: Video },
-    { href: settings?.snapchat_url, icon: Ghost },
+    { href: settings?.twitter_url, icon: X }, // تم تغييرها إلى X
+    { href: settings?.tiktok_url, icon: Music }, // تيك توك (أيقونة Music هي المعيار في Lucide)
+    { href: settings?.snapchat_url, icon: Ghost }, // سناب شات
     { href: settings?.youtube_url, icon: Youtube },
     { href: settings?.linkedin_url, icon: Linkedin },
     {
       href: settings?.whatsapp_number
         ? `https://wa.me/${settings.whatsapp_number.replace(/\D/g, "")}`
         : null,
-      icon: MessageCircle,
+      icon: MessageCircle, // واتساب
     },
-  ].filter(Boolean);
+  ].filter((link) => link.href); // تحسين الفلترة للتأكد من وجود رابط
 
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
@@ -112,16 +117,20 @@ export default function Footer({ settings }: { settings?: any }) {
             <div className="md:col-span-2">
               <div className="flex flex-col items-start gap-4 mb-6">
                 <Link href="/" className="flex flex-col items-start gap-3 tracking-[0.15em]">
-                  {/* عرض الشعار إذا كان موجوداً */}
+                  {/* عرض الشعار مع تعديل الحجم ليكون بارزاً */}
                   {logoUrl && (
-                    <img 
-                      src={logoUrl} 
-                      alt={siteName} 
-                      className="h-12 w-auto object-contain transition-all" 
+                    <img
+                      src={logoUrl}
+                      alt={siteName}
+                      // أضفت أبعاداً ثابتة هنا ليتوقف الخطأ في الـ Terminal
+                      width={200}
+                      height={80}
+                      className="h-20 w-auto object-contain transition-all hover:scale-105 duration-300"
                     />
                   )}
-                  {/* عرض النص دائماً لضمان عدم اختفائه كمطالبة للهوية */}
-                  <h2 className="text-2xl md:text-3xl tracking-[0.25em] font-light font-serif mt-2 leading-tight">
+
+                  {/* عرض النص مع تعديل الحجم ليكون متناسقاً مع الشعار الكبير */}
+                  <h2 className="text-lg md:text-xl tracking-[0.2em] font-light font-serif mt-1 leading-tight text-slate-700">
                     {siteName}
                   </h2>
                 </Link>
@@ -141,17 +150,20 @@ export default function Footer({ settings }: { settings?: any }) {
                     key={i}
                     href={s.href}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="
-                      w-12 h-12 flex items-center justify-center
-                      rounded-full
-                      bg-muted/30
-                      border border-border
-                      text-muted-foreground
-                      hover:text-foreground
-                      hover:border-primary/40
-                      hover:shadow-lg
-                      transition-all duration-300
-                    "
+        w-12 h-12 flex items-center justify-center
+        rounded-full
+        bg-muted/30
+        border border-border
+        text-muted-foreground
+        hover:bg-primary/10
+        hover:text-primary
+        hover:border-primary/40
+        hover:shadow-lg
+        hover:scale-110
+        transition-all duration-300
+      "
                   >
                     <s.icon className="w-5 h-5" />
                   </a>
@@ -161,7 +173,8 @@ export default function Footer({ settings }: { settings?: any }) {
 
             {/* LINKS */}
             <div>
-              <h4 className="text-xs tracking-[0.5em] text-muted-foreground mb-8">
+              <h4 className="text-[10px] sm:text-xs font-bold tracking-[0.3em] text-foreground uppercase mb-6 flex items-center gap-2">
+                <span className="w-6 h-[1px] bg-primary"></span> {/* خط زخرفي جانبي */}
                 {t('quick_links', lang)}
               </h4>
 
@@ -175,31 +188,64 @@ export default function Footer({ settings }: { settings?: any }) {
 
             {/* CONTACT */}
             <div>
-              <h4 className="text-xs tracking-[0.5em] text-muted-foreground mb-8">
+              <h4 className="text-[10px] sm:text-xs font-bold tracking-[0.3em] text-foreground uppercase mb-6 flex items-center gap-2">
+                <span className="w-6 h-[1px] bg-primary"></span> {/* خط زخرفي جانبي */}
                 {t('contact', lang)}
               </h4>
-
               <div className="space-y-5 text-sm text-muted-foreground">
+
+                {/* قسم البريد الإلكتروني مع الأيقونة */}
                 {settings?.support_email && (
-                  <div>
-                    <p className="text-xs text-foreground">{t('email', lang)}</p>
-                    <a href={`mailto:${settings.support_email}`}>
-                      {settings.support_email}
-                    </a>
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
+                      <Mail className="w-3 h-3" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+                        {t('email', lang)}
+                      </p>
+                      <a href={`mailto:${settings.support_email}`} className="text-sm font-semibold hover:text-primary transition-colors">
+                        {settings.support_email}
+                      </a>
+                    </div>
                   </div>
                 )}
 
+                {/* قسم الهاتف */}
                 {settings?.contact_phone && (
-                  <div>
-                    <p className="text-xs text-foreground">{t('phone', lang)}</p>
-                    <a
-                      dir="ltr"
-                      href={`tel:${settings.contact_phone.replace(/\D/g, "")}`}
-                    >
-                      {settings.contact_phone}
-                    </a>
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
+                      <Phone className="w-3 h-3" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+                        {t('phone', lang)}
+                      </p>
+                      <a
+                        dir="ltr"
+                        href={`tel:${settings.contact_phone.replace(/\D/g, "")}`}
+                        className="text-sm font-semibold hover:text-primary transition-colors"
+                      >
+                        {settings.contact_phone}
+                      </a>
+                    </div>
                   </div>
                 )}
+
+                {/* قسم الموقع */}
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
+                    <MapPin className="w-3 h-3" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+                      {t('address', lang)}
+                    </p>
+                    <p className="text-sm font-semibold text-foreground">
+                      {t('location', lang)}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 

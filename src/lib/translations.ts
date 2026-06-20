@@ -70,7 +70,7 @@ export const translations = {
     // Home Page
     hero_title: "Professional Uniforms for Healthcare & Hospitality",
     hero_subtitle: "Experience unmatched comfort and style with our premium collection of uniforms designed for the modern professional.",
-    shop_collection: "Shop the Collection",
+    shop_collection: "Our Services",
     shop_by_category: "Shop by Category",
     featured_products: "Featured Services",
     view_all_products: "View All Services",
@@ -220,8 +220,8 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     search_country: "Search country...",
 
     // Shop Page
-    shop_title: "Shop Collections",
-    shop_subtitle: "Explore our meticulously crafted professional wear designed for everyday elegance and comfort.",
+    shop_title: "Our equipment fleet",
+    shop_subtitle: "Discover our integrated fleet of state-of-the-art heavy equipment, ready to execute even the largest contracting projects with high efficiency and reliable performance.",
     results: "Results",
     loading_products: "Loading products...",
     apparel: "Apparel",
@@ -232,6 +232,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     details: "Details",
 
     // Footer
+    location:"Riyadh, Al Faisaliyah District, Cairo Street",
     quick_links: "Quick Links",
     contact_us: "Contact Us",
     returns: "Returns & Exchanges",
@@ -328,7 +329,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     // Home Page
     hero_title: "أزياء مهنية موحدة للرعاية الصحية والضيافة",
     hero_subtitle: "اكتشف الراحة والأناقة التي لا ميل لها مع مجموعتنا المميزة من الأزياء الموحدة المصممة للمحترفين العصريين.",
-    shop_collection: "تسوق المجموعة",
+    shop_collection: "خدماتنا",
     shop_by_category: "تسوق حسب الفئة",
     featured_products: "خدمات مميزة",
     view_all_products: "عرض كل الخدمات",
@@ -477,8 +478,8 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     search_country: "البحث عن دولة...",
 
     // Shop Page
-    shop_title: "تسوق المجموعات",
-    shop_subtitle: "اكتشف ملابسنا المهنية المصنوعة بعناية والمصممة للأناقة والراحة اليومية.",
+    shop_title: "اسطول معداتنا",
+    shop_subtitle:" اكتشف أسطولنا المتكامل من أحدث المعدات الثقيلة الجاهزة لتنفيذ أضخم مشاريع المقاوالت بكفاءة عالية وأداء موثوق ",
     results: "نتائج",
     loading_products: "جاري تحميل المنتجات...",
     apparel: "ملابس",
@@ -489,6 +490,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     details: "التفاصيل",
     
     // Footer
+    location: " الرياض، حي الفيصلية، شارع القاهرة",
     quick_links: "روابط سريعة",
     contact_us: "اتصل بنا",
     returns: "الاستبدال والاسترجاع",

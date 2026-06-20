@@ -65,13 +65,26 @@ export default function AboutPage() {
       </section>
 
 
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           {text.features.map((f, i) => (
-            <div key={i} className="p-8 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
-              <f.icon className="w-10 h-10 text-blue-600 mb-4" />
-              <h3 className="font-bold text-lg mb-2 text-slate-900">{f.title}</h3>
-              <p className="text-slate-500 text-sm">{f.desc}</p>
+            <div
+              key={i}
+              className="group relative p-[1px] rounded-[32px] bg-transparent hover:bg-gradient-to-tr from-cyan-400 via-blue-500 to-cyan-400 transition-all duration-500"
+            >
+              {/* هذا الـ div هو الذي سيعطي تأثير الإطار الدوار عند التحويم */}
+              <div className="absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-spin-slow bg-gradient-to-tr from-cyan-400 via-blue-500 to-cyan-400 blur-sm" />
+
+              {/* البطاقة الداخلية */}
+              <div className="relative p-8 bg-white rounded-[31px] h-full shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <f.icon className="w-7 h-7" />
+                </div>
+                <h3 className="font-bold text-lg mb-2 text-slate-900 group-hover:text-blue-700 transition-colors">
+                  {f.title}
+                </h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{f.desc}</p>
+              </div>
             </div>
           ))}
         </div>
