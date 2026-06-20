@@ -179,12 +179,13 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
 
           {/* FLOATING HEADER CARD */}
           <div className={`
-      relative w-full h-14 sm:h-16 lg:h-20 flex items-center justify-between px-4 sm:px-6 rounded-[24px] border transition-all duration-500
-      ${shouldBeTransparent && !isScrolled
+            relative w-full transition-all duration-500 z-10
+            rounded-[24px] border shadow-lg px-4 sm:px-6 h-14 sm:h-16 lg:h-20 flex items-center justify-between
+            ${shouldBeTransparent && !isScrolled
               ? "border-white/10 bg-white/5 backdrop-blur-2xl text-white"
               : "border-border bg-card/70 backdrop-blur-3xl text-foreground"
             }
-    `}>
+          `}>
 
             {/* Logo */}
             <div className="flex items-center gap-2 flex-shrink-0">
