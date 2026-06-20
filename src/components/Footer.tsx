@@ -43,20 +43,18 @@ export default function Footer({ settings }: { settings?: any }) {
     !html ? "" : html.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
 
   const socialLinks = [
-    { href: settings?.facebook_url, icon: Facebook },
-    { href: settings?.instagram_url, icon: Instagram },
-    { href: settings?.twitter_url, icon: X }, // تم تغييرها إلى X
-    { href: settings?.tiktok_url, icon: Music }, // تيك توك (أيقونة Music هي المعيار في Lucide)
-    { href: settings?.snapchat_url, icon: Ghost }, // سناب شات
-    { href: settings?.youtube_url, icon: Youtube },
-    { href: settings?.linkedin_url, icon: Linkedin },
+    { href: settings?.tiktok_url, icon: Music },
+    { href: settings?.snapchat_url, icon: Ghost },
     {
       href: settings?.whatsapp_number
         ? `https://wa.me/${settings.whatsapp_number.replace(/\D/g, "")}`
         : null,
-      icon: MessageCircle, // واتساب
+      icon: MessageCircle
     },
-  ].filter((link) => link.href); // تحسين الفلترة للتأكد من وجود رابط
+    { href: settings?.facebook_url, icon: Facebook },
+    { href: settings?.instagram_url, icon: Instagram },
+    { href: settings?.twitter_url, icon: X },
+  ].filter((link) => link.href);
 
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {

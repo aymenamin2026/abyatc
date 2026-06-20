@@ -15,7 +15,6 @@ import { t } from "@/lib/translations";
 import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from 'next/image';
 
 export default function Navbar({ settings, transparent: initialTransparent = false }: { settings?: any, transparent?: boolean }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -189,27 +188,18 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
           `}>
 
             {/* Logo */}
-            <div className="flex flex-col items-start gap-4 mb-6">
-              <Link href="/" className="flex flex-col items-start gap-3 tracking-[0.15em]">
-
-                {/* استخدام مكون Image بدلاً من img لتجنب المشاكل وتحسين الجودة */}
-                {settings?.logoUrl ? (
-                  <div className="relative h-20 w-48 transition-all hover:scale-105">
-                    <Image
-                      src={settings.logoUrl}
-                      alt={settings.siteName || "Logo"}
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 768px) 100px, 200px"
-                      priority // لجعل الشعار يحمل بسرعة
-                    />
-                  </div>
-                ) : null}
-
-                {/* اسم الموقع */}
-                <h2 className="text-xl md:text-2xl tracking-[0.2em] font-light font-serif mt-2 text-slate-700">
-                  {settings?.siteName}
-                </h2>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link href="/" className="flex items-center gap-2 font-serif text-lg sm:text-2xl font-bold tracking-[0.15em]">
+                {logoUrl ? (
+                  <img
+                    src={logoUrl}
+                    alt={siteName}
+                    className={`h-10 sm:h-14 w-auto object-contain transition-all drop-shadow-md p-1 ${shouldBeTransparent && !isScrolled ? "brightness-0 invert" : ""
+                      }`}
+                  />
+                ) : (
+                  <span>{siteName}</span>
+                )}
               </Link>
             </div>
 
