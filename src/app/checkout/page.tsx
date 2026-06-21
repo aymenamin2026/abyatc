@@ -1265,12 +1265,12 @@ export default function Checkout() {
                         </div>
                       </div>
                       <div className="font-semibold text-sm flex items-center gap-1 text-foreground">
-                        {/* {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
+                        {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
                           <img src={finalCurrencySymbol} alt="Currency" className="h-4 w-auto object-contain inline-block mr-1" />
                         ) : (
                           <span className="mr-1">{finalCurrencySymbol}</span>
                         )}
-                        {(item.price * item.quantity).toFixed(2)} */}
+                        {(item.price * item.quantity).toFixed(2)}
                       </div>
                     </div>
                   );
