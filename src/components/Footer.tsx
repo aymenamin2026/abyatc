@@ -54,10 +54,7 @@ export default function Footer({ settings }: { settings?: any }) {
     { href: settings?.facebook_url, icon: Facebook },
     { href: settings?.instagram_url, icon: Instagram },
     { href: settings?.twitter_url, icon: X },
-
-
-    { href: settings?.youtube_url, icon: Youtube },
-    { href: settings?.linkedin_url, icon: Linkedin },
+    ,
 
   ].filter(Boolean);
 
@@ -241,7 +238,7 @@ export default function Footer({ settings }: { settings?: any }) {
                     href="https://www.google.com/maps/search/?api=1&query=الرياض+حي+الفيصلية+شارع+القاهرة"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block cursor-pointer hover:opacity-80 transition-opacity"
+                    className=""
                   >
                     <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
 
