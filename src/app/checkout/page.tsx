@@ -651,9 +651,9 @@ export default function Checkout() {
                       </div>
                     </div>
 
-                    <button onClick={() => setAuthMode('guest')} className="w-full text-muted-foreground hover:text-foreground underline underline-offset-4 py-2 font-medium transition-colors">
+                    {/* <button onClick={() => setAuthMode('guest')} className="w-full text-muted-foreground hover:text-foreground underline underline-offset-4 py-2 font-medium transition-colors">
                       {t('checkout_as_guest', lang)}
-                    </button>
+                    </button> */}
                     {/* زر المراسلة عبر الواتساب الجديد */}
                     <a
                       href={whatsappUrl}

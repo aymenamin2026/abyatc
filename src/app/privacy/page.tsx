@@ -8,7 +8,7 @@ import { fetchSettings } from "@/lib/api";
 const content = {
   en: {
     heroTitle: "Privacy Policy",
-    heroSubtitle: "Abiyat Lamea Contracting & Heavy Equipment Co.",
+    heroSubtitle: "Abiyat Lamea Contracting ",
     intro: "Welcome to the Abiyat Lamea Contracting company website. We value your privacy and are committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit our website, and our practices for collecting, using, maintaining, protecting, and disclosing that information.",
     sections: [
       {
@@ -67,7 +67,7 @@ const content = {
   },
   ar: {
     heroTitle: "سياسة الخصوصية",
-    heroSubtitle: "شركة لمعة ابيات للمقاولات والمعدات الثقيلة",
+    heroSubtitle: "شركة لمعة ابيات للمقاولات",
     intro: "مرحباً بكم في الموقع الإلكتروني لشركة لمعة أبيات للمقاولات. نحن نقدر خصوصيتك ونلتزم بحمايتها من خلال امتثالنا لهذه السياسة. تصف هذه السياسة أنواع المعلومات التي قد نجمعها منك أو التي قد تقدمها عند زيارتك لموقعنا الإلكتروني، وممارساتنا في جمع تلك المعلومات واستخدامها والمحافظة عليها وحمايتها والإفصاح عنها.",
     sections: [
       {
