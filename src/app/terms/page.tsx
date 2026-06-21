@@ -8,13 +8,13 @@ import { fetchSettings } from "@/lib/api";
 const content = {
   en: {
     heroTitle: "Terms of Service",
-    heroSubtitle: "Abiyat Lamea Contracting & Heavy Equipment Co.",
-    intro: "Welcome to the Abiyat Lamea Contracting company website. By using this website or completing any leasing or contracting process through it, you fully agree to the terms of use outlined below. If you do not agree, please do not use the site.",
+    heroSubtitle: "Abiyat Lam'at Contracting & Heavy Equipment Co.",
+    intro: "Welcome to the Abiyat Lam'at Contracting company website. By using this website or completing any leasing or contracting process through it, you fully agree to the terms of use outlined below. If you do not agree, please do not use the site.",
     sections: [
       {
         title: "1. Definitions",
         items: [
-          "Company/Website: Abiyat Lamea Contracting & Heavy Equipment Co.",
+          "Company/Website: Abiyat Lam'at Contracting & Heavy Equipment Co.",
           "Client/User: Any person or entity (individual or company) using the website or requesting heavy equipment rental or services.",
           "Equipment and Services: All heavy equipment displayed for rental purposes and related contracting services offered on the website."
         ]
@@ -61,14 +61,14 @@ const content = {
       {
         title: "7. Intellectual Property",
         items: [
-          "All website content (text, equipment images, logos, designs) is owned by Abiyat Lamea Contracting & Heavy Equipment Co.",
+          "All website content (text, equipment images, logos, designs) is owned by Abiyat Lam'at Contracting & Heavy Equipment Co.",
           "Copying or reusing any content without prior written permission is prohibited."
         ]
       },
       {
         title: "8. Improper Use",
+        introText: "Using the website or rented equipment for illegal purposes is prohibited, including:",
         items: [
-          "Using the website or rented equipment for illegal purposes is prohibited, including:",
           "Violating laws, regulations, or occupational safety standards in the Kingdom of Saudi Arabia.",
           "Attempting to hack the website or tamper with its systems.",
           "Providing misleading or incorrect information regarding the nature of the project or work site for rental purposes."
@@ -84,7 +84,7 @@ const content = {
       {
         title: "10. Modifications to Terms",
         items: [
-          "Abiyat Lamea Contracting reserves the right to modify these terms of use at any time. Updates will be published on this page, and continued use of the site constitutes implicit acceptance of these changes."
+          "Abiyat Lam'at Contracting reserves the right to modify these terms of use at any time. Updates will be published on this page, and continued use of the site constitutes implicit acceptance of these changes."
         ]
       },
       {
@@ -96,8 +96,8 @@ const content = {
     ],
     contactTitle: "12. Contact Us",
     contactIntro: "For any inquiries regarding the terms of use or equipment rental contracts:",
-    emailLabel: "Email: alrwnyhsn505@gmail.com",
-    phoneLabel: "Phone: 0536060450",
+    emailLabel: "Email",
+    phoneLabel: "Phone",
   },
   ar: {
     heroTitle: "شروط الخدمة",
@@ -160,8 +160,8 @@ const content = {
       },
       {
         title: "8. الاستخدام غير السليم",
+        introText: "يُحظر استخدام الموقع أو المعدات المؤجرة لأغراض غير قانونية، بما في ذلك:",
         items: [
-          "يُحظر استخدام الموقع أو المعدات المؤجرة لأغراض غير قانونية، بما في ذلك:",
           "انتهاك القوانين أو اللوائح أو أنظمة السلامة المهنية في المملكة العربية السعودية.",
           "محاولة اختراق الموقع أو التلاعب بأنظمته.",
           "تقديم معلومات مضللة أو غير صحيحة حول طبيعة المشروع أو موقع العمل لتأجير المعدة."
@@ -189,8 +189,8 @@ const content = {
     ],
     contactTitle: "12. اتصل بنا",
     contactIntro: "لأي استفسارات تتعلق بشروط الاستخدام أو عقود تأجير المعدات:",
-    emailLabel: "البريد الإلكتروني: alrwnyhsn505@gmail.com",
-    phoneLabel: "الهاتف: 0536060450",
+    emailLabel: "البريد الإلكتروني",
+    phoneLabel: "الهاتف",
   }
 };
 
