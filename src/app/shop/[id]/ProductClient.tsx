@@ -400,7 +400,7 @@ export default function ProductClient({
                     ? 'bg-green-600 text-white hover:bg-green-700'
                     : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'
                   }`}
-                disabled={!selectedColor || !selectedSize || isAddedToCart}
+                disabled={(hasVariations && (!selectedColor || !selectedSize)) || isAddedToCart}
               >
                 {isAddedToCart ? (
                   <span className="flex items-center gap-2"><Check className="w-5 h-5" /> {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}</span>
