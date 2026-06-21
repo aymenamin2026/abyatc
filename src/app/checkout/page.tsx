@@ -49,6 +49,7 @@ export default function Checkout() {
   const [isPlacingOrder, setIsPlacingOrder] = useState<boolean>(false);
   const [currencySymbol, setCurrencySymbol] = useState("$");
   const [siteName, setSiteName] = useState("Luluh.sa");
+  const [settings, setSettings] = useState<any>(null);
 
   // Custom logic to swap riyal SVG based on theme
   const getCurrencySymbol = () => {
@@ -150,6 +151,7 @@ export default function Checkout() {
         fetchCountries()
       ]);
       setPaymentMethods(methods);
+      setSettings(settings);
       if (methods && methods.length > 0) {
         setSelectedMethod(methods[0].code);
       }
@@ -527,6 +529,32 @@ export default function Checkout() {
 
   let taxes = 0;
   let total = 0;
+  // 1. استخراج وتنظيف رقم الواتساب من الإعدادات
+  const rawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || "";
+  const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000";
+
+  // 2. بناء نص ملخص الطلبات بشكل مرتب للواتساب
+  const cartSummaryText = cartItems.map((item) => {
+    const itemName = typeof item.name === 'object' && item.name !== null
+      ? (item.name[lang] || item.name.en || "Product Name")
+      : (item.name || "Product Name");
+
+    const itemColor = typeof item.color === 'object' && item.color !== null
+      ? (item.color[lang] || item.color.en)
+      : item.color;
+
+    const itemSize = typeof item.size === 'object' && item.size !== null
+      ? (item.size[lang] || item.size.en)
+      : item.size;
+
+    return `- ${itemName} (${itemColor} / ${itemSize}) x ${item.quantity}`;
+  }).join('\n');
+
+  const messageText = lang === 'ar'
+    ? `مرحباً، أود الاستفسار عن سعر وتفاصيل المنتجات التالية:\n\n${cartSummaryText}`
+    : `Hello, I would like to inquire about the price and details for the following products:\n\n${cartSummaryText}`;
+
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   if (pricesIncludeTax) {
     // Inclusive Tax: Subtotal remains unchanged, Total is (subtotal - discount) + shipping.
@@ -626,6 +654,18 @@ export default function Checkout() {
                     <button onClick={() => setAuthMode('guest')} className="w-full text-muted-foreground hover:text-foreground underline underline-offset-4 py-2 font-medium transition-colors">
                       {t('checkout_as_guest', lang)}
                     </button>
+                    {/* زر المراسلة عبر الواتساب الجديد */}
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 underline underline-offset-4 py-2 font-medium transition-colors text-center text-sm"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12.21 2c-5.464 0-9.91 4.39-9.91 9.782 0 1.723.454 3.407 1.316 4.898L2 22l5.485-1.422a9.96 9.96 0 004.723 1.185c5.464 0 9.91-4.39 9.91-9.781C22.12 6.39 17.674 2 12.21 2zm5.727 13.914c-.244.68-1.22 1.332-1.83 1.4-.61.07-1.373.13-3.832-.86-2.46-.99-4.04-3.46-4.162-3.62-.122-.17-1.012-1.33-1.012-2.53 0-1.2.634-1.8.854-2.03.22-.24.488-.3.653-.3.164 0 .33.01.47.01.147 0 .348-.06.543.4.195.47.67 1.61.73 1.73.061.12.1.26.02.42-.08.17-.183.28-.317.43-.134.15-.28.34-.4.48-.135.15-.275.31-.116.58.16.27.707 1.15 1.513 1.86.1.09.81.72 1.636 1.05.25.1.445.08.61-.09.214-.22.915-1.05 1.16-1.41.244-.36.488-.3.824-.18.335.12 2.122.99 2.488 1.17.366.18.61.27.695.41.085.15.085.86-.159 1.54z" />
+                      </svg>
+                      {lang === 'ar' ? 'راسلنا لمعرفة السعر' : 'Inquire for price'}
+                    </a>
                   </div>
                 </section>
               )}
