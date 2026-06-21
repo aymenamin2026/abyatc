@@ -219,9 +219,8 @@ export default function ProductCard({
             </h3>
           </Link>
 
-          {/* DYNAMIC PRICE DETAILS - 🛠️ تم تعديله ليدعم شروط الإخفاء */}
-          {/* DYNAMIC PRICE DETAILS - تم التعديل ليصبح النص رابطاً عند إخفاء السعر */}
-          {/* DYNAMIC PRICE DETAILS - تم تحديث التصميم ليكون زر واتساب واضح */}
+          {/* DYNAMIC PRICE DETAILS - */}
+
           <div className="mt-auto font-medium text-xs sm:text-sm text-foreground flex items-center tracking-wider">
             {shouldShowPrice ? (
               <>

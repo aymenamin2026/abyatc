@@ -384,13 +384,13 @@ export default function ProductClient({
             {/* Actions */}
             <div className="flex gap-4 mb-4">
               {/* إظهار اختيار الكمية فقط إذا كان السعر متاحاً */}
-              {shouldShowPrice && (
-                <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">-</button>
-                  <span className="w-10 text-center font-medium">{quantity}</span>
-                  <button onClick={() => setQuantity(quantity + 1)} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">+</button>
-                </div>
-              )}
+
+              <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">-</button>
+                <span className="w-10 text-center font-medium">{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">+</button>
+              </div>
+
 
               {/* زر إضافة للسلة يظهر فقط إذا كان السعر متاحاً */}
               <button
