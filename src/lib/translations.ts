@@ -283,7 +283,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     dashboard_welcome: "مرحباً",
     dashboard_intro: "من لوحة تحكم حسابك ، يمكنك عرض طلباتك الأخيرة ، وإدارة عناوين الشحن والفوترة ، وتعديل كلمة المرور وتفاصيل الحساب.",
     privacy:" سياسة الخصوصية",
-    Termst:"شروط الخدمة",
+    termst:"شروط الخدمة",
     // Orders
     order_id: "الطلب",
     order_date: "التاريخ",
