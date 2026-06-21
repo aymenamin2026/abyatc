@@ -116,16 +116,16 @@ export default function ProjectPage() {
         ) : (
           /* شبكة المقالات بستايل الفلوتينج كارد الزجاجي */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {projects.map((article, index) => {
-              const title = article.title?.[lang] || article.title?.en || article.title;
-              const excerpt = article.excerpt?.[lang] || article.excerpt?.en || article.excerpt;
-              const image = getImageUrl(article.image);
-              const authorName = article.author?.name?.[lang] || article.author?.name?.en || 'Admin';
-              const categoryName = article.category?.name?.[lang] || article.category?.name?.en || 'General';
+            {projects.map((project, index) => {
+              const title = project.title?.[lang] || project.title?.en || project.title;
+              const excerpt = project.excerpt?.[lang] || project.excerpt?.en || project.excerpt;
+              const image = getImageUrl(project.image);
+              const authorName = project.author?.name?.[lang] || project.author?.name?.en || 'Admin';
+              const categoryName = project.category?.name?.[lang] || project.category?.name?.en || 'General';
 
               return (
                 <motion.article
-                  key={article.id}
+                  key={project.id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
@@ -135,7 +135,7 @@ export default function ProjectPage() {
                 >
                   {/* حاوية الصورة مع تأثير زووم سينمائي وقناع الفئة العلوي */}
                   <div className="relative aspect-[16/10] overflow-hidden bg-muted m-3 rounded-[20px] shadow-inner">
-                    <Link href={`/blogs/${article.slug}`} className="block w-full h-full">
+                    <Link href={`/projects/${project.slug}`} className="block w-full h-full">
                       <img
                         src={image}
                         alt={title}
@@ -154,7 +154,7 @@ export default function ProjectPage() {
                   <div className="p-6 pt-3 flex flex-col flex-1">
 
                     {/* العنوان مع تفاعل الألوان عند التحويم */}
-                    <Link href={`/blogs/${article.slug}`} className="block mt-2">
+                    <Link href={`/projects/${project.slug}`} className="block mt-2">
                       <h3 className="text-xl font-bold text-foreground font-serif line-clamp-2 leading-snug tracking-tight group-hover:text-primary transition-colors duration-300">
                         {title}
                       </h3>
@@ -175,15 +175,15 @@ export default function ProjectPage() {
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-muted-foreground/70" />
                           <span>
-                            {article.published_at
-                              ? new Date(article.published_at).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric' })
+                            {project.published_at
+                              ? new Date(project.published_at).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric' })
                               : ''}
                           </span>
                         </div>
                       </div>
 
                       {/* سهم حركي يظهر عند الـ hover لمزيد من الفخامة */}
-                      <Link href={`/blogs/${article.slug}`} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-muted group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                      <Link href={`/projects/${project.slug}`} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-muted group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                         {lang === 'ar' ? <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" /> : <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" />}
                       </Link>
                     </div>
