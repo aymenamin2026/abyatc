@@ -168,7 +168,10 @@ export default function ProductClient({
   }
 
   const handleAddToCart = async () => {
-    if (!selectedSize || !selectedColor) return;
+    if (hasVariations && (!selectedSize || !selectedColor)) {
+      alert(lang === 'ar' ? 'يرجى اختيار اللون والمقاس' : 'Please select color and size');
+      return;
+    }
 
     setIsAddedToCart(true);
     const colorValueObj = availableColors.find((c: any) => (c.value?.en || c.value) === selectedColor)?.value;
