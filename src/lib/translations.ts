@@ -504,7 +504,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     returns: "الاستبدال والاسترجاع",
     follow_us: "تابعنا",
     terms: "شروط الخدمة",
-    privacy: "سياسة الخصوصية",
+   // privacy: "سياسة الخصوصية",
     faq: "الأسئلة الشائعة",
     related_products: "منتجات ذات صلة",
     rights_reserved: "جميع الحقوق محفوظة.",
