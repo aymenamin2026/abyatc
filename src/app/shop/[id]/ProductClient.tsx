@@ -205,7 +205,7 @@ export default function ProductClient({
   };
 
   return (
-    <div className="flex flex-col min-h-screen pt-4 pb-24 bg-background">
+    <div className="flex flex-col min-h-screen pt-32 pb-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Breadcrumb */}
