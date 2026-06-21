@@ -8,196 +8,196 @@ import { fetchSettings } from "@/lib/api";
 const content = {
   en: {
     heroTitle: "Terms of Service",
-    heroSubtitle: "Lulu’a Uniforms Store",
-    intro: "Welcome to Lulu’a Uniforms Store. By using this website or completing any purchase through it, you fully agree to the terms of use outlined below. If you do not agree, please do not use the site.",
+    heroSubtitle: "Abiyat Lamea Contracting & Heavy Equipment Co.",
+    intro: "Welcome to the Abiyat Lamea Contracting company website. By using this website or completing any leasing or contracting process through it, you fully agree to the terms of use outlined below. If you do not agree, please do not use the site.",
     sections: [
       {
         title: "1. Definitions",
         items: [
-          "Store: The Lulu’a Uniforms online store.",
-          "Customer/User: Any person using the website or making a purchase.",
-          "Products: All clothing and items displayed in the store."
+          "Company/Website: Abiyat Lamea Contracting & Heavy Equipment Co.",
+          "Client/User: Any person or entity (individual or company) using the website or requesting heavy equipment rental or services.",
+          "Equipment and Services: All heavy equipment displayed for rental purposes and related contracting services offered on the website."
         ]
       },
       {
         title: "2. Eligibility",
         items: [
-          "The user must be 18 years or older or use the site under parental supervision.",
-          "The user must provide accurate and correct information when registering or making a purchase."
+          "The user must be 18 years or older and possess the legal capacity to enter into commercial contracts.",
+          "The user must provide accurate and correct information when registering, requesting quotes, or executing rental contracts."
         ]
       },
       {
         title: "3. Account and Information",
         items: [
           "The user is responsible for keeping their account information confidential.",
-          "The store is not responsible for unauthorized account use resulting from user negligence.",
-          "The store may suspend or cancel an account if it suspects a violation of the terms."
+          "The Company is not responsible for any unauthorized account use resulting from user negligence.",
+          "The Company reserves the right to suspend or cancel an account if it suspects a violation of the terms."
         ]
       },
       {
-        title: "4. Orders and Payment",
+        title: "4. Orders and Payment (Leasing Contracts & Services)",
         items: [
-          "All orders are subject to product availability and store approval.",
-          "The store may refuse or cancel any order for a legitimate reason.",
-          "Displayed prices include VAT (if applicable) unless stated otherwise.",
-          "Payments are processed through secure and approved electronic payment gateways."
+          "All rental requests are subject to equipment availability and management approval.",
+          "The Company reserves the right to refuse or cancel any rental request or contract for a legitimate reason (e.g., equipment unavailability or safety-related reasons).",
+          "Displayed or quoted prices include VAT unless otherwise stated.",
+          "Payments are processed according to the terms agreed upon in the rental contract, whether via bank transfers or approved electronic payment gateways."
         ]
       },
       {
-        title: "5. Shipping and Delivery",
+        title: "5. Transportation and Delivery",
         items: [
-          "Shipping is made to the addresses provided by the customer at checkout.",
-          "Delivery times vary depending on the city and shipping company.",
-          "The store is not responsible for delays outside its control caused by the shipping company."
+          "Rented equipment is transported and delivered to the work sites specified by the client in the contract.",
+          "Delivery times vary depending on the project location and the nature of the requested equipment.",
+          "The Company is not responsible for delays beyond its control caused by force majeure events during transportation."
         ]
       },
       {
-        title: "6. Returns and Exchanges",
+        title: "6. Cancellation and Equipment Changes",
         items: [
-          "Returns and exchanges are subject to the store’s approved policy.",
-          "Please review the return and exchange policy before completing your purchase."
+          "Cancellation of rental requests or equipment replacement on-site is subject to the Company’s policy and the signed contract terms.",
+          "Please review the cancellation details and terms attached to the quote or contract before final approval."
         ]
       },
       {
         title: "7. Intellectual Property",
         items: [
-          "All content on the website (text, images, logos, designs) is owned or licensed by Lulu’a Uniforms Store.",
+          "All website content (text, equipment images, logos, designs) is owned by Abiyat Lamea Contracting & Heavy Equipment Co.",
           "Copying or reusing any content without prior written permission is prohibited."
         ]
       },
       {
         title: "8. Improper Use",
-        introText: "Use of the website for illegal purposes is prohibited, including:",
         items: [
-          "Violating laws and regulations in the Kingdom of Saudi Arabia.",
+          "Using the website or rented equipment for illegal purposes is prohibited, including:",
+          "Violating laws, regulations, or occupational safety standards in the Kingdom of Saudi Arabia.",
           "Attempting to hack the website or tamper with its systems.",
-          "Providing misleading or incorrect information."
+          "Providing misleading or incorrect information regarding the nature of the project or work site for rental purposes."
         ]
       },
       {
         title: "9. Limitation of Liability",
         items: [
-          "The store is not responsible for indirect damages or losses resulting from misuse of the website.",
-          "The store’s liability is limited to the value of the purchased product only."
+          "The Company is not responsible for any indirect damages or losses resulting from misuse of the website.",
+          "The Company's financial liability is limited to the value of the service or rented equipment according to the signed contract only."
         ]
       },
       {
         title: "10. Modifications to Terms",
         items: [
-          "Lulu’a Uniforms Store reserves the right to modify the terms of use at any time. Updates will be published on this page, and continued use of the site constitutes implicit acceptance of these changes."
+          "Abiyat Lamea Contracting reserves the right to modify these terms of use at any time. Updates will be published on this page, and continued use of the site constitutes implicit acceptance of these changes."
         ]
       },
       {
         title: "11. Governing Law",
         items: [
-          "These terms are governed by and interpreted according to the laws of the Kingdom of Saudi Arabia."
+          "These terms are governed by and interpreted according to the laws and regulations in force in the Kingdom of Saudi Arabia."
         ]
       }
     ],
     contactTitle: "12. Contact Us",
-    contactIntro: "For any inquiries regarding the terms of use:",
-    emailLabel: "Email",
-    phoneLabel: "Phone",
+    contactIntro: "For any inquiries regarding the terms of use or equipment rental contracts:",
+    emailLabel: "Email: alrwnyhsn505@gmail.com",
+    phoneLabel: "Phone: 0536060450",
   },
   ar: {
     heroTitle: "شروط الخدمة",
-    heroSubtitle: "متجر لؤلؤة للأزياء الموحدة",
-    intro: "مرحباً بكم في متجر لؤلؤة للأزياء الموحدة. باستخدام هذا الموقع أو إتمام أي عملية شراء من خلاله، فإنك توافق تماماً على شروط الاستخدام الموضحة أدناه. إذا كنت لا توافق، يرجى عدم استخدام الموقع.",
+    heroSubtitle: "شركة لمعة ابيات للمقاولات والمعدات الثقيلة",
+    intro: "مرحباً بكم في الموقع الإلكتروني لشركة لمعة أبيات للمقاولات. باستخدام هذا الموقع أو إتمام أي عملية تأجير أو تعاقد من خلاله، فإنك توافق تماماً على شروط الاستخدام الموضحة أدناه. إذا كنت لا توافق، يرجى عدم استخدام الموقع.",
     sections: [
       {
         title: "1. التعاريف",
         items: [
-          "المتجر: متجر لؤلؤة للأزياء الموحدة الإلكتروني.",
-          "العميل / المستخدم: أي شخص يستخدم الموقع أو يقوم بعملية شراء.",
-          "المنتجات: جميع الملابس والعناصر المعروضة في المتجر."
+          "الشركة / الموقع: شركة لمعة ابيات للمقاولات.",
+          "العميل / المستخدم: أي شخص أو جهة (فرد أو شركة) يستخدم الموقع أو يقوم بطلب استئجار معدات أو خدمات.",
+          "المعدات والخدمات: جميع المعدات الثقيلة المعروضة للتأجير فقط، وخدمات المقاولات المرتبطة بها في الموقع."
         ]
       },
       {
         title: "2. الأهلية",
         items: [
-          "يجب أن يكون المستخدم بالغاً من العمر 18 عاماً أو أكثر، أو يستخدم الموقع تحت إشراف الوالدين.",
-          "يجب على المستخدم تقديم معلومات دقيقة وصحيحة عند التسجيل أو إجراء عملية شراء."
+          "يجب أن يكون المستخدم بالغاً من العمر 18 عاماً أو أكثر، ويمتلك الأهلية القانونية لإبرام العقود التجارية.",
+          "يجب على المستخدم تقديم معلومات دقيقة وصحيحة عند التسجيل، أو عند طلب عروض الأسعار وإبرام عقود التأجير."
         ]
       },
       {
         title: "3. الحساب والمعلومات",
         items: [
           "يتحمل المستخدم مسؤولية الحفاظ على سرية معلومات حسابه.",
-          "المتجر غير مسؤول عن أي استخدام غير مصرح به للحساب نتيجة إهمال المستخدم.",
-          "يحق للمتجر تعليق أو إلغاء الحساب إذا اشتبه في حدوث انتهاك للشروط."
+          "الشركة غير مسؤولة عن أي استخدام غير مصرح به للحساب نتيجة إهمال المستخدم.",
+          "يحق للشركة تعليق أو إلغاء الحساب إذا اشتبهت في حدوث انتهاك للشروط."
         ]
       },
       {
-        title: "4. الطلبات والدفع",
+        title: "4. الطلبات والدفع (عقود التأجير والخدمات)",
         items: [
-          "تخضع جميع الطلبات لتوفر المنتج وموافقة المتجر.",
-          "يحق للمتجر رفض أو إلغاء أي طلب لسبب مشروع.",
-          "الأسعار المعروضة تشمل ضريبة القيمة المضافة (إن وجدت) ما لم يُنص على خلاف ذلك.",
-          "تتم معالجة المدفوعات عبر بوابات دفع إلكترونية آمنة ومعتمدة."
+          "تخضع جميع طلبات التأجير لتوفر المعدات وموافقة إدارة الشركة.",
+          "يحق للشركة رفض أو إلغاء أي طلب تأجير أو عقد لسبب مشروع (مثل عدم توفر المعدة أو أسباب تتعلق بالسلامة).",
+          "الأسعار المعروضة أو المقدمة في عروض الأسعار تشمل ضريبة القيمة المضافة ما لم يُنص على خلاف ذلك.",
+          "تتم معالجة المدفوعات وفقاً لشروط الدفع المتفق عليها في عقد التأجير، سواء عبر الحوالات البنكية أو بوابات الدفع الإلكترونية المعتمدة."
         ]
       },
       {
-        title: "5. الشحن والتوصيل",
+        title: "5. النقل وتسليم المعدات",
         items: [
-          "يتم الشحن إلى العناوين التي يقدمها العميل عند الدفع.",
-          "تختلف أوقات التوصيل حسب المدينة وشركة الشحن.",
-          "المتجر غير مسؤول عن التأخير الخارج عن إرادته والذي تتسبب فيه شركة الشحن."
+          "يتم نقل وتسليم المعدات المستأجرة إلى مواقع العمل التي يحددها العميل في العقد.",
+          "تختلف أوقات التسليم حسب موقع المشروع وطبيعة المعدة المطلوبة.",
+          "الشركة غير مسؤولة عن التأخير الخارج عن إرادتها والذي قد تتسبب فيه ظروف قاهرة أثناء النقل."
         ]
       },
       {
-        title: "6. الاستبدال والاسترجاع",
+        title: "6. الإلغاء وتغيير المعدات المستأجرة",
         items: [
-          "يخضع الاستبدال والاسترجاع لسياسة المتجر المعتمدة.",
-          "يرجى مراجعة سياسة الاستبدال والاسترجاع قبل إتمام عملية الشراء."
+          "يخضع إلغاء طلبات التأجير أو استبدال المعدات في الموقع لسياسة الشركة وشروط العقد المبرم بين الطرفين.",
+          "يرجى مراجعة تفاصيل وشروط الإلغاء المرفقة مع عرض السعر أو العقد قبل الاعتماد النهائي."
         ]
       },
       {
         title: "7. الملكية الفكرية",
         items: [
-          "جميع محتويات الموقع (نصوص، صور، شعارات، تصاميم) مملوكة أو مرخصة لمتجر لؤلؤة للأزياء الموحدة.",
+          "جميع محتويات الموقع (نصوص، صور للمعدات، شعارات، تصاميم) مملوكة لشركة لمعة ابيات للمقاولات.",
           "يُمنع نسخ أو إعادة استخدام أي محتوى دون إذن كتابي مسبق."
         ]
       },
       {
         title: "8. الاستخدام غير السليم",
-        introText: "يُحظر استخدام الموقع لأغراض غير قانونية، بما في ذلك:",
         items: [
-          "انتهاك القوانين أو اللوائح في المملكة العربية السعودية.",
+          "يُحظر استخدام الموقع أو المعدات المؤجرة لأغراض غير قانونية، بما في ذلك:",
+          "انتهاك القوانين أو اللوائح أو أنظمة السلامة المهنية في المملكة العربية السعودية.",
           "محاولة اختراق الموقع أو التلاعب بأنظمته.",
-          "تقديم معلومات مضللة أو غير صحيحة."
+          "تقديم معلومات مضللة أو غير صحيحة حول طبيعة المشروع أو موقع العمل لتأجير المعدة."
         ]
       },
       {
         title: "9. حدود المسؤولية",
         items: [
-          "المتجر غير مسؤول عن أي أضرار أو خسائر غير مباشرة ناتجة عن سوء استخدام الموقع.",
-          "تقتصر مسؤولية المتجر على قيمة المنتج الذي تم شراؤه فقط."
+          "الشركة غير مسؤولة عن أي أضرار أو خسائر غير مباشرة ناتجة عن سوء استخدام الموقع.",
+          "تقتصر مسؤولية الشركة المادية على قيمة الخدمة أو المعدة المؤجرة وفقاً للعقد المبرم فقط."
         ]
       },
       {
         title: "10. تعديلات على الشروط",
         items: [
-          "يحتفظ متجر لؤلؤة للأزياء الموحدة بالحق في تعديل شروط الاستخدام في أي وقت. سيتم نشر التحديثات على هذه الصفحة، واستمرار استخدام الموقع يعتبر قبولاً ضمنياً لهذه التغييرات."
+          "تحتفظ شركة لمعة ابيات للمقاولات بالحق في تعديل شروط الاستخدام في أي وقت. سيتم نشر التحديثات على هذه الصفحة، واستمرار استخدام الموقع يعتبر قبولاً ضمنياً لهذه التغييرات."
         ]
       },
       {
         title: "11. القانون الحاكم",
         items: [
-          "تخضع هذه الشروط وتُفسر وفقاً لقوانين المملكة العربية السعودية."
+          "تخضع هذه الشروط وتُفسر وفقاً للأنظمة والقوانين المعمول بها في المملكة العربية السعودية."
         ]
       }
     ],
     contactTitle: "12. اتصل بنا",
-    contactIntro: "لأي استفسارات تتعلق بشروط الاستخدام:",
-    emailLabel: "البريد الإلكتروني",
-    phoneLabel: "الهاتف",
+    contactIntro: "لأي استفسارات تتعلق بشروط الاستخدام أو عقود تأجير المعدات:",
+    emailLabel: "البريد الإلكتروني: alrwnyhsn505@gmail.com",
+    phoneLabel: "الهاتف: 0536060450",
   }
 };
 
 export default function TermsPage() {
   const { lang } = useLanguage();
   const text = content[lang as keyof typeof content];
-  
+
   const [storeEmail, setStoreEmail] = useState("support@elegance.com");
   const [storePhone, setStorePhone] = useState("+966 50 000 0000");
 
@@ -220,7 +220,7 @@ export default function TermsPage() {
       <section className="bg-muted py-20 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary via-background to-background"></div>
         <div className="relative z-10 max-w-3xl mx-auto">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -228,7 +228,7 @@ export default function TermsPage() {
           >
             {text.heroTitle}
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -271,7 +271,7 @@ export default function TermsPage() {
             <div className="pt-8 border-t border-border">
               <h2 className="font-serif text-2xl font-bold text-foreground mb-4">{text.contactTitle}</h2>
               <p className="text-muted-foreground mb-4">{text.contactIntro}</p>
-              
+
               <div className="flex flex-col gap-2 font-medium">
                 <p>
                   <span className="text-foreground">{text.emailLabel}:</span> <a href={`mailto:${storeEmail}`} className="text-primary hover:underline">{storeEmail}</a>

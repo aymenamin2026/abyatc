@@ -193,6 +193,8 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     price: "Price",
     quantity: "Quantity",
     size: "Size",
+    privacy:"Polci Privacy",
+    termst:"Termst",
     
     // Auth & Checkout
     login: "Login",
@@ -240,7 +242,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     returns: "Returns & Exchanges",
     follow_us: "Follow Us",
     terms: "Terms of Service",
-    privacy: "Privacy Policy",
+    //privacy: "Privacy Policy",
     faq: "FAQ",
     related_products: "Related Products",
     rights_reserved: "All rights reserved.",
@@ -280,7 +282,8 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     logout: "تسجيل الخروج",
     dashboard_welcome: "مرحباً",
     dashboard_intro: "من لوحة تحكم حسابك ، يمكنك عرض طلباتك الأخيرة ، وإدارة عناوين الشحن والفوترة ، وتعديل كلمة المرور وتفاصيل الحساب.",
-
+    privacy:" سياسة الخصوصية",
+    Termst:"شروط الخدمة",
     // Orders
     order_id: "الطلب",
     order_date: "التاريخ",

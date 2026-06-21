@@ -8,121 +8,121 @@ import { fetchSettings } from "@/lib/api";
 const content = {
   en: {
     heroTitle: "Privacy Policy",
-    heroSubtitle: "Lulu’a Uniforms Store",
-    intro: "Welcome to Lulu’a Uniforms Store. We value your privacy and are committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit our website, and our practices for collecting, using, maintaining, protecting, and disclosing that information.",
+    heroSubtitle: "Abiyat Lamea Contracting & Heavy Equipment Co.",
+    intro: "Welcome to the Abiyat Lamea Contracting company website. We value your privacy and are committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit our website, and our practices for collecting, using, maintaining, protecting, and disclosing that information.",
     sections: [
       {
         title: "1. Information We Collect",
         items: [
-          "Personal Contact Information (Name, Email, Phone Number, Shipping Address) provided during checkout or registration.",
-          "Payment Details, processed securely via third-party gateways (we do not store direct credit card numbers).",
-          "Browsing Data such as IP addresses, browser types, and interaction logs through cookies and tracking tools."
+          "Personal contact information: (Name, email address, phone number, work sites, or equipment delivery addresses) provided during quote requests, contract execution, or account registration.",
+          "Payment details: Processed securely via third-party gateways (we do not store credit card numbers or direct bank account details).",
+          "Browsing data: Such as IP addresses, browser types, and interaction logs collected through cookies and tracking tools to enhance the platform user experience."
         ]
       },
       {
         title: "2. How We Use Your Information",
         items: [
-          "To process and fulfill your orders, including sending you emails to confirm your order status and shipment.",
-          "To provide customer support and respond to inquiries.",
-          "To send promotional emails and news (only if you have opted in).",
-          "To improve our website layout, product offerings, and customer service."
+          "To process and fulfill your leasing or purchase orders, including sending booking confirmation emails, contract details, and equipment delivery schedules to work sites.",
+          "To provide technical support, customer service, and respond to inquiries regarding equipment and projects.",
+          "To send important updates and special offers related to the contracting sector (only if you have opted in).",
+          "To improve our website layout and expand our equipment fleet based on market and client requirements."
         ]
       },
       {
         title: "3. Information Sharing",
         items: [
-          "We do not sell, trade, or rent your personal identification information to others.",
-          "We may share generic aggregated demographic information not linked to any personal identification information with our business partners.",
-          "We may use third-party service providers to help us operate our business (e.g., shipping companies, payment gateways) and may share your information with them for those limited purposes."
+          "We do not sell, trade, or rent your personal identification information to any external parties.",
+          "We may share generic aggregated demographic information not linked to any personal identification information with our strategic partners.",
+          "We may use third-party service providers to help us operate our business (e.g., logistics companies specialized in heavy equipment, or payment gateways) and may share your information with them to the extent necessary to complete your order."
         ]
       },
       {
         title: "4. Data Security",
         items: [
-          "We adopt appropriate data collection, storage, and processing practices and security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information.",
-          "Sensitive and private data exchange between the site and its users happens over an SSL-secured communication channel."
+          "We adopt strict technical and administrative practices for data collection, storage, and processing, along with security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information and contracts.",
+          "Sensitive and private data exchange between the site and its users occurs over encrypted communication channels secured with SSL protocol."
         ]
       },
       {
         title: "5. Your Rights",
         items: [
-          "You have the right to request access to the personal data we hold about you.",
-          "You can request corrections to any inaccurate data via your account dashboard or by contacting us.",
-          "You may request the deletion of your account and associated personal data, subject to legal and accounting retention requirements."
+          "You have the right to request access to the personal data we hold about you and your project history with us.",
+          "You can request corrections or updates to any inaccurate data via your account dashboard or by contacting us directly.",
+          "You may request the deletion of your account and associated data, subject to legal and accounting requirements related to commercial contracts."
         ]
       },
       {
         title: "6. Changes to This Policy",
         items: [
-          "Lulu’a Uniforms Store has the discretion to update this privacy policy at any time.",
-          "When we do, we will revise the updated date at the bottom of this page.",
-          "We encourage Users to frequently check this page for any changes to stay informed about how we are helping to protect the personal information we collect."
+          "Abiyat Lamea Contracting management has the right to update this privacy policy at any time to comply with technical or regulatory updates.",
+          "When any update occurs, we will modify the revision date at the bottom of this page.",
+          "We encourage our clients to review this page periodically to stay informed about how we protect their information."
         ]
       }
     ],
     contactTitle: "7. Contact Options",
-    contactIntro: "If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact us at:",
-    emailLabel: "Email",
-    phoneLabel: "Phone",
+    contactIntro: "If you have any questions about this Privacy Policy, our site practices, or contract and equipment details, please contact us at:",
+    emailLabel: "Email: alrwnyhsn505@gmail.com",
+    phoneLabel: "Phone: 0536060450",
   },
   ar: {
     heroTitle: "سياسة الخصوصية",
-    heroSubtitle: "متجر لؤلؤة للأزياء الموحدة",
-    intro: "مرحباً بكم في متجر لؤلؤة للأزياء الموحدة. نحن نقدر خصوصيتك ونلتزم بحمايتها من خلال امتثالنا لهذه السياسة. تصف هذه السياسة أنواع المعلومات التي قد نجمعها منك أو التي قد تقدمها عند زيارتك لموقعنا الإلكتروني، وممارساتنا في جمع تلك المعلومات واستخدامها والمحافظة عليها وحمايتها والإفصاح عنها.",
+    heroSubtitle: "شركة لمعة ابيات للمقاولات والمعدات الثقيلة",
+    intro: "مرحباً بكم في الموقع الإلكتروني لشركة لمعة أبيات للمقاولات. نحن نقدر خصوصيتك ونلتزم بحمايتها من خلال امتثالنا لهذه السياسة. تصف هذه السياسة أنواع المعلومات التي قد نجمعها منك أو التي قد تقدمها عند زيارتك لموقعنا الإلكتروني، وممارساتنا في جمع تلك المعلومات واستخدامها والمحافظة عليها وحمايتها والإفصاح عنها.",
     sections: [
       {
         title: "1. المعلومات التي نجمعها",
         items: [
-          "معلومات الاتصال الشخصية (الاسم، البريد الإلكتروني، رقم الهاتف، عنوان الشحن) المقدمة أثناء الدفع أو التسجيل.",
-          "تفاصيل الدفع، التي تتم معالجتها بشكل آمن عبر بوابات طرف ثالث (نحن لا نخزن أرقام بطاقات الائتمان المباشرة).",
-          "بيانات التصفح مثل عناوين IP، وأنواع المتصفحات، وسجلات التفاعل من خلال ملفات تعريف الارتباط وأدوات التتبع."
+          "معلومات الاتصال الشخصية: (الاسم، البريد الإلكتروني، رقم الهاتف، مواقع العمل أو عناوين تسليم المعدات) المقدمة أثناء طلب عروض الأسعار، إبرام العقود، أو تسجيل الحساب.",
+          "تفاصيل الدفع: التي تتم معالجتها بشكل آمن عبر بوابات طرف ثالث (نحن لا نخزن أرقام بطاقات الائتمان أو الحسابات البنكية المباشرة).",
+          "بيانات التصفح: مثل عناوين IP، وأنواع المتصفحات، وسجلات التفاعل من خلال ملفات تعريف الارتباط وأدوات التتبع لتحسين تجربة استخدام المنصة."
         ]
       },
       {
         title: "2. كيف نستخدم معلوماتك",
         items: [
-          "لمعالجة طلباتك والوفاء بها، بما في ذلك إرسال رسائل بريد إلكتروني لتأكيد حالة طلبك وشحنه.",
-          "لتقديم دعم العملاء والرد على الاستفسارات.",
-          "لإرسال رسائل بريد إلكتروني ترويجية وأخبار (فقط إذا قمت بالاشتراك).",
-          "لتحسين تصميم موقعنا، وعروض منتجاتنا، وخدمة العملاء."
+          "لمعالجة طلبات التأجير أو الشراء والوفاء بها، بما في ذلك إرسال رسائل تأكيد الحجز، تفاصيل العقود، ومواعيد تسليم المعدات إلى مواقع العمل.",
+          "لتقديم الدعم الفني، وخدمة العملاء، والرد على الاستفسارات المتعلقة بالمعدات والمشاريع.",
+          "إلرسال التحديثات الهامة، والعروض الخاصة بقطاع المقاولات (فقط إذا قمت بالاشتراك).",
+          "لتحسين تصميم موقعنا، وتوسيع أسطول المعدات بناءً على متطلبات السوق وعملائنا."
         ]
       },
       {
         title: "3. مشاركة المعلومات",
         items: [
-          "نحن لا نبيع أو نتاجر أو نؤجر معلومات الهوية الشخصية الخاصة بك للآخرين.",
-          "قد نشارك معلومات ديموغرافية مجمعة عامة غير مرتبطة بأي معلومات هوية شخصية مع شركائنا التجاريين.",
-          "قد نستخدم مزودي خدمات من أطراف ثالثة لمساعدتنا في تشغيل أعمالنا (مثل شركات الشحن، بوابات الدفع) وقد نشارك معلوماتك معهم لهذه الأغراض المحدودة."
+          "نحن لا نبيع أو نتاجر أو نؤجر معلومات الهوية الشخصية الخاصة بك لأي جهات خارجية.",
+          "قد نشارك معلومات ديموغرافية مجمعة عامة غير مرتبطة بأي معلومات هوية شخصية مع شركائنا الاستراتيجيين.",
+          "قد نستخدم مزودي خدمات من أطراف ثالثة لمساعدتنا في تشغيل أعمالنا (مثل شركات النقل اللوجستي المتخصصة بالمعدات الثقيلة، أو بوابات الدفع الإلكتروني) وقد نشارك معلوماتك معهم في حدود ما تقتضيه مصلحة العمل لإتمام طلبك."
         ]
       },
       {
         title: "4. أمان البيانات",
         items: [
-          "نحن نتبنى ممارسات مناسبة لجمع البيانات وتخزينها ومعالجتها وتدابير أمنية للحماية من الوصول غير المصرح به أو التعديل أو الإفصاح أو الإتلاف لمعلوماتك الشخصية.",
-          "يتم تبادل البيانات الحساسة والخاصة بين الموقع ومستخدميه عبر قناة اتصال مؤمنة بـ SSL."
+          "نحن نتبنى ممارسات تقنية وإدارية صارمة لجمع البيانات وتخزينها ومعالجتها، وتدابير أمنية للحماية من الوصول غير المصرح به أو التعديل أو الإفصاح أو الإتلاف لمعلوماتك الشخصية وعقودك.",
+          "يتم تبادل البيانات الحساسة والخاصة بين الموقع ومستخدميه عبر قنوات اتصال مشفرة ومؤمنة ببروتوكول SSL."
         ]
       },
       {
         title: "5. حقوقك",
         items: [
-          "لديك الحق في طلب الوصول إلى البيانات الشخصية التي نحتفظ بها عنك.",
-          "يمكنك طلب تصحيحات لأي بيانات غير دقيقة عبر لوحة تحكم حسابك أو عن طريق الاتصال بنا.",
-          "يجوز لك طلب حذف حسابك والبيانات الشخصية المرتبطة به، رهناً بمتطلبات الاحتفاظ القانونية والمحاسبية."
+          "لديك الحق في طلب الوصول إلى البيانات الشخصية التي نحتفظ بها عنك وعن سجل مشاريعك معنا.",
+          "يمكنك طلب تصحيح أو تحديث لأي بيانات غير دقيقة عبر لوحة تحكم حسابك أو عن طريق التواصل المباشر معنا.",
+          "يجوز لك طلب حذف حسابك والبيانات المرتبطة به، رهناً بمتطلبات الاحتفاظ القانونية والمحاسبية الخاصة بالعقود التجارية."
         ]
       },
       {
         title: "6. التغييرات على هذه السياسة",
         items: [
-          "يمتلك متجر لؤلؤة للأزياء الموحدة حرية تحديث سياسة الخصوصية هذه في أي وقت.",
-          "عندما نقوم بذلك، سنقوم بمراجعة التاريخ المحدث في أسفل هذه الصفحة.",
-          "نشجع المستخدمين على التحقق بشكل متكرر من هذه الصفحة لمعرفة أي تغييرات للبقاء على اطلاع دائم بكيفية مساعدتنا في حماية المعلومات الشخصية التي نجمعها."
+          "تمتلك إدارة شركة لمعة ابيات للمقاولات الحق في تحديث سياسة الخصوصية هذه في أي وقت لتتوافق مع التحديثات التقنية أو التنظيمية.",
+          "عند حدوث أي تحديث، سنقوم بتعديل تاريخ المراجعة في أسفل هذه الصفحة.",
+          "نشجع عملاءنا على مراجعة هذه الصفحة بشكل دوري للبقاء على اطلاع دائم بكيفية حمايتنا لمعلوماتهم."
         ]
       }
     ],
     contactTitle: "7. خيارات الاتصال",
-    contactIntro: "إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، أو ممارسات هذا الموقع، أو تعاملاتك مع هذا الموقع، يرجى الاتصال بنا على:",
-    emailLabel: "البريد الإلكتروني",
-    phoneLabel: "الهاتف",
+    contactIntro: "إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، أو ممارسات موقعنا، أو تفاصيل العقود والمعدات، يرجى التواصل معنا عبر:",
+    emailLabel: "البريد الإلكتروني: alrwnyhsn505@gmail.com",
+    phoneLabel: "الهاتف: 0536060450",
   }
 };
 

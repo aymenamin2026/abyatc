@@ -273,8 +273,8 @@ export default function Footer({ settings }: { settings?: any }) {
           <p>© {new Date().getFullYear()} {siteName}</p>
 
           <div className="flex gap-8 mt-4 md:mt-0">
-            <Link className="hover:text-foreground" href="/privacy">Privacy</Link>
-            <Link className="hover:text-foreground" href="/terms">Terms</Link>
+            <Link className="hover:text-foreground" href="/privacy">{t('privacy', lang)}</Link>
+            <Link className="hover:text-foreground" href="/terms">{t('termst', lang)}</Link>
           </div>
         </div>
 
