@@ -1,7 +1,6 @@
 import { fetchProductBySlug, fetchProducts, fetchSettings, fetchAttributes } from "@/lib/api";
 import ProductClient from "./ProductClient";
 import { notFound } from "next/navigation";
-
 export async function generateStaticParams() {
   const products = await fetchProducts();
   if (!Array.isArray(products)) return [];
@@ -41,6 +40,7 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
       attributes={attributes}
       currencySymbol={currencySymbol}
       relatedProducts={relatedProducts}
+      settings={settings} // <-- قمنا بإضافة تمرير الإعدادات هنا لكي يستقبلها ملف العميل بنجاح
     />
   );
 }
