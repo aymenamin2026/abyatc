@@ -124,8 +124,8 @@ export default function ProductCard({
             onClick={handleWishlistToggle}
             disabled={isTogglingThis}
             className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md shadow-sm ${isFav
-                ? "bg-red-500 text-white border-red-500 hover:bg-red-600"
-                : "bg-card/40 text-foreground/70 border-border/40 hover:bg-card hover:text-red-500"
+              ? "bg-red-500 text-white border-red-500 hover:bg-red-600"
+              : "bg-card/40 text-foreground/70 border-border/40 hover:bg-card hover:text-red-500"
               } ${isTogglingThis ? "scale-90 opacity-70" : "hover:scale-110 active:scale-95"}`}
             title={
               isFav
@@ -220,6 +220,7 @@ export default function ProductCard({
           </Link>
 
           {/* DYNAMIC PRICE DETAILS - 🛠️ تم تعديله ليدعم شروط الإخفاء */}
+          {/* DYNAMIC PRICE DETAILS - تم التعديل ليصبح النص رابطاً عند إخفاء السعر */}
           <div className="mt-auto font-medium text-xs sm:text-sm text-foreground flex items-center tracking-wider">
             {shouldShowPrice ? (
               <>
@@ -249,10 +250,16 @@ export default function ProductCard({
                 <span className="text-sm sm:text-base font-semibold text-foreground/90">{price}</span>
               </>
             ) : (
-
-              <span className="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 italic tracking-normal bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
-                {lang === "ar" ? "راسلنا لمعرفه السعر" : "Text Us For Price "}
-              </span>
+              /* هنا قمنا بتحويل الـ span إلى a ليصبح رابط واتساب */
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 italic tracking-normal bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {lang === "ar" ? "راسلنا لمعرفة السعر" : "Text Us For Price"}
+              </a>
             )}
           </div>
         </div>
