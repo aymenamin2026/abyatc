@@ -142,7 +142,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
   const navLinks = [
     { href: "/", label: lang === 'en' ? 'Home' : 'الرئيسية' },
     { href: "/shop", label: t('shop', lang) },
-    { href: "/track", label: t('request_quote', lang) },
+    { href: "/project", label: t('project', lang) },
 
     { href: "/about", label: t('about', lang) },
     // { href: "/track", label: t('track_order', lang) },
