@@ -62,8 +62,8 @@ const content = {
     ],
     contactTitle: "7. Contact Options",
     contactIntro: "If you have any questions about this Privacy Policy, our site practices, or contract and equipment details, please contact us at:",
-    emailLabel: "Email: alrwnyhsn505@gmail.com",
-    phoneLabel: "Phone: 0536060450",
+    emailLabel: "Email",
+    phoneLabel: "Phone",
   },
   ar: {
     heroTitle: "سياسة الخصوصية",
