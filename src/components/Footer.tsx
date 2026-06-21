@@ -236,28 +236,27 @@ export default function Footer({ settings }: { settings?: any }) {
                 )}
 
                 {/* قسم الموقع */}
-                <div className="flex items-start gap-3">
-                  <a
-                    href="https://www.google.com/maps/search/?api=1&query=الرياض+حي+الفيصلية+شارع+القاهرة"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=الرياض+حي+الفيصلية+شارع+القاهرة"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors w-fit"
+                >
+                  {/* الأيقونة داخل الدائرة الرمادية */}
+                  <div className="flex-shrink-0 p-2 rounded-full bg-white border border-gray-200">
+                    <MapPin className="w-5 h-5 text-gray-600" />
+                  </div>
 
-                  >
-                    <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
-
-                      <MapPin className="w-3 h-3" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                        {t('address', lang)}
-                      </p>
-                      <p className="text-sm font-semibold text-foreground">
-                        {t('location', lang)}
-                      </p>
-                    </div>
-                  </a>
-
-                </div>
+                  {/* كتلة النص */}
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+                      {t('address', lang)}
+                    </p>
+                    <p className="text-sm font-semibold text-foreground">
+                      {t('location', lang)}
+                    </p>
+                  </div>
+                </a>
               </div>
             </div>
 
