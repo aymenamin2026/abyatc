@@ -7,6 +7,7 @@ export const translations = {
     contact: "Contact",
     search_placeholder: "Search...",
     track_order: "Track Order",
+    project: "Project",
     request_quote:"Request a quote",
     
     // Account Dashboard
@@ -267,6 +268,8 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     search_placeholder: "ابحث هنا...",
     track_order: "تتبع الطلب",
     request_quote:"طلب تسعيره",
+    project: "مشاريعنا",
+    
     
     // Account Dashboard
     dashboard: "لوحة التحكم",

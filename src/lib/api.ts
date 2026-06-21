@@ -491,6 +491,37 @@ export async function fetchArticleBySlug(slug: string) {
   }
 }
 
+// نقوم بتعديل الدوال لتصبح خاصة بالمشاريع
+export async function fetchProjects() {
+  try {
+    const res = await fetch(`${API_URL}/projects`, { 
+      headers: getHeaders(),
+      next: { revalidate: 60 }
+    });
+    
+    if (!res.ok) throw new Error('Failed to fetch projects');
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    return [];
+  }
+}
+
+export async function fetchProjectBySlug(slug: string) {
+  try {
+    const res = await fetch(`${API_URL}/projects/${slug}`, { 
+      headers: getHeaders(),
+      next: { revalidate: 60 }
+    });
+    
+    if (!res.ok) throw new Error('Failed to fetch project');
+    return res.json();
+  } catch (error) {
+    console.error(`Error fetching project ${slug}:`, error);
+    return null;
+  }
+}
+
 export async function submitComment(articleId: number | string, commentData: { comment: string, name?: string, email?: string, parent_id?: number | null, captcha_answer?: string, captcha_question_id?: string, g_recaptcha_response?: string | null }, tokenParam?: string | null) {
   const token = tokenParam || getCookie('auth_token');
   const requestHeaders: any = {
