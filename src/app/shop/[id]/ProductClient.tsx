@@ -174,15 +174,20 @@ export default function ProductClient({
     }
 
     setIsAddedToCart(true);
-    const colorValueObj = availableColors.find((c: any) => (c.value?.en || c.value) === selectedColor)?.value;
-    const sizeValueObj = availableSizes.find((s: any) => (s.value?.en || s.value) === selectedSize)?.value;
+    const colorValueObj = hasVariations
+      ? availableColors.find((c: any) => (c.value?.en || c.value) === selectedColor)?.value
+      : null;
+
+    const sizeValueObj = hasVariations
+      ? availableSizes.find((s: any) => (s.value?.en || s.value) === selectedSize)?.value
+      : null;
 
     await addToCart({
       product_id: product.id,
       name: product.name,
       image: images[0],
-      color: colorValueObj || selectedColor,
-      size: sizeValueObj || selectedSize,
+      color: hasVariations ? (colorValueObj || selectedColor) : "N/A",
+      size: hasVariations ? (sizeValueObj || selectedSize) : "N/A",
       price: parseFloat(displayPrice),
       quantity: quantity
     });
@@ -435,30 +440,7 @@ export default function ProductClient({
             </div>
 
             {/* Guarantees */}
-            <div className="grid grid-cols-2 gap-4 py-6 border-y border-border mb-8">
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Truck className="w-5 h-5 text-foreground" />
-                <span className="flex items-center gap-1 flex-wrap">
-                  {lang === 'ar' ? 'شحن مجاني للطلبات فوق' : 'Free shipping over'}
-                  <span className="font-semibold flex items-center gap-1">
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                      <>
-                        <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1' : 'mr-1'}`} />
-                        <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className={`theme-dark-only ${lang === 'ar' ? 'ml-1' : 'mr-1'}`} />
-                        <span>{lang === 'ar' ? 'ر.س' : 'SAR'}</span>
-                      </>
-                    ) : (
-                      <span>{currencySymbol}</span>
-                    )}
-                    <span>{freeShippingThreshold || 100}</span>
-                  </span>
-                </span>
-              </div>
-              {/* <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <RefreshCw className="w-5 h-5 text-foreground" />
-                <span>{t('free_returns', lang)}</span>
-              </div> */}
-            </div>
+
           </div>
         </div>
 

@@ -88,7 +88,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     testimonials_subtitle: "Real reviews and experiences from our valued customers",
     
     // Product & Shop
-    add_to_cart: "Add to Cart",
+    add_to_cart: "Add to Quote Request",
     description: "Description",
     out_of_stock: "Out of Stock",
     no_products: "No products found.",
@@ -348,7 +348,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     testimonials_subtitle: "آراء وتجارب عملائنا الحقيقية",
     
     // Product & Shop
-    add_to_cart: "أضف إلى السلة",
+    add_to_cart: "أضف إلى طلب تسعيره",
     description: "الوصف",
     out_of_stock: "نفدت الكمية",
     no_products: "لم يتم العثور على منتجات.",
