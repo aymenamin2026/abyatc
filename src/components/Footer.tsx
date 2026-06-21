@@ -237,17 +237,26 @@ export default function Footer({ settings }: { settings?: any }) {
 
                 {/* قسم الموقع */}
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
-                    <MapPin className="w-3 h-3" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                      {t('address', lang)}
-                    </p>
-                    <p className="text-sm font-semibold text-foreground">
-                      {t('location', lang)}
-                    </p>
-                  </div>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=الرياض+حي+الفيصلية+شارع+القاهرة"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block cursor-pointer hover:opacity-80 transition-opacity"
+                  >
+                    <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
+
+                      <MapPin className="w-3 h-3" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+                        {t('address', lang)}
+                      </p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {t('location', lang)}
+                      </p>
+                    </div>
+                  </a>
+
                 </div>
               </div>
             </div>
