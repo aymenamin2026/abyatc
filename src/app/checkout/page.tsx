@@ -656,9 +656,9 @@ export default function Checkout() {
                       <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t border-border"></span>
                       </div>
-                      <div className="relative flex justify-center text-xs uppercase">
+                      {/* <div className="relative flex justify-center text-xs uppercase">
                         <span className="bg-background px-4 text-muted-foreground">{t('or', lang)}</span>
-                      </div>
+                      </div> */}
                     </div>
 
                     {/* <button onClick={() => setAuthMode('guest')} className="w-full text-muted-foreground hover:text-foreground underline underline-offset-4 py-2 font-medium transition-colors">
