@@ -8,71 +8,71 @@ import { ChevronDown } from "lucide-react";
 const content = {
   en: {
     heroTitle: "Frequently Asked Questions",
-    heroSubtitle: "Lulu’a Uniforms",
-    intro: "Find answers to our most common questions below. If you need further assistance, feel free to contact us.",
+    heroSubtitle: "Abiyat Lamea Contracting Co.",
+    intro: "Find answers to our most frequently asked questions about equipment rental below. If you need further assistance or would like to request a quote, please do not hesitate to contact us.",
     faqs: [
       {
-        question: "Why Choose Lulu’a Uniforms?",
-        answer: "We are a Saudi brand specialized in designing and supplying uniforms with a high level of professionalism, combining elegance, quality, and practical comfort."
+        question: "Why choose Abiyat Lamea Company for equipment rental?",
+        answer: "Because we provide a modern and diverse fleet of heavy equipment, with a full commitment to periodic maintenance and the highest safety standards, ensuring work continuity in your projects with high efficiency and minimal downtime."
       },
       {
-        question: "What is the quality of the materials used?",
-        answer: "We use high-quality materials designed to withstand daily use, with excellent color durability and practical cuts that last long."
+        question: "What is the condition and quality of the equipment available for rent?",
+        answer: "All our equipment is selected from the best global brands in the contracting sector. Each machine undergoes strict technical inspections and periodic maintenance before delivery to any work site to ensure the highest levels of performance and reliability."
       },
       {
-        question: "Are the designs suitable for different sectors?",
-        answer: "Yes, we provide integrated uniform solutions serving multiple sectors including hospitality, hotels, restaurants, reception, companies, and offices."
+        question: "Is your equipment suitable for different types of projects and sectors?",
+        answer: "Yes, our fleet includes a wide and diverse range of heavy equipment that meets the needs of various sectors, including building and construction projects, infrastructure, roads, as well as logistical and industrial projects."
       },
       {
-        question: "Do you pay attention to execution details?",
-        answer: "Absolutely. We pay close attention to the finest details such as cuts, color durability, and ease of care, ensuring our clients receive a product worthy of their name."
+        question: "Do you guarantee the equipment's readiness for work upon arrival at the site?",
+        answer: "Absolutely. We pay attention to the finest technical and operational details, and deliver the equipment to you fully equipped and ready for immediate operation to save your time and effort at the work site."
       },
       {
-        question: "Do you commit to delivery timelines?",
-        answer: "Yes, at Lulu’a Uniforms, we are committed to credibility, precision in execution, and strict respect for time and delivery schedules."
+        question: "Do you commit to equipment delivery schedules?",
+        answer: "We fully understand that time is a crucial factor in the success of contracting projects; therefore, we strictly commit to delivering equipment to work sites at the exact times agreed upon in the rental contract."
       },
       {
-        question: "Do you provide after-sales service?",
-        answer: "Yes, we strive to build long-term partnerships by delivering a reliable experience and high-standard products backed by dedicated support and an easy return/exchange policy."
+        question: "Do you provide technical support or maintenance during the rental period?",
+        answer: "Yes, we provide continuous technical support throughout the rental period. In the event of any emergency breakdown, we dispatch a mobile maintenance team to handle the issue on-site, or we replace the equipment to ensure your project schedule is not affected."
       },
       {
         question: "Do you have experience in the Saudi market?",
-        answer: "Yes, as a proud Saudi brand, we deeply understand local requirements, culture, and practical needs in the workplace across the Kingdom."
+        answer: "Yes, as a proud Saudi company, we deeply understand the requirements of the local contracting sector, occupational safety regulations, and the practical needs of work sites across the Kingdom."
       }
     ]
   },
   ar: {
     heroTitle: "الأسئلة الشائعة",
-    heroSubtitle: "لؤلؤة للأزياء الموحدة",
-    intro: "اعثر على إجابات لأسئلتنا الأكثر شيوعاً أدناه. إذا كنت بحاجة إلى مزيد من المساعدة، فلا تتردد في الاتصال بنا.",
+    heroSubtitle: "شركة لمعة ابيات للمقاولات",
+    intro: "اعثر على إجابات لأسئلتنا الأكثر شيوعاً حول تأجير المعدات أدناه. إذا كنت بحاجة إلى مزيد من المساعدة أو طلب تسعيرة، فلا تتردد في الاتصال بنا.",
     faqs: [
       {
-        question: "لماذا تختار لؤلؤة للأزياء الموحدة؟",
-        answer: "نحن علامة تجارية سعودية متخصصة في تصميم وتوريد الأزياء الموحدة بمستوى عالٍ من الاحترافية، مع الجمع بين الأناقة والجودة والراحة العملية."
+        question: "لماذا تختار شركة لمعة ابيات لتأجير المعدات؟",
+        answer: "لأننا نوفر أسطولاً حديثاً ومتنوعاً من المعدات الثقيلة، مع التزام تام بالصيانة الدورية وأعلى معايير السلامة، لضمان استمرارية العمل في مشاريعك بكفاءة عالية وبأقل أوقات التوقف."
       },
       {
-        question: "ما هي جودة الخامات المستخدمة؟",
-        answer: "نستخدم خامات عالية الجودة مصممة لتحمل الاستخدام اليومي، مع ثبات ممتاز للألوان وقصات عملية تدوم طويلاً."
+        question: "ما هي حالة وجودة المعدات المتوفرة للإيجار؟",
+        answer: "جميع معداتنا مختارة من أفضل العلامات التجارية العالمية في قطاع المقاولات. تخضع كل معدة لفحوصات فنية وصيانة دورية صارمة قبل تسليمها لأي موقع عمل لضمان أعلى مستويات الأداء والموثوقية."
       },
       {
-        question: "هل التصاميم مناسبة لقطاعات مختلفة؟",
-        answer: "نعم، نقدم حلولاً متكاملة للأزياء الموحدة تخدم قطاعات متعددة تشمل الضيافة، الفنادق، المطاعم، الاستقبال، الشركات والمكاتب."
+        question: "هل معداتكم مناسبة لمختلف أنواع المشاريع والقطاعات؟",
+        answer: "نعم، يضم أسطولنا مجموعة واسعة ومتنوعة من المعدات الثقيلة التي تلبي احتياجات مختلف القطاعات، بما في ذلك مشاريع البناء والتشييد، البنية التحتية، الطرق، والمشاريع اللوجستية والصناعية."
       },
       {
-        question: "هل تهتمون بتفاصيل التنفيذ؟",
-        answer: "بكل تأكيد. نولي اهتماماً دقيقاً لأدق التفاصيل مثل القصات، ثبات الألوان، وسهولة العناية، مما يضمن حصول عملائنا على منتج يليق باسمهم."
+        question: "هل تضمنون جاهزية المعدات للعمل فور وصولها للموقع؟",
+        answer: "بالتأكيد. نحن نهتم بأدق التفاصيل الفنية والتشغيلية، ونسلمك المعدة مزودة بكافة التجهيزات اللازمة وجاهزة للتشغيل الفوري لتوفير وقتك وجهدك في موقع العمل."
       },
       {
-        question: "هل تلتزمون بمواعيد التسليم؟",
-        answer: "نعم، في لؤلؤة للأزياء الموحدة، نلتزم بالمصداقية والدقة في التنفيذ واحترام الوقت وجداول التسليم الصارمة."
+        question: "هل تلتزمون بمواعيد تسليم المعدات؟",
+        answer: "ندرك تماماً أن الوقت عامل حاسم في نجاح مشاريع المقاولات؛ لذا نلتزم التزاماً صارماً بتوصيل المعدات إلى مواقع العمل في المواعيد الدقيقة المتفق عليها في عقد التأجير."
       },
       {
-        question: "هل تقدمون خدمات ما بعد البيع؟",
-        answer: "نعم، نسعى لبناء شراكات طويلة الأمد من خلال تقديم تجربة موثوقة ومنتجات ذات معايير عالية مدعومة بدعم مخصص وسياسة استرجاع/استبدال سهلة."
+        question: "هل تقدمون دعماً فنياً أو صيانة أثناء فترة التأجير؟",
+        answer: "نعم، نوفر دعماً فنياً مستمراً طوال فترة الإيجار. في حال حدوث أي عطل طارئ، نقوم بإرسال فريق صيانة متنقل للتعامل مع المشكلة في الموقع، أو نقوم باستبدال المعدة لضمان عدم تأثر جدولك الزمني."
       },
       {
         question: "هل لديكم خبرة في السوق السعودي؟",
-        answer: "نعم، بصفتنا علامة تجارية سعودية فخورة، فإننا نفهم بعمق المتطلبات المحلية والثقافة والاحتياجات العملية في بيئة العمل في جميع أنحاء المملكة."
+        answer: "نعم، بصفتنا شركة سعودية فخورة، فإننا نفهم بعمق متطلبات قطاع المقاولات المحلي، وأنظمة السلامة المهنية، والاحتياجات العملية لمواقع العمل في جميع أنحاء المملكة."
       }
     ]
   }
@@ -93,7 +93,7 @@ export default function FAQPage() {
       <section className="bg-muted py-20 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary via-background to-background"></div>
         <div className="relative z-10 max-w-3xl mx-auto">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -101,7 +101,7 @@ export default function FAQPage() {
           >
             {text.heroTitle}
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -129,8 +129,8 @@ export default function FAQPage() {
               const isOpen = openIndex === index;
 
               return (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className={`border border-border rounded-xl overflow-hidden transition-colors duration-300 ${isOpen ? 'bg-secondary/10 border-primary/30' : 'bg-card hover:border-primary/20'}`}
                 >
                   <button
