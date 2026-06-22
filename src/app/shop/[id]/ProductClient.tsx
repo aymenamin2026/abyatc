@@ -364,31 +364,25 @@ export default function ProductClient({
               attributes && attributes.length > 0 && attributes.map((attr: any) => {
                 const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
                 const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
-
-                // 1. فلترة القيم: نعرض فقط القيم التي تم ربطها بالمنتج من لوحة التحكم
+                console.log("ATTRIBUTE", attr.id, attr.name);
+                console.log("VALUES", attr.values);
+                console.log("VARIATIONS", product.variations);
                 const displayValues = attr.values.filter((val: any) => {
-                  // أ) إذا كان الباك إند يرسل حقل pivot أو علامة ربط للمنتج مباشرة
-                  if (val.product_id || val.pivot) return true;
-
-                  // ب) أو إذا كان هناك variations، نتحقق من وجود المعرف (id) أو القيمة بالكامل بمرونة
-                  if (product.variations && product.variations.length > 0) {
-                    const vEn = (val.value?.en || val.value || "").toUpperCase();
-                    return product.variations.some((v: any) => {
-                      // نتحقق من تداخل المعرفات أو النص داخل الـ variation specs
-                      const optionValues = v.options ? Object.values(v.options).map((o: any) => String(o).toUpperCase()) : [];
-                      const sku = (v.sku || "").toUpperCase();
-
-                      return (
-                        optionValues.includes(vEn) ||
-                        sku.includes(`-${vEn}`) ||
-                        sku.includes(`-${vEn}-`) ||
-                        v.attribute_value_id === val.id // مطابقة مباشرة عبر الـ ID لو توفرت
-                      );
-                    });
+                  // المنتج العادي
+                  if (!product.variations || product.variations.length === 0) {
+                    return true;
                   }
 
-                  // إذا لم تتوفر الشروط السابقة، نعيد true كـ Fallback لمنع الاختفاء التام
-                  return true;
+                  // مطابقة مباشرة بواسطة ID
+                  return product.variations.some((variation: any) => {
+                    if (!variation.options) return false;
+
+                    return Object.entries(variation.options).some(
+                      ([attributeId, valueId]) =>
+                        Number(attributeId) === Number(attr.id) &&
+                        Number(valueId) === Number(val.id)
+                    );
+                  });
                 });
 
                 // إذا لم تكن هناك قيم مخصصة لهذا المنتج، يتخطى العرض
