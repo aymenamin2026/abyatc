@@ -51,6 +51,7 @@ export default function ProductClient({
 }) {
   const { lang } = useLanguage();
   const shouldShowPrice = product.show_price !== false && product.show_price !== 0;
+
   // Process images
   const images = product.images && product.images.length > 0
     ? product.images.map((img: string) => getImageUrl(img))
@@ -71,8 +72,10 @@ export default function ProductClient({
   let displayPrice = parseFloat(product.base_price || "0").toFixed(2);
 
   const [activeImage, setActiveImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+
+  // 🛠️ تحويل التخزين إلى كائن ديناميكي ليشمل أي أتربيوت يتم إضافته مستقبلاً
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
+
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("details");
   const [isAddedToCart, setIsAddedToCart] = useState(false);
@@ -85,30 +88,21 @@ export default function ProductClient({
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const { addToCart } = useCart();
 
-  // Extract from API
-  const sizeAttr = attributes?.find((a: any) => a.slug === 'size' || a.name?.en === 'Size');
-  const colorAttr = attributes?.find((a: any) => a.slug === 'color' || a.name?.en === 'Color');
-
-  // Filter available options based on product variations
   const hasVariations = product.variations && product.variations.length > 0;
 
-  const availableSizes = hasVariations && sizeAttr ? sizeAttr.values.filter((size: any) => {
-    const sEn = size.value?.en || size.value;
-    return product.variations.some((v: any) => v.sku?.endsWith(`-${sEn}`));
-  }) : [];
-
-  const availableColors = hasVariations && colorAttr ? colorAttr.values.filter((color: any) => {
-    const cEn = color.value?.en || color.value;
-    const prefix = cEn.substring(0, 3).toUpperCase();
-    return product.variations.some((v: any) => v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`));
-  }) : []; useEffect(() => {
-    if (availableSizes.length > 0 && !selectedSize) {
-      setSelectedSize(availableSizes[0].value?.en || availableSizes[0].value);
+  // 🛠️ تعيين القيم الافتراضية لأي أتربيوت قادم من الباك إند تلقائياً عند تحميل الصفحة
+  useEffect(() => {
+    if (attributes && attributes.length > 0) {
+      const defaults: Record<string, string> = {};
+      attributes.forEach((attr: any) => {
+        if (attr.values && attr.values.length > 0) {
+          const slug = attr.slug || attr.name?.en?.toLowerCase();
+          defaults[slug] = attr.values[0].value?.en || attr.values[0].value;
+        }
+      });
+      setSelectedAttributes(defaults);
     }
-    if (availableColors.length > 0 && !selectedColor) {
-      setSelectedColor(availableColors[0].value?.en || availableColors[0].value);
-    }
-  }, [availableSizes, availableColors, selectedSize, selectedColor]);
+  }, [attributes]);
 
   useEffect(() => {
     async function getShipping() {
@@ -144,11 +138,10 @@ export default function ProductClient({
         rating: newReview.rating,
         comment: newReview.comment
       });
-      // Refresh reviews
       const updatedRevs = await fetchReviews(product.id);
       setReviews(updatedRevs);
       setNewReview({ rating: 5, comment: "" });
-      setCanReview(false); // Can only review once or wait for moderation if that's the logic
+      setCanReview(false);
     } catch (err) {
       console.error(err);
     } finally {
@@ -156,38 +149,56 @@ export default function ProductClient({
     }
   };
 
-  // Adjust price if a specific variation is selected
-  if (hasVariations && selectedSize && selectedColor) {
-    const prefix = selectedColor.substring(0, 3).toUpperCase();
-    const variation = product.variations.find((v: any) =>
-      (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${selectedSize}`)
-    );
-    if (variation && variation.price) {
-      displayPrice = parseFloat(variation.price).toFixed(2);
+  // 🛠️ تحديث السعر بناءً على المتغيرات المحددة ديناميكياً (مطابقة الـ SKU)
+  if (hasVariations && Object.keys(selectedAttributes).length > 0) {
+    const sizeSelection = selectedAttributes['size'];
+    const colorSelection = selectedAttributes['color'];
+
+    if (sizeSelection && colorSelection) {
+      const prefix = colorSelection.substring(0, 3).toUpperCase();
+      const variation = product.variations.find((v: any) =>
+        (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${sizeSelection}`)
+      );
+      if (variation && variation.price) {
+        displayPrice = parseFloat(variation.price).toFixed(2);
+      }
     }
   }
 
   const handleAddToCart = async () => {
-    if (hasVariations && (!selectedSize || !selectedColor)) {
-      alert(lang === 'ar' ? 'يرجى اختيار اللون والمقاس' : 'Please select color and size');
+    // التأكد من أن جميع الأتربيوتس المطلوبة تم اختيارها
+    const missingAttribute = attributes.some(attr => {
+      const slug = attr.slug || attr.name?.en?.toLowerCase();
+      return !selectedAttributes[slug];
+    });
+
+    if (hasVariations && missingAttribute) {
+      alert(lang === 'ar' ? 'يرجى تحديد جميع الخيارات المطلوبة للمنتج' : 'Please select all required product options');
       return;
     }
 
     setIsAddedToCart(true);
-    const colorValueObj = hasVariations
-      ? availableColors.find((c: any) => (c.value?.en || c.value) === selectedColor)?.value
-      : null;
 
-    const sizeValueObj = hasVariations
-      ? availableSizes.find((s: any) => (s.value?.en || s.value) === selectedSize)?.value
-      : null;
+    // تجهيز كائن المتغيرات للإرسال للسلة
+    const formattedOptions: Record<string, string> = {};
+    attributes.forEach(attr => {
+      const slug = attr.slug || attr.name?.en?.toLowerCase();
+      const selectedValueEn = selectedAttributes[slug];
+      const fullValueObj = attr.values.find((v: any) => (v.value?.en || v.value) === selectedValueEn);
+
+      formattedOptions[slug] = fullValueObj
+        ? (fullValueObj.value?.[lang] || fullValueObj.value?.en || fullValueObj.value)
+        : selectedValueEn || "N/A";
+    });
 
     await addToCart({
       product_id: product.id,
       name: product.name,
       image: images[0],
-      color: hasVariations ? (colorValueObj || selectedColor) : "N/A",
-      size: hasVariations ? (sizeValueObj || selectedSize) : "N/A",
+      // نمرر الخيارات بشكل مرن أو نعتمد على الهيكلية القديمة كـ Fallback
+      color: formattedOptions['color'] || "N/A",
+      size: formattedOptions['size'] || "N/A",
+      attributes: formattedOptions, // إرسال كل الخيارات الجديدة للسلة هنا
       price: parseFloat(displayPrice),
       quantity: quantity
     });
@@ -203,7 +214,6 @@ export default function ProductClient({
     const y = ((e.clientY - top) / height) * 100;
     setZoomPos({ x, y });
   };
-
   return (
     <div className="flex flex-col min-h-screen pt-32 pb-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -273,12 +283,17 @@ export default function ProductClient({
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2"> {name}</h1>
 
             {/* SKU */}
+            {/* SKU */}
             {(() => {
               let currentSku = product.sku || '';
-              if (hasVariations && selectedSize && selectedColor) {
-                const prefix = selectedColor.substring(0, 3).toUpperCase();
+              // 🛠️ نقرأ القيم الآن من الكائن الديناميكي الجديد
+              const sizeSelection = selectedAttributes['size'];
+              const colorSelection = selectedAttributes['color'];
+
+              if (hasVariations && sizeSelection && colorSelection) {
+                const prefix = colorSelection.substring(0, 3).toUpperCase();
                 const variation = product.variations.find((v: any) =>
-                  (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${selectedSize}`)
+                  (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${sizeSelection}`)
                 );
                 if (variation?.sku) currentSku = variation.sku;
               }
@@ -329,66 +344,81 @@ export default function ProductClient({
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
 
-            {/* Colors */}
-            {availableColors.length > 0 && (
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="font-medium text-foreground">
-                    {colorAttr?.name?.[lang] || colorAttr?.name?.en || "Color"}:
-                    <span className="text-muted-foreground font-normal ml-2">
-                      {availableColors.find((c: any) => (c.value?.en || c.value) === selectedColor)?.value?.[lang] || selectedColor}
-                    </span>
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-4">
-                  {availableColors.map((color: any) => {
-                    const cEn = color.value?.en || color.value;
-                    const cLocal = color.value?.[lang] || cEn;
-                    const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
+            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي بالكامل */}
+            {attributes && attributes.length > 0 && attributes.map((attr: any) => {
+              const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
+              const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
 
-                    return (
-                      <button
-                        key={color.id}
-                        onClick={() => setSelectedColor(cEn)}
-                        className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${selectedColor === cEn ? 'ring-2 ring-primary ring-offset-2' : 'hover:scale-110'}`}
-                        title={cLocal}
-                      >
-                        {selectedColor === cEn && (bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-black" />}
-                        {selectedColor === cEn && !(bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-white" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+              // 1. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة فخمة
+              if (attrSlug === 'color') {
+                return (
+                  <div key={attr.id} className="mb-6">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="font-medium text-foreground">
+                        {attrName}:
+                        <span className="text-muted-foreground font-normal ml-2">
+                          {attr.values.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-4">
+                      {attr.values.map((color: any) => {
+                        const cEn = color.value?.en || color.value;
+                        const cLocal = color.value?.[lang] || cEn;
+                        const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
+                        const isSelected = selectedAttributes[attrSlug] === cEn;
 
-            {/* Sizes */}
-            {availableSizes.length > 0 && (
-              <div className="mb-8">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="font-medium text-foreground">{sizeAttr?.name?.[lang] || sizeAttr?.name?.en || "Size"}</span>
-                  <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                  {availableSizes.map((size: any) => {
-                    const sEn = size.value?.en || size.value;
-                    const sLocal = size.value?.[lang] || sEn;
+                        return (
+                          <button
+                            key={color.id}
+                            onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: cEn }))}
+                            className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${isSelected ? 'ring-2 ring-primary ring-offset-2 scale-105' : 'hover:scale-110'}`}
+                            title={cLocal}
+                          >
+                            {isSelected && (bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-black" />}
+                            {isSelected && !(bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-white" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
 
-                    return (
-                      <button
-                        key={size.id}
-                        onClick={() => setSelectedSize(sEn)}
-                        className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
-                          ${selectedSize === sEn ? 'border-primary bg-primary text-primary-foreground' : 'border-border hover:border-primary text-foreground'}`}
-                      >
-                        {sLocal}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+              // 2. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
+              return (
+                <div key={attr.id} className="mb-8">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium text-foreground">{attrName}</span>
+                    {attrSlug === 'size' && (
+                      <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                    {attr.values.map((val: any) => {
+                      const vEn = val.value?.en || val.value;
+                      const vLocal = val.value?.[lang] || vEn;
+                      const isSelected = selectedAttributes[attrSlug] === vEn;
 
+                      return (
+                        <button
+                          key={val.id}
+                          onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
+                          className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
+                            ${isSelected
+                              ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                              : 'border-border bg-card hover:border-primary text-foreground'
+                            }`}
+                        >
+                          {vLocal}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+            {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي */}
             {/* Actions */}
             <div className="flex gap-4 mb-4">
               {/* إظهار اختيار الكمية فقط إذا كان السعر متاحاً */}
@@ -404,14 +434,21 @@ export default function ProductClient({
               <button
                 onClick={handleAddToCart}
                 className={`flex-1 h-14 rounded-full font-medium text-lg transition-all shadow-lg flex items-center justify-center
-                  ${isAddedToCart
+    ${isAddedToCart
                     ? 'bg-green-600 text-white hover:bg-green-700'
                     : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'
                   }`}
-                disabled={(hasVariations && (!selectedColor || !selectedSize)) || isAddedToCart}
+                {/* 🛠️ تحديث الشرط ليفحص ديناميكياً أي أتربيوت ناقص */}
+                disabled={
+                  isAddedToCart ||
+                  (hasVariations && attributes.some(attr => !selectedAttributes[attr.slug || attr.name?.en?.toLowerCase()]))
+                }
               >
                 {isAddedToCart ? (
-                  <span className="flex items-center gap-2"><Check className="w-5 h-5" /> {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}</span>
+                  <span className="flex items-center gap-2">
+                    <Check className="w-5 h-5" />
+                    {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}
+                  </span>
                 ) : (
                   <>
                     {t('add_to_cart', lang)}
