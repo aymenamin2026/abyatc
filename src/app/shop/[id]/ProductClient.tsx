@@ -352,109 +352,113 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
+            <pre>
+              {JSON.stringify(attributes, null, 2)}
+            </pre>
             {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بدقة */}
-            {attributes && attributes.length > 0 && attributes.map((attr: any) => {
-              const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
-              const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
+            {
+              attributes && attributes.length > 0 && attributes.map((attr: any) => {
+                const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
+                const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
 
-              // 1. فلترة القيم: نعرض فقط القيم التي تم ربطها بالمنتج من لوحة التحكم
-              const displayValues = attr.values.filter((val: any) => {
-                // أ) إذا كان الباك إند يرسل حقل pivot أو علامة ربط للمنتج مباشرة
-                if (val.product_id || val.pivot) return true;
+                // 1. فلترة القيم: نعرض فقط القيم التي تم ربطها بالمنتج من لوحة التحكم
+                const displayValues = attr.values.filter((val: any) => {
+                  // أ) إذا كان الباك إند يرسل حقل pivot أو علامة ربط للمنتج مباشرة
+                  if (val.product_id || val.pivot) return true;
 
-                // ب) أو إذا كان هناك variations، نتحقق من وجود المعرف (id) أو القيمة بالكامل بمرونة
-                if (product.variations && product.variations.length > 0) {
-                  const vEn = (val.value?.en || val.value || "").toUpperCase();
-                  return product.variations.some((v: any) => {
-                    // نتحقق من تداخل المعرفات أو النص داخل الـ variation specs
-                    const optionValues = v.options ? Object.values(v.options).map((o: any) => String(o).toUpperCase()) : [];
-                    const sku = (v.sku || "").toUpperCase();
+                  // ب) أو إذا كان هناك variations، نتحقق من وجود المعرف (id) أو القيمة بالكامل بمرونة
+                  if (product.variations && product.variations.length > 0) {
+                    const vEn = (val.value?.en || val.value || "").toUpperCase();
+                    return product.variations.some((v: any) => {
+                      // نتحقق من تداخل المعرفات أو النص داخل الـ variation specs
+                      const optionValues = v.options ? Object.values(v.options).map((o: any) => String(o).toUpperCase()) : [];
+                      const sku = (v.sku || "").toUpperCase();
 
-                    return (
-                      optionValues.includes(vEn) ||
-                      sku.includes(`-${vEn}`) ||
-                      sku.includes(`-${vEn}-`) ||
-                      v.attribute_value_id === val.id // مطابقة مباشرة عبر الـ ID لو توفرت
-                    );
-                  });
+                      return (
+                        optionValues.includes(vEn) ||
+                        sku.includes(`-${vEn}`) ||
+                        sku.includes(`-${vEn}-`) ||
+                        v.attribute_value_id === val.id // مطابقة مباشرة عبر الـ ID لو توفرت
+                      );
+                    });
+                  }
+
+                  // إذا لم تتوفر الشروط السابقة، نعيد true كـ Fallback لمنع الاختفاء التام
+                  return true;
+                });
+
+                // إذا لم تكن هناك قيم مخصصة لهذا المنتج، يتخطى العرض
+                if (displayValues.length === 0) return null;
+
+                // 2. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة
+                if (attrSlug === 'color') {
+                  return (
+                    <div key={attr.id} className="mb-6">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="font-medium text-foreground">
+                          {attrName}:
+                          <span className="text-muted-foreground font-normal ml-2">
+                            {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
+                          </span>
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-4">
+                        {displayValues.map((color: any) => {
+                          const cEn = color.value?.en || color.value;
+                          const cLocal = color.value?.[lang] || cEn;
+                          const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
+                          const isSelected = selectedAttributes[attrSlug] === cEn;
+
+                          return (
+                            <button
+                              key={color.id}
+                              onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: cEn }))}
+                              className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${isSelected ? 'ring-2 ring-primary ring-offset-2 scale-105' : 'hover:scale-110'}`}
+                              title={cLocal}
+                            >
+                              {isSelected && (bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-black" />}
+                              {isSelected && !(bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-white" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
                 }
 
-                // إذا لم تتوفر الشروط السابقة، نعيد true كـ Fallback لمنع الاختفاء التام
-                return true;
-              });
-
-              // إذا لم تكن هناك قيم مخصصة لهذا المنتج، يتخطى العرض
-              if (displayValues.length === 0) return null;
-
-              // 2. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة
-              if (attrSlug === 'color') {
+                // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
                 return (
-                  <div key={attr.id} className="mb-6">
+                  <div key={attr.id} className="mb-8">
                     <div className="flex justify-between items-center mb-3">
-                      <span className="font-medium text-foreground">
-                        {attrName}:
-                        <span className="text-muted-foreground font-normal ml-2">
-                          {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
-                        </span>
-                      </span>
+                      <span className="font-medium text-foreground">{attrName}</span>
+                      {attrSlug === 'size' && (
+                        <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
+                      )}
                     </div>
-                    <div className="flex flex-wrap gap-4">
-                      {displayValues.map((color: any) => {
-                        const cEn = color.value?.en || color.value;
-                        const cLocal = color.value?.[lang] || cEn;
-                        const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
-                        const isSelected = selectedAttributes[attrSlug] === cEn;
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                      {displayValues.map((val: any) => {
+                        const vEn = val.value?.en || val.value;
+                        const vLocal = val.value?.[lang] || vEn;
+                        const isSelected = selectedAttributes[attrSlug] === vEn;
 
                         return (
                           <button
-                            key={color.id}
-                            onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: cEn }))}
-                            className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${isSelected ? 'ring-2 ring-primary ring-offset-2 scale-105' : 'hover:scale-110'}`}
-                            title={cLocal}
+                            key={val.id}
+                            onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
+                            className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
+                ${isSelected
+                                ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                                : 'border-border bg-card hover:border-primary text-foreground'
+                              }`}
                           >
-                            {isSelected && (bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-black" />}
-                            {isSelected && !(bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-white" />}
+                            {vLocal}
                           </button>
                         );
                       })}
                     </div>
                   </div>
                 );
-              }
-
-              // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
-              return (
-                <div key={attr.id} className="mb-8">
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="font-medium text-foreground">{attrName}</span>
-                    {attrSlug === 'size' && (
-                      <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                    {displayValues.map((val: any) => {
-                      const vEn = val.value?.en || val.value;
-                      const vLocal = val.value?.[lang] || vEn;
-                      const isSelected = selectedAttributes[attrSlug] === vEn;
-
-                      return (
-                        <button
-                          key={val.id}
-                          onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
-                          className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
-                ${isSelected
-                              ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                              : 'border-border bg-card hover:border-primary text-foreground'
-                            }`}
-                        >
-                          {vLocal}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
+              })}
             {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي والمفلتر */}
             {/* Actions */}
             <div className="flex gap-4 mb-4">
