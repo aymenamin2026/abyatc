@@ -91,13 +91,15 @@ export default function ProductClient({
   const hasVariations = product.variations && product.variations.length > 0;
 
   // 🛠️ تعيين القيم الافتراضية لأي أتربيوت قادم من الباك إند تلقائياً عند تحميل الصفحة
+  // 🛠️ تعيين القيم الافتراضية بناءً على الـ slug الفعلي بشكل دقيق ومضمون
   useEffect(() => {
     if (attributes && attributes.length > 0) {
       const defaults: Record<string, string> = {};
       attributes.forEach((attr: any) => {
         if (attr.values && attr.values.length > 0) {
-          const slug = attr.slug || attr.name?.en?.toLowerCase();
-          defaults[slug] = attr.values[0].value?.en || attr.values[0].value;
+          // نستخدم الـ slug كما هو قادم من قاعدة البيانات، أو نعتمد الـ id كمعرف فريد لا يخطئ
+          const key = attr.slug || `attr_${attr.id}`;
+          defaults[key] = attr.values[0].value?.en || attr.values[0].value;
         }
       });
       setSelectedAttributes(defaults);
