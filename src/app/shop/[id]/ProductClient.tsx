@@ -352,13 +352,32 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
-
-            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي بالكامل */}
+            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بناءً على متغيرات المنتج */}
             {attributes && attributes.length > 0 && attributes.map((attr: any) => {
               const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
               const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
 
-              // 1. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة فخمة
+              // 1. فلترة القيم: نقوم بعرض القيم التي تحتوي على فارييشن (Variation) مطابق لها فقط في المنتج
+              const displayValues = attr.values.filter((val: any) => {
+                const vEn = val.value?.en || val.value;
+
+                // إذا كان المنتج لا يحتوي على متغيرات أصلًا، نعرض القيم كـ Fallback
+                if (!product.variations || product.variations.length === 0) return true;
+
+                // الفحص بذكاء: إذا كانت القيمة (مثل الـ SKU أو رمز المقاس/اللون) موجودة داخل الـ SKU الخاص بالـ Variation
+                return product.variations.some((v: any) => {
+                  const sku = v.sku?.toUpperCase() || "";
+                  const valStr = vEn.toUpperCase();
+
+                  // مطابقة مرنة: تفحص إذا كان الـ SKU ينتهي بالقيمة، أو يحتوي عليها بعد علامة الـ (-)
+                  return sku.endsWith(`-${valStr}`) || sku.includes(`-${valStr}-`) || sku.includes(`-${valStr.substring(0, 3)}`);
+                });
+              });
+
+              // إذا لم تكن هناك قيم مُسندة لهذا الأتربيوت في هذا المنتج، لا تعرض القسم نهائياً
+              if (displayValues.length === 0) return null;
+
+              // 2. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة
               if (attrSlug === 'color') {
                 return (
                   <div key={attr.id} className="mb-6">
@@ -366,12 +385,12 @@ export default function ProductClient({
                       <span className="font-medium text-foreground">
                         {attrName}:
                         <span className="text-muted-foreground font-normal ml-2">
-                          {attr.values.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
+                          {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
                         </span>
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-4">
-                      {attr.values.map((color: any) => {
+                      {displayValues.map((color: any) => {
                         const cEn = color.value?.en || color.value;
                         const cLocal = color.value?.[lang] || cEn;
                         const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
@@ -394,7 +413,7 @@ export default function ProductClient({
                 );
               }
 
-              // 2. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
+              // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية بمقاساتها المحددة فقط
               return (
                 <div key={attr.id} className="mb-8">
                   <div className="flex justify-between items-center mb-3">
@@ -404,7 +423,7 @@ export default function ProductClient({
                     )}
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                    {attr.values.map((val: any) => {
+                    {displayValues.map((val: any) => {
                       const vEn = val.value?.en || val.value;
                       const vLocal = val.value?.[lang] || vEn;
                       const isSelected = selectedAttributes[attrSlug] === vEn;
@@ -414,7 +433,7 @@ export default function ProductClient({
                           key={val.id}
                           onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
                           className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
-                            ${isSelected
+                ${isSelected
                               ? 'border-primary bg-primary text-primary-foreground shadow-sm'
                               : 'border-border bg-card hover:border-primary text-foreground'
                             }`}
@@ -427,7 +446,7 @@ export default function ProductClient({
                 </div>
               );
             })}
-            {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي */}
+            {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي والمفلتر */}
             {/* Actions */}
             <div className="flex gap-4 mb-4">
               {/* إظهار اختيار الكمية فقط إذا كان السعر متاحاً */}
