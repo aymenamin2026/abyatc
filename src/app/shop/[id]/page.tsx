@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { fetchProductBySlug, fetchProducts, fetchSettings, fetchAttributes } from "@/lib/api";
 import ProductClient from "./ProductClient";
 import { notFound } from "next/navigation";
