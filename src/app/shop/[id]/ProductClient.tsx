@@ -349,24 +349,33 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
-            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي الموحد والمفلتر */}
+            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي الموحد والمفلتر بناءً على متغيرات المنتج */}
             {attributes && attributes.length > 0 && attributes.map((attr: any) => {
               const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
               const attrKey = (attr.slug || attr.name?.en || `attr_${attr.id}`).toLowerCase();
 
-              // فلترة القيم: إظهار القيم التي تم ربطها بالفارييشن فقط، أو إظهارها كلها كـ Fallback
+              // 1. فلترة القيم: إظهار القيم التي تمتلك فارييشن نشط للمنتج فقط
               const displayValues = attr.values.filter((val: any) => {
-                if (val.product_id || val.pivot) return true;
-                if (product.variations && product.variations.length > 0) {
-                  const vEn = (val.value?.en || val.value || "").toUpperCase();
-                  return product.variations.some((v: any) => {
-                    const sku = (v.sku || "").toUpperCase();
-                    return sku.includes(`-${vEn}`) || sku.includes(`-${vEn}-`) || v.attribute_value_id === val.id;
-                  });
-                }
-                return true;
+                // إذا كان المنتج بسيط (Simple) ولا يحتوي على فارييشنز، نعرض القيم كـ Fallback
+                if (!product.variations || product.variations.length === 0) return true;
+
+                // التحقق من الـ variations المتاحة للمنتج
+                return product.variations.some((v: any) => {
+                  // أ) إذا كان الباك إند يرسل كائن خيارات صريح داخل الفارييشن (مثل v.options)
+                  if (v.options) {
+                    return Object.values(v.options).some(
+                      (optVal: any) => String(optVal).toLowerCase() === String(val.value?.en || val.value).toLowerCase()
+                    );
+                  }
+
+                  // ب) فحص مطابقة الـ SKU كخيار احتياطي آمن ومجرب
+                  const sku = (v.sku || "").toUpperCase();
+                  const valStr = String(val.value?.en || val.value || "").toUpperCase();
+                  return sku.includes(`-${valStr}`) || sku.includes(`-${valStr}-`) || sku.endsWith(`-${valStr}`);
+                });
               });
 
+              // إذا لم تكن هناك قيم لهذا المنتج في هذا الأتربيوت المحدد، نتخطى عرضه تماماً
               if (displayValues.length === 0) return null;
 
               // إذا كان الأتربيوت هو اللون
@@ -425,7 +434,7 @@ export default function ProductClient({
                           key={val.id}
                           onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrKey]: vEn }))}
                           className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
-                            ${isSelected
+                ${isSelected
                               ? 'border-primary bg-primary text-primary-foreground shadow-sm'
                               : 'border-border bg-card hover:border-primary text-foreground'
                             }`}
@@ -438,7 +447,7 @@ export default function ProductClient({
                 </div>
               );
             })}
-            {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي الموحد */}
+            {/* 🛠️ نهاية قسم الأتربيوتس */}
             {/* Actions */}
             <div className="flex gap-4 mb-4">
               {/* إظهار اختيار الكمية فقط إذا كان السعر متاحاً */}
