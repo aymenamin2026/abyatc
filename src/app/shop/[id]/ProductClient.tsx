@@ -151,10 +151,11 @@ export default function ProductClient({
     }
   };
 
-  // 🛠️ تحديث السعر بناءً على المتغيرات المحددة ديناميكياً (مطابقة الـ SKU)
+  // 🛠️ تحديث السعر بمطابقة مرنة لأسماء المفاتيح (حروف كبيرة أو صغيرة)
   if (hasVariations && Object.keys(selectedAttributes).length > 0) {
-    const sizeSelection = selectedAttributes['size'];
-    const colorSelection = selectedAttributes['color'];
+    // فحص مرن للحروف الكبيرة والصغيرة القادمة من الباك إند
+    const sizeSelection = selectedAttributes['size'] || selectedAttributes['Size'] || selectedAttributes[attributes.find(a => a.slug?.toLowerCase() === 'size')?.slug];
+    const colorSelection = selectedAttributes['color'] || selectedAttributes['Color'] || selectedAttributes[attributes.find(a => a.slug?.toLowerCase() === 'color')?.slug];
 
     if (sizeSelection && colorSelection) {
       const prefix = colorSelection.substring(0, 3).toUpperCase();
@@ -168,10 +169,10 @@ export default function ProductClient({
   }
 
   const handleAddToCart = async () => {
-    // التأكد من أن جميع الأتربيوتس المطلوبة تم اختيارها
+    // التأكد من اختيار كل السمات المتاحة
     const missingAttribute = attributes.some(attr => {
-      const slug = attr.slug || attr.name?.en?.toLowerCase();
-      return !selectedAttributes[slug];
+      const key = attr.slug || `attr_${attr.id}`;
+      return !selectedAttributes[key];
     });
 
     if (hasVariations && missingAttribute) {
@@ -181,26 +182,32 @@ export default function ProductClient({
 
     setIsAddedToCart(true);
 
-    // تجهيز كائن المتغيرات للإرسال للسلة
+    // تجهيز الخيارات بترجمة لغوية متناسقة
     const formattedOptions: Record<string, string> = {};
     attributes.forEach(attr => {
-      const slug = attr.slug || attr.name?.en?.toLowerCase();
-      const selectedValueEn = selectedAttributes[slug];
+      const key = attr.slug || `attr_${attr.id}`;
+      const selectedValueEn = selectedAttributes[key];
       const fullValueObj = attr.values.find((v: any) => (v.value?.en || v.value) === selectedValueEn);
 
-      formattedOptions[slug] = fullValueObj
+      formattedOptions[key.toLowerCase()] = fullValueObj
         ? (fullValueObj.value?.[lang] || fullValueObj.value?.en || fullValueObj.value)
         : selectedValueEn || "N/A";
     });
+
+    // استخراج الخيارات الإضافية الجديدة لدمجها لـ TypeScript
+    const baseSize = formattedOptions['size'] || "N/A";
+    const extraOptions = Object.entries(formattedOptions)
+      .filter(([key]) => key !== 'color' && key !== 'size')
+      .map(([_, val]) => val)
+      .join(' - ');
 
     await addToCart({
       product_id: product.id,
       name: product.name,
       image: images[0],
-      // نمرر الخيارات بشكل مرن أو نعتمد على الهيكلية القديمة كـ Fallback
       color: formattedOptions['color'] || "N/A",
-      size: formattedOptions['size'] || "N/A",
-      attributes: formattedOptions, // إرسال كل الخيارات الجديدة للسلة هنا
+      // دمج ذكي متوافق 100% مع نوع البيانات المعرف بـ CartContext
+      size: extraOptions ? `${baseSize} (${extraOptions})` : baseSize,
       price: parseFloat(displayPrice),
       quantity: quantity
     });
