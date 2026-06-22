@@ -438,7 +438,6 @@ export default function ProductClient({
                     ? 'bg-green-600 text-white hover:bg-green-700'
                     : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'
                   }`}
-                {/* 🛠️ تحديث الشرط ليفحص ديناميكياً أي أتربيوت ناقص */}
                 disabled={
                   isAddedToCart ||
                   (hasVariations && attributes.some(attr => !selectedAttributes[attr.slug || attr.name?.en?.toLowerCase()]))
