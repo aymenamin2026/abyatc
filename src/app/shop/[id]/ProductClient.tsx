@@ -291,21 +291,42 @@ export default function ProductClient({
             {/* SKU */}
             {/* SKU */}
             {(() => {
-              let currentSku = product.sku || '';
-              // 🛠️ نقرأ القيم الآن من الكائن الديناميكي الجديد
-              const sizeSelection = selectedAttributes['size'];
-              const colorSelection = selectedAttributes['color'];
+              // 1. القيمة الافتراضية للـ SKU في حال لم يتم اختيار كافة المتغيرات بعد
+              let currentSku = product.sku || "1010";
 
-              if (hasVariations && sizeSelection && colorSelection) {
-                const prefix = colorSelection.substring(0, 3).toUpperCase();
-                const variation = product.variations.find((v: any) =>
-                  (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${sizeSelection}`)
-                );
-                if (variation?.sku) currentSku = variation.sku;
+              // 2. إذا كان المنتج يحتوي على متغيرات (Variations) وقام المستخدم باختيار خيار واحد على الأقل
+              if (hasVariations && Object.keys(selectedAttributes).length > 0) {
+
+                // البحث عن الفارييشن المطابق للخيارات المحددة حالياً في الـ State
+                const variation = product.variations.find((v: any) => {
+
+                  // أ) إذا كان الباك إند (لارافيل) يرسل كائن خيارات صريح ومباشر داخل الفارييشن (v.options)
+                  if (v.options) {
+                    return Object.entries(selectedAttributes).every(([key, value]) => {
+                      const optVal = v.options[key] || v.options[key.toLowerCase()] || v.options[key.toUpperCase()];
+                      return String(optVal).toLowerCase() === String(value).toLowerCase();
+                    });
+                  }
+
+                  // ب) كخيار احتياطي تلقائي: الفحص والمطابقة عبر نصوص الـ SKU المدمجة
+                  const skuUpper = (v.sku || "").toUpperCase();
+                  return Object.values(selectedAttributes).every((val: any) => {
+                    const valUpper = String(val).toUpperCase();
+                    return skuUpper.includes(`-${valUpper}`) || skuUpper.includes(`${valUpper}`);
+                  });
+                });
+
+                // إذا عثرنا على الفارييشن المطابق، نأخذ الـ SKU الخاص به فوراً
+                if (variation && variation.sku) {
+                  currentSku = variation.sku;
+                }
               }
+
+              // 3. عرض الـ SKU المحدث والنهائي للمستخدم في الصفحة
               return currentSku ? (
                 <div className="text-sm text-muted-foreground mb-4">
-                  <span className="font-medium">{lang === 'ar' ? 'رمز المنتج' : 'SKU'}:</span> <span className="font-mono">{currentSku}</span>
+                  <span className="font-medium">{lang === 'ar' ? 'رمز المنتج :' : 'SKU :'}</span>{' '}
+                  <span className="font-mono">{currentSku}</span>
                 </div>
               ) : null;
             })()}
@@ -349,36 +370,40 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
-            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي الموحد والمفلتر بناءً على Variations المنتج */}
+            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي الموحد والمفلتر بدقة قاطعة */}
             {attributes && attributes.length > 0 && attributes.map((attr: any) => {
               const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
               const attrKey = (attr.slug || attr.name?.en || `attr_${attr.id}`).toLowerCase();
 
-              // 1. الفلترة الحقيقية: نمر على قيم الأتربيوت ونبقي فقط على القيم التي تظهر داخل الـ Variations لهذا المنتج
+              // فلترة القيم: إظهار القيم المرتبطة بالفارييشنز للمنتج الحالي فقط
               const displayValues = attr.values.filter((val: any) => {
-                // أ) إذا كان المنتج بسيط (Simple) ولا يحتوي على فارييشنز، نعرض القيم المتاحة كـ Fallback
+                // إذا كان المنتج بسيط (Simple)، نعرض القيم المتاحة كاملة
                 if (!product.variations || product.variations.length === 0) return true;
 
-                // ب) للمنتج المتغير: نتحقق هل القيمة الحالية مضافة في أي فارييشن للمنتج؟
+                // للمنتج المتغير: نتحقق هل معرف القيمة (id) أو نصها مستخدم في فارييشنز المنتج الحالي
                 const valEn = String(val.value?.en || val.value || "").toUpperCase();
 
                 return product.variations.some((v: any) => {
-                  const sku = (v.sku || "").toUpperCase();
+                  // أ) التحقق عبر المعرف المباشر إذا كان مدعوماً من الباك إند
+                  if (v.attribute_value_id === val.id || v.value_id === val.id) return true;
 
-                  // فحص المطابقة عبر الـ ID المباشر أو من خلال وجود القيمة نصياً داخل الـ SKU
-                  return (
-                    v.attribute_value_id === val.id ||
-                    sku.includes(`-${valEn}-`) ||
-                    sku.includes(`-${valEn}`) ||
-                    sku.endsWith(`-${valEn}`)
-                  );
+                  // ب) التحقق عبر كائن الـ options الداخلي للفارييشن
+                  if (v.options) {
+                    return Object.values(v.options).some(
+                      (optVal: any) => String(optVal).toUpperCase() === valEn
+                    );
+                  }
+
+                  // ج) التحقق الاحتياطي عبر الـ SKU
+                  const sku = (v.sku || "").toUpperCase();
+                  return sku.includes(`-${valEn}`) || sku.includes(`-${valEn}-`) || sku.endsWith(`-${valEn}`);
                 });
               });
 
-              // إذا كان الأتربيوت كاملاً لا يمتلك أي قيم نشطة لهذا المنتج، نخفيه تماماً ولا يظهر للمستخدم
+              // إذا كان الأتربيوت لا يحتوي على أي قيم مخصصة لهذا المنتج، يتخطى العرض
               if (displayValues.length === 0) return null;
 
-              // إذا كان الأتربيوت هو اللون
+              // إذا كان الأتربيوت هو اللون أو يحتوي على كود لوني
               if (attrKey === 'color') {
                 return (
                   <div key={attr.id} className="mb-6">
@@ -414,7 +439,7 @@ export default function ProductClient({
                 );
               }
 
-              // لأي أتربيوت آخر (مقاس، طول، خامة...)
+              // لأي أتربيوت آخر ديناميكي (مقاس، Mediumload، Lightload، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
               return (
                 <div key={attr.id} className="mb-8">
                   <div className="flex justify-between items-center mb-3">
@@ -423,7 +448,7 @@ export default function ProductClient({
                       <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
                     )}
                   </div>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                  <div className="flex flex-wrap gap-3">
                     {displayValues.map((val: any) => {
                       const vEn = val.value?.en || val.value;
                       const vLocal = val.value?.[lang] || vEn;
@@ -433,10 +458,10 @@ export default function ProductClient({
                         <button
                           key={val.id}
                           onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrKey]: vEn }))}
-                          className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
+                          className={`px-5 py-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-center min-w-[70px]
                 ${isSelected
-                              ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                              : 'border-border bg-card hover:border-primary text-foreground'
+                              ? 'border-primary bg-primary text-primary-foreground shadow-sm scale-105'
+                              : 'border-border bg-card hover:border-primary text-foreground hover:scale-102'
                             }`}
                         >
                           {vLocal}
@@ -447,7 +472,7 @@ export default function ProductClient({
                 </div>
               );
             })}
-            {/* 🛠️ نهاية قسم الأتربيوتس */}
+            {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي الموحد */}
             {/* Actions */}
             <div className="flex gap-4 mb-4">
               {/* إظهار اختيار الكمية فقط إذا كان السعر متاحاً */}
