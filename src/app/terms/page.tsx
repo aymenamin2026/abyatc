@@ -13,6 +13,7 @@ const content = {
     sections: [
       {
         title: "1. Definitions",
+        introText: "",
         items: [
           "The Company / The Website: Lamea Abyat Contracting Company.",
           "The Client / The User: Any person or entity (individual or company) who uses the website or requests the rental of equipment or services.",
@@ -21,6 +22,7 @@ const content = {
       },
       {
         title: "2. Eligibility",
+        introText: "",
         items: [
           "The user must be 18 years of age or older and possess the legal capacity to enter into commercial contracts.",
           "The user must provide accurate and correct information upon registration, or when requesting price quotes and concluding rental contracts."
@@ -28,6 +30,7 @@ const content = {
       },
       {
         title: "3. Account and Information",
+        introText: "",
         items: [
           "The user is responsible for maintaining the confidentiality of their account information.",
           "The Company is not liable for any unauthorized use of the account resulting from the user's negligence.",
@@ -36,6 +39,7 @@ const content = {
       },
       {
         title: "4. Orders and Payment (Rental and Service Contracts)",
+        introText: "",
         items: [
           "All rental requests are subject to equipment availability and the approval of the Company's management.",
           "The Company reserves the right to reject or cancel any rental request or contract for a legitimate reason (such as equipment unavailability or safety-related concerns).",
@@ -45,6 +49,7 @@ const content = {
       },
       {
         title: "5. Transportation and Equipment Delivery",
+        introText: "",
         items: [
           "Rented equipment is transported and delivered to the work sites specified by the client in the contract.",
           "Delivery times vary depending on the project location and the nature of the requested equipment.",
@@ -53,6 +58,7 @@ const content = {
       },
       {
         title: "6. Cancellation and Modification of Rented Equipment",
+        introText: "",
         items: [
           "Cancellation of rental requests or replacement of equipment on-site is subject to the Company's policy and the terms of the contract concluded between the two parties.",
           "Please review the cancellation details and terms attached to the price quote or contract prior to final approval."
@@ -60,6 +66,7 @@ const content = {
       },
       {
         title: "7. Intellectual Property",
+        introText: "",
         items: [
           "All website content (texts, equipment images, logos, designs) is owned by Lamat Abyat Contracting Company.",
           "Copying or reusing any content without prior written permission is strictly prohibited."
@@ -67,6 +74,7 @@ const content = {
       },
       {
         title: "8. Improper Use",
+        introText: "",
         items: [
           "Using the website or rented equipment for illegal purposes is prohibited, including:",
           "Violating laws, regulations, or occupational safety rules in the Kingdom of Saudi Arabia.",
@@ -76,6 +84,7 @@ const content = {
       },
       {
         title: "9. Limitation of Liability",
+        introText: "",
         items: [
           "The Company is not liable for any indirect damages or losses resulting from the misuse of the website.",
           "The Company's financial liability is strictly limited to the value of the service or rented equipment in accordance with the concluded contract."
@@ -83,12 +92,14 @@ const content = {
       },
       {
         title: "10. Amendments to the Terms",
+        introText: "",
         items: [
           "Lamat Abyat Contracting Company reserves the right to amend the terms of use at any time. Updates will be published on this page, and continued use of the website constitutes implicit acceptance of these changes."
         ]
       },
       {
         title: "11. Governing Law",
+        introText: "",
         items: [
           "These terms are governed by and construed in accordance with the applicable laws and regulations in the Kingdom of Saudi Arabia."
         ]
