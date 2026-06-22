@@ -352,29 +352,38 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
-            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بناءً على متغيرات المنتج */}
+            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بدقة */}
             {attributes && attributes.length > 0 && attributes.map((attr: any) => {
               const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
               const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
 
-              // 1. فلترة القيم: نقوم بعرض القيم التي تحتوي على فارييشن (Variation) مطابق لها فقط في المنتج
+              // 1. فلترة القيم: نعرض فقط القيم التي تم ربطها بالمنتج من لوحة التحكم
               const displayValues = attr.values.filter((val: any) => {
-                const vEn = val.value?.en || val.value;
+                // أ) إذا كان الباك إند يرسل حقل pivot أو علامة ربط للمنتج مباشرة
+                if (val.product_id || val.pivot) return true;
 
-                // إذا كان المنتج لا يحتوي على متغيرات أصلًا، نعرض القيم كـ Fallback
-                if (!product.variations || product.variations.length === 0) return true;
+                // ب) أو إذا كان هناك variations، نتحقق من وجود المعرف (id) أو القيمة بالكامل بمرونة
+                if (product.variations && product.variations.length > 0) {
+                  const vEn = (val.value?.en || val.value || "").toUpperCase();
+                  return product.variations.some((v: any) => {
+                    // نتحقق من تداخل المعرفات أو النص داخل الـ variation specs
+                    const optionValues = v.options ? Object.values(v.options).map((o: any) => String(o).toUpperCase()) : [];
+                    const sku = (v.sku || "").toUpperCase();
 
-                // الفحص بذكاء: إذا كانت القيمة (مثل الـ SKU أو رمز المقاس/اللون) موجودة داخل الـ SKU الخاص بالـ Variation
-                return product.variations.some((v: any) => {
-                  const sku = v.sku?.toUpperCase() || "";
-                  const valStr = vEn.toUpperCase();
+                    return (
+                      optionValues.includes(vEn) ||
+                      sku.includes(`-${vEn}`) ||
+                      sku.includes(`-${vEn}-`) ||
+                      v.attribute_value_id === val.id // مطابقة مباشرة عبر الـ ID لو توفرت
+                    );
+                  });
+                }
 
-                  // مطابقة مرنة: تفحص إذا كان الـ SKU ينتهي بالقيمة، أو يحتوي عليها بعد علامة الـ (-)
-                  return sku.endsWith(`-${valStr}`) || sku.includes(`-${valStr}-`) || sku.includes(`-${valStr.substring(0, 3)}`);
-                });
+                // إذا لم تتوفر الشروط السابقة، نعيد true كـ Fallback لمنع الاختفاء التام
+                return true;
               });
 
-              // إذا لم تكن هناك قيم مُسندة لهذا الأتربيوت في هذا المنتج، لا تعرض القسم نهائياً
+              // إذا لم تكن هناك قيم مخصصة لهذا المنتج، يتخطى العرض
               if (displayValues.length === 0) return null;
 
               // 2. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة
@@ -413,7 +422,7 @@ export default function ProductClient({
                 );
               }
 
-              // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية بمقاساتها المحددة فقط
+              // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
               return (
                 <div key={attr.id} className="mb-8">
                   <div className="flex justify-between items-center mb-3">
