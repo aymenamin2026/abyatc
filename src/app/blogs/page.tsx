@@ -37,9 +37,9 @@ export default function ArticlesPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground overflow-hidden">
-      
+
       {/* ================= HERO SECTION (AMBIENT GLOW STYLE) ================= */}
-      <section 
+      <section
         ref={heroRef}
         onMouseMove={handleMouseMove}
         className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 text-center overflow-hidden border-b border-border/40 bg-gradient-to-b from-muted/20 to-transparent"
@@ -66,16 +66,16 @@ export default function ArticlesPage() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md text-primary text-xs font-semibold tracking-wider uppercase"
           >
-             ✨ {lang === 'en' ? 'Insights, Tips & Trends' : 'رؤى ونصائح واتجاهات'}
+            ✨ {lang === 'en' ? 'Construction Insights & News' : 'رؤى وأخبار المقاولات'}
           </motion.div>
 
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-serif text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70"
           >
-            {lang === 'en' ? 'Our Blogs' : 'مدونتنا الإلكترونية'}
+            {lang === 'en' ? ' Lamat Abyat Blog' : 'مدونة لمعة ابيات'}
           </motion.h1>
 
           <motion.p
@@ -84,16 +84,16 @@ export default function ArticlesPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground leading-relaxed"
           >
-            {lang === 'en' 
-              ? 'Explore our beautifully curated articles regarding modern strategies, inspiration, and elite professional tips.' 
-              : 'استكشف مقالاتنا المنسقة بعناية حول أحدث الاستراتيجيات، الإلهام، والنصائح الاحترافية الحصرية.'}
+            {lang === 'en'
+              ? 'Discover our expert articles on the latest construction technologies, heavy equipment operation and maintenance tips, and best practices for successful project management.'
+              : ' اكتشف مقالاتنا المتخصصة حول أحدث تقنيات البناء، نصائح تشغيل وصيانة المعدات الثقيلة، وأفضل الممارسات لإدارة مشاريعك بنجاح.'}
           </motion.p>
         </div>
       </section>
 
       {/* ================= ARTICLES GRID SECTION ================= */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full z-10">
-        
+
         {loading ? (
           /* شاشة تحميل أنيقة متناغمة */
           <div className="flex flex-col justify-center items-center h-80 gap-4">
@@ -106,9 +106,9 @@ export default function ArticlesPage() {
             </p>
           </div>
         ) : articles.length === 0 ? (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="text-center py-20 bg-card/40 backdrop-blur-xl border border-border/60 rounded-[32px] p-8 max-w-md mx-auto"
           >
             <p className="text-muted-foreground font-medium">{lang === 'en' ? 'No articles found.' : 'لا توجد مقالات مضافة حالياً.'}</p>
@@ -136,14 +136,14 @@ export default function ArticlesPage() {
                   {/* حاوية الصورة مع تأثير زووم سينمائي وقناع الفئة العلوي */}
                   <div className="relative aspect-[16/10] overflow-hidden bg-muted m-3 rounded-[20px] shadow-inner">
                     <Link href={`/blogs/${article.slug}`} className="block w-full h-full">
-                      <img 
-                        src={image} 
-                        alt={title} 
+                      <img
+                        src={image}
+                        alt={title}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                         onError={(e) => { (e.target as HTMLImageElement).src = '/no-image.jpg'; }}
                       />
                     </Link>
-                    
+
                     {/* شارة الفئة المضيئة العائمة فوق الصورة */}
                     <span className="absolute top-3 start-3 px-3 py-1 text-[11px] font-bold tracking-wider uppercase text-primary bg-background/80 backdrop-blur-md rounded-full shadow-sm border border-border/40">
                       {categoryName}
@@ -152,7 +152,7 @@ export default function ArticlesPage() {
 
                   {/* تفاصيل الكارد */}
                   <div className="p-6 pt-3 flex flex-col flex-1">
-                    
+
                     {/* العنوان مع تفاعل الألوان عند التحويم */}
                     <Link href={`/blogs/${article.slug}`} className="block mt-2">
                       <h3 className="text-xl font-bold text-foreground font-serif line-clamp-2 leading-snug tracking-tight group-hover:text-primary transition-colors duration-300">
@@ -175,8 +175,8 @@ export default function ArticlesPage() {
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-muted-foreground/70" />
                           <span>
-                            {article.published_at 
-                              ? new Date(article.published_at).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', {month: 'short', day: 'numeric'}) 
+                            {article.published_at
+                              ? new Date(article.published_at).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric' })
                               : ''}
                           </span>
                         </div>

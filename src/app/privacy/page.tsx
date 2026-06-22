@@ -8,60 +8,60 @@ import { fetchSettings } from "@/lib/api";
 const content = {
   en: {
     heroTitle: "Privacy Policy",
-    heroSubtitle: "Abiyat Lamea Contracting ",
-    intro: "Welcome to the Abiyat Lamea Contracting company website. We value your privacy and are committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit our website, and our practices for collecting, using, maintaining, protecting, and disclosing that information.",
+    heroSubtitle: "Lamea Abyat Contracting Company",
+    intro: "Welcome to the website of Lamea Abyat Contracting Company. We respect your privacy and are committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit our website, and our practices for collecting, using, maintaining, protecting, and disclosing that information.",
     sections: [
       {
         title: "1. Information We Collect",
         items: [
-          "Personal contact information: (Name, email address, phone number, work sites, or equipment delivery addresses) provided during quote requests, contract execution, or account registration.",
-          "Payment details: Processed securely via third-party gateways (we do not store credit card numbers or direct bank account details).",
-          "Browsing data: Such as IP addresses, browser types, and interaction logs collected through cookies and tracking tools to enhance the platform user experience."
+          "Personal Contact Information: (Name, email, phone number, work site locations, or equipment delivery addresses) provided during requests for price quotes, contract conclusions, or account registration.",
+          "Payment Details: Processed securely via third-party gateways (we do not directly store credit card numbers or bank accounts).",
+          "Browsing Data: Such as IP addresses, browser types, and interaction logs through cookies and tracking tools to improve the platform's user experience."
         ]
       },
       {
         title: "2. How We Use Your Information",
         items: [
-          "To process and fulfill your leasing or purchase orders, including sending booking confirmation emails, contract details, and equipment delivery schedules to work sites.",
-          "To provide technical support, customer service, and respond to inquiries regarding equipment and projects.",
-          "To send important updates and special offers related to the contracting sector (only if you have opted in).",
-          "To improve our website layout and expand our equipment fleet based on market and client requirements."
+          "To process and fulfill rental or purchase requests, including sending booking confirmations, contract details, and equipment delivery schedules to work sites.",
+          "To provide technical support, customer service, and to respond to inquiries related to equipment and projects.",
+          "To send important updates and special offers related to the contracting sector (only if you have subscribed to receive them).",
+          "To improve our website design and expand our equipment fleet based on market demands and customer requirements."
         ]
       },
       {
         title: "3. Information Sharing",
         items: [
-          "We do not sell, trade, or rent your personal identification information to any external parties.",
-          "We may share generic aggregated demographic information not linked to any personal identification information with our strategic partners.",
-          "We may use third-party service providers to help us operate our business (e.g., logistics companies specialized in heavy equipment, or payment gateways) and may share your information with them to the extent necessary to complete your order."
+          "We do not sell, trade, or rent your personally identifiable information to any third parties.",
+          "We may share generic, aggregated demographic information not linked to any personally identifiable information with our strategic partners.",
+          "We may use third-party service providers to help us operate our business (such as logistics companies specialized in heavy equipment, or electronic payment gateways), and we may share your information with them strictly to the extent necessary to fulfill your order."
         ]
       },
       {
         title: "4. Data Security",
         items: [
-          "We adopt strict technical and administrative practices for data collection, storage, and processing, along with security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information and contracts.",
-          "Sensitive and private data exchange between the site and its users occurs over encrypted communication channels secured with SSL protocol."
+          "We adopt strict technical and administrative practices for data collection, storage, and processing, along with robust security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information and contracts.",
+          "Sensitive and private data exchange between the website and its users occurs over a secured communication channel encrypted with an SSL protocol."
         ]
       },
       {
         title: "5. Your Rights",
         items: [
           "You have the right to request access to the personal data we hold about you and your project history with us.",
-          "You can request corrections or updates to any inaccurate data via your account dashboard or by contacting us directly.",
-          "You may request the deletion of your account and associated data, subject to legal and accounting requirements related to commercial contracts."
+          "You can request the correction or update of any inaccurate data via your account dashboard or by contacting us directly.",
+          "You may request the deletion of your account and associated data, subject to legal and accounting retention requirements for commercial contracts."
         ]
       },
       {
         title: "6. Changes to This Policy",
         items: [
-          "Abiyat Lamea Contracting management has the right to update this privacy policy at any time to comply with technical or regulatory updates.",
-          "When any update occurs, we will modify the revision date at the bottom of this page.",
+          "The management of Lamat Abyat Contracting Company reserves the right to update this privacy policy at any time to align with technical or regulatory updates.",
+          "When any update occurs, we will revise the updated date at the bottom of this page.",
           "We encourage our clients to review this page periodically to stay informed about how we protect their information."
         ]
       }
     ],
-    contactTitle: "7. Contact Options",
-    contactIntro: "If you have any questions about this Privacy Policy, our site practices, or contract and equipment details, please contact us at:",
+    contactTitle: "7. Contact Us",
+    contactIntro: "If you have any questions about this Privacy Policy, the practices of our site, or details regarding contracts and equipment, please contact us at:",
     emailLabel: "Email",
     phoneLabel: "Phone",
   },

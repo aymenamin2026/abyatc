@@ -8,89 +8,89 @@ import { fetchSettings } from "@/lib/api";
 const content = {
   en: {
     heroTitle: "Terms of Service",
-    heroSubtitle: "Abiyat Lam'at Contracting & Heavy Equipment Co.",
-    intro: "Welcome to the Abiyat Lam'at Contracting company website. By using this website or completing any leasing or contracting process through it, you fully agree to the terms of use outlined below. If you do not agree, please do not use the site.",
+    heroSubtitle: "Lamea Abyat Contracting Company",
+    intro: "Welcome to the website of Lamea Abyat Contracting Company. By using this website or completing any rental or contracting process through it, you fully agree to the Terms of Use outlined below. If you do not agree, please do not use the website.",
     sections: [
       {
         title: "1. Definitions",
         items: [
-          "Company/Website: Abiyat Lam'at Contracting & Heavy Equipment Co.",
-          "Client/User: Any person or entity (individual or company) using the website or requesting heavy equipment rental or services.",
-          "Equipment and Services: All heavy equipment displayed for rental purposes and related contracting services offered on the website."
+          "The Company / The Website: Lamea Abyat Contracting Company.",
+          "The Client / The User: Any person or entity (individual or company) who uses the website or requests the rental of equipment or services.",
+          "Equipment and Services: All heavy equipment offered solely for rental, and the related contracting services available on the website."
         ]
       },
       {
         title: "2. Eligibility",
         items: [
-          "The user must be 18 years or older and possess the legal capacity to enter into commercial contracts.",
-          "The user must provide accurate and correct information when registering, requesting quotes, or executing rental contracts."
+          "The user must be 18 years of age or older and possess the legal capacity to enter into commercial contracts.",
+          "The user must provide accurate and correct information upon registration, or when requesting price quotes and concluding rental contracts."
         ]
       },
       {
         title: "3. Account and Information",
         items: [
-          "The user is responsible for keeping their account information confidential.",
-          "The Company is not responsible for any unauthorized account use resulting from user negligence.",
-          "The Company reserves the right to suspend or cancel an account if it suspects a violation of the terms."
+          "The user is responsible for maintaining the confidentiality of their account information.",
+          "The Company is not liable for any unauthorized use of the account resulting from the user's negligence.",
+          "The Company reserves the right to suspend or cancel the account if it suspects a violation of the terms."
         ]
       },
       {
-        title: "4. Orders and Payment (Leasing Contracts & Services)",
+        title: "4. Orders and Payment (Rental and Service Contracts)",
         items: [
-          "All rental requests are subject to equipment availability and management approval.",
-          "The Company reserves the right to refuse or cancel any rental request or contract for a legitimate reason (e.g., equipment unavailability or safety-related reasons).",
-          "Displayed or quoted prices include VAT unless otherwise stated.",
-          "Payments are processed according to the terms agreed upon in the rental contract, whether via bank transfers or approved electronic payment gateways."
+          "All rental requests are subject to equipment availability and the approval of the Company's management.",
+          "The Company reserves the right to reject or cancel any rental request or contract for a legitimate reason (such as equipment unavailability or safety-related concerns).",
+          "The prices displayed or provided in quotes include Value Added Tax (VAT) unless otherwise stated.",
+          "Payments are processed according to the payment terms agreed upon in the rental contract, whether through bank transfers or approved electronic payment gateways."
         ]
       },
       {
-        title: "5. Transportation and Delivery",
+        title: "5. Transportation and Equipment Delivery",
         items: [
           "Rented equipment is transported and delivered to the work sites specified by the client in the contract.",
           "Delivery times vary depending on the project location and the nature of the requested equipment.",
-          "The Company is not responsible for delays beyond its control caused by force majeure events during transportation."
+          "The Company is not liable for delays beyond its control caused by force majeure circumstances during transportation."
         ]
       },
       {
-        title: "6. Cancellation and Equipment Changes",
+        title: "6. Cancellation and Modification of Rented Equipment",
         items: [
-          "Cancellation of rental requests or equipment replacement on-site is subject to the Company’s policy and the signed contract terms.",
-          "Please review the cancellation details and terms attached to the quote or contract before final approval."
+          "Cancellation of rental requests or replacement of equipment on-site is subject to the Company's policy and the terms of the contract concluded between the two parties.",
+          "Please review the cancellation details and terms attached to the price quote or contract prior to final approval."
         ]
       },
       {
         title: "7. Intellectual Property",
         items: [
-          "All website content (text, equipment images, logos, designs) is owned by Abiyat Lam'at Contracting & Heavy Equipment Co.",
-          "Copying or reusing any content without prior written permission is prohibited."
+          "All website content (texts, equipment images, logos, designs) is owned by Lamat Abyat Contracting Company.",
+          "Copying or reusing any content without prior written permission is strictly prohibited."
         ]
       },
       {
         title: "8. Improper Use",
-        introText: "Using the website or rented equipment for illegal purposes is prohibited, including:",
         items: [
-          "Violating laws, regulations, or occupational safety standards in the Kingdom of Saudi Arabia.",
-          "Attempting to hack the website or tamper with its systems.",
-          "Providing misleading or incorrect information regarding the nature of the project or work site for rental purposes."
+          "Using the website or rented equipment for illegal purposes is prohibited, including:",
+          "Violating laws, regulations, or occupational safety rules in the Kingdom of Saudi Arabia.",
+          "Attempting to hack the website or manipulate its systems.",
+          "Providing misleading or incorrect information regarding the nature of the project or the work site for renting the equipment."
         ]
       },
       {
         title: "9. Limitation of Liability",
         items: [
-          "The Company is not responsible for any indirect damages or losses resulting from misuse of the website.",
-          "The Company's financial liability is limited to the value of the service or rented equipment according to the signed contract only."
+          "The Company is not liable for any indirect damages or losses resulting from the misuse of the website.",
+          "The Company's financial liability is strictly limited to the value of the service or rented equipment in accordance with the concluded contract."
         ]
       },
       {
-        title: "10. Modifications to Terms",
+        title: "10. Amendments to the Terms",
         items: [
-          "Abiyat Lam'at Contracting reserves the right to modify these terms of use at any time. Updates will be published on this page, and continued use of the site constitutes implicit acceptance of these changes."
+          "Lamat Abyat Contracting Company reserves the right to amend the terms of use at any time. Updates will be published on this page, and continued use of the website constitutes implicit acceptance of these changes."
         ]
       },
       {
         title: "11. Governing Law",
         items: [
-          "These terms are governed by and interpreted according to the laws and regulations in force in the Kingdom of Saudi Arabia."
+          "These terms are governed by and construed in accordance with the applicable laws and regulations in the Kingdom of Saudi Arabia."
         ]
       }
     ],

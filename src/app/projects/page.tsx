@@ -66,7 +66,7 @@ export default function ProjectPage() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md text-primary text-xs font-semibold tracking-wider uppercase"
           >
-            ✨ {lang === 'en' ? 'Insights, Tips & Trends' : 'رؤى ونصائح واتجاهات'}
+            ✨ {lang === 'en' ? 'A proven track record of achievements' : 'سجل حافل بالإنجازات'}
           </motion.div>
 
           <motion.h1
@@ -75,7 +75,7 @@ export default function ProjectPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-serif text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70"
           >
-            {lang === 'en' ? 'Our Blogs' : 'مدونتنا الإلكترونية'}
+            {lang === 'en' ? 'Our Projects' : ' معرض مشاريعنا'}
           </motion.h1>
 
           <motion.p
@@ -85,8 +85,8 @@ export default function ProjectPage() {
             className="max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground leading-relaxed"
           >
             {lang === 'en'
-              ? 'Explore our beautifully curated articles regarding modern strategies, inspiration, and elite professional tips.'
-              : 'استكشف مقالاتنا المنسقة بعناية حول أحدث الاستراتيجيات، الإلهام، والنصائح الاحترافية الحصرية.'}
+              ? 'We leave our mark on landmark construction and infrastructure projects. Explore our portfolio, which reflects our unwavering commitment to the highest quality standards, precision in execution, and the power of our heavy equipment fleet in the field.'
+              : 'نضع بصمتنا في أهم مشاريع التشييد والبنية التحتية. تصفح سابقة أعمالنا التي تعكس التزامنا التام بأعلى معايير الجودة، الدقة في التنفيذ، وقوة أسطول معداتنا في الميدان.'}
           </motion.p>
         </div>
       </section>

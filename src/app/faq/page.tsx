@@ -7,25 +7,25 @@ import { ChevronDown } from "lucide-react";
 
 const content = {
   en: {
-    heroTitle: "Frequently Asked Questions",
-    heroSubtitle: "Abiyat Lamea Contracting Co.",
-    intro: "Find answers to our most frequently asked questions about equipment rental below. If you need further assistance or would like to request a quote, please do not hesitate to contact us.",
+    heroTitle: "Frequently Asked Questions (FAQs)",
+    heroSubtitle: "Lamea Abyat Contracting Company",
+    intro: "Find answers to our most commonly asked questions about equipment rental below. If you need further assistance or would like to request a quote, please do not hesitate to contact us.",
     faqs: [
       {
-        question: "Why choose Abiyat Lamea Company for equipment rental?",
-        answer: "Because we provide a modern and diverse fleet of heavy equipment, with a full commitment to periodic maintenance and the highest safety standards, ensuring work continuity in your projects with high efficiency and minimal downtime."
+        question: "Why choose Lamat Abyat for equipment rental?",
+        answer: "Because we provide a modern and diverse fleet of heavy equipment, with a full commitment to periodic maintenance and the highest safety standards, ensuring the continuous operation of your projects with high efficiency and minimal downtime."
       },
       {
         question: "What is the condition and quality of the equipment available for rent?",
-        answer: "All our equipment is selected from the best global brands in the contracting sector. Each machine undergoes strict technical inspections and periodic maintenance before delivery to any work site to ensure the highest levels of performance and reliability."
+        answer: "All our equipment is selected from the top global brands in the contracting sector. Each machine undergoes rigorous technical inspections and periodic maintenance before being delivered to any work site to guarantee the highest levels of performance and reliability."
       },
       {
-        question: "Is your equipment suitable for different types of projects and sectors?",
-        answer: "Yes, our fleet includes a wide and diverse range of heavy equipment that meets the needs of various sectors, including building and construction projects, infrastructure, roads, as well as logistical and industrial projects."
+        question: "Is your equipment suitable for various types of projects and sectors?",
+        answer: "Yes, our fleet includes a wide and diverse range of heavy equipment that meets the needs of various sectors, including construction and building projects, infrastructure, roads, as well as logistical and industrial projects."
       },
       {
-        question: "Do you guarantee the equipment's readiness for work upon arrival at the site?",
-        answer: "Absolutely. We pay attention to the finest technical and operational details, and deliver the equipment to you fully equipped and ready for immediate operation to save your time and effort at the work site."
+        question: "Do you guarantee the equipment's readiness for operation immediately upon arrival at the site?",
+        answer: "Absolutely. We pay attention to the smallest technical and operational details, delivering the equipment fully equipped and ready for immediate operation to save you time and effort at the work site."
       },
       {
         question: "Do you commit to equipment delivery schedules?",
@@ -33,11 +33,11 @@ const content = {
       },
       {
         question: "Do you provide technical support or maintenance during the rental period?",
-        answer: "Yes, we provide continuous technical support throughout the rental period. In the event of any emergency breakdown, we dispatch a mobile maintenance team to handle the issue on-site, or we replace the equipment to ensure your project schedule is not affected."
+        answer: "Yes, we provide continuous technical support throughout the rental period. In the event of an emergency breakdown, we dispatch a mobile maintenance team to handle the issue on-site, or we replace the equipment to ensure your project schedule is not affected."
       },
       {
         question: "Do you have experience in the Saudi market?",
-        answer: "Yes, as a proud Saudi company, we deeply understand the requirements of the local contracting sector, occupational safety regulations, and the practical needs of work sites across the Kingdom."
+        answer: "Yes, as a proud Saudi company, we have a deep understanding of the local contracting sector's requirements, occupational safety regulations, and the practical needs of work sites across the Kingdom."
       }
     ]
   },
