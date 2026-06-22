@@ -73,7 +73,7 @@ export default function ProductClient({
 
   const [activeImage, setActiveImage] = useState(0);
 
-  // 🛠️ التخزين الموحد باستخدام المعرف الفريد ID لمنع أي تضارب في حالة الأحرف الكبيرة والصغيرة
+  // 🛠️ تحويل التخزين إلى كائن ديناميكي ليشمل أي أتربيوت يتم إضافته مستقبلاً
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
 
   const [quantity, setQuantity] = useState(1);
@@ -90,14 +90,15 @@ export default function ProductClient({
 
   const hasVariations = product.variations && product.variations.length > 0;
 
-  // 🛠️ تعيين القيم الافتراضية بالاعتماد على معرف الأتربيوت الفريد من الـ JSON
+  // 🛠️ تعيين القيم الافتراضية لأي أتربيوت قادم من الباك إند تلقائياً عند تحميل الصفحة
+  // 🛠️ تعيين القيم الافتراضية بناءً على الـ slug الفعلي بشكل دقيق ومضمون
   useEffect(() => {
     if (attributes && attributes.length > 0) {
       const defaults: Record<string, string> = {};
       attributes.forEach((attr: any) => {
         if (attr.values && attr.values.length > 0) {
-          // نستخدم الـ ID كمفتاح ثابت لا يخطئ ولا يتأثر بالحروف الكبيرة والصغيرة
-          const key = String(attr.id);
+          // نستخدم الـ slug كما هو قادم من قاعدة البيانات، أو نعتمد الـ id كمعرف فريد لا يخطئ
+          const key = attr.slug || `attr_${attr.id}`;
           defaults[key] = attr.values[0].value?.en || attr.values[0].value;
         }
       });
@@ -150,30 +151,28 @@ export default function ProductClient({
     }
   };
 
-  // 🛠️ تحديث السعر والـ SKU بناءً على المعرفات المحددة
-  let currentSku = product.sku || "1010";
-
+  // 🛠️ تحديث السعر بمطابقة مرنة لأسماء المفاتيح (حروف كبيرة أو صغيرة)
   if (hasVariations && Object.keys(selectedAttributes).length > 0) {
-    const variation = product.variations.find((v: any) => {
-      if (v.options) {
-        return Object.entries(selectedAttributes).every(([attrId, value]) => {
-          // مطابقة مرنة داخل كائن الـ options الخاص بالفارييشن
-          return String(v.options[attrId] || "").toLowerCase() === String(value).toLowerCase();
-        });
-      }
-      // مطابقة احتياطية عبر الـ ID المباشر الممرر من الباك إند لارافيل
-      return String(v.attribute_value_id) === String(selectedAttributes[String(v.attribute_id)]);
-    });
+    // فحص مرن للحروف الكبيرة والصغيرة القادمة من الباك إند
+    const sizeSelection = selectedAttributes['size'] || selectedAttributes['Size'] || selectedAttributes[attributes.find(a => a.slug?.toLowerCase() === 'size')?.slug];
+    const colorSelection = selectedAttributes['color'] || selectedAttributes['Color'] || selectedAttributes[attributes.find(a => a.slug?.toLowerCase() === 'color')?.slug];
 
-    if (variation) {
-      if (variation.price) displayPrice = parseFloat(variation.price).toFixed(2);
-      if (variation.sku) currentSku = variation.sku;
+    if (sizeSelection && colorSelection) {
+      const prefix = colorSelection.substring(0, 3).toUpperCase();
+      const variation = product.variations.find((v: any) =>
+        (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${sizeSelection}`)
+      );
+      if (variation && variation.price) {
+        displayPrice = parseFloat(variation.price).toFixed(2);
+      }
     }
   }
 
   const handleAddToCart = async () => {
+    // التأكد من اختيار كل السمات المتاحة
     const missingAttribute = attributes.some(attr => {
-      return !selectedAttributes[String(attr.id)];
+      const key = attr.slug || `attr_${attr.id}`;
+      return !selectedAttributes[key];
     });
 
     if (hasVariations && missingAttribute) {
@@ -183,17 +182,19 @@ export default function ProductClient({
 
     setIsAddedToCart(true);
 
+    // تجهيز الخيارات بترجمة لغوية متناسقة
     const formattedOptions: Record<string, string> = {};
     attributes.forEach(attr => {
-      const key = (attr.slug || attr.name?.en || "").toLowerCase();
-      const selectedValueEn = selectedAttributes[String(attr.id)];
+      const key = attr.slug || `attr_${attr.id}`;
+      const selectedValueEn = selectedAttributes[key];
       const fullValueObj = attr.values.find((v: any) => (v.value?.en || v.value) === selectedValueEn);
 
-      formattedOptions[key] = fullValueObj
+      formattedOptions[key.toLowerCase()] = fullValueObj
         ? (fullValueObj.value?.[lang] || fullValueObj.value?.en || fullValueObj.value)
         : selectedValueEn || "N/A";
     });
 
+    // استخراج الخيارات الإضافية الجديدة لدمجها لـ TypeScript
     const baseSize = formattedOptions['size'] || "N/A";
     const extraOptions = Object.entries(formattedOptions)
       .filter(([key]) => key !== 'color' && key !== 'size')
@@ -205,6 +206,7 @@ export default function ProductClient({
       name: product.name,
       image: images[0],
       color: formattedOptions['color'] || "N/A",
+      // دمج ذكي متوافق 100% مع نوع البيانات المعرف بـ CartContext
       size: extraOptions ? `${baseSize} (${extraOptions})` : baseSize,
       price: parseFloat(displayPrice),
       quantity: quantity
@@ -221,27 +223,24 @@ export default function ProductClient({
     const y = ((e.clientY - top) / height) * 100;
     setZoomPos({ x, y });
   };
-
   return (
     <div className="flex flex-col min-h-screen pt-32 pb-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Breadcrumb */}
         <nav className="flex items-center text-sm text-muted-foreground mb-8">
-          <Link href="/" className="hover:text-foreground transition-colors">
-            {lang === 'ar' ? 'الرئيسية' : 'Home'}
-          </Link>
+          <Link href="/" className="hover:text-foreground transition-colors">{t('shop', lang) === 'Shop' ? 'Home' : 'الرئيسية'}</Link>
           <ChevronRight className={`w-4 h-4 mx-2 ${lang === 'ar' ? 'rotate-180' : ''}`} />
-          <Link href="/shop" className="hover:text-foreground transition-colors">
-            {t('shop', lang)}
-          </Link>
+          <Link href="/shop" className="hover:text-foreground transition-colors">{t('shop', lang)}</Link>
           <ChevronRight className={`w-4 h-4 mx-2 ${lang === 'ar' ? 'rotate-180' : ''}`} />
           <span className="text-foreground">{catName}</span>
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
+
           {/* Image Gallery */}
           <div className="flex flex-col-reverse md:flex-row gap-3 md:gap-3 md:sticky md:top-24 h-fit">
+            {/* Thumbnails */}
             <div className={`flex ${images.length > 8 ? 'md:grid md:grid-cols-2 md:w-[104px]' : 'md:flex-col md:w-12'} gap-2 overflow-x-auto flex-shrink-0 scrollbar-hide select-none h-fit self-start`}>
               {images.map((img: string, idx: number) => (
                 <button
@@ -254,6 +253,7 @@ export default function ProductClient({
               ))}
             </div>
 
+            {/* Main Image */}
             <div
               className="relative flex-1 rounded-2xl overflow-hidden cursor-zoom-in group/main h-fit"
               onMouseMove={handleMouseMove}
@@ -268,12 +268,13 @@ export default function ProductClient({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
+
                   <Image
                     src={images[activeImage]}
                     alt={name}
                     width={1000}
                     height={1250}
-                    unoptimized={true}
+                    unoptimized={true} // <--- أضف هذا السطر هنا
                     className="w-full h-auto object-contain transition-transform duration-200 ease-out"
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -288,21 +289,42 @@ export default function ProductClient({
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2">{name}</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2"> {name}</h1>
 
-            {/* SKU Section */}
-            {currentSku && (
-              <div className="text-sm text-muted-foreground mb-4">
-                <span className="font-medium">{lang === 'ar' ? 'رمز المنتج :' : 'SKU :'}</span> <span className="font-mono">{currentSku}</span>
-              </div>
-            )}
+            {/* SKU */}
+            {/* SKU */}
+            {(() => {
+              let currentSku = product.sku || '';
+              // 🛠️ نقرأ القيم الآن من الكائن الديناميكي الجديد
+              const sizeSelection = selectedAttributes['size'];
+              const colorSelection = selectedAttributes['color'];
 
-            {/* Price & Rating Section */}
+              if (hasVariations && sizeSelection && colorSelection) {
+                const prefix = colorSelection.substring(0, 3).toUpperCase();
+                const variation = product.variations.find((v: any) =>
+                  (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${sizeSelection}`)
+                );
+                if (variation?.sku) currentSku = variation.sku;
+              }
+              return currentSku ? (
+                <div className="text-sm text-muted-foreground mb-4">
+                  <span className="font-medium">{lang === 'ar' ? 'رمز المنتج' : 'SKU'}:</span> <span className="font-mono">{currentSku}</span>
+                </div>
+              ) : null;
+            })()}
+
             <div className="flex items-center gap-4 mb-6">
-              <div className="text-2xl font-semibold flex items-center">
+              {/* <div className="text-2xl font-semibold flex items-center">
                 {shouldShowPrice ? (
                   <>
-                    <span className={lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}>{currencySymbol}</span>
+                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                      <>
+                        <Image src="/riyal-dark.svg" alt="SAR" width={20} height={20} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+                        <Image src="/riyal-light.svg" alt="SAR" width={20} height={20} className={`theme-dark-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+                      </>
+                    ) : (
+                      <span className={lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}>{currencySymbol}</span>
+                    )}
                     <span>{displayPrice}</span>
                   </>
                 ) : (
@@ -310,13 +332,18 @@ export default function ProductClient({
                     {lang === 'ar' ? 'السعر غير معروض - راسلنا للاستفسار' : 'Price not shown - Contact us'}
                   </div>
                 )}
-              </div>
+              </div> */}
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <div className="flex text-amber-500">
                   {(() => {
-                    const avg = reviews.length > 0 ? reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length : 0;
+                    const avg = reviews.length > 0
+                      ? reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length
+                      : 0;
                     return [...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-4 h-4 ${i < Math.round(avg) ? 'fill-current' : 'text-muted-foreground opacity-30'}`} />
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${i < Math.round(avg) ? 'fill-current' : 'text-muted-foreground opacity-30'}`}
+                      />
                     ));
                   })()}
                 </div>
@@ -325,30 +352,41 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
-
-            {/* 🛠️ قسم عرض الأتربيوتس الديناميكي المصلح بالكامل والمفلتر بناءً على مدخلات لوحة التحكم */}
+            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بدقة */}
             {attributes && attributes.length > 0 && attributes.map((attr: any) => {
               const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
-              const attrSlug = (attr.slug || "").toLowerCase();
-              const attrIdKey = String(attr.id);
+              const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
 
-              // تصفية القيم لعرض القيم المحددة والنشطة فقط للمنتج الحالي
+              // 1. فلترة القيم: نعرض فقط القيم التي تم ربطها بالمنتج من لوحة التحكم
               const displayValues = attr.values.filter((val: any) => {
-                if (!product.variations || product.variations.length === 0) return true;
-                const valEn = String(val.value?.en || val.value || "").toUpperCase();
+                // أ) إذا كان الباك إند يرسل حقل pivot أو علامة ربط للمنتج مباشرة
+                if (val.product_id || val.pivot) return true;
 
-                return product.variations.some((v: any) => {
-                  const sku = (v.sku || "").toUpperCase();
-                  return (
-                    v.attribute_value_id === val.id ||
-                    sku.includes(`-${valEn}`) ||
-                    sku.includes(`-${valEn}-`)
-                  );
-                });
+                // ب) أو إذا كان هناك variations، نتحقق من وجود المعرف (id) أو القيمة بالكامل بمرونة
+                if (product.variations && product.variations.length > 0) {
+                  const vEn = (val.value?.en || val.value || "").toUpperCase();
+                  return product.variations.some((v: any) => {
+                    // نتحقق من تداخل المعرفات أو النص داخل الـ variation specs
+                    const optionValues = v.options ? Object.values(v.options).map((o: any) => String(o).toUpperCase()) : [];
+                    const sku = (v.sku || "").toUpperCase();
+
+                    return (
+                      optionValues.includes(vEn) ||
+                      sku.includes(`-${vEn}`) ||
+                      sku.includes(`-${vEn}-`) ||
+                      v.attribute_value_id === val.id // مطابقة مباشرة عبر الـ ID لو توفرت
+                    );
+                  });
+                }
+
+                // إذا لم تتوفر الشروط السابقة، نعيد true كـ Fallback لمنع الاختفاء التام
+                return true;
               });
 
+              // إذا لم تكن هناك قيم مخصصة لهذا المنتج، يتخطى العرض
               if (displayValues.length === 0) return null;
 
+              // 2. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة
               if (attrSlug === 'color') {
                 return (
                   <div key={attr.id} className="mb-6">
@@ -356,7 +394,7 @@ export default function ProductClient({
                       <span className="font-medium text-foreground">
                         {attrName}:
                         <span className="text-muted-foreground font-normal ml-2">
-                          {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrIdKey])?.value?.[lang] || selectedAttributes[attrIdKey]}
+                          {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
                         </span>
                       </span>
                     </div>
@@ -365,12 +403,12 @@ export default function ProductClient({
                         const cEn = color.value?.en || color.value;
                         const cLocal = color.value?.[lang] || cEn;
                         const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
-                        const isSelected = selectedAttributes[attrIdKey] === cEn;
+                        const isSelected = selectedAttributes[attrSlug] === cEn;
 
                         return (
                           <button
                             key={color.id}
-                            onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrIdKey]: cEn }))}
+                            onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: cEn }))}
                             className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${isSelected ? 'ring-2 ring-primary ring-offset-2 scale-105' : 'hover:scale-110'}`}
                             title={cLocal}
                           >
@@ -384,6 +422,7 @@ export default function ProductClient({
                 );
               }
 
+              // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
               return (
                 <div key={attr.id} className="mb-8">
                   <div className="flex justify-between items-center mb-3">
@@ -392,20 +431,20 @@ export default function ProductClient({
                       <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                     {displayValues.map((val: any) => {
                       const vEn = val.value?.en || val.value;
                       const vLocal = val.value?.[lang] || vEn;
-                      const isSelected = selectedAttributes[attrIdKey] === vEn;
+                      const isSelected = selectedAttributes[attrSlug] === vEn;
 
                       return (
                         <button
                           key={val.id}
-                          onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrIdKey]: vEn }))}
-                          className={`px-5 py-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-center min-w-[70px]
-                            ${isSelected
-                              ? 'border-primary bg-primary text-primary-foreground shadow-sm scale-105'
-                              : 'border-border bg-card hover:border-primary text-foreground hover:scale-102'
+                          onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
+                          className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
+                ${isSelected
+                              ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                              : 'border-border bg-card hover:border-primary text-foreground'
                             }`}
                         >
                           {vLocal}
@@ -416,25 +455,40 @@ export default function ProductClient({
                 </div>
               );
             })}
-
-            {/* Actions Section */}
+            {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي والمفلتر */}
+            {/* Actions */}
             <div className="flex gap-4 mb-4">
+              {/* إظهار اختيار الكمية فقط إذا كان السعر متاحاً */}
+
               <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
                 <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">-</button>
                 <span className="w-10 text-center font-medium">{quantity}</span>
                 <button onClick={() => setQuantity(quantity + 1)} className="w-6 h-6 flex items-center justify-center text-xl hover:text-foreground transition-colors">+</button>
               </div>
 
+
+              {/* زر إضافة للسلة يظهر فقط إذا كان السعر متاحاً */}
               <button
                 onClick={handleAddToCart}
                 className={`flex-1 h-14 rounded-full font-medium text-lg transition-all shadow-lg flex items-center justify-center
-                  ${isAddedToCart ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'}`}
-                disabled={isAddedToCart || (hasVariations && attributes.some(attr => !selectedAttributes[String(attr.id)]))}
+    ${isAddedToCart
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-btn-bg text-btn-text hover:bg-btn-bg/90 hover:shadow-xl hover:-translate-y-0.5'
+                  }`}
+                disabled={
+                  isAddedToCart ||
+                  (hasVariations && attributes.some(attr => !selectedAttributes[attr.slug || attr.name?.en?.toLowerCase()]))
+                }
               >
                 {isAddedToCart ? (
-                  <span className="flex items-center gap-2"><Check className="w-5 h-5" /> {lang === 'ar' ? 'تمت الإضافة' : 'Added to Cart'}</span>
+                  <span className="flex items-center gap-2">
+                    <Check className="w-5 h-5" />
+                    {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}
+                  </span>
                 ) : (
-                  <>{t('add_to_cart', lang)}</>
+                  <>
+                    {t('add_to_cart', lang)}
+                  </>
                 )}
               </button>
 
@@ -443,13 +497,13 @@ export default function ProductClient({
               </button>
             </div>
 
-            {/* WhatsApp Inquiry Button */}
+            {/* زر الواتساب الديناميكي المنسق لصفحة التفاصيل */}
             <div className="mb-8">
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg rounded-full shadow-lg transition-all transform hover:-translate-y-0.5 hover:shadow-xl text-center"
+                className="flex items-center justify-center gap-2 w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg rounded-full shadow-lg transition-all transform hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 text-center"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path fillRule="evenodd" d="M12.21 2c-5.464 0-9.91 4.39-9.91 9.782 0 1.723.454 3.407 1.316 4.898L2 22l5.485-1.422a9.96 9.96 0 004.723 1.185c5.464 0 9.91-4.39 9.91-9.781C22.12 6.39 17.674 2 12.21 2zm5.727 13.914c-.244.68-1.22 1.332-1.83 1.4-.61.07-1.373.13-3.832-.86-2.46-.99-4.04-3.46-4.162-3.62-.122-.17-1.012-1.33-1.012-2.53 0-1.2.634-1.8.854-2.03.22-.24.488-.3.653-.3.164 0 .33.01.47.01.147 0 .348-.06.543.4.195.47.67 1.61.73 1.73.061.12.1.26.02.42-.08.17-.183.28-.317.43-.134.15-.28.34-.4.48-.135.15-.275.31-.116.58.16.27.707 1.15 1.513 1.86.1.09.81.72 1.636 1.05.25.1.445.08.61-.09.214-.22.915-1.05 1.16-1.41.244-.36.488-.3.824-.18.335.12 2.122.99 2.488 1.17.366.18.61.27.695.41.085.15.085.86-.159 1.54z" clipRule="evenodd" />
@@ -458,10 +512,12 @@ export default function ProductClient({
               </a>
             </div>
 
+            {/* Guarantees */}
+
           </div>
         </div>
 
-        {/* Tabs - Details & Reviews */}
+        {/* Tabs - Full Width */}
         <div className="mt-16 pt-8 border-t border-border">
           <div className="flex gap-8 border-b border-border mb-8 overflow-x-auto scrollbar-hide">
             {['details', 'reviews'].map((tab) => (
@@ -477,7 +533,6 @@ export default function ProductClient({
               </button>
             ))}
           </div>
-
           <div className={`text-muted-foreground text-base leading-relaxed max-w-4xl ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
             <AnimatePresence mode="wait">
               <motion.div
@@ -491,6 +546,52 @@ export default function ProductClient({
                   <div dangerouslySetInnerHTML={{ __html: desc }} />
                 ) : (
                   <div className="space-y-12">
+                    {/* Review Form (Only for eligible customers) */}
+                    {canReview && (
+                      <div className="bg-secondary/30 p-8 rounded-2xl border border-border">
+                        <h4 className="font-serif text-xl font-bold mb-4">
+                          {lang === 'ar' ? 'أضف تقييمك' : 'Add your review'}
+                        </h4>
+                        <form onSubmit={handleSubmitReview} className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium mb-2">{lang === 'ar' ? 'التقييم' : 'Rating'}</label>
+                            <div className="flex gap-2">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                  key={star}
+                                  type="button"
+                                  onClick={() => setNewReview({ ...newReview, rating: star })}
+                                  className={`p-1 transition-transform hover:scale-110`}
+                                >
+                                  <Star className={`w-6 h-6 ${star <= newReview.rating ? 'fill-amber-500 text-amber-500' : 'text-muted-foreground opacity-30'}`} />
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-2">{lang === 'ar' ? 'تعليقك' : 'Your comment'}</label>
+                            <textarea
+                              value={newReview.comment}
+                              onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                              className="w-full bg-background border border-border rounded-xl p-4 min-h-[100px] focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm leading-relaxed"
+                              placeholder={lang === 'ar' ? 'اكتب رأيك هنا...' : 'Write your review here...'}
+                              required
+                            />
+                          </div>
+                          <button
+                            type="submit"
+                            disabled={isSubmittingReview || newReview.comment.length < 5}
+                            className="bg-primary text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                          >
+                            {isSubmittingReview ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : null}
+                            {lang === 'ar' ? 'إرسال التقييم' : 'Submit Review'}
+                          </button>
+                        </form>
+                      </div>
+                    )}
+
                     {/* Reviews List */}
                     <div className="space-y-8">
                       {reviews && reviews.length > 0 ? (
@@ -533,8 +634,40 @@ export default function ProductClient({
             </AnimatePresence>
           </div>
         </div>
-
       </div>
+
+      {/* Related Products - Full Width Section Matching Home Featured */}
+      {relatedProducts.length > 0 && (
+        <section className="py-24 bg-background border-t border-border/50 mt-24">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-end mb-12">
+              <div>
+                <h2 className={`font-serif text-3xl md:text-4xl font-bold text-foreground mb-3 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
+                  {t('related_products' as any, lang as any)}
+                </h2>
+                <p className={`text-muted-foreground ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
+                  {lang === 'ar' ? 'اكتشف المزيد من هذه الفئة' : 'Explore more from this category'}
+                </p>
+              </div>
+              <Link href="/shop" className="hidden md:flex items-center gap-1 text-foreground font-medium hover:text-foreground/80 transition-colors">
+                {t('view_all_products' as any, lang as any)}
+                <ChevronRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {relatedProducts.map((p: any, i: number) => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  currencySymbol={currencySymbol}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
