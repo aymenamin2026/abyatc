@@ -349,33 +349,33 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
-            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي الموحد والمفلتر بناءً على متغيرات المنتج */}
+            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي الموحد والمفلتر بناءً على Variations المنتج */}
             {attributes && attributes.length > 0 && attributes.map((attr: any) => {
               const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
               const attrKey = (attr.slug || attr.name?.en || `attr_${attr.id}`).toLowerCase();
 
-              // 1. فلترة القيم: إظهار القيم التي تمتلك فارييشن نشط للمنتج فقط
+              // 1. الفلترة الحقيقية: نمر على قيم الأتربيوت ونبقي فقط على القيم التي تظهر داخل الـ Variations لهذا المنتج
               const displayValues = attr.values.filter((val: any) => {
-                // إذا كان المنتج بسيط (Simple) ولا يحتوي على فارييشنز، نعرض القيم كـ Fallback
+                // أ) إذا كان المنتج بسيط (Simple) ولا يحتوي على فارييشنز، نعرض القيم المتاحة كـ Fallback
                 if (!product.variations || product.variations.length === 0) return true;
 
-                // التحقق من الـ variations المتاحة للمنتج
-                return product.variations.some((v: any) => {
-                  // أ) إذا كان الباك إند يرسل كائن خيارات صريح داخل الفارييشن (مثل v.options)
-                  if (v.options) {
-                    return Object.values(v.options).some(
-                      (optVal: any) => String(optVal).toLowerCase() === String(val.value?.en || val.value).toLowerCase()
-                    );
-                  }
+                // ب) للمنتج المتغير: نتحقق هل القيمة الحالية مضافة في أي فارييشن للمنتج؟
+                const valEn = String(val.value?.en || val.value || "").toUpperCase();
 
-                  // ب) فحص مطابقة الـ SKU كخيار احتياطي آمن ومجرب
+                return product.variations.some((v: any) => {
                   const sku = (v.sku || "").toUpperCase();
-                  const valStr = String(val.value?.en || val.value || "").toUpperCase();
-                  return sku.includes(`-${valStr}`) || sku.includes(`-${valStr}-`) || sku.endsWith(`-${valStr}`);
+
+                  // فحص المطابقة عبر الـ ID المباشر أو من خلال وجود القيمة نصياً داخل الـ SKU
+                  return (
+                    v.attribute_value_id === val.id ||
+                    sku.includes(`-${valEn}-`) ||
+                    sku.includes(`-${valEn}`) ||
+                    sku.endsWith(`-${valEn}`)
+                  );
                 });
               });
 
-              // إذا لم تكن هناك قيم لهذا المنتج في هذا الأتربيوت المحدد، نتخطى عرضه تماماً
+              // إذا كان الأتربيوت كاملاً لا يمتلك أي قيم نشطة لهذا المنتج، نخفيه تماماً ولا يظهر للمستخدم
               if (displayValues.length === 0) return null;
 
               // إذا كان الأتربيوت هو اللون
