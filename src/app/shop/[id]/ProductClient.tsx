@@ -90,15 +90,13 @@ export default function ProductClient({
 
   const hasVariations = product.variations && product.variations.length > 0;
 
-  // 🛠️ تعيين القيم الافتراضية لأي أتربيوت قادم من الباك إند تلقائياً عند تحميل الصفحة
-  // 🛠️ تعيين القيم الافتراضية بناءً على الـ slug الفعلي بشكل دقيق ومضمون
+  // 🛠️ تعيين القيم الافتراضية بناءً على الـ slug الفعلي بحروف صغيرة موحدة
   useEffect(() => {
     if (attributes && attributes.length > 0) {
       const defaults: Record<string, string> = {};
       attributes.forEach((attr: any) => {
         if (attr.values && attr.values.length > 0) {
-          // نستخدم الـ slug كما هو قادم من قاعدة البيانات، أو نعتمد الـ id كمعرف فريد لا يخطئ
-          const key = attr.slug || `attr_${attr.id}`;
+          const key = (attr.slug || attr.name?.en || `attr_${attr.id}`).toLowerCase();
           defaults[key] = attr.values[0].value?.en || attr.values[0].value;
         }
       });
@@ -151,11 +149,10 @@ export default function ProductClient({
     }
   };
 
-  // 🛠️ تحديث السعر بمطابقة مرنة لأسماء المفاتيح (حروف كبيرة أو صغيرة)
+  // 🛠️ تحديث السعر بمطابقة المفاتيح الصغيرة الموحدة
   if (hasVariations && Object.keys(selectedAttributes).length > 0) {
-    // فحص مرن للحروف الكبيرة والصغيرة القادمة من الباك إند
-    const sizeSelection = selectedAttributes['size'] || selectedAttributes['Size'] || selectedAttributes[attributes.find(a => a.slug?.toLowerCase() === 'size')?.slug];
-    const colorSelection = selectedAttributes['color'] || selectedAttributes['Color'] || selectedAttributes[attributes.find(a => a.slug?.toLowerCase() === 'color')?.slug];
+    const sizeSelection = selectedAttributes['size'];
+    const colorSelection = selectedAttributes['color'];
 
     if (sizeSelection && colorSelection) {
       const prefix = colorSelection.substring(0, 3).toUpperCase();
@@ -352,49 +349,35 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
-            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بدقة */}
+            {/* 🛠️ بداية قسم الأتربيوتس الديناميكي الموحد والمفلتر */}
             {attributes && attributes.length > 0 && attributes.map((attr: any) => {
               const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
-              const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
+              const attrKey = (attr.slug || attr.name?.en || `attr_${attr.id}`).toLowerCase();
 
-              // 1. فلترة القيم: نعرض فقط القيم التي تم ربطها بالمنتج من لوحة التحكم
+              // فلترة القيم: إظهار القيم التي تم ربطها بالفارييشن فقط، أو إظهارها كلها كـ Fallback
               const displayValues = attr.values.filter((val: any) => {
-                // أ) إذا كان الباك إند يرسل حقل pivot أو علامة ربط للمنتج مباشرة
                 if (val.product_id || val.pivot) return true;
-
-                // ب) أو إذا كان هناك variations، نتحقق من وجود المعرف (id) أو القيمة بالكامل بمرونة
                 if (product.variations && product.variations.length > 0) {
                   const vEn = (val.value?.en || val.value || "").toUpperCase();
                   return product.variations.some((v: any) => {
-                    // نتحقق من تداخل المعرفات أو النص داخل الـ variation specs
-                    const optionValues = v.options ? Object.values(v.options).map((o: any) => String(o).toUpperCase()) : [];
                     const sku = (v.sku || "").toUpperCase();
-
-                    return (
-                      optionValues.includes(vEn) ||
-                      sku.includes(`-${vEn}`) ||
-                      sku.includes(`-${vEn}-`) ||
-                      v.attribute_value_id === val.id // مطابقة مباشرة عبر الـ ID لو توفرت
-                    );
+                    return sku.includes(`-${vEn}`) || sku.includes(`-${vEn}-`) || v.attribute_value_id === val.id;
                   });
                 }
-
-                // إذا لم تتوفر الشروط السابقة، نعيد true كـ Fallback لمنع الاختفاء التام
                 return true;
               });
 
-              // إذا لم تكن هناك قيم مخصصة لهذا المنتج، يتخطى العرض
               if (displayValues.length === 0) return null;
 
-              // 2. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة
-              if (attrSlug === 'color') {
+              // إذا كان الأتربيوت هو اللون
+              if (attrKey === 'color') {
                 return (
                   <div key={attr.id} className="mb-6">
                     <div className="flex justify-between items-center mb-3">
                       <span className="font-medium text-foreground">
                         {attrName}:
                         <span className="text-muted-foreground font-normal ml-2">
-                          {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
+                          {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrKey])?.value?.[lang] || selectedAttributes[attrKey]}
                         </span>
                       </span>
                     </div>
@@ -403,12 +386,12 @@ export default function ProductClient({
                         const cEn = color.value?.en || color.value;
                         const cLocal = color.value?.[lang] || cEn;
                         const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
-                        const isSelected = selectedAttributes[attrSlug] === cEn;
+                        const isSelected = selectedAttributes[attrKey] === cEn;
 
                         return (
                           <button
                             key={color.id}
-                            onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: cEn }))}
+                            onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrKey]: cEn }))}
                             className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${isSelected ? 'ring-2 ring-primary ring-offset-2 scale-105' : 'hover:scale-110'}`}
                             title={cLocal}
                           >
@@ -422,12 +405,12 @@ export default function ProductClient({
                 );
               }
 
-              // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
+              // لأي أتربيوت آخر (مقاس، طول، خامة...)
               return (
                 <div key={attr.id} className="mb-8">
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-medium text-foreground">{attrName}</span>
-                    {attrSlug === 'size' && (
+                    {attrKey === 'size' && (
                       <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
                     )}
                   </div>
@@ -435,14 +418,14 @@ export default function ProductClient({
                     {displayValues.map((val: any) => {
                       const vEn = val.value?.en || val.value;
                       const vLocal = val.value?.[lang] || vEn;
-                      const isSelected = selectedAttributes[attrSlug] === vEn;
+                      const isSelected = selectedAttributes[attrKey] === vEn;
 
                       return (
                         <button
                           key={val.id}
-                          onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
+                          onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrKey]: vEn }))}
                           className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
-                ${isSelected
+                            ${isSelected
                               ? 'border-primary bg-primary text-primary-foreground shadow-sm'
                               : 'border-border bg-card hover:border-primary text-foreground'
                             }`}
@@ -455,7 +438,7 @@ export default function ProductClient({
                 </div>
               );
             })}
-            {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي والمفلتر */}
+            {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي الموحد */}
             {/* Actions */}
             <div className="flex gap-4 mb-4">
               {/* إظهار اختيار الكمية فقط إذا كان السعر متاحاً */}
