@@ -352,13 +352,13 @@ export default function ProductClient({
             </div>
 
             <div className={`text-muted-foreground mb-8 text-lg leading-relaxed max-w-none ${lang === 'ar' ? 'text-right' : 'text-left'}`} dangerouslySetInnerHTML={{ __html: desc }} />
-            {/* <pre>
+            <pre>
               {JSON.stringify(attributes, null, 2)}
 
             </pre>
             <pre>
               {JSON.stringify(product, null, 2)}
-            </pre> */}
+            </pre>
             {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بدقة */}
             {
               attributes && attributes.length > 0 && attributes.map((attr: any) => {
