@@ -63,7 +63,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
           >
             {/* Header */}
             <div className={`flex items-center justify-between p-6 border-b border-border`}>
-              <h2 className="font-serif text-2xl font-bold">{t('your_cart', lang)}</h2>
+              <h2 className="font-serif text-2xl font-bold">{t('your_cart', lang)}بي</h2>
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-muted rounded-full transition-colors"
