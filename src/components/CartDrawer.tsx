@@ -39,7 +39,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
 
   const { items: cartItems, subtotal, removeFromCart, updateQuantity } = useCart();
   const [itemToRemove, setItemToRemove] = useState<string | number | null>(null);
-
+  console.log("cartItems", cartItems);
   return (
     <AnimatePresence>
       {isOpen && (

@@ -76,7 +76,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setItems([]);
       return;
     }
-    
+
     const mappedItems: CartItem[] = dbCart.items.map((item: any) => ({
       cart_item_id: item.id,
       product_id: item.product_id,
@@ -115,7 +115,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // Optimistic UI update
     const tempId = `temp-${Date.now()}`;
     const optimisticItem = { ...item, cart_item_id: tempId };
-    
+
     // Helper to extract comparable string value from a potentially multilingual field
     const getFieldValue = (field: any): string => {
       if (typeof field === 'object' && field !== null) {
@@ -125,12 +125,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
 
     // Check if exists optimistically (compare by product_id + color/size values)
-    const existingIndex = items.findIndex(i => 
-      i.product_id === item.product_id && 
-      getFieldValue(i.color) === getFieldValue(item.color) && 
+    const existingIndex = items.findIndex(i =>
+      i.product_id === item.product_id &&
+      getFieldValue(i.color) === getFieldValue(item.color) &&
       getFieldValue(i.size) === getFieldValue(item.size)
     );
-    
+
     if (existingIndex >= 0) {
       const newItems = [...items];
       newItems[existingIndex].quantity += item.quantity;
@@ -161,16 +161,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeFromCart = async (cartItemId: string | number) => {
     if (String(cartItemId).startsWith('temp')) return; // Ignore temporary
-    
+
     // Optimistic UI update
     setItems(prev => prev.filter(i => String(i.cart_item_id) !== String(cartItemId)));
-    
+
     try {
       const res = await fetch(`${API_URL}/cart/${cartItemId}`, {
         method: 'DELETE',
         headers: getHeaders()
       });
-      
+
       if (res.ok) {
         const data = await res.json();
         mapDbCartToState(data.cart);
@@ -186,17 +186,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const updateQuantity = async (cartItemId: string | number, newQuantity: number) => {
     if (newQuantity < 1) return;
     if (String(cartItemId).startsWith('temp')) return;
-    
+
     // Optimistic
     setItems(prev => prev.map(i => String(i.cart_item_id) === String(cartItemId) ? { ...i, quantity: newQuantity } : i));
-    
+
     try {
       const res = await fetch(`${API_URL}/cart/${cartItemId}`, {
         method: 'PUT',
         headers: getHeaders(),
         body: JSON.stringify({ quantity: newQuantity })
       });
-      
+
       if (res.ok) {
         const data = await res.json();
         mapDbCartToState(data.cart);
@@ -228,7 +228,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const syncCart = async () => {
     const uuid = getCookie('elegance_cart_uuid') || (typeof window !== 'undefined' ? localStorage.getItem('elegance_cart_uuid') : null);
     if (!uuid) return;
-    
+
     try {
       const res = await fetch(`${API_URL}/cart/sync`, {
         method: 'POST',
