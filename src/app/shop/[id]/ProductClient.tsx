@@ -229,7 +229,7 @@ export default function ProductClient({
           product_id: product.id,
           name: product.name?.[lang] || product.name?.en,
           image: images[0],
-          console.log(images);
+
 
           color: "",
 
