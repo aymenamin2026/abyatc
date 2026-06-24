@@ -195,50 +195,62 @@ export default function ProductClient({
   }
 
   const handleAddToCart = async () => {
-    // التأكد من اختيار كل السمات المتاحة
-    const missingAttribute = productAttributes.some(attr => {
-      const key = attr.slug || `attr_${attr.id}`;
-      return !selectedAttributes[key];
-    });
+    try {
+      console.log("BUTTON CLICKED");
+      // التأكد من اختيار كل السمات المتاحة
+      const missingAttribute = productAttributes.some(attr => {
+        const key = attr.slug || `attr_${attr.id}`;
+        return !selectedAttributes[key];
+      });
 
-    if (hasVariations && missingAttribute) {
-      alert(lang === 'ar' ? 'يرجى تحديد جميع الخيارات المطلوبة للمنتج' : 'Please select all required product options');
-      return;
+      if (hasVariations && missingAttribute) {
+        alert(lang === 'ar' ? 'يرجى تحديد جميع الخيارات المطلوبة للمنتج' : 'Please select all required product options');
+        return;
+      }
+
+      setIsAddedToCart(true);
+
+      // تجهيز الخيارات بترجمة لغوية متناسقة
+      const formattedOptions: Record<string, string> = {};
+      productAttributes.forEach(attr => {
+        const key = attr.slug || `attr_${attr.id}`;
+        const selectedValueEn = selectedAttributes[key];
+        const fullValueObj = attr.values.find((v: any) => (v.value?.en || v.value) === selectedValueEn);
+
+        formattedOptions[key.toLowerCase()] = fullValueObj
+          ? (fullValueObj.value?.[lang] || fullValueObj.value?.en || fullValueObj.value)
+          : selectedValueEn || "N/A";
+      });
+
+
+      const selectedOptionsText = Object.values(formattedOptions).join(" - ");
+      try {
+        await addToCart({
+          product_id: product.id,
+          name: product.name?.[lang] || product.name?.en,
+          image: images[0],
+          console.log(images);
+
+          color: "",
+
+          size: selectedOptionsText || "",
+
+          price: parseFloat(displayPrice),
+          quantity: quantity
+        });
+        console.log("Added Successfully");
+
+      } catch (error) {
+        console.error("ADD TO CART ERROR:", error);
+        alert(JSON.stringify(error));
+      }
+
+      setTimeout(() => {
+        setIsAddedToCart(false);
+      }, 2000);
+    } catch (error) {
+      console.error(error);
     }
-
-    setIsAddedToCart(true);
-
-    // تجهيز الخيارات بترجمة لغوية متناسقة
-    const formattedOptions: Record<string, string> = {};
-    productAttributes.forEach(attr => {
-      const key = attr.slug || `attr_${attr.id}`;
-      const selectedValueEn = selectedAttributes[key];
-      const fullValueObj = attr.values.find((v: any) => (v.value?.en || v.value) === selectedValueEn);
-
-      formattedOptions[key.toLowerCase()] = fullValueObj
-        ? (fullValueObj.value?.[lang] || fullValueObj.value?.en || fullValueObj.value)
-        : selectedValueEn || "N/A";
-    });
-
-
-    const selectedOptionsText = Object.values(formattedOptions).join(" - ");
-
-    await addToCart({
-      product_id: product.id,
-      name: product.name,
-      image: images[0],
-
-      color: "",
-
-      size: selectedOptionsText || "",
-
-      price: parseFloat(displayPrice),
-      quantity: quantity
-    });
-
-    setTimeout(() => {
-      setIsAddedToCart(false);
-    }, 2000);
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
