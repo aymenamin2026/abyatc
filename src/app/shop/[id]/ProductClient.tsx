@@ -220,7 +220,7 @@ export default function ProductClient({
         : selectedValueEn || "N/A";
     });
 
-    // استخراج الخيارات الإضافية الجديدة لدمجها لـ TypeScript
+
     const selectedOptionsText = Object.values(formattedOptions).join(" - ");
 
     await addToCart({
