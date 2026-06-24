@@ -93,21 +93,45 @@ export default function ProductClient({
   // 🛠️ تعيين القيم الافتراضية لأي أتربيوت قادم من الباك إند تلقائياً عند تحميل الصفحة
   // 🛠️ تعيين القيم الافتراضية بناءً على الـ slug الفعلي بشكل دقيق ومضمون
   useEffect(() => {
-    console.log("selectedAttributes", selectedAttributes);
-    if (attributes && attributes.length > 0) {
-      const defaults: Record<string, string> = {};
-      attributes.forEach((attr: any) => {
-        if (attr.values && attr.values.length > 0) {
-          // نستخدم الـ slug كما هو قادم من قاعدة البيانات، أو نعتمد الـ id كمعرف فريد لا يخطئ
+    if (!attributes?.length || !product?.variations?.length) return;
+
+    const usedAttributeIds = new Set<number>();
+
+    product.variations.forEach((variation: any) => {
+      Object.keys(variation.options || {}).forEach((attributeId) => {
+        usedAttributeIds.add(Number(attributeId));
+      });
+    });
+
+    const defaults: Record<string, string> = {};
+
+    attributes
+      .filter((attr: any) => usedAttributeIds.has(attr.id))
+      .forEach((attr: any) => {
+        const usedValueIds = new Set<number>();
+
+        product.variations.forEach((variation: any) => {
+          const valueId = variation.options?.[String(attr.id)];
+
+          if (valueId) {
+            usedValueIds.add(Number(valueId));
+          }
+        });
+
+        const firstValue = attr.values?.find((v: any) =>
+          usedValueIds.has(v.id)
+        );
+
+        if (firstValue) {
           const key = attr.slug || `attr_${attr.id}`;
-          defaults[key] = attr.values[0].value?.en || attr.values[0].value;
-          console.log("selectedAttributes", selectedAttributes);
+
+          defaults[key] =
+            firstValue.value?.en || firstValue.value;
         }
       });
-      setSelectedAttributes(defaults);
-    }
-  }, [attributes]);
 
+    setSelectedAttributes(defaults);
+  }, [attributes, product]);
   useEffect(() => {
     async function getShipping() {
       const methods = await fetchShippingMethods();
@@ -367,102 +391,116 @@ export default function ProductClient({
 
             {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بدقة */}
             {
-              attributes && attributes.length > 0 && attributes.map((attr: any) => {
-                const attrName = attr.name?.[lang] || attr.name?.en || attr.name || "";
-                const attrSlug = attr.slug || attr.name?.en?.toLowerCase() || "";
-                // console.log("ATTRIBUTE", attr.id, attr.name);
-                // console.log("VALUES", attr.values);
-                // console.log("VARIATIONS", product.variations);
-                const displayValues = attr.values.filter((val: any) => {
-                  // المنتج العادي
-                  if (!product.variations || product.variations.length === 0) {
-                    return true;
+              attributes &&
+              attributes.length > 0 &&
+              attributes
+                .filter((attr: any) => {
+                  return product.variations?.some((variation: any) =>
+                    variation.options?.[String(attr.id)]
+                  );
+                })
+                .map((attr: any) => {
+
+                  const attrName =
+                    attr.name?.[lang] ||
+                    attr.name?.en ||
+                    attr.name ||
+                    "";
+
+                  const attrSlug =
+                    attr.slug ||
+                    attr.name?.en?.toLowerCase() ||
+                    "";
+                  const displayValues = attr.values.filter((val: any) => {
+                    // المنتج العادي
+                    if (!product.variations || product.variations.length === 0) {
+                      return true;
+                    }
+
+                    // مطابقة مباشرة بواسطة ID
+                    return product.variations.some((variation: any) => {
+                      if (!variation.options) return false;
+
+                      return Object.entries(variation.options).some(
+                        ([attributeId, valueId]) =>
+                          Number(attributeId) === Number(attr.id) &&
+                          Number(valueId) === Number(val.id)
+                      );
+                    });
+                  });
+
+                  // إذا لم تكن هناك قيم مخصصة لهذا المنتج، يتخطى العرض
+                  if (displayValues.length === 0) return null;
+
+                  // 2. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة
+                  if (attrSlug === 'color') {
+                    return (
+                      <div key={attr.id} className="mb-6">
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="font-medium text-foreground">
+                            {attrName}:
+                            <span className="text-muted-foreground font-normal ml-2">
+                              {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
+                            </span>
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                          {displayValues.map((color: any) => {
+                            const cEn = color.value?.en || color.value;
+                            const cLocal = color.value?.[lang] || cEn;
+                            const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
+                            const isSelected = selectedAttributes[attrSlug] === cEn;
+
+                            return (
+                              <button
+                                key={color.id}
+                                onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: cEn }))}
+                                className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${isSelected ? 'ring-2 ring-primary ring-offset-2 scale-105' : 'hover:scale-110'}`}
+                                title={cLocal}
+                              >
+                                {isSelected && (bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-black" />}
+                                {isSelected && !(bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-white" />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
                   }
 
-                  // مطابقة مباشرة بواسطة ID
-                  return product.variations.some((variation: any) => {
-                    if (!variation.options) return false;
-
-                    return Object.entries(variation.options).some(
-                      ([attributeId, valueId]) =>
-                        Number(attributeId) === Number(attr.id) &&
-                        Number(valueId) === Number(val.id)
-                    );
-                  });
-                });
-
-                // إذا لم تكن هناك قيم مخصصة لهذا المنتج، يتخطى العرض
-                if (displayValues.length === 0) return null;
-
-                // 2. إذا كان الأتربيوت هو اللون، يتم عرضه كدوائر ملونة
-                if (attrSlug === 'color') {
+                  // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
                   return (
-                    <div key={attr.id} className="mb-6">
+                    <div key={attr.id} className="mb-8">
                       <div className="flex justify-between items-center mb-3">
-                        <span className="font-medium text-foreground">
-                          {attrName}:
-                          <span className="text-muted-foreground font-normal ml-2">
-                            {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
-                          </span>
-                        </span>
+                        <span className="font-medium text-foreground">{attrName}</span>
+                        {attrSlug === 'size' && (
+                          <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
+                        )}
                       </div>
-                      <div className="flex flex-wrap gap-4">
-                        {displayValues.map((color: any) => {
-                          const cEn = color.value?.en || color.value;
-                          const cLocal = color.value?.[lang] || cEn;
-                          const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
-                          const isSelected = selectedAttributes[attrSlug] === cEn;
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                        {displayValues.map((val: any) => {
+                          const vEn = val.value?.en || val.value;
+                          const vLocal = val.value?.[lang] || vEn;
+                          const isSelected = selectedAttributes[attrSlug] === vEn;
 
                           return (
                             <button
-                              key={color.id}
-                              onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: cEn }))}
-                              className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all ${bgClass} ${isSelected ? 'ring-2 ring-primary ring-offset-2 scale-105' : 'hover:scale-110'}`}
-                              title={cLocal}
+                              key={val.id}
+                              onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
+                              className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
+                ${isSelected
+                                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                                  : 'border-border bg-card hover:border-primary text-foreground'
+                                }`}
                             >
-                              {isSelected && (bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-black" />}
-                              {isSelected && !(bgClass.includes('white') || bgClass.includes('yellow')) && <Check className="w-5 h-5 text-white" />}
+                              {vLocal}
                             </button>
                           );
                         })}
                       </div>
                     </div>
                   );
-                }
-
-                // 3. لأي أتربيوت آخر (مقاس، طول، خامة، إلخ) يتم عرضه كأزرار أنيقة وتلقائية
-                return (
-                  <div key={attr.id} className="mb-8">
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="font-medium text-foreground">{attrName}</span>
-                      {attrSlug === 'size' && (
-                        <Link href="#" className="text-sm text-foreground hover:underline">Size Guide</Link>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                      {displayValues.map((val: any) => {
-                        const vEn = val.value?.en || val.value;
-                        const vLocal = val.value?.[lang] || vEn;
-                        const isSelected = selectedAttributes[attrSlug] === vEn;
-
-                        return (
-                          <button
-                            key={val.id}
-                            onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
-                            className={`py-3 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center
-                ${isSelected
-                                ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                                : 'border-border bg-card hover:border-primary text-foreground'
-                              }`}
-                          >
-                            {vLocal}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
+                })}
             {/* 🛠️ نهاية قسم الأتربيوتس الديناميكي والمفلتر */}
             {/* Actions */}
             <div className="flex gap-4 mb-4">
