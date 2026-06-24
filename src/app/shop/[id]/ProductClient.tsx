@@ -221,19 +221,17 @@ export default function ProductClient({
     });
 
     // استخراج الخيارات الإضافية الجديدة لدمجها لـ TypeScript
-    const baseSize = formattedOptions['size'] || "N/A";
-    const extraOptions = Object.entries(formattedOptions)
-      .filter(([key]) => key !== 'color' && key !== 'size')
-      .map(([_, val]) => val)
-      .join(' - ');
+    const selectedOptionsText = Object.values(formattedOptions).join(" - ");
 
     await addToCart({
       product_id: product.id,
       name: product.name,
       image: images[0],
-      color: formattedOptions['color'] || "N/A",
-      // دمج ذكي متوافق 100% مع نوع البيانات المعرف بـ CartContext
-      size: extraOptions ? `${baseSize} (${extraOptions})` : baseSize,
+
+      color: "",
+
+      size: selectedOptionsText || "",
+
       price: parseFloat(displayPrice),
       quantity: quantity
     });
