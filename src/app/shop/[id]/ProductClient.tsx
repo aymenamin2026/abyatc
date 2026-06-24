@@ -93,6 +93,7 @@ export default function ProductClient({
   // 🛠️ تعيين القيم الافتراضية لأي أتربيوت قادم من الباك إند تلقائياً عند تحميل الصفحة
   // 🛠️ تعيين القيم الافتراضية بناءً على الـ slug الفعلي بشكل دقيق ومضمون
   useEffect(() => {
+    console.log("selectedAttributes", selectedAttributes);
     if (attributes && attributes.length > 0) {
       const defaults: Record<string, string> = {};
       attributes.forEach((attr: any) => {
@@ -100,6 +101,7 @@ export default function ProductClient({
           // نستخدم الـ slug كما هو قادم من قاعدة البيانات، أو نعتمد الـ id كمعرف فريد لا يخطئ
           const key = attr.slug || `attr_${attr.id}`;
           defaults[key] = attr.values[0].value?.en || attr.values[0].value;
+          console.log("selectedAttributes", selectedAttributes);
         }
       });
       setSelectedAttributes(defaults);
@@ -223,6 +225,7 @@ export default function ProductClient({
     const y = ((e.clientY - top) / height) * 100;
     setZoomPos({ x, y });
   };
+
   return (
     <div className="flex flex-col min-h-screen pt-32 pb-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -470,6 +473,7 @@ export default function ProductClient({
 
 
               {/* زر إضافة للسلة يظهر فقط إذا كان السعر متاحاً */}
+
               <button
                 onClick={handleAddToCart}
                 className={`flex-1 h-14 rounded-full font-medium text-lg transition-all shadow-lg flex items-center justify-center
