@@ -196,7 +196,7 @@ export default function ProductClient({
 
   const handleAddToCart = async () => {
     // التأكد من اختيار كل السمات المتاحة
-    const missingAttribute = attributes.some(attr => {
+    const missingAttribute = productAttributes.some(attr => {
       const key = attr.slug || `attr_${attr.id}`;
       return !selectedAttributes[key];
     });
@@ -210,7 +210,7 @@ export default function ProductClient({
 
     // تجهيز الخيارات بترجمة لغوية متناسقة
     const formattedOptions: Record<string, string> = {};
-    attributes.forEach(attr => {
+    productAttributes.forEach(attr => {
       const key = attr.slug || `attr_${attr.id}`;
       const selectedValueEn = selectedAttributes[key];
       const fullValueObj = attr.values.find((v: any) => (v.value?.en || v.value) === selectedValueEn);
@@ -249,6 +249,11 @@ export default function ProductClient({
     const y = ((e.clientY - top) / height) * 100;
     setZoomPos({ x, y });
   };
+  const productAttributes = attributes.filter((attr: any) =>
+    product.variations?.some(
+      (variation: any) => variation.options?.[String(attr.id)]
+    )
+  );
 
   return (
     <div className="flex flex-col min-h-screen pt-32 pb-24 bg-background">
@@ -393,12 +398,8 @@ export default function ProductClient({
             {
               attributes &&
               attributes.length > 0 &&
-              attributes
-                .filter((attr: any) => {
-                  return product.variations?.some((variation: any) =>
-                    variation.options?.[String(attr.id)]
-                  );
-                })
+
+              productAttributes
                 .map((attr: any) => {
 
                   const attrName =
@@ -524,7 +525,13 @@ export default function ProductClient({
                   }`}
                 disabled={
                   isAddedToCart ||
-                  (hasVariations && attributes.some(attr => !selectedAttributes[attr.slug || attr.name?.en?.toLowerCase()]))
+                  (hasVariations &&
+                    productAttributes.some(
+                      attr =>
+                        !selectedAttributes[
+                        attr.slug || attr.name?.en?.toLowerCase()
+                        ]
+                    ))
                 }
               >
                 {isAddedToCart ? (
