@@ -45,9 +45,24 @@ export default function MobileBottomNav() {
 
   useEffect(() => {
     if (showCategories && categories.length === 0) {
-      fetchCategories().then(setCategories).catch(console.error);
+      fetchCategories()
+        .then((res: any) => {
+          console.log("Categories Response:", res); // للتأكد من البيانات في الـ Console
+
+          // تحقق إذا كانت البيانات قادمة مباشرة كمصفوفة أو داخل res.data
+          if (Array.isArray(res)) {
+            setCategories(res);
+          } else if (res && Array.isArray(res.data)) {
+            setCategories(res.data);
+          } else if (res && Array.isArray(res.categories)) {
+            setCategories(res.categories);
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching categories:", err);
+        });
     }
-  }, [showCategories]);
+  }, [showCategories, categories.length]);
 
   useEffect(() => {
     if (searchQuery.trim().length > 1 && allProducts.length > 0) {
