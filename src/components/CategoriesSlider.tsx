@@ -57,7 +57,7 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
     checkScroll();
     el.addEventListener('scroll', checkScroll);
     window.addEventListener('resize', checkScroll);
-    console.log("Categories:", categories);
+
     return () => {
       el.removeEventListener('scroll', checkScroll);
       window.removeEventListener('resize', checkScroll);
