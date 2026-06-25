@@ -186,7 +186,7 @@ export default function MobileBottomNav() {
                   </div>
                 ) : (
                   suggestions.map((p) => (
-                    <Link href={`/product/${p.slug || p.id}`} key={p.id} className="flex items-center gap-3 p-2 hover:bg-secondary rounded-xl transition-colors">
+                    <Link href={`/shop/${p.slug || p.id}`} key={p.id} className="flex items-center gap-3 p-2 hover:bg-secondary rounded-xl transition-colors">
                       <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-secondary shrink-0 border border-border/40">
                         <Image src={p.images?.[0] ? getImageUrl(p.images[0]) : '/no-image.jpg'} alt="" fill className="object-cover" />
                       </div>
