@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchProducts, fetchCategories, getImageUrl } from "@/lib/api";
+import Image from "next/image";
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
@@ -19,6 +20,7 @@ export default function MobileBottomNav() {
   const { user } = useAuth();
   const { theme } = useTheme();
 
+  const isRtl = lang === "ar";
   const [showSearch, setShowSearch] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,7 +31,9 @@ export default function MobileBottomNav() {
 
   useEffect(() => {
     if (showSearch) {
-      searchInputRef.current?.focus();
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
       if (allProducts.length === 0) {
         fetchProducts().then(setAllProducts).catch(console.error);
       }
@@ -77,17 +81,17 @@ export default function MobileBottomNav() {
   };
 
   const tabs = [
-    { key: "home", href: "/", icon: Home, label: lang === "ar" ? "الرئيسية" : "Home" },
-    { key: "categories", href: "#", icon: Grid3x3, label: lang === "ar" ? "الأقسام" : "Categories" },
-    { key: "search", href: "#", icon: Search, label: lang === "ar" ? "بحث" : "Search" },
-    { key: "cart", href: "/cart", icon: ShoppingBag, label: lang === "ar" ? "السلة" : "Cart" },
-    { key: "account", href: user ? "/account" : "/login", icon: User, label: lang === "ar" ? "حسابي" : "Account" },
+    { key: "home", href: "/", icon: Home, label: isRtl ? "الرئيسية" : "Home" },
+    { key: "categories", href: "#", icon: Grid3x3, label: isRtl ? "الأقسام" : "Categories" },
+    { key: "search", href: "#", icon: Search, label: isRtl ? "بحث" : "Search" },
+    { key: "cart", href: "/cart", icon: ShoppingBag, label: isRtl ? "السلة" : "Cart" },
+    { key: "account", href: user ? "/account" : "/login", icon: User, label: isRtl ? "حسابي" : "Account" },
   ];
 
   return (
     <>
       {/* Floating Bottom Tab Bar */}
-      <motion.div 
+      <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         className="fixed bottom-4 left-4 right-4 z-[50] lg:hidden"
@@ -98,9 +102,9 @@ export default function MobileBottomNav() {
               const Icon = tab.icon;
               const active = tab.key === "home" ? isActive("/") && pathname === "/" :
                 tab.key === "cart" ? isActive("/cart") :
-                tab.key === "account" ? isActive("/account") || isActive("/login") :
-                tab.key === "categories" ? showCategories :
-                tab.key === "search" ? showSearch : false;
+                  tab.key === "account" ? isActive("/account") || isActive("/login") :
+                    tab.key === "categories" ? showCategories :
+                      tab.key === "search" ? showSearch : false;
 
               return (
                 <button
@@ -118,9 +122,8 @@ export default function MobileBottomNav() {
                       router.push(tab.href);
                     }
                   }}
-                  className={`flex flex-col items-center justify-center gap-0.5 w-16 py-1 rounded-2xl transition-all duration-300 ${
-                    active ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`flex flex-col items-center justify-center gap-0.5 w-16 py-1 rounded-2xl transition-all duration-300 ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   <div className="relative">
                     <Icon className={`w-5 h-5 transition-all ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.5 : 1.8} />
@@ -138,19 +141,123 @@ export default function MobileBottomNav() {
         </div>
       </motion.div>
 
-      {/* Panels (Search & Categories remain unchanged in logic but match the theme) */}
+      {/* Panels (Search & Categories) */}
       <AnimatePresence>
+        {/* 1. Search Panel */}
         {showSearch && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowSearch(false)} className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[48] lg:hidden" />
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed bottom-0 left-0 right-0 z-[49] lg:hidden bg-background/80 backdrop-blur-xl rounded-t-[32px] border-t border-border/50 shadow-2xl max-h-[70vh] flex flex-col">
-              {/* ... محتوى البحث كما هو ... */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowSearch(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[58] lg:hidden"
+            />
+
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-0 right-0 z-[60] lg:hidden bg-background bg-opacity-95 backdrop-blur-xl rounded-t-[32px] border-t border-border/60 shadow-2xl h-[70vh] min-h-[400px] flex flex-col p-6 pb-24"
+            >
+              <div className="flex justify-between items-center mb-4 shrink-0">
+                <h3 className="text-lg font-bold">{isRtl ? "البحث في المتجر" : "Search Store"}</h3>
+                <button onClick={() => setShowSearch(false)} className="p-2 rounded-full bg-secondary text-muted-foreground hover:text-foreground">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSearch} className="relative w-full mb-4 shrink-0">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={isRtl ? "ابحث عن منتج، علامة تجارية..." : "Search for a product..."}
+                  className="w-full bg-secondary border border-border/80 rounded-2xl h-12 px-4 text-sm focus:outline-none focus:border-primary text-foreground"
+                />
+              </form>
+
+              <div className="flex-1 overflow-y-auto space-y-3 pr-1 native-scrollbar">
+                {suggestions.length === 0 && searchQuery.trim().length > 1 ? (
+                  <div className="text-center text-sm text-muted-foreground py-8">
+                    {isRtl ? "لا توجد نتائج مطابقة" : "No results found"}
+                  </div>
+                ) : (
+                  suggestions.map((p) => (
+                    <Link href={`/product/${p.slug || p.id}`} key={p.id} className="flex items-center gap-3 p-2 hover:bg-secondary rounded-xl transition-colors">
+                      <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-secondary shrink-0 border border-border/40">
+                        <Image src={p.images?.[0] ? getImageUrl(p.images[0]) : '/no-image.jpg'} alt="" fill className="object-cover" />
+                      </div>
+                      <span className="text-sm font-medium line-clamp-1 text-foreground">{p.name?.[lang] || p.name?.en || p.name}</span>
+                    </Link>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+
+        {/* 2. Categories Panel */}
+        {showCategories && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCategories(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[58] lg:hidden"
+            />
+
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-0 right-0 z-[60] lg:hidden bg-background bg-opacity-95 backdrop-blur-xl rounded-t-[32px] border-t border-border/60 shadow-2xl h-[70vh] min-h-[400px] flex flex-col p-6 pb-24"
+            >
+              <div className="flex justify-between items-center mb-6 shrink-0">
+                <h3 className="text-lg font-bold">{isRtl ? "جميع الفئات" : "All Categories"}</h3>
+                <button onClick={() => setShowCategories(false)} className="p-2 rounded-full bg-secondary text-muted-foreground">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto grid grid-cols-2 gap-4">
+                {categories.length === 0 ? (
+                  <div className="col-span-2 text-center text-sm text-muted-foreground py-10">
+                    {isRtl ? "جاري تحميل الفئات..." : "Loading categories..."}
+                  </div>
+                ) : (
+                  categories.map((category) => (
+                    <Link
+                      href={`/shop?category=${encodeURIComponent(category.name?.[lang] || category.name?.en || category.name)}`}
+                      key={category.id}
+                      className="flex flex-col items-center p-4 bg-secondary/50 hover:bg-secondary border border-border/20 rounded-2xl transition-all"
+                    >
+                      <div className="relative w-16 h-16 rounded-full overflow-hidden mb-3 bg-background border border-border/50">
+                        <Image
+                          src={category.image ? getImageUrl(category.image) : '/no-image.jpg'}
+                          alt=""
+                          fill
+                          sizes="64px"
+                          className="object-cover"
+                        />
+                      </div>
+                      <span className="text-xs font-bold text-center line-clamp-1 text-foreground">
+                        {category.name?.[lang] || category.name?.en || category.name}
+                      </span>
+                    </Link>
+                  ))
+                )}
+              </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      <div className="h-20 lg:hidden" /> {/* مسافة إضافية لتناسب التصميم العائم */}
+      <div className="h-20 lg:hidden" />
     </>
   );
 }
