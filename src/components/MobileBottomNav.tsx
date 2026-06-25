@@ -199,9 +199,10 @@ export default function MobileBottomNav() {
           </>
         )}
 
-        {/* 2. Categories Panel */}
+        {/* 2. Categories Panel (نافذة عرض الفئات بتصميم متناسق) */}
         {showCategories && (
           <>
+            {/* الخلفية المعتمة والمموهة للموقع عند فتح الفئات */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -210,6 +211,7 @@ export default function MobileBottomNav() {
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[58] lg:hidden"
             />
 
+            {/* نافذة الفئات الصاعدة من الأسفل */}
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
@@ -217,39 +219,55 @@ export default function MobileBottomNav() {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed bottom-0 left-0 right-0 z-[60] lg:hidden bg-background bg-opacity-95 backdrop-blur-xl rounded-t-[32px] border-t border-border/60 shadow-2xl h-[70vh] min-h-[400px] flex flex-col p-6 pb-24"
             >
+              {/* الهيدر: العنوان وزر الإغلاق */}
               <div className="flex justify-between items-center mb-6 shrink-0">
-                <h3 className="text-lg font-bold">{isRtl ? "جميع الفئات" : "All Categories"}</h3>
-                <button onClick={() => setShowCategories(false)} className="p-2 rounded-full bg-secondary text-muted-foreground">
+                <h3 className="text-lg font-bold text-foreground">
+                  {isRtl ? "تصفح حسب الفئات" : "Shop by Category"}
+                </h3>
+                <button
+                  onClick={() => setShowCategories(false)}
+                  className="p-2 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto grid grid-cols-2 gap-4">
+              {/* جسد النافذة: شبكة عرض الفئات القابلة للتمرير */}
+              <div className="flex-1 overflow-y-auto pr-1 native-scrollbar">
                 {categories.length === 0 ? (
-                  <div className="col-span-2 text-center text-sm text-muted-foreground py-10">
-                    {isRtl ? "جاري تحميل الفئات..." : "Loading categories..."}
+                  /* حالة الانتظار وجلب البيانات من الباك إند */
+                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground gap-2">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm">{isRtl ? "جاري تحميل الفئات..." : "Loading categories..."}</span>
                   </div>
                 ) : (
-                  categories.map((category) => (
-                    <Link
-                      href={`/shop?category=${encodeURIComponent(category.name?.[lang] || category.name?.en || category.name)}`}
-                      key={category.id}
-                      className="flex flex-col items-center p-4 bg-secondary/50 hover:bg-secondary border border-border/20 rounded-2xl transition-all"
-                    >
-                      <div className="relative w-16 h-16 rounded-full overflow-hidden mb-3 bg-background border border-border/50">
-                        <Image
-                          src={category.image ? getImageUrl(category.image) : '/no-image.jpg'}
-                          alt=""
-                          fill
-                          sizes="64px"
-                          className="object-cover"
-                        />
-                      </div>
-                      <span className="text-xs font-bold text-center line-clamp-1 text-foreground">
-                        {category.name?.[lang] || category.name?.en || category.name}
-                      </span>
-                    </Link>
-                  ))
+                  /* شبكة الفئات - عنصرين في كل صف على الموبايل */
+                  <div className="grid grid-cols-2 gap-4 pb-4">
+                    {categories.map((category) => (
+                      <Link
+                        href={`/shop?category=${encodeURIComponent(category.name?.[lang] || category.name?.en || category.name)}`}
+                        key={category.id}
+                        onClick={() => setShowCategories(false)}
+                        className="flex flex-col items-center p-4 bg-secondary/40 hover:bg-secondary/80 border border-border/40 rounded-2xl transition-all duration-200 active:scale-95 group"
+                      >
+                        {/* صورة الفئة الدائرية المحمية */}
+                        <div className="relative w-16 h-16 rounded-full overflow-hidden mb-3 bg-background border border-border/60 shadow-sm shrink-0">
+                          <Image
+                            src={category.image ? getImageUrl(category.image) : '/no-image.jpg'}
+                            alt={category.name?.[lang] || category.name?.en || category.name}
+                            fill
+                            sizes="64px"
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        </div>
+
+                        {/* اسم الفئة */}
+                        <span className="text-xs font-bold text-center text-foreground line-clamp-2 px-1">
+                          {category.name?.[lang] || category.name?.en || category.name}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
                 )}
               </div>
             </motion.div>
