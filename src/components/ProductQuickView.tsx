@@ -76,9 +76,9 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
 
   const sizeAttr = attributes?.find((a: any) => a.slug === 'size' || a.name?.en === 'Size');
   const colorAttr = attributes?.find((a: any) => a.slug === 'color' || a.name?.en === 'Color');
-  
+
   const hasVariations = product?.variations && product.variations.length > 0;
-  
+
   const availableSizes = hasVariations && sizeAttr ? sizeAttr.values.filter((size: any) => {
     const sEn = size.value?.en || size.value;
     return product.variations.some((v: any) => v.sku?.endsWith(`-${sEn}`));
@@ -105,12 +105,12 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
   const description = product.description?.[lang] || product.description?.en || product.description;
   const category = product.categories?.[0]?.name?.[lang] || product.categories?.[0]?.name?.en || t('apparel', lang);
 
-  let displayPrice = product.base_price !== undefined ? parseFloat(product.base_price) 
-              : (product.variations?.[0]?.price ? parseFloat(product.variations[0].price) : 0);
+  let displayPrice = product.base_price !== undefined ? parseFloat(product.base_price)
+    : (product.variations?.[0]?.price ? parseFloat(product.variations[0].price) : 0);
 
   if (hasVariations && selectedSize && selectedColor) {
     const prefix = selectedColor.substring(0, 3).toUpperCase();
-    const variation = product.variations.find((v: any) => 
+    const variation = product.variations.find((v: any) =>
       (v.sku?.includes(`-${prefix}-`) || v.sku?.includes(`-${prefix}`)) && v.sku?.endsWith(`-${selectedSize}`)
     );
     if (variation && variation.price) {
@@ -130,7 +130,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
       price: displayPrice,
       quantity: 1
     });
-    
+
     setAddedToCart(true);
     setTimeout(() => {
       setAddedToCart(false);
@@ -188,33 +188,33 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
 
           {/* RIGHT: DETAILS SCROLLABLE AREA */}
           <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col overflow-y-auto custom-scrollbar">
-            
+
             {/* METADATA CATEGORY */}
             <div className="text-[10px] uppercase tracking-[0.25em] font-medium text-muted-foreground/80 mb-2.5">
               {category}
             </div>
-            
+
             {/* PRODUCT TITLE */}
             <h2 className="font-light text-2xl md:text-3xl text-foreground tracking-wide leading-tight mb-4">
               {productName}
             </h2>
-            
+
             {/* LIVE DYNAMIC PRICE */}
             <div className="text-xl md:text-2xl font-semibold text-foreground mb-6 flex items-center tracking-wider">
-               {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                 <div className="flex items-center">
-                   <Image src="/riyal-dark.svg" alt="SAR" width={16} height={16} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
-                   <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className={`theme-dark-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
-                 </div>
-               ) : (
-                 <span dangerouslySetInnerHTML={{ __html: currencySymbol }} className={`font-light text-muted-foreground ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
-               )}
-               <span>{displayPrice.toFixed(2)}</span>
+              {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                <div className="flex items-center">
+                  <Image src="/riyal-dark.svg" alt="SAR" width={16} height={16} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+                  <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className={`theme-dark-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+                </div>
+              ) : (
+                <span dangerouslySetInnerHTML={{ __html: currencySymbol }} className={`font-light text-muted-foreground ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
+              )}
+              <span>{displayPrice.toFixed(2)}</span>
             </div>
 
             {/* PRODUCT DESCRIPTION */}
             {description && (
-              <div 
+              <div
                 className="prose prose-sm dark:prose-invert text-muted-foreground/90 font-light leading-relaxed mb-6 line-clamp-4 border-t border-border/30 pt-4"
                 dangerouslySetInnerHTML={{ __html: description }}
               />
@@ -227,7 +227,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                 <div>
                   <div className="mb-2.5">
                     <span className="text-xs uppercase tracking-widest font-medium text-muted-foreground">
-                      {colorAttr?.name?.[lang] || colorAttr?.name?.en || "Color"}: 
+                      {colorAttr?.name?.[lang] || colorAttr?.name?.en || "Color"}:
                       <span className="text-foreground font-normal normal-case tracking-normal ml-2">
                         {availableColors.find((c: any) => (c.value?.en || c.value) === selectedColor)?.value?.[lang] || selectedColor}
                       </span>
@@ -241,7 +241,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                       const isSelected = selectedColor === cEn;
 
                       return (
-                        <button 
+                        <button
                           key={color.id}
                           onClick={() => setSelectedColor(cEn)}
                           className={`relative w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${bgClass} ${isSelected ? 'ring-2 ring-primary ring-offset-2 scale-105 shadow-sm' : 'hover:scale-110'}`}
@@ -272,12 +272,12 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                       const isSelected = selectedSize === sEn;
 
                       return (
-                        <button 
+                        <button
                           key={size.id}
                           onClick={() => setSelectedSize(sEn)}
                           className={`py-2.5 px-1 rounded-xl border text-xs tracking-wider font-light transition-all duration-300 flex items-center justify-center
-                            ${isSelected 
-                              ? 'border-primary bg-primary/10 text-primary font-medium shadow-sm shadow-primary/5' 
+                            ${isSelected
+                              ? 'border-primary bg-primary/10 text-primary font-medium shadow-sm shadow-primary/5'
                               : 'border-border/60 bg-muted/5 hover:border-foreground/40 text-foreground'}`}
                         >
                           {sLocal}
@@ -294,11 +294,10 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
               <button
                 onClick={handleAddToCart}
                 disabled={addedToCart || (hasVariations && (!selectedSize || !selectedColor))}
-                className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-medium text-sm tracking-wider uppercase transition-all duration-500 shadow-md ${
-                  addedToCart
+                className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-medium text-sm tracking-wider uppercase transition-all duration-500 shadow-md ${addedToCart
                     ? "bg-green-500 text-white border-green-500 shadow-green-500/10 scale-[0.99]"
                     : "bg-foreground text-background hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-                }`}
+                  }`}
               >
                 {addedToCart ? (
                   <>
@@ -312,7 +311,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                   </>
                 )}
               </button>
-              
+
               <Link
                 href={`/shop/${product.slug}`}
                 onClick={onClose}
@@ -321,7 +320,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                 {t('view_details', lang)}
               </Link>
             </div>
-            
+
           </div>
         </motion.div>
       </div>
