@@ -400,9 +400,9 @@ export default function ProductClient({
             <pre>
               {JSON.stringify(product, null, 2)}
             </pre> */}
-            <pre>
+            {/* <pre>
               {JSON.stringify(product.variations, null, 2)}
-            </pre>
+            </pre> */}
 
             {/* 🛠️ بداية قسم الأتربيوتس الديناميكي والمفلتر بدقة */}
             {

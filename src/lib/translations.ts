@@ -103,12 +103,12 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     sort_price_desc: "Price: High to Low",
     
     // Cart
-    your_cart: "Your Cart",
+    your_cart: "Show Quote Summary",
     view_cart: "Price Quote Summary",
     subtotal: "Subtotal",
     checkout: "Request Now Price",
     request_now:"Request Now Price",
-    empty_cart: "Your cart is empty.",
+    empty_cart: "Your Quote Summary is empty.",
     no_products_added_desc: "It looks like you haven't added any products to your cart yet. Discover our collections to find your perfect professional attire.",
     shipping_taxes_calculated: "Shipping & taxes calculated at checkout",
     shipping_calculated_checkout: "Shipping calculated at checkout. Taxes are included.",
@@ -367,12 +367,12 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     sort_price_desc: "السعر: من الأعلى للأقل",
     
     // Cart
-    your_cart: "سلة التسوق",
+    your_cart: "عرض طلب التسعيره",
     view_cart: "عرض ملخص طلب التسعيره",
     subtotal: "المجموع الفرعي",
     checkout: "طلب الان تسعيره",
     request_now: "طلب الان تسعيره",
-    empty_cart: "سلة التسوق فارغة.",
+    empty_cart: "عرض طلب السعر فارغه.",
     no_products_added_desc: "يبدو أنك لم تضف أي منتجات إلى سلة تسوقك بعد. استكشف مجموعاتنا لتجد زيك المهني المثالي.",
     shipping_taxes_calculated: "يتم حساب الشحن والضرائب عند الدفع",
     shipping_calculated_checkout: "يتم حساب الشحن عند الدفع. الأسعار شاملة الضريبة.",
