@@ -83,7 +83,7 @@ export default async function Home() {
                   key={category.id}
                   className="group cursor-pointer block h-full"
                 >
-                  <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-md bg-secondary h-full">
+                  <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-md bg-secondary">
                     <Image
                       src={category.image ? getImageUrl(category.image) : '/no-image.jpg'}
                       alt={category.name?.[lang] || category.name?.en || category.name}
