@@ -71,7 +71,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               <th className="pb-3 font-medium text-start">{t('order_id', lang)}</th>
               <th className="pb-3 font-medium text-start">{t('order_date', lang)}</th>
               <th className="pb-3 font-medium text-start">{t('order_status', lang)}</th>
-              <th className="pb-3 font-medium text-start">{t('order_total', lang)}</th>
+              {/* <th className="pb-3 font-medium text-start">{t('order_total', lang)}</th> */}
               <th className="pb-3 font-medium text-end">{t('order_actions', lang)}</th>
             </tr>
           </thead>
@@ -96,7 +96,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                     {t(order.status as any, lang)}
                   </span>
                 </td>
-                <td className="py-4 font-medium text-foreground">
+                {/* <td className="py-4 font-medium text-foreground">
                   <span className="flex items-center gap-1">
                     {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
                       <>
@@ -111,18 +111,18 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                   <span className="text-xs text-muted-foreground block mt-1">
                     for {order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}
                   </span>
-                </td>
+                </td> */}
                 <td className="py-4 text-end">
                   <div className="flex items-center justify-end gap-4">
-                    <button 
+                    <button
                       onClick={() => setSelectedOrder(order)}
                       className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 font-medium text-sm transition-colors"
                     >
                       <Eye className="w-4 h-4" />
                       {t('view', lang)}
                     </button>
-                    <Link 
-                      href={`/track?query=${order.order_number}`} 
+                    <Link
+                      href={`/track?query=${order.order_number}`}
                       className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground font-medium text-sm transition-colors border-s border-border ps-4"
                     >
                       <Truck className="w-4 h-4" />
@@ -146,7 +146,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 <h3 className="text-xl font-bold text-foreground font-serif">{t('order_details', lang)}</h3>
                 <p className="text-sm text-muted-foreground">{t('order_id', lang)} #{selectedOrder.order_number}</p>
               </div>
-              <button 
+              <button
                 onClick={() => setSelectedOrder(null)}
                 className="p-2 hover:bg-muted rounded-full transition-colors"
               >
@@ -196,10 +196,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                   {selectedOrder.items?.map((item: any) => (
                     <div key={item.id} className="flex gap-4 items-center p-3 rounded-xl border border-border hover:bg-muted/5 transition-colors">
                       <div className="w-14 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
-                        <img 
-                          src={getImageUrl(item.product?.image || item.image)} 
-                          alt="Product" 
-                          className="w-full h-full object-cover" 
+                        <img
+                          src={getImageUrl(item.product?.image || item.image)}
+                          alt="Product"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -270,7 +270,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       <span className="text-muted-foreground font-medium">{t('shipping', lang)} ({selectedOrder.shipping_method})</span>
                       <span className="text-foreground font-bold text-green-600">
                         {selectedOrder.shipping_amount > 0 ? (
-                           `${currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}${parseFloat(selectedOrder.shipping_amount).toFixed(2)}`
+                          `${currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}${parseFloat(selectedOrder.shipping_amount).toFixed(2)}`
                         ) : 'Free'}
                       </span>
                     </div>
@@ -315,14 +315,14 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
 
             {/* Modal Footer */}
             <div className="p-6 border-t border-border bg-muted/20 flex gap-3">
-              <Link 
+              <Link
                 href={`/track?query=${selectedOrder.order_number}`}
                 className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
               >
                 <Truck className="w-5 h-5" />
                 {t('track_order', lang)}
               </Link>
-              <button 
+              <button
                 onClick={() => setSelectedOrder(null)}
                 className="px-6 py-3 border border-border rounded-xl font-medium hover:bg-background transition-colors"
               >
