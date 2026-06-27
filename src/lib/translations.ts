@@ -234,6 +234,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     free_returns: "30-day free returns",
     reviews: "Reviews",
     details: "Details",
+    awaiting_pricing:"Awaiting Pricing",
 
     // Footer
     location:"Riyadh, Al Faisaliyah District, Cairo Street",
@@ -447,6 +448,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     do_not_close: "يرجى عدم إغلاق النافذة",
     select_payment_method: "يرجى اختيار طريقة الدفع.",
     select_shipping_method: "يرجى اختيار طريقة الشحن.",
+    awaiting_pricing:"قيد المراجعه",
     address_incomplete: "يرجى التأكد من اكتمال عنوان الشحن الخاص بك (الاسم، العنوان، المدينة مطلوبة).",
     error_placing_order: "خطأ في تقديم الطلب",
     error_deleting_address: "فشل في حذف العنوان",
