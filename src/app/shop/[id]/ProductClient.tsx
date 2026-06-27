@@ -223,21 +223,36 @@ export default function ProductClient({
       });
 
 
-      const selectedOptionsText = Object.values(formattedOptions).join(" - ");
+      // تجهيز نص يحتوي على اسم الأتربيوت + القيمة
+      const selectedOptionsText = productAttributes
+        .map((attr: any) => {
+          const key = (attr.slug || `attr_${attr.id}`).toLowerCase();
+
+          const attrName =
+            attr.name?.[lang] ||
+            attr.name?.en ||
+            attr.name;
+
+          const value = formattedOptions[key] || "";
+
+          return `${attrName}: ${value}`;
+        })
+        .join(" | ");
+
       try {
         await addToCart({
           product_id: product.id,
           name: product.name?.[lang] || product.name?.en,
           image: images[0],
 
-
           color: "",
 
-          size: selectedOptionsText || "",
+          size: selectedOptionsText,
 
           price: parseFloat(displayPrice),
           quantity: quantity
         });
+
         console.log("Added Successfully");
 
       } catch (error) {

@@ -96,7 +96,9 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                         </button>
                       </div>
                       <div className="text-sm text-muted-foreground mb-4">
-                        {typeof item.color === 'object' && item.color !== null ? (item.color[lang] || item.color.en) : item.color} | {lang === 'ar' ? 'المقاس' : 'Size'} {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
+                        {typeof item.size === "object"
+                          ? (item.size[lang] || item.size.en)
+                          : item.size}
                       </div>
 
                       <div className="mt-auto flex items-center justify-between">
@@ -151,9 +153,9 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                   {subtotal.toFixed(2)}
                 </span>
               </div> */}
-              <p className="text-sm text-muted-foreground mb-6">
+              {/* <p className="text-sm text-muted-foreground mb-6">
                 {pricesIncludeTax ? t('shipping_calculated_checkout', lang) || "Shipping calculated at checkout. Taxes are included." : t('shipping_taxes_calculated', lang) || "Shipping & taxes calculated at checkout."}
-              </p>
+              </p> */}
 
               <div className="flex flex-col gap-3">
                 <Link
@@ -171,9 +173,9 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                   {t('checkout', lang)} <ArrowRight className={`w-5 h-5 transition-transform ${lang === 'ar' ? 'group-hover:-translate-x-1 rotate-180' : 'group-hover:translate-x-1'}`} />
                 </Link>
               </div>
-              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              {/* <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <ShieldCheck className="w-4 h-4 text-green-600" /> {t('secure_checkout', lang)}
-              </div>
+              </div> */}
             </div>
           </motion.div>
 

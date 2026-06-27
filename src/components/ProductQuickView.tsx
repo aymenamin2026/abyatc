@@ -200,7 +200,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
             </h2>
 
             {/* LIVE DYNAMIC PRICE */}
-            <div className="text-xl md:text-2xl font-semibold text-foreground mb-6 flex items-center tracking-wider">
+            {/* <div className="text-xl md:text-2xl font-semibold text-foreground mb-6 flex items-center tracking-wider">
               {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
                 <div className="flex items-center">
                   <Image src="/riyal-dark.svg" alt="SAR" width={16} height={16} className={`inline-block theme-light-only ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
@@ -210,7 +210,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                 <span dangerouslySetInnerHTML={{ __html: currencySymbol }} className={`font-light text-muted-foreground ${lang === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
               )}
               <span>{displayPrice.toFixed(2)}</span>
-            </div>
+            </div> */}
 
             {/* PRODUCT DESCRIPTION */}
             {description && (
@@ -295,8 +295,8 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                 onClick={handleAddToCart}
                 disabled={addedToCart || (hasVariations && (!selectedSize || !selectedColor))}
                 className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-medium text-sm tracking-wider uppercase transition-all duration-500 shadow-md ${addedToCart
-                    ? "bg-green-500 text-white border-green-500 shadow-green-500/10 scale-[0.99]"
-                    : "bg-foreground text-background hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                  ? "bg-green-500 text-white border-green-500 shadow-green-500/10 scale-[0.99]"
+                  : "bg-foreground text-background hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                   }`}
               >
                 {addedToCart ? (

@@ -78,6 +78,10 @@ export default function Checkout() {
   const [isLoadingRates, setIsLoadingRates] = useState(false);
 
   const [countries, setCountries] = useState<any[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<any>(null);
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+966");
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
   const [zones, setZones] = useState<any[]>([]);
   const [defaultCountryId, setDefaultCountryId] = useState<string>("");
 
@@ -87,6 +91,35 @@ export default function Checkout() {
 
   const [countryQuery, setCountryQuery] = useState('');
   const [zoneQuery, setZoneQuery] = useState('');
+
+  useEffect(() => {
+    const loadCountriesData = async () => {
+      try {
+        const [countriesData, settingsData] = await Promise.all([
+          fetchCountries(),
+          fetchSettings()
+        ]);
+
+        if (settingsData?.default_country) {
+          setCountries([settingsData.default_country]);
+          setSelectedCountry(settingsData.default_country);
+          if (settingsData.default_country.phone_code) {
+            setSelectedCountryCode(settingsData.default_country.phone_code);
+          }
+        } else {
+          const withCodes = (countriesData || []).filter((c: any) => c.phone_code);
+          setCountries(withCodes);
+          if (withCodes.length > 0) {
+            setSelectedCountry(withCodes.find((c: any) => c.phone_code === "+966") || withCodes[0]);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading countries in checkout:', err);
+      }
+    };
+    loadCountriesData();
+  }, []);
+
 
   const filteredCountries = countryQuery === ''
     ? countries
@@ -142,6 +175,7 @@ export default function Checkout() {
       if ((user as any).phone) setTabbyPhone((user as any).phone);
     }
   }, [user]);
+
 
   useEffect(() => {
     async function init() {
@@ -202,6 +236,7 @@ export default function Checkout() {
     init();
   }, [user]);
 
+
   useEffect(() => {
     const handler = setTimeout(() => {
       // Trigger rates fetch if using manual address entry (guest or adding new)
@@ -253,12 +288,26 @@ export default function Checkout() {
     const isLogin = authMode === "login";
 
     try {
-      const data = isLogin ? await authLogin(credentials) : await authRegister(credentials);
+      let data;
 
-      // Successful Auth
+      if (isLogin) {
+        // في حالة تسجيل الدخول نرسل البيانات كالمعتاد
+        data = await authLogin(credentials);
+      } else {
+        // في حالة التسجيل، نقوم بتجهيز البيانات وإضافة كود الدولة phone_code
+        const registerPayload = {
+          ...credentials,
+          phone_code: selectedCountryCode, // الكود المختار من الـ Dropdown (مثال: +966)
+          // إذا كان الباك-إند يتوقع الرقم بدون الصفر الأول، يمكنك تفعيل السطر التالي:
+          // phone: credentials.phone.replace(/^0+/, '')
+        };
+        data = await authRegister(registerPayload);
+      }
+
+      // النجاح في المصادقة
       login(data.customer, data.access_token);
-      await syncCart(); // Sync guest cart to new customer account
-      setAuthMode("guest"); // Move to actual checkout
+      await syncCart();
+      setAuthMode("guest");
     } catch (err: any) {
       setAuthError(err.message);
     }
@@ -568,7 +617,7 @@ export default function Checkout() {
 
   if (isCartLoading) {
     return (
-      <div className="flex flex-col min-h-screen pt-4 pb-24 bg-muted/20 animate-pulse">
+      <div className="flex flex-col min-h-screen pt-4 pb-24 bg-muted/20 animate-pulse pt-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="flex items-center justify-center py-8 mb-8 border-b border-border">
             <div className="h-10 w-40 bg-muted rounded-lg"></div>
@@ -669,9 +718,8 @@ export default function Checkout() {
                   </div>
                 </section>
               )}
-
               {!user && (authMode === "login" || authMode === "register") && (
-                <section className="bg-background p-8 rounded-2xl shadow-sm border border-border/50 mb-8">
+                <section className="bg-background p-8 rounded-2xl shadow-sm border border-border/50 mb-8 relative">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="font-serif text-2xl font-bold text-foreground">
                       {authMode === "login" ? t('login', lang) : t('create_account', lang)}
@@ -694,7 +742,7 @@ export default function Checkout() {
                           required
                           value={credentials.first_name}
                           onChange={e => setCredentials({ ...credentials, first_name: e.target.value })}
-                          className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                          className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent text-foreground"
                         />
                         <input
                           type="text"
@@ -702,7 +750,7 @@ export default function Checkout() {
                           required
                           value={credentials.last_name}
                           onChange={e => setCredentials({ ...credentials, last_name: e.target.value })}
-                          className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                          className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent text-foreground"
                         />
                       </div>
                     )}
@@ -713,8 +761,87 @@ export default function Checkout() {
                       required
                       value={credentials.email}
                       onChange={e => setCredentials({ ...credentials, email: e.target.value })}
-                      className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                      className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent text-foreground"
                     />
+
+                    {authMode === "register" && (
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('mobile_number', lang)}</label>
+                        <div className="flex gap-0">
+                          {/* Country Code Selector */}
+                          <div className="relative">
+                            <button
+                              type="button"
+                              onClick={() => { if (countries.length > 1) setShowCountryDropdown(!showCountryDropdown); }}
+                              className={`flex items-center gap-1.5 border border-border border-r-0 rounded-l-lg px-3 py-3 bg-muted/30 transition-colors min-w-[90px] justify-center ${countries.length > 1 ? 'hover:bg-muted/50 cursor-pointer' : 'cursor-default'}`}
+                            >
+                              <span className="text-sm font-semibold text-foreground">{selectedCountryCode}</span>
+                              {countries.length > 1 && (
+                                <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              )}
+                            </button>
+
+                            {/* Dropdown */}
+                            {showCountryDropdown && (
+                              <div className="absolute top-full left-0 mt-1 w-72 bg-background border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+                                {countries.length > 1 && (
+                                  <div className="p-2 border-b border-border">
+                                    <input
+                                      type="text"
+                                      placeholder={t('search_country', lang)}
+                                      value={countrySearch}
+                                      onChange={e => setCountrySearch(e.target.value)}
+                                      className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                                      autoFocus
+                                    />
+                                  </div>
+                                )}
+                                <div className="max-h-48 overflow-y-auto">
+                                  {filteredCountries.map((country: any) => (
+                                    <button
+                                      key={country.id}
+                                      type="button"
+                                      onClick={() => {
+                                        setSelectedCountry(country);
+                                        setSelectedCountryCode(country.phone_code);
+                                        setShowCountryDropdown(false);
+                                        setCountrySearch("");
+                                      }}
+                                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-muted/50 transition-colors ${selectedCountryCode === country.phone_code ? 'bg-primary/5 text-primary' : 'text-foreground'
+                                        }`}
+                                    >
+                                      <span>{country.name}</span>
+                                      <span className="font-mono text-muted-foreground">{country.phone_code}</span>
+                                    </button>
+                                  ))}
+                                  {filteredCountries.length === 0 && (
+                                    <div className="px-4 py-3 text-sm text-muted-foreground text-center"> {t('no_countries_found', lang)}</div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Phone Input */}
+                          <input
+                            type="tel"
+                            required
+                            placeholder={selectedCountry?.min_digits === selectedCountry?.max_digits ? t('enter_digits', lang).replace('{digits}', selectedCountry?.min_digits) : t('mobile_number', lang)}
+                            value={credentials.phone}
+                            minLength={selectedCountry?.min_digits}
+                            maxLength={selectedCountry?.max_digits}
+                            onChange={e => {
+                              const val = e.target.value.replace(/[^0-9]/g, '');
+                              if (selectedCountry?.max_digits && val.length > selectedCountry.max_digits) return;
+                              setCredentials({ ...credentials, phone: val });
+                            }}
+                            className="flex-1 border border-border rounded-r-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     <input
                       type="password"
@@ -722,7 +849,7 @@ export default function Checkout() {
                       required
                       value={credentials.password}
                       onChange={e => setCredentials({ ...credentials, password: e.target.value })}
-                      className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                      className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent text-foreground"
                     />
 
                     {authMode === "register" && (
@@ -732,7 +859,7 @@ export default function Checkout() {
                         required
                         value={credentials.password_confirmation}
                         onChange={e => setCredentials({ ...credentials, password_confirmation: e.target.value })}
-                        className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                        className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent text-foreground"
                       />
                     )}
 
@@ -742,7 +869,6 @@ export default function Checkout() {
                   </form>
                 </section>
               )}
-
               {/* Guest / Logged-In Checkout Pipeline */}
               {authMode === "guest" && (
                 <>

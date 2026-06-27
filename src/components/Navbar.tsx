@@ -145,7 +145,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
     { href: "/projects", label: t('project', lang) },
 
     { href: "/about", label: t('about', lang) },
-    // { href: "/track", label: t('track_order', lang) },
+    { href: "/track", label: t('track_order', lang) },
 
     { href: "/blogs", label: lang === 'en' ? 'Blogs' : 'المدونة' },
   ];

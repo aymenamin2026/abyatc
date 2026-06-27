@@ -19,7 +19,7 @@ function CheckoutResultContent() {
   const isPending = status === "pending";
 
   return (
-    <div className="min-h-screen bg-muted/20 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-muted/20 flex items-center justify-center pt-32">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -53,8 +53,8 @@ function CheckoutResultContent() {
           {isSuccess
             ? lang === "ar" ? "تم الدفع بنجاح!" : "Payment Successful!"
             : isPending
-            ? lang === "ar" ? "الدفع قيد المعالجة" : "Payment Pending"
-            : lang === "ar" ? "فشل الدفع" : "Payment Failed"
+              ? lang === "ar" ? "الدفع قيد المعالجة" : "Payment Pending"
+              : lang === "ar" ? "فشل الدفع" : "Payment Failed"
           }
         </h1>
 
@@ -65,12 +65,12 @@ function CheckoutResultContent() {
               ? "تم تأكيد طلبك وسيتم معالجته قريباً. شكراً لتسوقك معنا!"
               : "Your order has been confirmed and will be processed shortly. Thank you for shopping with us!"
             : isPending
-            ? lang === "ar"
-              ? "دفعتك قيد المعالجة. سيتم تحديث حالة الطلب تلقائياً."
-              : "Your payment is being processed. The order status will be updated automatically."
-            : lang === "ar"
-            ? "لم يتم إكمال الدفع. يمكنك المحاولة مرة أخرى أو اختيار طريقة دفع مختلفة."
-            : "The payment could not be completed. You can try again or choose a different payment method."
+              ? lang === "ar"
+                ? "دفعتك قيد المعالجة. سيتم تحديث حالة الطلب تلقائياً."
+                : "Your payment is being processed. The order status will be updated automatically."
+              : lang === "ar"
+                ? "لم يتم إكمال الدفع. يمكنك المحاولة مرة أخرى أو اختيار طريقة دفع مختلفة."
+                : "The payment could not be completed. You can try again or choose a different payment method."
           }
         </p>
 

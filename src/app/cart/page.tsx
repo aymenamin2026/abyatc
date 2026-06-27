@@ -151,7 +151,7 @@ export default function CartPage() {
                           {itemName}
                         </Link>
                         <div className="text-sm text-muted-foreground">
-                          {typeof item.color === 'object' && item.color !== null ? (item.color[lang] || item.color.en) : item.color} | {t('size', lang)} {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
+                          {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
                         </div>
                         {/* Mobile Delete */}
                         <button
@@ -298,14 +298,14 @@ export default function CartPage() {
                 </div>
               )}
 
-              <div className="flex justify-between text-muted-foreground">
+              {/* <div className="flex justify-between text-muted-foreground">
                 <span>{t('shipping', lang)}</span>
                 <span>{t('calculated_at_checkout', lang)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>{t('taxes', lang)}</span>
                 <span>{t('calculated_at_checkout', lang)}</span>
-              </div>
+              </div> */}
 
               {/* <div className="pt-4 mt-4 border-t border-border flex justify-between items-center text-xl font-bold">
                 <span>{t('total', lang)}</span>
