@@ -533,18 +533,20 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                       <LayoutDashboard className="w-4 h-4 text-muted-foreground" />
                       {lang === 'en' ? 'Dashboard' : 'لوحة التحكم'}
                     </Link>
+
+                    <Link
+                      href="/account?tab=orders"
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl text-foreground/80 hover:bg-muted/60 transition-colors"
+                    >
+                      <ShoppingBag className="w-4 h-4" />
+                      <span>{t("my_orders", lang)}</span> {/* أو النص الثابت مثل "طلباتي" */}
+                    </Link>
                     <Link
                       href="/account?tab=wishlist"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl text-foreground/80 hover:bg-muted/60 transition-colors"
                     >
-                      <Link
-                        href="/account?tab=orders"
-                        className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
-                      >
-                        <ShoppingBag className="w-4 h-4" />
-                        <span>{t("my_orders", lang)}</span> {/* أو النص الثابت مثل "طلباتي" */}
-                      </Link>
+
                       <Heart className="w-4 h-4 text-muted-foreground" />
                       {lang === 'en' ? 'Wishlist' : 'المفضلة'}
                       {wishlistCount > 0 && (
