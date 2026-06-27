@@ -168,9 +168,9 @@ export default function WishlistTab({ lang, currencySymbol = "SAR" }: WishlistTa
                     </h4>
                   </Link>
                   <div className="flex items-center justify-between pt-1">
-                    <span className="font-bold text-foreground">
+                    {/* <span className="font-bold text-foreground">
                       {currencySymbol} {parseFloat(price).toFixed(2)}
-                    </span>
+                    </span> */}
                     <button
                       onClick={() => handleAddToCart(product)}
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-semibold rounded-xl hover:opacity-90 transition-all"
