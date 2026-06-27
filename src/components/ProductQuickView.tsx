@@ -291,7 +291,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
 
             {/* ACTION FOOTER BUTTONS */}
             <div className="mt-auto space-y-3">
-              <button
+              {/* <button
                 onClick={handleAddToCart}
                 disabled={addedToCart || (hasVariations && (!selectedSize || !selectedColor))}
                 className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-medium text-sm tracking-wider uppercase transition-all duration-500 shadow-md ${addedToCart
@@ -310,7 +310,7 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                     <span className="text-xs">{t('add_to_cart', lang)}</span>
                   </>
                 )}
-              </button>
+              </button> */}
 
               <Link
                 href={`/shop/${product.slug}`}
