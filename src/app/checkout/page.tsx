@@ -143,7 +143,7 @@ export default function Checkout() {
   // Auth Flows
   const [authMode, setAuthMode] = useState<"options" | "login" | "register" | "guest">("options");
   const [authError, setAuthError] = useState("");
-  const [credentials, setCredentials] = useState({ first_name: "", last_name: "", email: "", password: "", password_confirmation: "" });
+  const [credentials, setCredentials] = useState({ first_name: "", phone: "", last_name: "", email: "", password: "", password_confirmation: "" });
   const [tabbyPhone, setTabbyPhone] = useState("");
 
   const searchParams = useSearchParams();
