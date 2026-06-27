@@ -373,10 +373,10 @@ export default function Checkout() {
     }
 
     // Only require shipping method if items exist (assuming always physical cart for now)
-    if (shippingRates.length > 0 && !selectedShippingMethod) {
-      setCheckoutError(t('select_shipping_method', lang));
-      return;
-    }
+    // if (!selectedShippingMethod) {
+    //   setCheckoutError(t('select_shipping_method', lang));
+    //   return;
+    // }
 
     const deliveryAddress = selectedAddressId
       ? addresses.find(a => a.id === selectedAddressId)
@@ -1378,8 +1378,7 @@ export default function Checkout() {
                     onClick={handlePlaceOrder}
                     disabled={
                       isPlacingOrder ||
-                      cartItems.length === 0 ||
-                      (shippingRates.length > 0 && !selectedShippingMethod)
+                      cartItems.length === 0
                     }
                     className="w-full bg-primary text-primary-foreground py-5 rounded-xl font-medium text-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
