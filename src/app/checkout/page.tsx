@@ -1392,16 +1392,7 @@ export default function Checkout() {
                         <Lock className="w-5 h-5" /> {t('pay', lang)}
                       </>
                     )}
-                    {!isPlacingOrder && (
-                      <span className="flex items-center ml-1 font-bold">
-                        {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
-                          <img src={finalCurrencySymbol} alt="Currency" className="h-4 w-auto object-contain inline-block mr-1 invert dark:invert-0" />
-                        ) : (
-                          <span className="mr-1">{finalCurrencySymbol}</span>
-                        )}
-                        {total.toFixed(2)}
-                      </span>
-                    )}
+
                   </button>
                 </>
               )}
