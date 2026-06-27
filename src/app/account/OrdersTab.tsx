@@ -71,67 +71,81 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               <th className="pb-3 font-medium text-start">{t('order_id', lang)}</th>
               <th className="pb-3 font-medium text-start">{t('order_date', lang)}</th>
               <th className="pb-3 font-medium text-start">{t('order_status', lang)}</th>
-              {/* <th className="pb-3 font-medium text-start">{t('order_total', lang)}</th> */}
+              <th className="pb-3 font-medium text-start">{t('order_total', lang)}</th>
               <th className="pb-3 font-medium text-end">{t('order_actions', lang)}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {orders.map((order) => (
-              <tr key={order.id} className="group hover:bg-muted/10 transition-colors">
-                <td className="py-4">
-                  <span className="font-medium text-foreground">#{order.order_number}</span>
-                </td>
-                <td className="py-4 text-muted-foreground text-sm">
-                  {new Date(order.created_at).toLocaleDateString()}
-                </td>
-                <td className="py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                    ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ''}
-                    ${order.status === 'processing' ? 'bg-blue-100 text-blue-800' : ''}
-                    ${order.status === 'completed' ? 'bg-green-100 text-green-800' : ''}
-                    ${order.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''}
-                    ${order.status === 'shipped' ? 'bg-indigo-100 text-indigo-800' : ''}
-                    ${order.status === 'awaiting_payment' ? 'bg-orange-100 text-orange-800' : ''}
-                  `}>
-                    {t(order.status as any, lang)}
-                  </span>
-                </td>
-                {/* <td className="py-4 font-medium text-foreground">
-                  <span className="flex items-center gap-1">
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                      <>
-                        <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
-                        <Image src="/riyal-light.svg" alt="SAR" width={12} height={12} className="theme-dark-only" />
-                      </>
+            {orders.map((order) => {
+              // حساب القيمة الرقمية للإجمالي للتأكد مما إذا كان الأدمن قد وضع سعراً أم لا
+              const totalAmount = parseFloat(order.total_amount || order.grand_total || '0');
+              const isPriced = totalAmount > 0;
+
+              return (
+                <tr key={order.id} className="group hover:bg-muted/10 transition-colors">
+                  <td className="py-4">
+                    <span className="font-medium text-foreground">#{order.order_number}</span>
+                  </td>
+                  <td className="py-4 text-muted-foreground text-sm">
+                    {new Date(order.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="py-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+              ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ''}
+              ${order.status === 'processing' ? 'bg-blue-100 text-blue-800' : ''}
+              ${order.status === 'completed' ? 'bg-green-100 text-green-800' : ''}
+              ${order.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''}
+              ${order.status === 'shipped' ? 'bg-indigo-100 text-indigo-800' : ''}
+              ${order.status === 'awaiting_payment' ? 'bg-orange-100 text-orange-800' : ''}
+            `}>
+                      {t(order.status as any, lang)}
+                    </span>
+                  </td>
+                  <td className="py-4 font-medium text-foreground">
+                    {isPriced ? (
+                      // إذا قام الأدمن بالتسعير، يظهر السعر والعملة بشكل طبيعي
+                      <span className="flex items-center gap-1">
+                        {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                          <>
+                            <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
+                            <Image src="/riyal-light.svg" alt="SAR" width={12} height={12} className="theme-dark-only" />
+                          </>
+                        ) : (
+                          <span>{currencySymbol}</span>
+                        )}
+                        {totalAmount.toFixed(2)}
+                      </span>
                     ) : (
-                      <span>{currencySymbol}</span>
+                      // إذا كان السعر 0 (لم يتم التسعير بعد)، تظهر هذه الرسالة
+                      <span className="text-sm text-amber-500 font-normal bg-amber-500/10 px-2 py-0.5 rounded-md inline-block">
+                        {t('awaiting_pricing', lang) || 'قيد المراجعة'}
+                      </span>
                     )}
-                    {parseFloat(order.total_amount || order.grand_total).toFixed(2)}
-                  </span>
-                  <span className="text-xs text-muted-foreground block mt-1">
-                    for {order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}
-                  </span>
-                </td> */}
-                <td className="py-4 text-end">
-                  <div className="flex items-center justify-end gap-4">
-                    <button
-                      onClick={() => setSelectedOrder(order)}
-                      className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 font-medium text-sm transition-colors"
-                    >
-                      <Eye className="w-4 h-4" />
-                      {t('view', lang)}
-                    </button>
-                    <Link
-                      href={`/track?query=${order.order_number}`}
-                      className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground font-medium text-sm transition-colors border-s border-border ps-4"
-                    >
-                      <Truck className="w-4 h-4" />
-                      {t('track_order', lang)}
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                    <span className="text-xs text-muted-foreground block mt-1">
+                      for {order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}
+                    </span>
+                  </td>
+                  <td className="py-4 text-end">
+                    <div className="flex items-center justify-end gap-4">
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 font-medium text-sm transition-colors"
+                      >
+                        <Eye className="w-4 h-4" />
+                        {t('view', lang)}
+                      </button>
+                      <Link
+                        href={`/track?query=${order.order_number}`}
+                        className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground font-medium text-sm transition-colors border-s border-border ps-4"
+                      >
+                        <Truck className="w-4 h-4" />
+                        {t('track_order', lang)}
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
