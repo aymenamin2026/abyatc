@@ -407,6 +407,13 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                         <LayoutDashboard className="w-4 h-4" />
                         <span>{lang === 'en' ? 'Dashboard' : 'لوحة التحكم'}</span>
                       </Link>
+                      <Link
+                        href="/account?tab=orders"
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl text-foreground/80 hover:bg-muted/60 transition-colors"
+                      >
+                        <ShoppingBag className="w-4 h-4" />
+                        <span>{t("my_orders", lang)}</span> {/* أو النص الثابت مثل "طلباتي" */}
+                      </Link>
 
                       <button
                         onClick={() => {

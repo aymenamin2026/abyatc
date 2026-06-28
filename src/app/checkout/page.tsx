@@ -1389,7 +1389,7 @@ export default function Checkout() {
                       </div>
                     ) : (
                       <>
-                        <Lock className="w-5 h-5" /> {t('pay', lang)}
+                        {t('pay', lang)}
                       </>
                     )}
 
