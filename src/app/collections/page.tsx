@@ -1,83 +1,49 @@
-"use client";
-
-import { useLanguage } from "@/components/LanguageContext"; // تأكد من مسار الـ LanguageContext لديك
-import { useEffect, useState } from "react";
+import { fetchCategories, fetchSettings } from "@/lib/api";
+import { cookies } from "next/headers";
+import { t } from "@/lib/translations";
+import CategoriesSlider from "@/components/CategoriesSlider";
 import Link from "next/link";
 import Image from "next/image";
-import { t } from "@/lib/translations";
-import CategoriesSlider from "@/components/CategoriesSlider"; // تأكد من مسار الكومبوننت الصحيح
+import { getImageUrl } from "@/lib/api";
 
-// دالة جلب مسار الصور (قم بتعديلها لتطابق الدالة المستخدمة في الصفحة الرئيسية لديك إذا كانت تختلف)
-const getImageUrl = (imagePath: string) => {
-    if (!imagePath) return '/no-image.jpg';
-    if (imagePath.startsWith('http')) return imagePath;
-    return `${process.env.NEXT_PUBLIC_API_URL || 'https://your-laravel-backend.com'}/storage/${imagePath}`;
-};
+export default async function CollectionsPage() {
+    // 1. جلب البيانات مباشرة عبر دوال الـ API الخاصة بالمشروع (Server-side)
+    const categories = await fetchCategories();
+    const settings = await fetchSettings();
 
-export default function CollectionsPage() {
-    const { lang } = useLanguage();
-    const [categories, setCategories] = useState<any[]>([]);
-    const [settings, setSettings] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    // 2. جلب اللغة الحالية للمستخدم عبر الكوكيز
+    const cookieStore = await cookies();
+    const localeCookie = cookieStore.get("NEXT_LOCALE");
+    const lang = (localeCookie?.value === "ar" ? "ar" : "en") as "en" | "ar";
 
-    // جلب البيانات من الـ API الخاص بـ لارافل عند تحميل الصفحة
-    useEffect(() => {
-        const fetchCollectionsData = async () => {
-            try {
-                // يمكنك تعديل مسارات الـ API هنا لتطابق روابط الـ Backend الخاص بمتجرك
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://your-laravel-backend.com/api';
-
-                const [categoriesRes, settingsRes] = await Promise.all([
-                    fetch(`${apiUrl}/categories`),
-                    fetch(`${apiUrl}/settings`)
-                ]);
-
-                if (categoriesRes.ok) {
-                    const categoriesData = await categoriesRes.json();
-                    // تأكد من هيكلة البيانات القادمة (إن كانت داخل مصفوفة مباشرة أو داخل كائن مثل data.categories)
-                    setCategories(categoriesData.data || categoriesData);
-                }
-
-                if (settingsRes.ok) {
-                    const settingsData = await settingsRes.json();
-                    setSettings(settingsData.data || settingsData);
-                }
-            } catch (error) {
-                console.error("Error fetching collections data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCollectionsData();
-    }, []);
-
-    if (loading) {
+    // التحقق من حالة وجود فئات لتجنب الأخطاء
+    if (!categories || categories.length === 0) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                <p className="text-muted-foreground">{lang === 'ar' ? 'لا توجد فئات متاحة حالياً.' : 'No categories available.'}</p>
             </div>
         );
     }
 
     return (
         <div className="flex flex-col min-h-screen bg-muted/20 pb-24">
-            {/* Categories Section */}
             <section className="py-24 bg-background flex-1">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+
+                    {/* العناوين المترجمة */}
                     <div className="text-center max-w-3xl mx-auto mb-16">
                         <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
-                            {t('categories', lang) || 'الفئات'}
+                            {t('categories', lang)}
                         </h1>
                         <p className="text-muted-foreground text-lg">
-                            {t('shop_by_category', lang) || 'تسوق حسب الفئة'}
+                            {t('shop_by_category', lang)}
                         </p>
                     </div>
 
-                    {/* 1. Grid Layout */}
+                    {/* الخيار الأول: Grid Layout */}
                     {(!settings?.categories_layout || settings?.categories_layout === 'grid') && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
-                            {categories?.map((category: any) => (
+                            {categories.map((category: any) => (
                                 <Link
                                     href={`/shop?category=${encodeURIComponent(category.name?.[lang] || category.name?.en || category.name)}`}
                                     key={category.id}
@@ -95,7 +61,6 @@ export default function CollectionsPage() {
                                             <h3 className="font-serif text-xl md:text-2xl font-bold mb-2 drop-shadow-md relative z-10 transition-transform duration-500">
                                                 {category.name?.[lang] || category.name?.en || category.name}
                                             </h3>
-
                                             <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
                                                 <div className="overflow-hidden">
                                                     {(settings?.categories_show_description ?? true) && (
@@ -113,15 +78,15 @@ export default function CollectionsPage() {
                         </div>
                     )}
 
-                    {/* 2. Slider Layout */}
+                    {/* الخيار الثاني: Slider Layout المكون الخاص بك سيعمل هنا مباشرة وبشكل صحيح */}
                     {settings?.categories_layout === 'slider' && (
                         <CategoriesSlider categories={categories} lang={lang} settings={settings} />
                     )}
 
-                    {/* 3. Masonry Layout */}
+                    {/* الخيار الثالث: Masonry Layout */}
                     {settings?.categories_layout === 'masonry' && (
                         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6">
-                            {categories?.map((category: any, index: number) => {
+                            {categories.map((category: any, index: number) => {
                                 const heightClass = index % 3 === 0 ? 'h-[400px]' : index % 2 === 0 ? 'h-[250px]' : 'h-[320px]';
                                 return (
                                     <Link
@@ -140,7 +105,6 @@ export default function CollectionsPage() {
                                             <h3 className="font-serif text-2xl font-bold mb-3 drop-shadow-md relative z-10 transition-transform duration-500">
                                                 {category.name?.[lang] || category.name?.en || category.name}
                                             </h3>
-
                                             <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out w-full">
                                                 <div className="overflow-hidden flex flex-col items-center">
                                                     {(settings?.categories_show_description ?? true) && (
@@ -150,7 +114,7 @@ export default function CollectionsPage() {
                                                         />
                                                     )}
                                                     <span className="text-xs font-medium tracking-wider uppercase border border-white/50 px-4 py-1.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-150 inline-block mb-1">
-                                                        {t('shop_collection', lang) || 'تسوق التشكيلة'}
+                                                        {lang === 'ar' ? 'استكشف الفئة' : 'Shop Collection'}
                                                     </span>
                                                 </div>
                                             </div>
@@ -160,6 +124,7 @@ export default function CollectionsPage() {
                             })}
                         </div>
                     )}
+
                 </div>
             </section>
         </div>
