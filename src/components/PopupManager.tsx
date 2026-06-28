@@ -185,7 +185,12 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
           </button>
           <div className="p-8 md:p-10 flex flex-col items-center justify-center text-center w-full mt-2">
             {currentPopup.title && <h2 className="text-2xl font-serif font-bold text-foreground mb-4">{currentPopup.title}</h2>}
-            {currentPopup.content && <div className="text-muted-foreground mb-8 text-sm leading-relaxed">{currentPopup.content}</div>}
+            {currentPopup.content && (
+              <div
+                className="text-muted-foreground mb-8 text-sm leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: currentPopup.content }}
+              />
+            )}
             {currentPopup.button_text && currentPopup.button_url && (
               <a href={currentPopup.button_url} className="inline-flex justify-center flex-shrink-0 items-center px-8 py-3 bg-primary text-primary-foreground rounded-full font-bold w-full hover:bg-primary/90 transition-all shadow-lg active:scale-95">
                 {currentPopup.button_text}
@@ -212,7 +217,12 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
 
           <div className="relative z-10 p-8 md:p-12 flex flex-col items-center justify-center text-center w-full h-full my-auto text-white">
             {currentPopup.title && <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 drop-shadow-lg">{currentPopup.title}</h2>}
-            {currentPopup.content && <div className="mb-8 text-base md:text-lg text-gray-200 drop-shadow max-w-lg">{currentPopup.content}</div>}
+            {currentPopup.content && (
+              <div
+                className="mb-8 text-base md:text-lg text-gray-200 drop-shadow max-w-lg"
+                dangerouslySetInnerHTML={{ __html: currentPopup.content }}
+              />
+            )}
             {currentPopup.button_text && currentPopup.button_url && (
               <a href={currentPopup.button_url} className="inline-flex justify-center items-center px-10 py-4 bg-white text-black rounded-full font-bold hover:bg-gray-100 transition-all shadow-xl active:scale-95">
                 {currentPopup.button_text}
@@ -238,7 +248,12 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
 
           <div className={`p-8 md:p-12 flex flex-col justify-center w-full ${currentPopup.media_type !== 'none' ? 'md:w-1/2' : ''}`}>
             {currentPopup.title && <h2 className="text-2xl md:text-4xl font-serif font-bold text-foreground mb-4 leading-tight">{currentPopup.title}</h2>}
-            {currentPopup.content && <div className="text-muted-foreground mb-8 text-sm md:text-base leading-relaxed whitespace-pre-wrap">{currentPopup.content}</div>}
+            {currentPopup.content && (
+              <div
+                className="text-muted-foreground mb-8 text-sm md:text-base leading-relaxed whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ __html: currentPopup.content }}
+              />
+            )}
             {currentPopup.button_text && currentPopup.button_url && (
               <a href={currentPopup.button_url} className="inline-flex justify-center items-center px-8 py-4 bg-primary text-primary-foreground font-bold rounded-full w-full md:w-auto text-center hover:bg-primary/90 transition-all shadow-lg active:scale-95">
                 {currentPopup.button_text}
