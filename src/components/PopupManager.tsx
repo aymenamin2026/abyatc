@@ -25,18 +25,18 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
     try {
       sessionCache = JSON.parse(sessionStorage.getItem('displayed_popups_session') || '[]');
       everCache = JSON.parse(localStorage.getItem('displayed_popups_ever') || '[]');
-    } catch (e) {}
+    } catch (e) { }
 
     // Filter popups
     const isHomepage = pathname === '/' || pathname === '';
-    
+
     let activePopups = popups.filter(p => {
       // 1. Check if it should show on this page
       let pageMatch = false;
       if (isHomepage && p.show_on_homepage) {
         pageMatch = true;
       }
-      
+
       if (!pageMatch && p.show_on_pages && Array.isArray(p.show_on_pages)) {
         const pathNoSlash = pathname.replace(/^\//, '');
         for (let rule of p.show_on_pages) {
@@ -76,7 +76,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
     }
 
     setQueue(activePopups);
-    
+
     // Tiny delay before popping the first one
     const timer = setTimeout(() => {
       showNext(activePopups);
@@ -94,7 +94,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
 
     const nextPopup = currentQueue[0];
     const newQueue = currentQueue.slice(1);
-    
+
     setCurrentPopup(nextPopup);
     setQueue(newQueue);
     setIsOpen(true);
@@ -152,7 +152,12 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
           <div className="container mx-auto px-4 py-4 md:py-3 flex flex-col md:flex-row items-center justify-center md:justify-between gap-4 pr-12">
             <div className="text-center md:text-left flex-1">
               {currentPopup.title && <h3 className="font-bold text-lg">{currentPopup.title}</h3>}
-              {currentPopup.content && <p className="text-sm opacity-90 mt-0.5">{currentPopup.content}</p>}
+              {currentPopup.content && (
+                <p
+                  className="text-sm opacity-90 mt-0.5"
+                  dangerouslySetInnerHTML={{ __html: currentPopup.content }}
+                />
+              )}
             </div>
             {currentPopup.button_text && currentPopup.button_url && (
               <a href={currentPopup.button_url} className="shrink-0 bg-background text-foreground px-6 py-2 rounded-full font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md">
@@ -167,7 +172,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
 
   // ALL OTHER MODAL STYLES (default, minimal, center_cover)
   return (
-    <div 
+    <div
       className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-300 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
       style={{ backdropFilter: 'blur(5px)' }}
     >
@@ -195,7 +200,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
           <button onClick={closeCurrent} className="absolute top-4 right-4 z-20 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 backdrop-blur-md transition-colors border border-white/10">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
-          
+
           {currentPopup.media_type !== 'none' && (
             <div className="absolute inset-0 z-0">
               {isImage && <img src={getImageUrl(currentPopup.media_path)} alt="" className="absolute inset-0 w-full h-full object-cover" />}
