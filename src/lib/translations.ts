@@ -400,7 +400,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     email: "البريد الإلكتروني",
     phone: "رقم الهاتف",
     //apartment: "شقة، جناح، إلخ (اختياري)",
-    apartment: "تفاصيل اضافية (اختياري)",
+    apartment: "تفاصيل اضافيه (اختياري)",
     state: "المنطقة / المحافظة",
     zip: "الرمز البريدي",
     country: "الدولة",
