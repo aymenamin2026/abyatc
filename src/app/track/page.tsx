@@ -153,6 +153,7 @@ export default function TrackOrderPage() {
       return lang === 'ar' ? 'ملغي' : 'Cancelled';
     }
 
+
     return status; // إرجاع الحالة الأصلية كإجراء احتياطي
   };
 
@@ -277,7 +278,11 @@ export default function TrackOrderPage() {
             <div className="bg-background rounded-2xl shadow-sm border border-border p-6 lg:p-8">
               <h3 className="text-lg font-medium text-foreground mb-6">{lang === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}</h3>
               <div className="space-y-4">
+                <pre>
+                  {JSON.stringify(order.items, null, 2)}
+                </pre>
                 {order.items.map(item => {
+                  console.log(item);
                   const productName = item.product?.name ?
                     (typeof item.product.name === 'string' ? item.product.name :
                       (item.product.name[lang] || item.product.name['en'] || 'Unknown Product'))
@@ -285,7 +290,12 @@ export default function TrackOrderPage() {
 
                   return (
                     <div key={item.id} className="flex items-center gap-4 pb-4 border-b border-border last:border-0 last:pb-0">
+                      <pre className="text-xs">
+
+                        {JSON.stringify(item.product, null, 2)}
+                      </pre>
                       <div className="h-16 w-16 bg-muted rounded-lg overflow-hidden shrink-0 border border-border">
+
                         <img src={getImageUrl(item.product?.image)} alt={productName} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1">
