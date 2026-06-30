@@ -23,8 +23,9 @@ interface OrderItem {
   unit_price: number;
   total: number;
   product?: {
+    id: number;
     name: any;
-    image: string;
+    images: string[];
   };
 }
 
@@ -278,6 +279,7 @@ export default function TrackOrderPage() {
               <h3 className="text-lg font-medium text-foreground mb-6">{lang === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}</h3>
               <div className="space-y-4">
                 {order.items.map(item => {
+                  console.log(item);
                   const productName = item.product?.name ?
                     (typeof item.product.name === 'string' ? item.product.name :
                       (item.product.name[lang] || item.product.name['en'] || 'Unknown Product'))
