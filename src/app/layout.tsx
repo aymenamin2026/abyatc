@@ -30,7 +30,7 @@ import PopupManager from "@/components/PopupManager";
 
 export async function generateMetadata(): Promise<Metadata> {
   // القيم الافتراضية الثابتة في حال فشل جلب البيانات من السيرفر أثناء الـ Build
-  const defaultTitle = "لؤلؤة للزي الموحد | Luluh Uniform | api.luluh.sa";
+  const defaultTitle = "لمعة ابيات | Lamaa Abyat| api.abyat.vercel.app";
   const defaultDesc = "وجهتكم الأولى في السعودية للزي الموحد الطبي، المدرسي، الفندقي، وزي الشركات بجودة استثنائية.";
 
   try {
