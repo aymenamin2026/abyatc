@@ -404,13 +404,14 @@ export default function Checkout() {
       const uuid = typeof window !== 'undefined' ? localStorage.getItem('elegance_cart_uuid') : null;
 
       const payload = {
-        payment_method: selectedMethod,
-        shipping_method: selectedShippingMethod,
-        cart_uuid: uuid || '',
-        shipping_address: finalAddress,
-        coupon_code: appliedCoupon ? appliedCoupon.code : null,
-        coupon_discount: appliedCoupon ? calculateDiscount(subtotal, appliedCoupon) : 0,
-        tabby_phone: (selectedMethod === 'tabby' || selectedMethod === 'tamara') ? tabbyPhone : null,
+        first_name: credentials.first_name,
+        last_name: credentials.last_name,
+        email: credentials.email,
+        password: credentials.password,
+        password_confirmation: credentials.password_confirmation,
+        phone: credentials.phone,
+        country_code: selectedCountryCode,
+        otp_code: (credentials as any).otp, // 👈 اكتبها هنا في السطر 420
       };
 
       const headers: HeadersInit = {
