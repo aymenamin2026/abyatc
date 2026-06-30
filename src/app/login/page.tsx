@@ -58,12 +58,15 @@ export default function LoginPage() {
         if (settingsData?.site_name) {
           setSiteName(settingsData.site_name);
         } else {
-          // Fallback: Filter countries that have phone_code
-          const withCodes = (countriesData || []).filter((c: any) => c.phone_code);
+          const withCodes = (countriesData || []).filter(c => c.phone_code);
+
           setCountries(withCodes);
-          if (withCodes.length > 0) {
-            setSelectedCountry(withCodes.find((c: any) => c.phone_code === "+966") || withCodes[0]);
-          }
+
+          setSelectedCountry(
+            settingsData?.default_country ||
+            withCodes.find(c => c.phone_code === "+966") ||
+            withCodes[0]
+          );
         }
       } catch (err) {
         console.error('Error loading countries:', err);
@@ -314,7 +317,7 @@ export default function LoginPage() {
                       className={`flex items-center gap-1.5 border border-border border-r-0 rounded-l-lg px-3 py-3 bg-muted/30 transition-colors min-w-[90px] justify-center ${countries.length > 1 ? 'hover:bg-muted/50 cursor-pointer' : 'cursor-default'}`}
                     >
                       <span className="text-sm font-semibold text-foreground">{selectedCountryCode}</span>
-                      {countries.length > 1 && (
+                      {countries.length >= 1 && (
                         <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
@@ -323,7 +326,7 @@ export default function LoginPage() {
 
                     {/* Dropdown */}
                     {showCountryDropdown && (
-                      <div className="absolute top-full left-0 mt-1 w-72 bg-background border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+                      <div className="absolute top-full left-0 mt-1 w-72 bg-background border border-border rounded-xl shadow-xl z-50 overflow: visible;">
                         {countries.length > 1 && (
                           <div className="p-2 border-b border-border">
                             <input
