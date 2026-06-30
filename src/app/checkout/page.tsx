@@ -301,7 +301,15 @@ export default function Checkout() {
           // إذا كان الباك-إند يتوقع الرقم بدون الصفر الأول، يمكنك تفعيل السطر التالي:
           // phone: credentials.phone.replace(/^0+/, '')
         };
-        data = await authRegister(registerPayload);
+        const data = await authRegister(registerPayload);
+
+        const email = data.customer?.email || credentials.email;
+
+        localStorage.setItem("pending_email", email);
+        localStorage.setItem("auth_mode", "verify");
+        localStorage.setItem("after_verify_redirect", "checkout");
+
+        router.push("/login");
       }
 
       // النجاح في المصادقة
