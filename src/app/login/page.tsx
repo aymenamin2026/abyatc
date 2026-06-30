@@ -48,13 +48,19 @@ export default function LoginPage() {
         ]);
 
         // Only show the default country if it exists in settings
-        const withCodes = countriesData || [];
-
+        const withCodes = (countriesData || []).filter((c: any) => c);
         setCountries(withCodes);
 
         setSelectedCountry(
           settingsData?.default_country ||
+          withCodes.find((c: any) => c.phone_code) ||
           withCodes[0]
+        );
+
+        setSelectedCountryCode(
+          settingsData?.default_country?.phone_code ||
+          withCodes.find((c: any) => c.phone_code)?.phone_code ||
+          "+966"
         );
         if (settingsData?.site_name) {
           setSiteName(settingsData.site_name);
@@ -349,7 +355,7 @@ export default function LoginPage() {
                               type="button"
                               onClick={() => {
                                 setSelectedCountry(country);
-                                setSelectedCountryCode(country.phone_code);
+                                setSelectedCountryCode(country.phone_code || "+966");
                                 setShowCountryDropdown(false);
                                 setCountrySearch("");
                               }}
@@ -357,7 +363,9 @@ export default function LoginPage() {
                                 }`}
                             >
                               <span>{country.name}</span>
-                              <span className="font-mono text-muted-foreground">{country.phone_code}</span>
+                              <span className="font-mono text-muted-foreground">
+                                {country.phone_code || "—"}
+                              </span>
                             </button>
                           ))}
                           {filteredCountries.length === 0 && (
