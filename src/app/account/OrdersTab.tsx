@@ -209,12 +209,22 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 <div className="space-y-4">
                   {selectedOrder.items?.map((item: any) => (
                     <div key={item.id} className="flex gap-4 items-center p-3 rounded-xl border border-border hover:bg-muted/5 transition-colors">
-                      <div className="w-14 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
-                        <img
-                          src={getImageUrl(item.product?.image || item.image)}
-                          alt="Product"
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="w-14 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border relative">
+                        {/* تأمين جلب الرابط، وإذا لم يجد صورة يضع صورة احتياطية أو مسار شفاف لمنع الأخطاء */}
+                        {(item.product?.image || item.image) ? (
+                          <Image
+                            src={getImageUrl(item.product?.image || item.image)}
+                            alt={item.product?.name?.[lang] || "Product"}
+                            fill
+                            sizes="56px"
+                            className="object-cover"
+                            unoptimized // أضف هذا إذا كانت الصور تأتي من سيرفر خارجي (مثل لارافيل) ولم تقم بتهيئته في next.config.js
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-secondary text-muted-foreground text-[10px]">
+                            No Img
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-bold text-foreground truncate">
