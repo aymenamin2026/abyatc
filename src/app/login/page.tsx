@@ -121,9 +121,19 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const data = await verifyRegistration(verificationEmail, verificationCode);
+      const redirect = localStorage.getItem("after_verify_redirect") || "account";
+
       login(data.customer, data.access_token);
       await syncCart();
-      router.push("/account");
+
+      localStorage.removeItem("after_verify_redirect");
+      localStorage.removeItem("pending_email");
+
+      if (redirect === "checkout") {
+        router.push("/checkout");
+      } else {
+        router.push("/account");
+      }
     } catch (err: any) {
       setAuthError(err.message || t('verification_failed', lang));
     } finally {

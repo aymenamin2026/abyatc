@@ -305,9 +305,13 @@ export default function Checkout() {
       }
 
       // النجاح في المصادقة
-      login(data.customer, data.access_token);
-      await syncCart();
-      setAuthMode("guest");
+      // login(data.customer, data.access_token);
+      // await syncCart();
+      // setAuthMode("guest");
+      localStorage.setItem("after_verify_redirect", "checkout");
+      localStorage.setItem("pending_email", credentials.email);
+
+      router.push("/account-verify");
     } catch (err: any) {
       setAuthError(err.message);
     }
