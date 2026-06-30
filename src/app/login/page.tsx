@@ -48,17 +48,18 @@ export default function LoginPage() {
         ]);
 
         // Only show the default country if it exists in settings
-        if (settingsData?.default_country) {
-          setCountries([settingsData.default_country]);
-          setSelectedCountry(settingsData.default_country);
-          if (settingsData.default_country.phone_code) {
-            setSelectedCountryCode(settingsData.default_country.phone_code);
-          }
-        }
+        const withCodes = countriesData || [];
+
+        setCountries(withCodes);
+
+        setSelectedCountry(
+          settingsData?.default_country ||
+          withCodes[0]
+        );
         if (settingsData?.site_name) {
           setSiteName(settingsData.site_name);
         } else {
-          const withCodes = (countriesData || []).filter((c: any) => c.phone_code);
+          const withCodes = countriesData || [];
 
           setCountries(withCodes);
 
