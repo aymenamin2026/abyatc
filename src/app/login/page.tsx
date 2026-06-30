@@ -34,7 +34,6 @@ export default function LoginPage() {
   // Country code state
   const [countries, setCountries] = useState<any[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<any>(null);
-  const [selectedCountryCode, setSelectedCountryCode] = useState("+966");
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
 
@@ -57,11 +56,7 @@ export default function LoginPage() {
           withCodes[0]
         );
 
-        setSelectedCountryCode(
-          settingsData?.default_country?.phone_code ||
-          withCodes.find((c: any) => c.phone_code)?.phone_code ||
-          "+966"
-        );
+
         if (settingsData?.site_name) {
           setSiteName(settingsData.site_name);
         } else {
@@ -105,7 +100,7 @@ export default function LoginPage() {
       // Prepend country code to phone for registration
       const submitData = isLogin ? credentials : {
         ...credentials,
-        phone: selectedCountryCode + credentials.phone.replace(/^0+/, '')
+        phone: (selectedCountry?.phone_code || "+966") + credentials.phone.replace(/^0+/, '')
       };
 
       const data = isLogin ? await authLogin(submitData) : await authRegister(submitData);
@@ -325,7 +320,9 @@ export default function LoginPage() {
                       onClick={() => { if (countries.length > 1) setShowCountryDropdown(!showCountryDropdown); }}
                       className={`flex items-center gap-1.5 border border-border border-r-0 rounded-l-lg px-3 py-3 bg-muted/30 transition-colors min-w-[90px] justify-center ${countries.length > 1 ? 'hover:bg-muted/50 cursor-pointer' : 'cursor-default'}`}
                     >
-                      <span className="text-sm font-semibold text-foreground">{selectedCountryCode}</span>
+                      <span className="text-sm font-semibold text-foreground">
+                        {selectedCountry?.phone_code || "+966"}
+                      </span>
                       {countries.length > 1 && (
                         <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -355,11 +352,10 @@ export default function LoginPage() {
                               type="button"
                               onClick={() => {
                                 setSelectedCountry(country);
-                                setSelectedCountryCode(country.phone_code || "+966");
-                                setShowCountryDropdown(false);
                                 setCountrySearch("");
+                                setShowCountryDropdown(false);
                               }}
-                              className={`w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-muted/50 transition-colors ${selectedCountryCode === country.phone_code ? 'bg-primary/5 text-primary' : 'text-foreground'
+                              className={`w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-muted/50 transition-colors ${selectedCountry?.id === country.id ? 'bg-primary/5 text-primary' : 'text-foreground'
                                 }`}
                             >
                               <span>{country.name}</span>
