@@ -181,7 +181,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                   <div className="text-sm font-bold">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">{t('contact', lang)}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">{t('contact_det', lang)}</div>
                   <div className="text-sm font-bold capitalize">{selectedOrder.payment_method}</div>
                 </div>
                 <div>
