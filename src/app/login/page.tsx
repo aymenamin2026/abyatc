@@ -38,7 +38,6 @@ export default function LoginPage() {
   const [countrySearch, setCountrySearch] = useState("");
 
   useEffect(() => {
-    // Load countries and default settings
     const loadData = async () => {
       try {
         const [countriesData, settingsData] = await Promise.all([
@@ -46,29 +45,20 @@ export default function LoginPage() {
           fetchSettings()
         ]);
 
-        // Only show the default country if it exists in settings
-        const withCodes = (countriesData || []).filter((c: any) => c);
+        const withCodes = countriesData || [];
         setCountries(withCodes);
 
-        setSelectedCountry(
-          settingsData?.default_country ||
-          withCodes.find((c: any) => c.phone_code) ||
-          withCodes[0]
-        );
-
+        // تحديد الدولة الافتراضية بشكل سليم دون تكرار متعارض
+        if (settingsData?.default_country) {
+          setSelectedCountry(settingsData.default_country);
+        } else if (withCodes.length > 0) {
+          // البحث عن السعودية كخيار افتراضي أولاً، وإلا نأخذ أول دولة في القائمة
+          const ksa = withCodes.find((c: any) => c.phone_code === "+966");
+          setSelectedCountry(ksa || withCodes[0]);
+        }
 
         if (settingsData?.site_name) {
           setSiteName(settingsData.site_name);
-        } else {
-          const withCodes = countriesData || [];
-
-          setCountries(withCodes);
-
-          setSelectedCountry(
-            settingsData?.default_country ||
-            withCodes.find((c: any) => c.phone_code === "+966") ||
-            withCodes[0]
-          );
         }
       } catch (err) {
         console.error('Error loading countries:', err);
@@ -76,7 +66,6 @@ export default function LoginPage() {
     };
     loadData();
   }, []);
-
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
@@ -317,38 +306,34 @@ export default function LoginPage() {
                   <div className="relative">
                     <button
                       type="button"
-                      onClick={() => { if (countries.length > 1) setShowCountryDropdown(!showCountryDropdown); }}
-                      className={`flex items-center gap-1.5 border border-border border-r-0 rounded-l-lg px-3 py-3 bg-muted/30 transition-colors min-w-[90px] justify-center ${countries.length > 1 ? 'hover:bg-muted/50 cursor-pointer' : 'cursor-default'}`}
+                      onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                      className="flex items-center gap-1.5 border border-border border-r-0 rounded-l-lg px-3 py-3 bg-muted/30 transition-colors min-w-[90px] justify-center hover:bg-muted/50 cursor-pointer"
                     >
                       <span className="text-sm font-semibold text-foreground">
                         {selectedCountry?.phone_code || "+966"}
                       </span>
-                      {countries.length > 1 && (
-                        <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      )}
+                      <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </button>
 
                     {/* Dropdown */}
                     {showCountryDropdown && (
                       <div className="absolute top-full left-0 mt-1 w-72 bg-background border border-border rounded-xl shadow-xl z-50 overflow-visible">
-                        {countries.length > 1 && (
-                          <div className="p-2 border-b border-border">
-                            <input
-                              type="text"
-                              placeholder={t('search_country', lang)}
-                              value={countrySearch}
-                              onChange={e => setCountrySearch(e.target.value)}
-                              className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
-                              autoFocus
-                            />
-                          </div>
-                        )}
+                        <div className="p-2 border-b border-border">
+                          <input
+                            type="text"
+                            placeholder={t('search_country', lang)}
+                            value={countrySearch}
+                            onChange={e => setCountrySearch(e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                            autoFocus
+                          />
+                        </div>
                         <div className="max-h-48 overflow-y-auto">
                           {filteredCountries.map((country: any) => (
                             <button
-                              key={country.id}
+                              key={country.id || country.phone_code}
                               type="button"
                               onClick={() => {
                                 setSelectedCountry(country);
@@ -365,7 +350,9 @@ export default function LoginPage() {
                             </button>
                           ))}
                           {filteredCountries.length === 0 && (
-                            <div className="px-4 py-3 text-sm text-muted-foreground text-center"> {t('no_countries_found', lang)}</div>
+                            <div className="px-4 py-3 text-sm text-muted-foreground text-center">
+                              {t('no_countries_found', lang)}
+                            </div>
                           )}
                         </div>
                       </div>
