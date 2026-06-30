@@ -101,9 +101,14 @@ export default function LoginPage() {
       const data = isLogin ? await authLogin(submitData) : await authRegister(submitData);
 
       if (data.requires_verification) {
-        setVerificationEmail(data.email);
-        localStorage.setItem("pending_email", data.email);
+        const emailFromRequest = credentials.email;
+
+        setVerificationEmail(emailFromRequest);
+        localStorage.setItem("pending_email", emailFromRequest);
+        localStorage.setItem("auth_mode", "verify");
+
         setAuthMode("verify");
+
       } else {
         login(data.customer, data.access_token);
         await syncCart();
@@ -124,7 +129,9 @@ export default function LoginPage() {
     try {
       // 🔴 أهم سطر: جلب الإيميل بشكل مضمون
       const email =
-        verificationEmail || localStorage.getItem("pending_email");
+        verificationEmail ||
+        localStorage.getItem("pending_email") ||
+        credentials.email;
 
       if (!email) {
         setAuthError("Email not found. Please register again.");
