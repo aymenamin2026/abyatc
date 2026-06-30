@@ -395,10 +395,7 @@ export async function verifyRegistration(email: string, code: string) {
   const res = await fetch(`${API_URL}/auth/verify-registration`, {
     method: 'POST',
     headers: getHeaders(),
-    body: JSON.stringify({
-      email: email,
-      verification_code: code.trim()
-    })
+body: JSON.stringify({ email, code })
   });
 
   const data = await res.json();
