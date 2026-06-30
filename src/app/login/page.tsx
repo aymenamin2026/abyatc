@@ -64,7 +64,7 @@ export default function LoginPage() {
 
           setSelectedCountry(
             settingsData?.default_country ||
-            withCodes.find(c => c.phone_code === "+966") ||
+            withCodes.find((c: any) => c.phone_code === "+966") ||
             withCodes[0]
           );
         }
