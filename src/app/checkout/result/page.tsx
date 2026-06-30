@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle, XCircle, Clock, ShoppingBag, ArrowLeft, Home } from "lucide-react";
+import { CheckCircle, XCircle, Clock, ShoppingBag, ArrowLeft, Home, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
 import { Suspense } from "react";
@@ -14,6 +14,9 @@ function CheckoutResultContent() {
   const status = searchParams.get("status") || "failed";
   const orderNumber = searchParams.get("order_number");
   const error = searchParams.get("error");
+
+  // استقبال مدة الشحن المتوقعة من الرابط ديناميكياً
+  const estimatedDays = searchParams.get("days");
 
   const isSuccess = status === "success";
   const isPending = status === "pending";
@@ -74,13 +77,28 @@ function CheckoutResultContent() {
           }
         </p>
 
-        {/* Order Number */}
+        {/* Order Info (Number & Dynamic Shipping Time) */}
         {orderNumber && (
-          <div className="bg-muted/50 rounded-xl p-4 mb-6 border border-border/50">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-              {lang === "ar" ? "رقم الطلب" : "Order Number"}
-            </p>
-            <p className="text-lg font-bold font-mono text-foreground">{orderNumber}</p>
+          <div className="bg-muted/50 rounded-xl p-4 mb-6 border border-border/50 grid grid-cols-2 gap-4 text-center divide-x divide-border/40 rtl:divide-x-reverse">
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                {lang === "ar" ? "رقم الطلب" : "Order Number"}
+              </p>
+              <p className="text-base font-bold font-mono text-foreground">{orderNumber}</p>
+            </div>
+
+            {/* عرض وقت الشحن المختار أوتوماتيكياً في حالة النجاح */}
+            {isSuccess && (
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1 flex items-center justify-center gap-1">
+                  <Calendar className="w-3.5 h-3.5" />
+                  {lang === "ar" ? "التوصيل المتوقع" : "Est. Delivery"}
+                </p>
+                <p className="text-sm font-semibold text-primary mt-1">
+                  {estimatedDays ? decodeURIComponent(estimatedDays) : (lang === "ar" ? "3 - 5 أيام عمل" : "3 - 5 Business Days")}
+                </p>
+              </div>
+            )}
           </div>
         )}
 

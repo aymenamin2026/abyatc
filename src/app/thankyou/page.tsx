@@ -14,7 +14,7 @@ export default function ThankYouPage() {
   const orderNumber = searchParams.get("order_number");
   const { lang } = useLanguage();
   const [currencySymbol, setCurrencySymbol] = useState("$");
-  const [supportEmail, setSupportEmail] = useState("support@elegance.com");
+  const [supportEmail, setSupportEmail] = useState("support@abyatc.com");
 
   // حالة جديدة لحفظ ميعاد التوصيل المتوقع القادم من السيرفر
   const [estimatedDelivery, setEstimatedDelivery] = useState<string>("");

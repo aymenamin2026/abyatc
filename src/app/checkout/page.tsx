@@ -487,11 +487,32 @@ export default function Checkout() {
         }
 
         // Give time for the success animation
+        // Give time for the success animation
         setTimeout(() => {
           if (data.checkout_url) {
-            window.location.href = data.checkout_url;
+            // إذا كان هناك رابط خارجي للدفع (مثل تمارا أو تابي أو ميسر)، نقوم بتمرير المتغيرات إليه أيضاً ليتم قراءتها عند الرجوع
+            const returnUrl = new URL(data.checkout_url);
+
+            // استخراج نص مدة الشحن الحالية
+            const activeMethod = shippingRates.find((m: any) => m.code === selectedShippingMethod);
+            const deliveryText = activeMethod
+              ? (typeof activeMethod.estimated_days === 'object'
+                ? (activeMethod.estimated_days[lang] || activeMethod.estimated_days.ar || activeMethod.estimated_days.en)
+                : activeMethod.estimated_days)
+              : "3 - 5 أيام عمل";
+
+            returnUrl.searchParams.set('days', deliveryText);
+            window.location.href = returnUrl.toString();
           } else {
-            window.location.href = `/thankyou?order_number=${data.order_number}`;
+            // البحث عن مدة الشحن المحددة من المصفوفة لإرسالها لصفحة النجاح مباشرة
+            const activeMethod = shippingRates.find((m: any) => m.code === selectedShippingMethod);
+            const deliveryText = activeMethod
+              ? (typeof activeMethod.estimated_days === 'object'
+                ? (activeMethod.estimated_days[lang] || activeMethod.estimated_days.ar || activeMethod.estimated_days.en)
+                : activeMethod.estimated_days)
+              : "3 - 5 أيام عمل";
+
+            window.location.href = `/checkout/result?status=success&order_number=${data.order_number}&days=${encodeURIComponent(deliveryText)}`;
           }
         }, 2000);
       } else {
