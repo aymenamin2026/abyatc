@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [authMode, setAuthMode] = useState<"login" | "register" | "verify">("login");
   const [authError, setAuthError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [siteName, setSiteName] = useState("Luluh.sa");
+  const [siteName, setSiteName] = useState("abyatc.vercel.app");
   const [credentials, setCredentials] = useState({
     first_name: "",
     last_name: "",
