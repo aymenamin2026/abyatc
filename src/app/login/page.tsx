@@ -173,11 +173,13 @@ export default function LoginPage() {
     }
   };
 
-  const filteredCountries = countries.filter((c: any) =>
-    c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
-    c.phone_code.includes(countrySearch) ||
-    c.iso_code_2.toLowerCase().includes(countrySearch.toLowerCase())
-  );
+  const filteredCountries = (countries || []).filter((c: any) => {
+    return (
+      (c?.name || "").toLowerCase().includes(countrySearch.toLowerCase()) ||
+      (c?.phone_code || "").includes(countrySearch) ||
+      (c?.iso_code_2 || "").toLowerCase().includes(countrySearch.toLowerCase())
+    );
+  });
   useEffect(() => {
     const mode = localStorage.getItem("auth_mode");
 

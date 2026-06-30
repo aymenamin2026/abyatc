@@ -286,11 +286,7 @@ export default function TrackOrderPage() {
                   return (
                     <div key={item.id} className="flex items-center gap-4 pb-4 border-b border-border last:border-0 last:pb-0">
                       <div className="h-16 w-16 bg-muted rounded-lg overflow-hidden shrink-0 border border-border">
-                        <img src={getImageUrl(
-
-                          item.product?.image
-
-                        )} alt={productName} className="w-full h-full object-cover" />
+                        <img src={getImageUrl(item.product?.image)} alt={productName} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1">
                         <h4 className="text-sm font-medium text-foreground line-clamp-1">{productName}</h4>
