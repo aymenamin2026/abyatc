@@ -156,6 +156,15 @@ export default function LoginPage() {
     c.phone_code.includes(countrySearch) ||
     c.iso_code_2.toLowerCase().includes(countrySearch.toLowerCase())
   );
+  useEffect(() => {
+    const mode = localStorage.getItem("auth_mode");
+
+    if (mode === "verify") {
+      setAuthMode("verify");
+    }
+
+    localStorage.removeItem("auth_mode");
+  }, []);
 
   if (user) return null;
 

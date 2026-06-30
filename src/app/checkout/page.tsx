@@ -312,6 +312,8 @@ export default function Checkout() {
 
 
       localStorage.setItem("after_verify_redirect", "checkout");
+      localStorage.setItem("auth_mode", "verify");
+
       router.push("/login");
     } catch (err: any) {
       setAuthError(err.message);
