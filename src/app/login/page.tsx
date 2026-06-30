@@ -143,7 +143,15 @@ export default function LoginPage() {
       console.log("verificationEmail state:", verificationEmail);
       console.log("localStorage email:", localStorage.getItem("pending_email"));
       console.log("credentials email:", credentials.email);
-      router.push("/account");
+      const redirect = localStorage.getItem("after_verify_redirect");
+
+      localStorage.removeItem("after_verify_redirect");
+
+      if (redirect === "checkout") {
+        router.push("/checkout?from=auth");
+      } else {
+        router.push("/account");
+      }
     } catch (err: any) {
       setAuthError(err.message || t("verification_failed", lang));
     } finally {

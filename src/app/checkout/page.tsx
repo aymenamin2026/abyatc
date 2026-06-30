@@ -148,8 +148,26 @@ export default function Checkout() {
 
   const searchParams = useSearchParams();
   const router = useRouter();
+  const fromAuth = searchParams.get("from");
 
   // Handle Cancellation from Payment Gateway
+  useEffect(() => {
+    if (fromAuth === "auth") {
+      // المستخدم جاء من تسجيل دخول / تحقق
+      // هنا نعيد تهيئة صفحة الدفع
+      console.log("Returned from auth flow");
+
+      // مثال مهم:
+      // 1. إعادة تحميل السلة
+      syncCart?.();
+
+      // 2. إعادة حساب الشحن (إذا عندك دالة)
+      // calculateRatesForAddress(selectedAddress);
+
+      // 3. (اختياري) فتح خطوة الدفع مباشرة
+      // setStep("payment");
+    }
+  }, [fromAuth]);
   useEffect(() => {
     const cancelAction = async () => {
       const cancel = searchParams.get('cancel');
