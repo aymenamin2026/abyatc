@@ -42,8 +42,10 @@ export default function LoginPage() {
       try {
         const [countriesData, settingsData] = await Promise.all([
           fetchCountries(),
-          fetchSettings()
+          fetchSettings(),
+
         ]);
+        console.log("Countries API:", countriesData);
 
         const withCodes = countriesData || [];
         setCountries(withCodes);
@@ -336,6 +338,7 @@ export default function LoginPage() {
                               key={country.id || country.phone_code}
                               type="button"
                               onClick={() => {
+                                console.log("Selected country:", country);
                                 setSelectedCountry(country);
                                 setCountrySearch("");
                                 setShowCountryDropdown(false);
