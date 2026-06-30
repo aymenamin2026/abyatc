@@ -122,6 +122,9 @@ export default function LoginPage() {
   };
 
   const handleVerifySubmit = async (e: React.FormEvent) => {
+    console.log("verificationEmail state:", verificationEmail);
+    console.log("localStorage email:", localStorage.getItem("pending_email"));
+    console.log("credentials email:", credentials.email);
     e.preventDefault();
     setAuthError("");
     setLoading(true);
@@ -170,8 +173,13 @@ export default function LoginPage() {
     c.iso_code_2.toLowerCase().includes(countrySearch.toLowerCase())
   );
   useEffect(() => {
-    const mode = localStorage.getItem("auth_mode");
+    const savedEmail = localStorage.getItem("pending_email");
 
+    if (savedEmail) {
+      setVerificationEmail(savedEmail);
+    }
+
+    const mode = localStorage.getItem("auth_mode");
     if (mode === "verify") {
       setAuthMode("verify");
     }
