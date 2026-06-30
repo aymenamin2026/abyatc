@@ -95,7 +95,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               ${order.status === 'processing' ? 'bg-blue-100 text-blue-800' : ''}
               ${order.status === 'completed' ? 'bg-green-100 text-green-800' : ''}
               ${order.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''}
-              ${order.status === 'shipped' ? 'bg-indigo-100 text-indigo-800' : ''}
+              ${order.status === 'in_way' ? 'bg-indigo-100 text-indigo-800' : ''}
               ${order.status === 'awaiting_payment' ? 'bg-orange-100 text-orange-800' : ''}
             `}>
                       {t(order.status as any, lang)}
