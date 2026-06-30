@@ -286,7 +286,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground font-medium">{t('shipping', lang)} ({selectedOrder.shipping_method})</span>
+                      <span className="text-muted-foreground font-medium">{t('processing_fees', lang)} ({selectedOrder.shipping_method})</span>
                       <span className="text-foreground font-bold text-green-600">
                         {selectedOrder.shipping_amount > 0 ? (
                           `${currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}${parseFloat(selectedOrder.shipping_amount).toFixed(2)}`
