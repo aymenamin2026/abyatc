@@ -1227,7 +1227,7 @@ export default function Checkout() {
                             <label
                               key={method.code}
                               className={`relative flex flex-col p-5 border rounded-xl cursor-pointer transition-all overflow-hidden group
-                              ${selectedShippingMethod === method.code
+            ${selectedShippingMethod === method.code
                                   ? "border-primary bg-primary/5 ring-1 ring-primary shadow-md"
                                   : "border-border hover:border-primary/50 hover:bg-secondary/20"
                                 }`}
@@ -1250,8 +1250,21 @@ export default function Checkout() {
                                       : (method.name || 'Standard Shipping')}
                                   </span>
                                 </div>
+
+                                {/* --- بداية الجزء المعدل الخاص بطباعة السعر وحالة الـ express --- */}
                                 <span className="font-bold text-lg text-primary flex items-center gap-1">
-                                  {method.cost === 0 ? t('free', lang) : (
+                                  {method.code === "express" ? (
+                                    <>
+                                      {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
+                                        <img src={finalCurrencySymbol} alt="Currency" className="h-4 w-auto object-contain inline-block" />
+                                      ) : (
+                                        <span>{finalCurrencySymbol}</span>
+                                      )}
+                                      <span>{parseFloat(method.cost).toFixed(2)}</span>
+                                    </>
+                                  ) : method.cost === 0 ? (
+                                    t('free', lang)
+                                  ) : (
                                     <>
                                       {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
                                         <img src={finalCurrencySymbol} alt="Currency" className="h-4 w-auto object-contain inline-block" />
@@ -1262,6 +1275,8 @@ export default function Checkout() {
                                     </>
                                   )}
                                 </span>
+                                {/* --- نهاية الجزء المعدل --- */}
+
                               </div>
                               <p className="text-sm text-muted-foreground pl-8">
                                 {typeof method.description === 'object' && method.description !== null
