@@ -214,7 +214,11 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                     <div key={item.id} className="flex gap-4 items-center p-3 rounded-xl border border-border hover:bg-muted/5 transition-colors">
                       <div className="w-14 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
                         <img
-                          src={getImageUrl(item.product?.image || item.image)}
+                          src={getImageUrl(
+                            item.product?.images?.[0] ||
+                            item.product?.image ||
+                            item.image
+                          )}
                           alt="Product"
                           className="w-full h-full object-cover"
                         />
