@@ -48,7 +48,7 @@ export default function Checkout() {
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [isPlacingOrder, setIsPlacingOrder] = useState<boolean>(false);
   const [currencySymbol, setCurrencySymbol] = useState("$");
-  const [siteName, setSiteName] = useState("Luluh.sa");
+  const [siteName, setSiteName] = useState("abyatc.vercel.app");
   const [settings, setSettings] = useState<any>(null);
 
   // Custom logic to swap riyal SVG based on theme
@@ -308,10 +308,11 @@ export default function Checkout() {
       // login(data.customer, data.access_token);
       // await syncCart();
       // setAuthMode("guest");
-      localStorage.setItem("after_verify_redirect", "checkout");
-      localStorage.setItem("pending_email", credentials.email);
 
-      router.push("/account-verify");
+
+
+      localStorage.setItem("after_verify_redirect", "checkout");
+      router.push("/login");
     } catch (err: any) {
       setAuthError(err.message);
     }
