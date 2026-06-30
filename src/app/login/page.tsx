@@ -304,7 +304,9 @@ export default function LoginPage() {
                 className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
               />
             </div>
-
+            <div className="text-xs text-red-500">
+              {JSON.stringify(countries)}
+            </div>
             {authMode === "register" && (
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('mobile_number', lang)}</label>
