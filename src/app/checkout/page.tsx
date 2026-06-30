@@ -1253,7 +1253,6 @@ export default function Checkout() {
 
                                 {/* --- بداية الجزء المعدل الخاص بطباعة السعر وحالة الـ express --- */}
                                 <span className="font-bold text-lg text-primary flex items-center gap-1">
-                                  {/* إذا كان الكود هو express، سنعرض الرقم 250 مباشرة بغض النظر عن القيمة القادمة من الباك اند */}
                                   {method.code === "express" ? (
                                     <>
                                       {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
@@ -1261,7 +1260,7 @@ export default function Checkout() {
                                       ) : (
                                         <span>{finalCurrencySymbol}</span>
                                       )}
-                                      <span>250.00</span>
+                                      <span>{parseFloat(method.cost).toFixed(2)}</span>
                                     </>
                                   ) : method.cost === 0 ? (
                                     t('free', lang)
