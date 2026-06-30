@@ -102,6 +102,7 @@ export default function LoginPage() {
 
       if (data.requires_verification) {
         setVerificationEmail(data.email);
+        localStorage.setItem("pending_email", data.email);
         setAuthMode("verify");
       } else {
         login(data.customer, data.access_token);
@@ -119,23 +120,28 @@ export default function LoginPage() {
     e.preventDefault();
     setAuthError("");
     setLoading(true);
+
     try {
-      const data = await verifyRegistration(verificationEmail, verificationCode);
-      const redirect = localStorage.getItem("after_verify_redirect") || "account";
+      // 🔴 أهم سطر: جلب الإيميل بشكل مضمون
+      const email =
+        verificationEmail || localStorage.getItem("pending_email");
+
+      if (!email) {
+        setAuthError("Email not found. Please register again.");
+        setLoading(false);
+        return;
+      }
+
+      const data = await verifyRegistration(email, verificationCode);
 
       login(data.customer, data.access_token);
       await syncCart();
 
-      localStorage.removeItem("after_verify_redirect");
       localStorage.removeItem("pending_email");
 
-      if (redirect === "checkout") {
-        router.push("/checkout");
-      } else {
-        router.push("/account");
-      }
+      router.push("/account");
     } catch (err: any) {
-      setAuthError(err.message || t('verification_failed', lang));
+      setAuthError(err.message || t("verification_failed", lang));
     } finally {
       setLoading(false);
     }
