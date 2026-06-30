@@ -209,39 +209,12 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 <div className="space-y-4">
                   {selectedOrder.items?.map((item: any) => (
                     <div key={item.id} className="flex gap-4 items-center p-3 rounded-xl border border-border hover:bg-muted/5 transition-colors">
-                      <div className="w-14 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border relative">
-                        {(() => {
-                          // 1. استخراج مسار الصورة الذكي بفحص كافة المسميات المحتملة في السيرفر
-                          const imagePath =
-                            item.product?.image ||
-                            item.product?.image_path ||
-                            item.product?.thumbnail ||
-                            item.image ||
-                            item.image_path ||
-                            item.thumbnail;
-
-                          // 2. إذا وجدنا أي مسار، نقوم برندرة الصورة فوراً
-                          if (imagePath) {
-                            return (
-                              <Image
-                                src={getImageUrl(imagePath)}
-                                alt={item.product?.name?.[lang] || item.product_name || "Product"}
-                                fill
-                                sizes="56px"
-                                className="object-cover"
-                                unoptimized // لتخطي قيود الدومين ومشاكل السيرفر الخارجي
-                              />
-                            );
-                          }
-
-                          // 3. إذا كانت الصورة فعلياً غير موجودة في قاعدة البيانات (Fallback)
-                          return (
-                            <div className="w-full h-full flex flex-col items-center justify-center bg-secondary text-muted-foreground text-[9px] text-center p-1 leading-tight">
-                              <Package className="w-4 h-4 mb-1 text-muted-foreground/50" />
-                              {lang === 'ar' ? 'لا توجد صورة' : 'No Img'}
-                            </div>
-                          );
-                        })()}
+                      <div className="w-14 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
+                        <img
+                          src={getImageUrl(item.product?.image || item.image)}
+                          alt="Product"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-bold text-foreground truncate">
