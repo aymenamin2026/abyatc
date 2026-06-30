@@ -58,7 +58,7 @@ export default function LoginPage() {
         if (settingsData?.site_name) {
           setSiteName(settingsData.site_name);
         } else {
-          const withCodes = (countriesData || []).filter(c => c.phone_code);
+          const withCodes = (countriesData || []).filter((c: any) => c.phone_code);
 
           setCountries(withCodes);
 
