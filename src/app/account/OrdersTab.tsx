@@ -207,6 +207,9 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                   {t('order_items', lang)} ({selectedOrder.items?.length || 0})
                 </h4>
                 <div className="space-y-4">
+                  <pre>
+                    {JSON.stringify(selectedOrder.items, null, 2)}
+                  </pre>
                   {selectedOrder.items?.map((item: any) => (
                     <div key={item.id} className="flex gap-4 items-center p-3 rounded-xl border border-border hover:bg-muted/5 transition-colors">
                       <div className="w-14 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
