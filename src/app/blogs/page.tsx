@@ -15,14 +15,50 @@ const categoryColorMap: Record<string, string> = {
   security: "from-red-500 to-rose-600",
 };
 
+// --- Custom Mouse Tracker Hook for Spotlight and Custom Cursor ---
+function useMouseTracker() {
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const [isClickable, setIsClickable] = useState(false);
 
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+
+      const target = e.target as HTMLElement;
+      const isHoverClickable = !!target.closest("button, a, select, input, [role='button']");
+      setIsClickable(isHoverClickable);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  return { mouseX, mouseY, isClickable };
+}
 
 // --- Animated Counter Component ---
 function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: number }) {
   const [count, setCount] = useState(0);
   const nodeRef = useRef<HTMLSpanElement>(null);
 
+  useEffect(() => {
+    let start = 0;
+    const end = value;
+    if (start === end) return;
 
+    let totalMiliseconds = duration * 1000;
+    let incrementTime = Math.max(Math.floor(totalMiliseconds / end), 30);
+
+    let timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start === end) clearInterval(timer);
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [value, duration]);
 
   return <span ref={nodeRef}>{count}</span>;
 }
@@ -34,7 +70,12 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
   const localY = useMotionValue(0);
   const [isHovered, setIsHovered] = useState(false);
 
-
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    localX.set(e.clientX - rect.left);
+    localY.set(e.clientY - rect.top);
+  };
 
   const title = article.title?.[lang] || article.title?.en || article.title;
   const excerpt = article.excerpt?.[lang] || article.excerpt?.en || article.excerpt;
@@ -47,6 +88,9 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
   return (
     <motion.article
       ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       initial={{ opacity: 0, y: 50, scale: 0.95, filter: "blur(8px)" }}
       whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-40px" }}
@@ -160,13 +204,32 @@ export default function ArticlesPage() {
   const bgTransformY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
 
   // Cursor Integration
-
+  const { mouseX, mouseY, isClickable } = useMouseTracker();
+  const smoothCursorX = useSpring(mouseX, { stiffness: 350, damping: 25 });
+  const smoothCursorY = useSpring(mouseY, { stiffness: 350, damping: 25 });
 
   // Hero interactive track pos
   const heroRef = useRef<HTMLDivElement>(null);
+  const [heroMouse, setHeroMouse] = useState({ x: 50, y: 50 });
 
+  useEffect(() => {
+    fetchArticles().then(data => {
+      setArticles(data);
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, []);
 
-
+  const handleHeroMouseMove = (e: React.MouseEvent) => {
+    if (!heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    setHeroMouse({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    });
+  };
 
   return (
     <div ref={containerRef} dir={isRtl ? "rtl" : "ltr"} className="flex flex-col min-h-screen bg-background text-foreground overflow-hidden md:  select-none">
@@ -174,12 +237,19 @@ export default function ArticlesPage() {
       {/* 1. Global Custom Fluid Elastic Smooth Cursor + Glow */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9999] hidden md:block rounded-full border border-primary/40 bg-primary/5 backdrop-blur-[1.5px] w-6 h-6 -ml-3 -mt-3 shadow-lg shadow-primary/20"
-
+        style={{ x: smoothCursorX, y: smoothCursorY }}
+        animate={{
+          scale: isClickable ? 2.3 : 1,
+          borderColor: isClickable ? "var(--primary)" : "rgba(var(--primary-rgb), 0.4)",
+          backgroundColor: isClickable ? "rgba(var(--primary-rgb), 0.1)" : "rgba(var(--primary-rgb), 0.02)",
+        }}
         transition={{ type: "tween", ease: "backOut", duration: 0.2 }}
       />
       <div
         className="pointer-events-none fixed inset-0 z-0 opacity-15 dark:opacity-20 blur-[130px] hidden md:block"
-
+        style={{
+          background: `radial-gradient(circle 350px at ${mouseX.get()}px ${mouseY.get()}px, var(--primary), transparent 80%)`,
+        }}
       />
 
       {/* Static Noise Background and ambient layers */}
@@ -192,12 +262,14 @@ export default function ArticlesPage() {
       {/* ================= HERO SECTION ================= */}
       <section
         ref={heroRef}
-
+        onMouseMove={handleHeroMouseMove}
         className="relative pt-36 pb-24 px-4 sm:px-6 lg:px-12 text-center overflow-hidden border-b border-border/40 bg-gradient-to-b from-muted/10 to-transparent z-10"
       >
         <div
           className="pointer-events-none absolute inset-0 transition-all duration-300 opacity-50 mix-blend-screen dark:mix-blend-normal"
-
+          style={{
+            background: `radial-gradient(700px circle at ${heroMouse.x}% ${heroMouse.y}%, rgba(var(--primary-rgb), 0.12), transparent 70%)`,
+          }}
         />
 
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
