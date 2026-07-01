@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { useSearchParams, useRouter } from "navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
 import { ChevronDown, SlidersHorizontal, Check, X, ArrowDownWideNarrow, ShoppingBag, Eye } from "lucide-react";
 
