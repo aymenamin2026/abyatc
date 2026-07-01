@@ -96,7 +96,7 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
         rotateY: rotateY,
       }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className={`relative overflow-hidden rounded-[24px] border border-white/10 dark:border-white/5 bg-gradient-to-br from-white/10 to-white/5 dark:from-neutral-900/40 dark:to-neutral-900/10 backdrop-blur-xl shadow-xl transition-all duration-300 ${className}`}
+      className={`relative overflow-hidden rounded-[24px] border border-neutral-200/50 dark:border-white/5 bg-white/60 dark:from-neutral-900/40 dark:to-neutral-900/10 backdrop-blur-xl shadow-xl transition-all duration-300 ${className}`}
     >
       {/* Spotlight Glow Effect */}
       <div
@@ -364,7 +364,7 @@ export default function AboutPage() {
           {/* Vision Card */}
           <motion.div
             whileHover={{ y: -5 }}
-            className="p-10 md:p-14 bg-gradient-to-br from-white/30 to-white/5 dark:from-neutral-900/50 dark:to-neutral-900/10 backdrop-blur-2xl border border-white/30 dark:border-neutral-800/40 rounded-[32px] shadow-2xl flex flex-col md:flex-row gap-6 items-start"
+            className="p-10 md:p-14 bg-white/70 dark:from-neutral-900/50 dark:to-neutral-900/10 backdrop-blur-2xl border border-neutral-200/60 dark:border-neutral-800/40 rounded-[32px] shadow-2xl flex flex-col md:flex-row gap-6 items-start"
           >
             <div className="p-4 bg-amber-500/10 text-amber-500 rounded-2xl border border-amber-500/20">
               <Eye className="w-8 h-8" />
@@ -378,7 +378,7 @@ export default function AboutPage() {
           {/* Mission Card */}
           <motion.div
             whileHover={{ y: -5 }}
-            className="p-10 md:p-14 bg-gradient-to-br from-white/30 to-white/5 dark:from-neutral-900/50 dark:to-neutral-900/10 backdrop-blur-2xl border border-white/30 dark:border-neutral-800/40 rounded-[32px] shadow-2xl flex flex-col md:flex-row gap-6 items-start"
+            className="p-10 md:p-14 bg-white/70 dark:from-neutral-900/50 dark:to-neutral-900/10 backdrop-blur-2xl border border-neutral-200/60 dark:border-neutral-800/40 rounded-[32px] shadow-2xl flex flex-col md:flex-row gap-6 items-start"
           >
             <div className="p-4 bg-primary/10 text-primary rounded-2xl border border-primary/20">
               <Rocket className="w-8 h-8" />
@@ -391,7 +391,7 @@ export default function AboutPage() {
         </div>
 
         {/* Core Values Rows */}
-        <div className="mt-12 p-8 md:p-12 bg-white/20 dark:bg-neutral-900/20 backdrop-blur-xl border border-white/20 dark:border-neutral-800/20 rounded-[32px] shadow-xl">
+        <div className="mt-12 p-8 md:p-12 bg-white/80 dark:bg-neutral-900/20 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800/20 rounded-[32px] shadow-xl">
           <h3 className="text-xl font-bold uppercase tracking-wider text-center mb-10 text-neutral-400 dark:text-neutral-500">
             {text.mvv.values.title}
           </h3>
@@ -434,7 +434,7 @@ export default function AboutPage() {
               </div>
 
               {/* Box Info */}
-              <div className="p-6 bg-white/50 dark:bg-neutral-900/40 backdrop-blur-md rounded-2xl border border-white/20 dark:border-neutral-800/40 shadow-md group-hover:shadow-xl transition-shadow duration-300">
+              <div className="p-6 bg-white/80 dark:bg-neutral-900/40 backdrop-blur-md rounded-2xl border border-neutral-200/50 dark:border-neutral-800/40 shadow-md group-hover:shadow-xl transition-shadow duration-300">
                 <span className="inline-block md:hidden font-mono font-bold text-primary mb-1">{item.year}</span>
                 <h3 className="font-bold text-lg mb-2 text-neutral-900 dark:text-neutral-100">{item.title}</h3>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{item.desc}</p>
