@@ -110,7 +110,7 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
 
       {/* Image Container with Cinematic Shine & Zoom */}
       <div className="relative z-10 w-full aspect-[16/10] rounded-[24px] overflow-hidden bg-muted/50 mb-5 shadow-inner">
-        <Link href={`/blogs/${article.slug}`} className="block w-full h-full cursor-none">
+        <Link href={`/blogs/${article.slug}`} className="block w-full h-full  ">
           <img
             src={image || '/no-image.jpg'}
             alt={title}
@@ -123,7 +123,7 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
         {/* Hover View Detail Overlay Button */}
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-center justify-center gap-3 z-20">
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 rounded-full bg-white text-black shadow-2xl flex items-center justify-center">
-            <Link href={`/blogs/${article.slug}`} className="cursor-none"><Eye className="w-5 h-5" /></Link>
+            <Link href={`/blogs/${article.slug}`} className=" "><Eye className="w-5 h-5" /></Link>
           </motion.div>
         </div>
 
@@ -136,7 +136,7 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
       {/* Card Metadata & Typography Details */}
       <div className="relative z-10 flex-1 flex flex-col justify-between px-2">
         <div className="space-y-3">
-          <Link href={`/blogs/${article.slug}`} className="block cursor-none">
+          <Link href={`/blogs/${article.slug}`} className="block  ">
             <h3 className="text-xl font-bold text-foreground font-serif tracking-tight line-clamp-2 leading-snug group-hover:text-primary transition-colors duration-300">
               {title}
             </h3>
@@ -163,7 +163,7 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
           </div>
 
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-            <Link href={`/blogs/${article.slug}`} className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-muted/60 border border-border/60 text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 cursor-none">
+            <Link href={`/blogs/${article.slug}`} className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-muted/60 border border-border/60 text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300  ">
               {lang === 'ar' ? <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" /> : <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" />}
             </Link>
           </motion.div>
@@ -232,7 +232,7 @@ export default function ArticlesPage() {
   };
 
   return (
-    <div ref={containerRef} dir={isRtl ? "rtl" : "ltr"} className="flex flex-col min-h-screen bg-background text-foreground overflow-hidden md:cursor-none select-none">
+    <div ref={containerRef} dir={isRtl ? "rtl" : "ltr"} className="flex flex-col min-h-screen bg-background text-foreground overflow-hidden md:  select-none">
 
       {/* 1. Global Custom Fluid Elastic Smooth Cursor + Glow */}
       <motion.div
@@ -464,9 +464,9 @@ export default function ArticlesPage() {
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.96 }}
-              className="w-full sm:w-auto relative group overflow-hidden px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-xl text-xs sm:text-sm tracking-widest uppercase shadow-lg hover:shadow-primary/20 transition-all duration-300 cursor-none"
+              className="w-full sm:w-auto relative group overflow-hidden px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-xl text-xs sm:text-sm tracking-widest uppercase shadow-lg hover:shadow-primary/20 transition-all duration-300"
             >
-              <Link href="/contact" className="flex items-center justify-center gap-2 cursor-none">
+              <Link href="/contact" className="flex items-center justify-center gap-2">
                 <MessageSquare className="w-4 h-4" />
                 {isRtl ? 'طلب تسعير ومناقشة المشروع' : 'Request Quote & Consultation'}
               </Link>
@@ -475,9 +475,9 @@ export default function ArticlesPage() {
             <motion.button
               whileHover={{ scale: 1.03, backgroundColor: "rgba(var(--primary-rgb), 0.05)" }}
               whileTap={{ scale: 0.96 }}
-              className="w-full sm:w-auto px-8 py-4 border border-border/80 hover:border-foreground/60 text-foreground font-semibold rounded-xl text-xs sm:text-sm tracking-widest uppercase backdrop-blur-sm transition-all duration-300 cursor-none"
+              className="w-full sm:w-auto px-8 py-4 border border-border/80 hover:border-foreground/60 text-foreground font-semibold rounded-xl text-xs sm:text-sm tracking-widest uppercase backdrop-blur-sm transition-all duration-300"
             >
-              <Link href="/shop" className="flex items-center justify-center gap-2 cursor-none">
+              <Link href="/shop" className="flex items-center justify-center gap-2">
                 {isRtl ? 'تصفح المعدات والخدمات المتاحة' : 'Explore Fleet & Services'}
                 <ArrowUpRight className="w-4 h-4" />
               </Link>

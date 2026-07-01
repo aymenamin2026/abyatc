@@ -39,7 +39,7 @@ export default async function Shop() {
 
   return (
     /* تم إضافة md:cursor-none هنا لإخفاء المؤشر التقليدي على الشاشات الكبيرة لتفعيل المؤشر الفخم */
-    <div className="relative flex flex-col min-h-screen bg-background text-foreground transition-colors duration-500 overflow-hidden md:cursor-none">
+    <div className="relative flex flex-col min-h-screen bg-background text-foreground transition-colors duration-500 overflow-hidden md: ">
 
       {/* 2. BACKGROUND LAYERS: التوافق المطلق مع الوضع الداكن */}
       <div className="absolute inset-0 pointer-events-none z-0">
