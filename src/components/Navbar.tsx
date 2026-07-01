@@ -185,7 +185,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                   <img
                     src={logoUrl}
                     alt={siteName}
-                    className={`h-14 sm:h-20 w-auto object-contain transition-all drop-shadow-lg p-1 ${shouldBeTransparent && !isScrolled ? "brightness-0 invert" : "dark:brightness-0 dark:invert"}`}
+                    className="h-14 sm:h-20 w-auto object-contain transition-all drop-shadow-lg p-1"
                   />
                 ) : (
                   <span>{siteName}</span>
@@ -202,8 +202,8 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                     key={link.href}
                     href={link.href}
                     className={`px-4 py-2 rounded-xl tracking-wide transition-all duration-300 ${active
-                        ? (shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground")
-                        : (shouldBeTransparent && !isScrolled ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground")
+                      ? (shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground")
+                      : (shouldBeTransparent && !isScrolled ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground")
                       }`}
                   >
                     {link.label}
