@@ -240,7 +240,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     awaiting_pricing:"Awaiting Pricing",
 
     // Footer
-    location:"Riyadh, Al Faisaliyah District, Cairo Street",
+    location:"Riyadh, Al Faisaliyah District, Alwqarah Street",
     quick_links: "Quick Links",
     contact_us: "Contact Us",
     returns: "Returns & Exchanges",
@@ -507,7 +507,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     details: "التفاصيل",
     
     // Footer
-    location: " الرياض، حي الفيصلية، شارع القاهرة",
+    location: "الرياض حي الفيصلية شارع الوقارة",
     quick_links: "روابط سريعة",
     contact_us: "اتصل بنا",
     returns: "الاستبدال والاسترجاع",
