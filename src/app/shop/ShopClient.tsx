@@ -308,15 +308,15 @@ export default function ShopClient({
   return (
     <>
       {/* 1. Global Custom Elastic Fluid Cursor Ring */}
+      {/* 1. Global Custom Elastic Fluid Cursor Ring */}
       <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-[9999] hidden md:block rounded-full border border-primary/40 bg-primary/5 backdrop-blur-[1px]"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] hidden md:block rounded-full border border-primary/40 bg-primary/5 backdrop-blur-[1px] w-6 h-6 -ml-3 -mt-3"
         style={{ x: smoothCursorX, y: smoothCursorY }}
         animate={{
           scale: isClickable ? 2.2 : 1,
           borderColor: isClickable ? "var(--primary)" : "rgba(var(--primary-rgb), 0.4)",
         }}
         transition={{ type: "tween", ease: "backOut", duration: 0.2 }}
-        className="w-6 h-6 -ml-3 -mt-3"
       />
 
       {/* 2. Glow Cursor Spot Effect */}
