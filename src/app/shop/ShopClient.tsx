@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
 import { ChevronDown, SlidersHorizontal, Check, X, ArrowDownWideNarrow, ShoppingBag, Eye } from "lucide-react";
+import { Variants } from "framer-motion";
 
 import { getImageUrl } from "@/lib/api";
 import { t } from "@/lib/translations";
@@ -89,17 +90,25 @@ function PremiumProductCard({
   const price = product.base_price || product.price || (product.variations?.[0]?.price) || 0;
 
   // إعدادات الأنيميشن عند الظهور تدريجياً وبنعومة (Fade + Slide + Blur + Scale)
-  const cardVariants = {
-    hidden: { opacity: 0, y: 40, scale: 0.96, filter: "blur(10px)" },
+  const cardVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      y: 40,
+      scale: 0.96,
+      filter: "blur(10px)"
+    },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
       filter: "blur(0px)",
-      transition: { type: "spring", stiffness: 70, damping: 14 }
+      transition: {
+        type: "spring",
+        stiffness: 70,
+        damping: 14
+      }
     }
   };
-
   return (
     <motion.div
       ref={cardRef}
