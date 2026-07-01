@@ -5,6 +5,10 @@ import { useLanguage } from "@/components/LanguageContext";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, Briefcase, Target, CheckCircle2, Eye, Rocket, ArrowRight } from "lucide-react";
 
+// المعرفات اللونية الثابتة للتصميم
+const COLOR_PRIMARY = "#093f89"; // الأزرق الكحلي
+const COLOR_ACCENT = "#fbc70f";  // الأصفر الذهبي
+
 // --- Animated Counter Component ---
 function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -59,7 +63,7 @@ function useTiltEffect() {
   return { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave };
 }
 
-// كرت زجاجي تفاعلي يعتمد بالكامل على متغيرات ثيم موقعك الأصلي
+// كرت زجاجي تفاعلي مدعوم بإضاءة النيون الخاصة بألوان براند لمعة أبيات
 function TiltCard({ children }: { children: React.ReactNode }) {
   const { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave } = useTiltEffect();
 
@@ -72,14 +76,14 @@ function TiltCard({ children }: { children: React.ReactNode }) {
       style={{ transformStyle: "preserve-3d" }}
       animate={{ rotateX: rotateX, rotateY: rotateY }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="relative overflow-hidden rounded-[24px] border border-border/60 bg-card/60 backdrop-blur-xl shadow-xl transition-all duration-300 h-full w-full"
+      className="relative overflow-hidden rounded-[24px] border border-slate-200/50 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl shadow-xl transition-all duration-300 h-full w-full group"
     >
-      {/* Spotlight Hover Glow */}
+      {/* سحر التفاعل: توهج نيون يدمج الكحلي مع وميض ذهبي عند تحريك الفأرة */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
         style={{
           opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(600px circle at ${glowX}px ${glowY}px, rgba(var(--primary), 0.1), transparent 40%)`,
+          background: `radial-gradient(400px circle at ${glowX}px ${glowY}px, rgba(9, 63, 137, 0.08), rgba(251, 199, 15, 0.03), transparent 60%)`,
         }}
       />
       <div style={{ transform: "translateZ(20px)" }} className="h-full w-full">
@@ -195,22 +199,36 @@ export default function AboutPage() {
     <div
       ref={containerRef}
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative min-h-screen bg-background text-foreground overflow-x-hidden w-full transition-colors duration-500 selection:bg-primary/30"
+      className="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 overflow-x-hidden w-full transition-colors duration-500 selection:bg-[#093f89]/20"
     >
+      {/* لمسة خلفية فنية: دوائر نيون هادئة بألوان الهوية المحددة تمنح فخامة بصرية للموقع */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#093f89]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-40 right-1/4 w-80 h-80 bg-[#fbc70f]/5 rounded-full blur-[100px] pointer-events-none" />
+
       {/* --- HERO SECTION WITH PARALLAX --- */}
       <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden w-full">
         <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8 w-full">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", delay: 0.1 }}>
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest border border-primary/20 shadow-sm">
-              {text.badge}
+            {/* البادج: يعتمد هنا على لون الذهب والأزرق الكحلي معاً لإظهار التميز */}
+            <span
+              style={{ borderColor: `${COLOR_PRIMARY}30`, color: COLOR_PRIMARY }}
+              className="inline-block px-5 py-2 rounded-full bg-white dark:bg-slate-900 text-xs font-bold uppercase tracking-widest border shadow-md"
+            >
+              <span className="me-1" style={{ color: COLOR_ACCENT }}>✦</span> {text.badge}
             </span>
           </motion.div>
 
-          <h1 className="font-serif text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-tight">
+          <h1 className="font-serif text-4xl md:text-7xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
             <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="block">
               {text.heroTitle}
             </motion.span>
-            <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="block mt-2 text-2xl md:text-4xl font-sans font-medium text-primary">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              style={{ color: COLOR_PRIMARY }}
+              className="block mt-4 text-3xl md:text-5xl font-sans font-extrabold tracking-wide drop-shadow-sm"
+            >
               {text.heroSubtitle}
             </motion.span>
           </h1>
@@ -221,12 +239,13 @@ export default function AboutPage() {
       <section className="relative z-10 py-10 px-4 sm:px-6 max-w-7xl mx-auto -mt-16 w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
           {text.stats.map((stat, i) => (
-            <div key={i} className="p-4 md:p-6 text-center bg-card/40 border border-border/50 backdrop-blur-md rounded-2xl shadow-sm w-full">
-              <div className="text-2xl md:text-5xl font-bold text-primary font-mono mb-2">
+            <div key={i} className="p-6 text-center bg-white/60 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/50 backdrop-blur-md rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 w-full border-t-4" style={{ borderTopColor: COLOR_PRIMARY }}>
+              {/* تلوين العداد والرمز التابع بالأصفر الذهبي الملكي */}
+              <div style={{ color: COLOR_ACCENT }} className="text-3xl md:text-5xl font-extrabold font-mono mb-2 drop-shadow-sm">
                 <AnimatedCounter value={stat.value} />
-                <span className="text-xl md:text-3xl ml-1">{stat.suffix}</span>
+                <span className="text-xl md:text-3xl ml-1 font-sans">{stat.suffix}</span>
               </div>
-              <p className="text-muted-foreground text-[10px] md:text-sm font-medium uppercase tracking-wide line-clamp-1">
+              <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm font-semibold uppercase tracking-wide line-clamp-1">
                 {stat.label}
               </p>
             </div>
@@ -235,22 +254,27 @@ export default function AboutPage() {
       </section>
 
       {/* --- WHY CHOOSE US (TILT & SPOTLIGHT CARDS) --- */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.featuresTitle}</h2>
-          <p className="text-sm md:text-lg text-muted-foreground">{text.featuresSubtitle}</p>
+      <section className="relative z-10 py-24 px-4 sm:px-6 max-w-7xl mx-auto w-full">
+        <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
+          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-slate-900 dark:text-white">{text.featuresTitle}</h2>
+          <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: COLOR_ACCENT }} />
+          <p className="text-sm md:text-lg text-slate-600 dark:text-slate-400">{text.featuresSubtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
           {text.features.map((f, i) => (
             <TiltCard key={i}>
-              <div className="p-6 md:p-8 h-full flex flex-col justify-between group w-full">
+              <div className="p-6 md:p-8 h-full flex flex-col justify-between w-full">
                 <div>
-                  <div className="w-12 h-12 md:w-14 md:h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <f.icon className="w-6 h-6 md:w-7 md:h-7" />
+                  {/* حاوية الأيقونة: ملونة بالأزرق الكحلي مع تأثير تحول سلس عند الـ hover */}
+                  <div
+                    style={{ backgroundColor: `${COLOR_PRIMARY}12`, color: COLOR_PRIMARY }}
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#093f89] group-hover:text-white transition-all duration-500 shadow-inner"
+                  >
+                    <f.icon className="w-7 h-7" />
                   </div>
-                  <h3 className="font-bold text-lg md:text-xl mb-2 text-foreground">{f.title}</h3>
-                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{f.desc}</p>
+                  <h3 className="font-bold text-lg md:text-xl mb-3 text-slate-900 dark:text-white group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">{f.title}</h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed">{f.desc}</p>
                 </div>
               </div>
             </TiltCard>
@@ -261,32 +285,40 @@ export default function AboutPage() {
       {/* --- MISSION & VISION (ADVANCED GLASSMORPHISM) --- */}
       <section className="relative z-10 py-16 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 w-full">
-          <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
-            <div className="p-4 bg-primary/10 text-primary rounded-2xl shrink-0"><Eye className="w-6 h-6 md:w-8 md:h-8" /></div>
+          {/* الرؤية */}
+          <motion.div whileHover={{ y: -6 }} className="p-6 md:p-10 bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
+            <div style={{ backgroundColor: `${COLOR_PRIMARY}12`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm"><Eye className="w-7 h-7" /></div>
             <div>
-              <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 md:mb-4 text-foreground">{text.mvv.vision.title}</h3>
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{text.mvv.vision.desc}</p>
+              <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 text-slate-900 dark:text-white">{text.mvv.vision.title}</h3>
+              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">{text.mvv.vision.desc}</p>
             </div>
           </motion.div>
 
-          <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
-            <div className="p-4 bg-primary/10 text-primary rounded-2xl shrink-0"><Rocket className="w-6 h-6 md:w-8 md:h-8" /></div>
+          {/* الرسالة - تم تمييز العنوان باللون الكحلي */}
+          <motion.div whileHover={{ y: -6 }} className="p-6 md:p-10 bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
+            <div style={{ backgroundColor: `${COLOR_PRIMARY}12`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm"><Rocket className="w-7 h-7" /></div>
             <div>
-              <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 md:mb-4 text-primary">{text.mvv.mission.title}</h3>
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{text.mvv.mission.desc}</p>
+              <h3 style={{ color: COLOR_PRIMARY }} className="text-xl md:text-2xl font-bold font-serif mb-3 dark:text-white">{text.mvv.mission.title}</h3>
+              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">{text.mvv.mission.desc}</p>
             </div>
           </motion.div>
         </div>
 
-        {/* Core Values Box */}
-        <div className="mt-12 p-6 md:p-12 bg-card/30 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-lg w-full">
-          <h3 className="text-lg md:text-xl font-bold tracking-wider text-center mb-10 text-muted-foreground">{text.mvv.values.title}</h3>
+        {/* صندوق القيم الجوهرية */}
+        <div className="mt-12 p-8 md:p-12 bg-white/40 dark:bg-slate-900/30 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-[32px] shadow-lg w-full">
+          <h3 className="text-sm md:text-base font-bold tracking-widest text-center mb-12 uppercase text-slate-500 dark:text-slate-400">{text.mvv.values.title}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
             {text.mvv.values.items.map((item, idx) => (
-              <div key={idx} className="space-y-3 text-center w-full">
-                <div className="mx-auto w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">{idx + 1}</div>
-                <h4 className="font-bold text-base md:text-lg text-foreground">{item.title}</h4>
-                <p className="text-xs md:text-sm text-muted-foreground">{item.desc}</p>
+              <div key={idx} className="space-y-4 text-center w-full group">
+                {/* ترقيم دائرى مميز باللون الكحلي والخط الذهبي */}
+                <div
+                  style={{ backgroundColor: `${COLOR_PRIMARY}12`, color: COLOR_PRIMARY, borderColor: `${COLOR_ACCENT}40` }}
+                  className="mx-auto w-12 h-12 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform duration-300"
+                >
+                  {idx + 1}
+                </div>
+                <h4 className="font-bold text-base md:text-xl text-slate-900 dark:text-white">{item.title}</h4>
+                <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -294,19 +326,30 @@ export default function AboutPage() {
       </section>
 
       {/* --- INTERACTIVE TIMELINE SECTION --- */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 max-w-5xl mx-auto w-full">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.timelineTitle}</h2>
+      <section className="relative z-10 py-24 px-4 sm:px-6 max-w-5xl mx-auto w-full">
+        <div className="text-center mb-20">
+          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-slate-900 dark:text-white">{text.timelineTitle}</h2>
+          <div className="w-16 h-1 mx-auto rounded-full mt-3" style={{ backgroundColor: COLOR_ACCENT }} />
         </div>
-        <div className="relative border-s-2 border-border ms-2 md:ms-32 space-y-12 py-4 w-full">
+        {/* الخط الجانبي للتايم لاين يعتمد على الأزرق الكحلي */}
+        <div style={{ borderColor: `${COLOR_PRIMARY}30` }} className="relative border-s-2 ms-2 md:ms-32 space-y-12 py-4 w-full">
           {text.timeline.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: isRtl ? 20 : -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative ps-6 md:ps-12 group w-full">
-              <div className="absolute -start-[9px] top-1.5 w-4 h-4 rounded-full bg-background border-2 border-primary group-hover:bg-primary transition-all duration-300" />
-              <div className="hidden md:block absolute -start-[140px] top-0 text-right w-24 font-mono font-bold text-xl text-muted-foreground group-hover:text-primary transition-colors duration-300">{item.year}</div>
-              <div className="p-6 bg-card/50 backdrop-blur-md rounded-2xl border border-border/50 shadow-sm w-full max-w-[calc(100%-16px)]">
-                <span className="inline-block md:hidden font-mono font-bold text-primary mb-1">[{item.year}]</span>
-                <h3 className="font-bold text-base md:text-lg mb-2 text-foreground">{item.title}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+              {/* النقطة التفاعلية الملونة برأس ذهبي وحد كحلي */}
+              <div
+                style={{ borderColor: COLOR_PRIMARY }}
+                className="absolute -start-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-950 border-2 group-hover:bg-[#fbc70f] group-hover:border-[#fbc70f] transition-all duration-300 shadow-sm"
+              />
+              <div
+                style={{ color: COLOR_PRIMARY }}
+                className="hidden md:block absolute -start-[140px] top-0 text-right w-24 font-mono font-extrabold text-2xl opacity-60 group-hover:opacity-100 group-hover:text-[#fbc70f] transition-all duration-300"
+              >
+                {item.year}
+              </div>
+              <div className="p-6 bg-white/80 dark:bg-slate-900/50 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/50 shadow-md hover:shadow-xl transition-all duration-300 w-full max-w-[calc(100%-16px)]">
+                <span style={{ color: COLOR_PRIMARY }} className="inline-block md:hidden font-mono font-bold mb-1">[{item.year}]</span>
+                <h3 className="font-bold text-base md:text-lg mb-2 text-slate-900 dark:text-white group-hover:text-[#093f89] transition-colors duration-300">{item.title}</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed">{item.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -315,11 +358,18 @@ export default function AboutPage() {
 
       {/* --- CTA SECTION --- */}
       <section className="relative z-10 py-16 px-4 sm:px-6 max-w-6xl mx-auto mb-20 w-full">
-        <div className="relative overflow-hidden rounded-[32px] bg-card border border-border/80 p-8 md:p-16 shadow-2xl text-center space-y-6 w-full">
-          <h2 className="text-2xl md:text-5xl font-serif font-bold text-foreground leading-tight">{text.ctaTitle}</h2>
-          <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="inline-block w-full sm:w-auto">
-            <button className="flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20 transition-all duration-300 w-full">
+        {/* خلفية الـ CTA مدمجة بتدرج عميق ومحاطة بحدود كحلية خفيفة */}
+        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-white to-slate-100 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 p-8 md:p-16 shadow-2xl text-center space-y-8 w-full">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbc70f]/5 rounded-full blur-3xl pointer-events-none" />
+          <h2 className="text-3xl md:text-6xl font-serif font-bold text-slate-900 dark:text-white leading-tight">{text.ctaTitle}</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm md:text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
+
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block w-full sm:w-auto">
+            {/* الزر الإستراتيجي اللامع: تم بناؤه بالكامل باللون الذهبي #fbc70f مع نصوص كحلية #093f89 لإعطاء أقصى درجات الفخامة ولفت النظر لطلب الخدمة */}
+            <button
+              style={{ backgroundColor: COLOR_ACCENT, color: COLOR_PRIMARY }}
+              className="flex items-center justify-center gap-3 px-10 py-4 rounded-full font-bold shadow-lg shadow-amber-500/20 hover:brightness-105 transition-all duration-300 w-full"
+            >
               {text.ctaBtn}
               <ArrowRight className={`w-5 h-5 transform ${isRtl ? "rotate-180" : ""}`} />
             </button>
@@ -328,8 +378,10 @@ export default function AboutPage() {
       </section>
 
       {/* --- FOOTER QUOTE --- */}
-      <footer className="relative z-10 py-12 text-center border-t border-border/60 w-full">
-        <p className="text-lg md:text-2xl font-serif font-bold text-primary max-w-4xl mx-auto px-6">{text.footerQuote}</p>
+      <footer className="relative z-10 py-14 text-center border-t border-slate-200/60 dark:border-slate-800/60 w-full bg-white/20 dark:bg-slate-950/40 backdrop-blur-sm">
+        <p style={{ color: COLOR_PRIMARY }} className="text-xl md:text-3xl font-serif font-bold max-w-4xl mx-auto px-6 tracking-wide drop-shadow-sm dark:text-amber-400">
+          {text.footerQuote}
+        </p>
       </footer>
     </div>
   );
