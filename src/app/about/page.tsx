@@ -5,20 +5,7 @@ import { useLanguage } from "@/components/LanguageContext";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, Briefcase, Target, CheckCircle2, Eye, Rocket, ArrowRight } from "lucide-react";
 
-// --- Custom Hooks للتأثيرات المتقدمة دون كسر الثيم ---
-
-function useMousePosition() {
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-  return mousePosition;
-}
-
+// --- Animated Counter Component ---
 function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: number }) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -72,7 +59,7 @@ function useTiltEffect() {
   return { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave };
 }
 
-// كرت زجاجي تفاعلي يعتمد بالكامل على متغيرات ثيم موقعك الأصلي (bg-card / border-border)
+// كرت زجاجي تفاعلي يعتمد بالكامل على متغيرات ثيم موقعك الأصلي
 function TiltCard({ children }: { children: React.ReactNode }) {
   const { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave } = useTiltEffect();
 
@@ -195,9 +182,6 @@ export default function AboutPage() {
   const text = content[lang as keyof typeof content];
   const isRtl = lang === "ar";
 
-  const { x, y } = useMousePosition();
-  const [isHoveringClickable, setIsHoveringClickable] = useState(false);
-
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -211,42 +195,22 @@ export default function AboutPage() {
     <div
       ref={containerRef}
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative min-h-screen bg-background text-foreground overflow-hidden transition-colors duration-500 selection:bg-primary/30"
+      className="relative min-h-screen bg-background text-foreground overflow-x-hidden w-full transition-colors duration-500 selection:bg-primary/30"
     >
-      {/* 1. Mouse Glow (يعتمد على ألوان الـ primary التابعة للموقع) */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-20 dark:opacity-30 blur-[130px] transition-opacity duration-500"
-        style={{
-          background: `radial-gradient(circle 350px at ${x}px ${y}px, var(--primary), transparent 80%)`,
-        }}
-      />
-
-      {/* 2. Custom Elastic Cursor */}
-      <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-50 hidden md:block rounded-full bg-primary/10 border border-primary/30 backdrop-blur-[1px]"
-        animate={{
-          x: x - (isHoveringClickable ? 24 : 10),
-          y: y - (isHoveringClickable ? 24 : 10),
-          width: isHoveringClickable ? 48 : 20,
-          height: isHoveringClickable ? 48 : 20,
-        }}
-        transition={{ type: "spring", stiffness: 450, damping: 28, mass: 0.2 }}
-      />
-
       {/* --- HERO SECTION WITH PARALLAX --- */}
-      <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden">
-        <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8">
+      <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden w-full">
+        <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8 w-full">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", delay: 0.1 }}>
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest border border-primary/20 shadow-sm">
               {text.badge}
             </span>
           </motion.div>
 
-          <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-tight">
-            <motion.span initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="block">
+          <h1 className="font-serif text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-tight">
+            <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="block">
               {text.heroTitle}
             </motion.span>
-            <motion.span initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="block mt-2 text-2xl md:text-4xl font-sans font-medium text-primary">
+            <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="block mt-2 text-2xl md:text-4xl font-sans font-medium text-primary">
               {text.heroSubtitle}
             </motion.span>
           </h1>
@@ -254,15 +218,15 @@ export default function AboutPage() {
       </section>
 
       {/* --- STATS SECTION (ANIMATED COUNTERS) --- */}
-      <section className="relative z-10 py-10 px-6 max-w-7xl mx-auto -mt-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section className="relative z-10 py-10 px-4 sm:px-6 max-w-7xl mx-auto -mt-16 w-full">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
           {text.stats.map((stat, i) => (
-            <div key={i} className="p-6 text-center bg-card/40 border border-border/50 backdrop-blur-md rounded-2xl shadow-sm">
-              <div className="text-3xl md:text-5xl font-bold text-primary font-mono mb-2">
+            <div key={i} className="p-4 md:p-6 text-center bg-card/40 border border-border/50 backdrop-blur-md rounded-2xl shadow-sm w-full">
+              <div className="text-2xl md:text-5xl font-bold text-primary font-mono mb-2">
                 <AnimatedCounter value={stat.value} />
-                <span className="text-2xl md:text-3xl ml-1">{stat.suffix}</span>
+                <span className="text-xl md:text-3xl ml-1">{stat.suffix}</span>
               </div>
-              <p className="text-muted-foreground text-xs md:text-sm font-medium uppercase tracking-wide">
+              <p className="text-muted-foreground text-[10px] md:text-sm font-medium uppercase tracking-wide line-clamp-1">
                 {stat.label}
               </p>
             </div>
@@ -271,22 +235,22 @@ export default function AboutPage() {
       </section>
 
       {/* --- WHY CHOOSE US (TILT & SPOTLIGHT CARDS) --- */}
-      <section className="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+      <section className="relative z-10 py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.featuresTitle}</h2>
-          <p className="text-lg text-muted-foreground">{text.featuresSubtitle}</p>
+          <p className="text-sm md:text-lg text-muted-foreground">{text.featuresSubtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
           {text.features.map((f, i) => (
             <TiltCard key={i}>
-              <div className="p-8 h-full flex flex-col justify-between group">
+              <div className="p-6 md:p-8 h-full flex flex-col justify-between group w-full">
                 <div>
-                  <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <f.icon className="w-7 h-7" />
+                  <div className="w-12 h-12 md:w-14 md:h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <f.icon className="w-6 h-6 md:w-7 md:h-7" />
                   </div>
-                  <h3 className="font-bold text-xl mb-2 text-foreground">{f.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
+                  <h3 className="font-bold text-lg md:text-xl mb-2 text-foreground">{f.title}</h3>
+                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{f.desc}</p>
                 </div>
               </div>
             </TiltCard>
@@ -295,34 +259,34 @@ export default function AboutPage() {
       </section>
 
       {/* --- MISSION & VISION (ADVANCED GLASSMORPHISM) --- */}
-      <section className="relative z-10 py-16 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <motion.div whileHover={{ y: -5 }} className="p-10 bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-xl flex gap-6 items-start">
-            <div className="p-4 bg-primary/10 text-primary rounded-2xl"><Eye className="w-8 h-8" /></div>
+      <section className="relative z-10 py-16 px-4 sm:px-6 max-w-7xl mx-auto w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 w-full">
+          <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
+            <div className="p-4 bg-primary/10 text-primary rounded-2xl shrink-0"><Eye className="w-6 h-6 md:w-8 md:h-8" /></div>
             <div>
-              <h3 className="text-2xl font-bold font-serif mb-4 text-foreground">{text.mvv.vision.title}</h3>
-              <p className="text-base text-muted-foreground leading-relaxed">{text.mvv.vision.desc}</p>
+              <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 md:mb-4 text-foreground">{text.mvv.vision.title}</h3>
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{text.mvv.vision.desc}</p>
             </div>
           </motion.div>
 
-          <motion.div whileHover={{ y: -5 }} className="p-10 bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-xl flex gap-6 items-start">
-            <div className="p-4 bg-primary/10 text-primary rounded-2xl"><Rocket className="w-8 h-8" /></div>
+          <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
+            <div className="p-4 bg-primary/10 text-primary rounded-2xl shrink-0"><Rocket className="w-6 h-6 md:w-8 md:h-8" /></div>
             <div>
-              <h3 className="text-2xl font-bold font-serif mb-4 text-primary">{text.mvv.mission.title}</h3>
-              <p className="text-base text-muted-foreground leading-relaxed">{text.mvv.mission.desc}</p>
+              <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 md:mb-4 text-primary">{text.mvv.mission.title}</h3>
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{text.mvv.mission.desc}</p>
             </div>
           </motion.div>
         </div>
 
         {/* Core Values Box */}
-        <div className="mt-12 p-8 md:p-12 bg-card/30 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-lg">
-          <h3 className="text-xl font-bold tracking-wider text-center mb-10 text-muted-foreground">{text.mvv.values.title}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="mt-12 p-6 md:p-12 bg-card/30 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-lg w-full">
+          <h3 className="text-lg md:text-xl font-bold tracking-wider text-center mb-10 text-muted-foreground">{text.mvv.values.title}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
             {text.mvv.values.items.map((item, idx) => (
-              <div key={idx} className="space-y-3 text-center">
+              <div key={idx} className="space-y-3 text-center w-full">
                 <div className="mx-auto w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">{idx + 1}</div>
-                <h4 className="font-bold text-lg text-foreground">{item.title}</h4>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
+                <h4 className="font-bold text-base md:text-lg text-foreground">{item.title}</h4>
+                <p className="text-xs md:text-sm text-muted-foreground">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -330,19 +294,19 @@ export default function AboutPage() {
       </section>
 
       {/* --- INTERACTIVE TIMELINE SECTION --- */}
-      <section className="relative z-10 py-20 px-6 max-w-5xl mx-auto">
+      <section className="relative z-10 py-20 px-4 sm:px-6 max-w-5xl mx-auto w-full">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.timelineTitle}</h2>
         </div>
-        <div className="relative border-l-2 border-border ml-4 md:ml-32 space-y-12 py-4">
+        <div className="relative border-s-2 border-border ms-2 md:ms-32 space-y-12 py-4 w-full">
           {text.timeline.map((item, i) => (
-            <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative pl-8 md:pl-12 group">
-              <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-background border-2 border-primary group-hover:bg-primary transition-all duration-300" />
-              <div className="hidden md:block absolute left-[-140px] top-0 text-right w-24 font-mono font-bold text-xl text-muted-foreground group-hover:text-primary transition-colors duration-300">{item.year}</div>
-              <div className="p-6 bg-card/50 backdrop-blur-md rounded-2xl border border-border/50 shadow-sm">
-                <span className="inline-block md:hidden font-mono font-bold text-primary mb-1">{item.year}</span>
-                <h3 className="font-bold text-lg mb-2 text-foreground">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+            <motion.div key={i} initial={{ opacity: 0, x: isRtl ? 20 : -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative ps-6 md:ps-12 group w-full">
+              <div className="absolute -start-[9px] top-1.5 w-4 h-4 rounded-full bg-background border-2 border-primary group-hover:bg-primary transition-all duration-300" />
+              <div className="hidden md:block absolute -start-[140px] top-0 text-right w-24 font-mono font-bold text-xl text-muted-foreground group-hover:text-primary transition-colors duration-300">{item.year}</div>
+              <div className="p-6 bg-card/50 backdrop-blur-md rounded-2xl border border-border/50 shadow-sm w-full max-w-[calc(100%-16px)]">
+                <span className="inline-block md:hidden font-mono font-bold text-primary mb-1">[{item.year}]</span>
+                <h3 className="font-bold text-base md:text-lg mb-2 text-foreground">{item.title}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -350,12 +314,12 @@ export default function AboutPage() {
       </section>
 
       {/* --- CTA SECTION --- */}
-      <section className="relative z-10 py-16 px-6 max-w-6xl mx-auto mb-20">
-        <div className="relative overflow-hidden rounded-[32px] bg-card border border-border/80 p-10 md:p-16 shadow-2xl text-center space-y-6">
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground">{text.ctaTitle}</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
-          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} onMouseEnter={() => setIsHoveringClickable(true)} onMouseLeave={() => setIsHoveringClickable(false)} className="inline-block">
-            <button className="flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20 transition-all duration-300">
+      <section className="relative z-10 py-16 px-4 sm:px-6 max-w-6xl mx-auto mb-20 w-full">
+        <div className="relative overflow-hidden rounded-[32px] bg-card border border-border/80 p-8 md:p-16 shadow-2xl text-center space-y-6 w-full">
+          <h2 className="text-2xl md:text-5xl font-serif font-bold text-foreground leading-tight">{text.ctaTitle}</h2>
+          <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="inline-block w-full sm:w-auto">
+            <button className="flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20 transition-all duration-300 w-full">
               {text.ctaBtn}
               <ArrowRight className={`w-5 h-5 transform ${isRtl ? "rotate-180" : ""}`} />
             </button>
@@ -364,8 +328,8 @@ export default function AboutPage() {
       </section>
 
       {/* --- FOOTER QUOTE --- */}
-      <footer className="relative z-10 py-12 text-center border-t border-border/60">
-        <p className="text-xl md:text-2xl font-serif font-bold text-primary max-w-4xl mx-auto px-6">{text.footerQuote}</p>
+      <footer className="relative z-10 py-12 text-center border-t border-border/60 w-full">
+        <p className="text-lg md:text-2xl font-serif font-bold text-primary max-w-4xl mx-auto px-6">{text.footerQuote}</p>
       </footer>
     </div>
   );
