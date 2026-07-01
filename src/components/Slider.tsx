@@ -111,21 +111,23 @@ export default function Slider({ position, lang }: SliderProps) {
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
+  // قم بتغيير الدالة إلى هذا الشكل:
   const getAnimationProps = () => {
     switch (sliderSettings.animation) {
       case 'slide':
         return {
-          initial: { x: isRtl ? -100 : 100, opacity: 0 }, // تقليل مسافة الحركة لتحسين الأداء والشكل
+          initial: { x: lang === 'ar' ? -100 : 100, opacity: 0 },
           animate: { x: 0, opacity: 1 },
-          exit: { x: isRtl ? 100 : -100, opacity: 0 },
-          transition: { type: "spring", stiffness: 300, damping: 30 }
+          exit: { x: lang === 'ar' ? 100 : -100, opacity: 0 },
+          // الحل هنا: إضافة as const لجعل القيم ثابتة (Literal Types)
+          transition: { type: "spring" as const, stiffness: 300, damping: 30 }
         };
       case 'zoom':
         return {
-          initial: { scale: 1.05, opacity: 0 },
+          initial: { scale: 1.1, opacity: 0 },
           animate: { scale: 1, opacity: 1 },
-          exit: { scale: 0.98, opacity: 0 },
-          transition: { duration: 1.2, ease: "easeOut" }
+          exit: { scale: 0.95, opacity: 0 },
+          transition: { duration: 1.5, ease: "easeOut" as const }
         };
       case 'fade':
       default:
@@ -133,7 +135,7 @@ export default function Slider({ position, lang }: SliderProps) {
           initial: { opacity: 0 },
           animate: { opacity: 1 },
           exit: { opacity: 0 },
-          transition: { duration: 1 }
+          transition: { duration: 1.2, ease: "linear" as const }
         };
     }
   };
