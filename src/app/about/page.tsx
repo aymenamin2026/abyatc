@@ -2,7 +2,7 @@
 
 import { useLanguage } from "@/components/LanguageContext";
 import { motion } from "framer-motion";
-import { Award, Briefcase, Target, Building2, CheckCircle2 } from "lucide-react";
+import { Award, Briefcase, Target, CheckCircle2 } from "lucide-react";
 
 const content = {
   en: {
@@ -48,52 +48,56 @@ export default function AboutPage() {
   const text = content[lang as keyof typeof content];
 
   return (
+    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-500">
 
-    <div className="flex flex-col min-h-screen bg-white text-slate-900 overflow-hidden">
-
-
-      <section className="pt-32 pb-16 px-4 text-center">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-6">
-          <span className="px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold uppercase tracking-widest">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mx-auto space-y-6"
+        >
+          <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest border border-primary/20">
             {text.badge}
           </span>
-          <h1 className="font-serif text-5xl md:text-7xl font-bold text-slate-900">
+          <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-foreground">
             {text.heroTitle}
           </h1>
-          <p className="text-xl text-blue-600 font-semibold tracking-wide">{text.heroSubtitle}</p>
+          <p className="text-xl text-primary font-medium tracking-wide">{text.heroSubtitle}</p>
         </motion.div>
       </section>
 
-
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      {/* Features Grid */}
+      <section className="py-20 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {text.features.map((f, i) => (
-            <div
+            <motion.div
               key={i}
-              className="group relative p-[1px] rounded-[32px] bg-transparent hover:bg-gradient-to-tr from-cyan-400 via-blue-500 to-cyan-400 transition-all duration-500"
+              whileHover={{ y: -10 }}
+              className="group relative p-6 bg-card border border-border/50 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300"
             >
-              {/* هذا الـ div هو الذي سيعطي تأثير الإطار الدوار عند التحويم */}
-              <div className="absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-spin-slow bg-gradient-to-tr from-cyan-400 via-blue-500 to-cyan-400 blur-sm" />
-
-              {/* البطاقة الداخلية */}
-              <div className="relative p-8 bg-white rounded-[31px] h-full shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <f.icon className="w-7 h-7" />
-                </div>
-                <h3 className="font-bold text-lg mb-2 text-slate-900 group-hover:text-blue-700 transition-colors">
-                  {f.title}
-                </h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{f.desc}</p>
+              <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <f.icon className="w-7 h-7" />
               </div>
-            </div>
+              <h3 className="font-bold text-lg mb-2 text-foreground">{f.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      <section className="py-12 pb-32 px-4 max-w-4xl mx-auto">
-        <div className="bg-slate-50 border border-slate-100 p-10 rounded-[32px] space-y-8 text-lg leading-relaxed text-slate-600">
+      {/* Content Section with Glassmorphism */}
+      <section className="py-20 px-6 max-w-4xl mx-auto">
+        <div className="bg-card/50 backdrop-blur-xl border border-border/50 p-10 md:p-16 rounded-[40px] shadow-2xl space-y-8">
           {text.paragraphs.map((p, i) => (
-            <p key={i} className={i === text.paragraphs.length - 1 ? "text-2xl font-serif text-blue-700 font-bold text-center pt-8" : ""}>
+            <p
+              key={i}
+              className={`text-lg leading-relaxed ${i === text.paragraphs.length - 1
+                  ? "text-2xl font-serif text-primary font-bold text-center pt-8 border-t border-primary/20"
+                  : "text-muted-foreground"
+                }`}
+            >
               {p}
             </p>
           ))}
