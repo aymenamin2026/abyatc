@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/components/LanguageContext";
-import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
-import { Award, Briefcase, Target, CheckCircle2, Shield, Eye, Compass, Rocket, ArrowRight } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Award, Briefcase, Target, CheckCircle2, Eye, Rocket, ArrowRight } from "lucide-react";
 
-// --- Custom Hooks للـ Effects المتقدمة ---
+// --- Custom Hooks للتأثيرات المتقدمة دون كسر الثيم ---
 
-// 1. تتبع حركة الماوس للـ Custom Cursor والـ Global Mouse Glow
 function useMousePosition() {
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   useEffect(() => {
@@ -20,7 +19,6 @@ function useMousePosition() {
   return mousePosition;
 }
 
-// 2. عداد متحرك تفاعلي (Animated Counter)
 function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: number }) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -39,7 +37,6 @@ function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: nu
   return <span>{count}</span>;
 }
 
-// 3. تأثير Tilt الكروت ثلاثي الأبعاد مع الـ Spotlight Hover
 function useTiltEffect() {
   const ref = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
@@ -57,8 +54,7 @@ function useTiltEffect() {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    // حسابات الـ Tilt (تأثير الإمالة)
-    const rX = ((mouseY - height / 2) / height) * -10; // بحد أقصى 10 درجات
+    const rX = ((mouseY - height / 2) / height) * -10;
     const rY = ((mouseX - width / 2) / width) * 10;
 
     setRotateX(rX);
@@ -76,10 +72,8 @@ function useTiltEffect() {
   return { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave };
 }
 
-// --- المكونات الداخلية الفرعية الفاخرة ---
-
-// كرت تفاعلي يجمع بين Tilt و Spotlight و Glassmorphism
-function TiltCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+// كرت زجاجي تفاعلي يعتمد بالكامل على متغيرات ثيم موقعك الأصلي (bg-card / border-border)
+function TiltCard({ children }: { children: React.ReactNode }) {
   const { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave } = useTiltEffect();
 
   return (
@@ -88,22 +82,17 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      style={{
-        transformStyle: "preserve-3d",
-      }}
-      animate={{
-        rotateX: rotateX,
-        rotateY: rotateY,
-      }}
+      style={{ transformStyle: "preserve-3d" }}
+      animate={{ rotateX: rotateX, rotateY: rotateY }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className={`relative overflow-hidden rounded-[24px] border border-neutral-200/50 dark:border-white/5 bg-white/60 dark:from-neutral-900/40 dark:to-neutral-900/10 backdrop-blur-xl shadow-xl transition-all duration-300 ${className}`}
+      className="relative overflow-hidden rounded-[24px] border border-border/60 bg-card/60 backdrop-blur-xl shadow-xl transition-all duration-300 h-full w-full"
     >
-      {/* Spotlight Glow Effect */}
+      {/* Spotlight Hover Glow */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
         style={{
           opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(600px circle at ${glowX}px ${glowY}px, rgba(var(--primary-rgb), 0.15), transparent 40%)`,
+          background: `radial-gradient(600px circle at ${glowX}px ${glowY}px, rgba(var(--primary), 0.1), transparent 40%)`,
         }}
       />
       <div style={{ transform: "translateZ(20px)" }} className="h-full w-full">
@@ -113,8 +102,7 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
   );
 }
 
-// --- البيانات والنصوص المنظمة ---
-
+// --- النصوص والبيانات المنظمة ---
 const content = {
   en: {
     heroTitle: "About Us",
@@ -129,7 +117,7 @@ const content = {
     featuresTitle: "Why Choose Us",
     featuresSubtitle: "We combine precision engineering with premium execution to set industry benchmarks.",
     features: [
-      { icon: Award, title: "Quality Assurance", desc: "Highest global standards implemented at every single project stage." },
+      { icon: Award, title: "Quality Assurance", desc: "Highest standards implemented at every single project stage." },
       { icon: CheckCircle2, title: "Absolute Commitment", desc: "On-time delivery within strictly optimized budgetary frames." },
       { icon: Briefcase, title: "Elite Professionalism", desc: "Expert multinational team trained on safety and top-tier efficiency." },
       { icon: Target, title: "Strategic Innovation", desc: "Smart engineering solutions that fundamentally enhance project value." },
@@ -207,11 +195,9 @@ export default function AboutPage() {
   const text = content[lang as keyof typeof content];
   const isRtl = lang === "ar";
 
-  // تتبع الماوس والمؤشر الخاص
   const { x, y } = useMousePosition();
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
 
-  // السكرول للتأثيرات البارالاكس
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -225,19 +211,19 @@ export default function AboutPage() {
     <div
       ref={containerRef}
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative min-h-screen bg-white text-neutral-900 dark:bg-[#070708] dark:text-neutral-50 overflow-hidden transition-colors duration-700 selection:bg-primary/30"
+      className="relative min-h-screen bg-background text-foreground overflow-hidden transition-colors duration-500 selection:bg-primary/30"
     >
-      {/* 1. Global Mouse Glow Background Effect */}
+      {/* 1. Mouse Glow (يعتمد على ألوان الـ primary التابعة للموقع) */}
       <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-40 dark:opacity-30 blur-[140px] transition-opacity duration-500"
+        className="pointer-events-none fixed inset-0 z-0 opacity-20 dark:opacity-30 blur-[130px] transition-opacity duration-500"
         style={{
-          background: `radial-gradient(circle 350px at ${x}px ${y}px, rgba(var(--primary-rgb, 140, 100, 255), 0.18), transparent 80%)`,
+          background: `radial-gradient(circle 350px at ${x}px ${y}px, var(--primary), transparent 80%)`,
         }}
       />
 
-      {/* 2. Custom Fluid Cursor (Hidden on mobile) */}
+      {/* 2. Custom Elastic Cursor */}
       <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-50 hidden md:block rounded-full bg-primary/20 border border-primary/40 backdrop-blur-[2px]"
+        className="pointer-events-none fixed left-0 top-0 z-50 hidden md:block rounded-full bg-primary/10 border border-primary/30 backdrop-blur-[1px]"
         animate={{
           x: x - (isHoveringClickable ? 24 : 10),
           y: y - (isHoveringClickable ? 24 : 10),
@@ -247,81 +233,36 @@ export default function AboutPage() {
         transition={{ type: "spring", stiffness: 450, damping: 28, mass: 0.2 }}
       />
 
-      {/* 3. Luxury Decorative Background Gradients */}
-      <div className="absolute top-[-10%] left-[-20%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-primary/10 to-transparent blur-[120px] pointer-events-none" />
-      <div className="absolute top-[40%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-bl from-amber-500/5 to-transparent blur-[150px] pointer-events-none" />
-
       {/* --- HERO SECTION WITH PARALLAX --- */}
-      <section className="relative min-h-[90vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden">
-        <motion.div
-          style={{ y: yHero, opacity: opacityHero }}
-          className="relative z-10 max-w-5xl mx-auto text-center space-y-8"
-        >
-          {/* Badge Grid with Entrance Animation */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", stiffness: 100, delay: 0.1 }}
-          >
-            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/60 dark:bg-neutral-900/60 backdrop-blur-md text-primary text-xs md:text-sm font-semibold uppercase tracking-widest border border-primary/20 shadow-lg shadow-primary/5">
+      <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden">
+        <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", delay: 0.1 }}>
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest border border-primary/20 shadow-sm">
               {text.badge}
             </span>
           </motion.div>
 
-          {/* Main Titles */}
-          <h1 className="font-serif text-5xl md:text-8xl font-black tracking-tight leading-tight bg-clip-text text-transparent bg-gradient-to-b from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-400">
-            <motion.span
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="block"
-            >
+          <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-tight">
+            <motion.span initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="block">
               {text.heroTitle}
             </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="block mt-2 text-3xl md:text-5xl font-sans font-medium text-primary tracking-wide"
-            >
+            <motion.span initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="block mt-2 text-2xl md:text-4xl font-sans font-medium text-primary">
               {text.heroSubtitle}
             </motion.span>
           </h1>
-
-          {/* Luxury Divider */}
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: "120px" }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="h-[3px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto rounded-full"
-          />
         </motion.div>
-
-        {/* Decorative Scroll Indicator */}
-        <div className="absolute bottom-10 left-100 right-100 flex justify-center">
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-6 h-10 border-2 border-neutral-400 dark:border-neutral-600 rounded-full flex justify-center p-1"
-          >
-            <div className="w-1.5 h-2 bg-primary rounded-full" />
-          </motion.div>
-        </div>
       </section>
 
       {/* --- STATS SECTION (ANIMATED COUNTERS) --- */}
-      <section className="relative z-10 py-12 px-6 max-w-7xl mx-auto -mt-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+      <section className="relative z-10 py-10 px-6 max-w-7xl mx-auto -mt-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {text.stats.map((stat, i) => (
-            <div
-              key={i}
-              className="p-6 text-center bg-white/40 dark:bg-neutral-900/30 backdrop-blur-md rounded-3xl border border-white/20 dark:border-neutral-800/40 shadow-xl"
-            >
-              <div className="text-3xl md:text-5xl font-black text-primary font-mono mb-2">
+            <div key={i} className="p-6 text-center bg-card/40 border border-border/50 backdrop-blur-md rounded-2xl shadow-sm">
+              <div className="text-3xl md:text-5xl font-bold text-primary font-mono mb-2">
                 <AnimatedCounter value={stat.value} />
                 <span className="text-2xl md:text-3xl ml-1">{stat.suffix}</span>
               </div>
-              <p className="text-neutral-500 dark:text-neutral-400 text-xs md:text-sm font-medium tracking-wide uppercase">
+              <p className="text-muted-foreground text-xs md:text-sm font-medium uppercase tracking-wide">
                 {stat.label}
               </p>
             </div>
@@ -329,80 +270,59 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- WHY CHOOSE US SECTION (TILT CARDS & SPOTLIGHT) --- */}
-      <section className="relative z-10 py-28 px-6 max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight">{text.featuresTitle}</h2>
-          <p className="text-lg text-neutral-500 dark:text-neutral-400">{text.featuresSubtitle}</p>
+      {/* --- WHY CHOOSE US (TILT & SPOTLIGHT CARDS) --- */}
+      <section className="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.featuresTitle}</h2>
+          <p className="text-lg text-muted-foreground">{text.featuresSubtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {text.features.map((f, i) => (
             <TiltCard key={i}>
               <div className="p-8 h-full flex flex-col justify-between group">
                 <div>
-                  <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/5 text-primary rounded-2xl flex items-center justify-center mb-8 border border-primary/20 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <f.icon className="w-7 h-7" />
                   </div>
-                  <h3 className="font-bold text-xl mb-3 tracking-tight group-hover:text-primary transition-colors duration-300">
-                    {f.title}
-                  </h3>
-                  <p className="text-neutral-500 dark:text-neutral-400 text-sm leading-relaxed">
-                    {f.desc}
-                  </p>
+                  <h3 className="font-bold text-xl mb-2 text-foreground">{f.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
                 </div>
-                <div className="mt-6 w-full h-[2px] bg-gradient-to-r from-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
               </div>
             </TiltCard>
           ))}
         </div>
       </section>
 
-      {/* --- MISSION, VISION & VALUES (ADVANCED GLASSMORPHISM) --- */}
-      <section className="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+      {/* --- MISSION & VISION (ADVANCED GLASSMORPHISM) --- */}
+      <section className="relative z-10 py-16 px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Vision Card */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="p-10 md:p-14 bg-white/70 dark:from-neutral-900/50 dark:to-neutral-900/10 backdrop-blur-2xl border border-neutral-200/60 dark:border-neutral-800/40 rounded-[32px] shadow-2xl flex flex-col md:flex-row gap-6 items-start"
-          >
-            <div className="p-4 bg-amber-500/10 text-amber-500 rounded-2xl border border-amber-500/20">
-              <Eye className="w-8 h-8" />
-            </div>
+          <motion.div whileHover={{ y: -5 }} className="p-10 bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-xl flex gap-6 items-start">
+            <div className="p-4 bg-primary/10 text-primary rounded-2xl"><Eye className="w-8 h-8" /></div>
             <div>
-              <h3 className="text-2xl font-bold font-serif mb-4 text-amber-500">{text.mvv.vision.title}</h3>
-              <p className="text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed font-light">{text.mvv.vision.desc}</p>
+              <h3 className="text-2xl font-bold font-serif mb-4 text-foreground">{text.mvv.vision.title}</h3>
+              <p className="text-base text-muted-foreground leading-relaxed">{text.mvv.vision.desc}</p>
             </div>
           </motion.div>
 
-          {/* Mission Card */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="p-10 md:p-14 bg-white/70 dark:from-neutral-900/50 dark:to-neutral-900/10 backdrop-blur-2xl border border-neutral-200/60 dark:border-neutral-800/40 rounded-[32px] shadow-2xl flex flex-col md:flex-row gap-6 items-start"
-          >
-            <div className="p-4 bg-primary/10 text-primary rounded-2xl border border-primary/20">
-              <Rocket className="w-8 h-8" />
-            </div>
+          <motion.div whileHover={{ y: -5 }} className="p-10 bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-xl flex gap-6 items-start">
+            <div className="p-4 bg-primary/10 text-primary rounded-2xl"><Rocket className="w-8 h-8" /></div>
             <div>
               <h3 className="text-2xl font-bold font-serif mb-4 text-primary">{text.mvv.mission.title}</h3>
-              <p className="text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed font-light">{text.mvv.mission.desc}</p>
+              <p className="text-base text-muted-foreground leading-relaxed">{text.mvv.mission.desc}</p>
             </div>
           </motion.div>
         </div>
 
-        {/* Core Values Rows */}
-        <div className="mt-12 p-8 md:p-12 bg-white/80 dark:bg-neutral-900/20 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800/20 rounded-[32px] shadow-xl">
-          <h3 className="text-xl font-bold uppercase tracking-wider text-center mb-10 text-neutral-400 dark:text-neutral-500">
-            {text.mvv.values.title}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 divider-y md:divider-y-0 md:divider-x dark:divider-neutral-800">
+        {/* Core Values Box */}
+        <div className="mt-12 p-8 md:p-12 bg-card/30 backdrop-blur-xl border border-border/50 rounded-[32px] shadow-lg">
+          <h3 className="text-xl font-bold tracking-wider text-center mb-10 text-muted-foreground">{text.mvv.values.title}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {text.mvv.values.items.map((item, idx) => (
-              <div key={idx} className="space-y-3 px-4 text-center md:text-center">
-                <div className="mx-auto w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
-                  {idx + 1}
-                </div>
-                <h4 className="font-bold text-lg text-neutral-800 dark:text-neutral-200">{item.title}</h4>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.desc}</p>
+              <div key={idx} className="space-y-3 text-center">
+                <div className="mx-auto w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">{idx + 1}</div>
+                <h4 className="font-bold text-lg text-foreground">{item.title}</h4>
+                <p className="text-sm text-muted-foreground">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -410,76 +330,42 @@ export default function AboutPage() {
       </section>
 
       {/* --- INTERACTIVE TIMELINE SECTION --- */}
-      <section className="relative z-10 py-24 px-6 max-w-5xl mx-auto">
+      <section className="relative z-10 py-20 px-6 max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight">{text.timelineTitle}</h2>
+          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.timelineTitle}</h2>
         </div>
-
-        <div className="relative border-l-2 dark:border-l border-neutral-300 dark:border-neutral-800 ml-4 md:ml-32 space-y-12 py-4">
+        <div className="relative border-l-2 border-border ml-4 md:ml-32 space-y-12 py-4">
           {text.timeline.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="relative pl-8 md:pl-12 group"
-            >
-              {/* Point indicator */}
-              <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-neutral-950 border-2 border-primary group-hover:bg-primary transition-all duration-300 shadow-sm" />
-
-              {/* Year float on left side */}
-              <div className="hidden md:block absolute left-[-140px] top-0 text-right w-24 font-mono font-black text-2xl text-neutral-400 dark:text-neutral-600 group-hover:text-primary transition-colors duration-300">
-                {item.year}
-              </div>
-
-              {/* Box Info */}
-              <div className="p-6 bg-white/80 dark:bg-neutral-900/40 backdrop-blur-md rounded-2xl border border-neutral-200/50 dark:border-neutral-800/40 shadow-md group-hover:shadow-xl transition-shadow duration-300">
+            <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative pl-8 md:pl-12 group">
+              <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-background border-2 border-primary group-hover:bg-primary transition-all duration-300" />
+              <div className="hidden md:block absolute left-[-140px] top-0 text-right w-24 font-mono font-bold text-xl text-muted-foreground group-hover:text-primary transition-colors duration-300">{item.year}</div>
+              <div className="p-6 bg-card/50 backdrop-blur-md rounded-2xl border border-border/50 shadow-sm">
                 <span className="inline-block md:hidden font-mono font-bold text-primary mb-1">{item.year}</span>
-                <h3 className="font-bold text-lg mb-2 text-neutral-900 dark:text-neutral-100">{item.title}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-lg mb-2 text-foreground">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* --- PREMIUM CALL TO ACTION (CTA) --- */}
-      <section className="relative z-10 py-20 px-6 max-w-6xl mx-auto mb-24">
-        <div className="relative overflow-hidden rounded-[40px] bg-neutral-900 dark:bg-gradient-to-br dark:from-neutral-900 dark:to-neutral-950 text-white p-10 md:p-20 shadow-2xl border border-white/10">
-          {/* Animated Ambient background circle */}
-          <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-primary/20 blur-[80px] pointer-events-none" />
-          <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-amber-500/10 blur-[80px] pointer-events-none" />
-
-          <div className="relative z-10 max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl md:text-6xl font-serif font-bold tracking-tight leading-tight">
-              {text.ctaTitle}
-            </h2>
-            <p className="text-neutral-400 text-lg md:text-xl font-light">
-              {text.ctaSubtitle}
-            </p>
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              onMouseEnter={() => setIsHoveringClickable(true)}
-              onMouseLeave={() => setIsHoveringClickable(false)}
-              className="inline-block"
-            >
-              <button className="flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-white font-semibold text-base shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all duration-300">
-                {text.ctaBtn}
-                <ArrowRight className={`w-5 h-5 transform ${isRtl ? "rotate-180" : ""}`} />
-              </button>
-            </motion.div>
-          </div>
+      {/* --- CTA SECTION --- */}
+      <section className="relative z-10 py-16 px-6 max-w-6xl mx-auto mb-20">
+        <div className="relative overflow-hidden rounded-[32px] bg-card border border-border/80 p-10 md:p-16 shadow-2xl text-center space-y-6">
+          <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground">{text.ctaTitle}</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} onMouseEnter={() => setIsHoveringClickable(true)} onMouseLeave={() => setIsHoveringClickable(false)} className="inline-block">
+            <button className="flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20 transition-all duration-300">
+              {text.ctaBtn}
+              <ArrowRight className={`w-5 h-5 transform ${isRtl ? "rotate-180" : ""}`} />
+            </button>
+          </motion.div>
         </div>
       </section>
 
-      {/* --- BRAND FOOTER SLOGAN QUOTE --- */}
-      <footer className="relative z-10 py-12 px-6 border-t border-neutral-200 dark:border-neutral-900 text-center text-neutral-400 dark:text-neutral-600">
-        <p className="text-xl md:text-2xl font-serif font-bold text-primary max-w-4xl mx-auto">
-          {text.footerQuote}
-        </p>
+      {/* --- FOOTER QUOTE --- */}
+      <footer className="relative z-10 py-12 text-center border-t border-border/60">
+        <p className="text-xl md:text-2xl font-serif font-bold text-primary max-w-4xl mx-auto px-6">{text.footerQuote}</p>
       </footer>
     </div>
   );
