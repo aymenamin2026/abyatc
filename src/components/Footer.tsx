@@ -193,7 +193,7 @@ export default function Footer({ settings }: { settings?: any }) {
 
                 {/* 3. إصلاح ألوان الوضع الداكن في خريطة الموقع */}
                 <a
-                  href="https://maps.app.goo.gl/Cv3ANXxhNW2CmgAV7"
+                  href="https://maps.app.goo.gl/63S3Fk5VMAofLt9J7"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 hover:bg-muted border border-transparent hover:border-border transition-all w-fit group"
