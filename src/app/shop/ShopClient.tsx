@@ -360,12 +360,10 @@ export default function ShopClient({
               variants={{ visible: { transition: { staggerChildren: 0.05 } } }}
               className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-y-10 gap-x-6 sm:gap-x-8"
             >
-              {sortedProducts.map((product: any, idx: number) => (
+              {sortedProducts.map((product: any) => (
                 <PremiumProductCard
                   key={product.id}
                   product={product}
-                  currencySymbol={currencySymbol}
-                  index={idx}
                   onQuickView={setQuickViewProduct}
                   onAddToCart={handleAddToCart}
                 />
