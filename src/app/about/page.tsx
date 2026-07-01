@@ -76,14 +76,15 @@ function TiltCard({ children }: { children: React.ReactNode }) {
       style={{ transformStyle: "preserve-3d" }}
       animate={{ rotateX: rotateX, rotateY: rotateY }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="relative overflow-hidden rounded-[24px] border border-black/5 dark:border-white/10 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl transition-all duration-300 h-full w-full group"
+      // تم تغيير bg-white/60 إلى bg-white ناصعة وثابتة في الوضع العادي، لتجنب شفافية الرمادي الظاهرة في الصورة
+      className="relative overflow-hidden rounded-[24px] border border-slate-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md hover:shadow-xl transition-all duration-300 h-full w-full group"
     >
-      {/* وميض الهوفير بلمسة خفيفة متناسقة مع الوضعين */}
+      {/* وميض تفاعلي خفيف جداً يظهر عند تحريك الماوس */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
         style={{
           opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(400px circle at ${glowX}px ${glowY}px, rgba(9, 63, 137, 0.06), rgba(251, 199, 15, 0.03), transparent 60%)`,
+          background: `radial-gradient(400px circle at ${glowX}px ${glowY}px, rgba(9, 63, 137, 0.04), transparent 60%)`,
         }}
       />
       <div style={{ transform: "translateZ(20px)" }} className="h-full w-full">
@@ -256,9 +257,9 @@ export default function AboutPage() {
       {/* --- WHY CHOOSE US (TILT & SPOTLIGHT CARDS) --- */}
       <section className="relative z-10 py-24 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.featuresTitle}</h2>
+          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-slate-950 dark:text-white">{text.featuresTitle}</h2>
           <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: COLOR_ACCENT }} />
-          <p className="text-sm md:text-lg text-muted-foreground">{text.featuresSubtitle}</p>
+          <p className="text-sm md:text-lg text-slate-600 dark:text-zinc-400">{text.featuresSubtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
@@ -266,15 +267,23 @@ export default function AboutPage() {
             <TiltCard key={i}>
               <div className="p-6 md:p-8 h-full flex flex-col justify-between w-full">
                 <div>
-                  {/* خلفية الأيقونات: استخدام خلفية كحلية شفافة في الوضع الفاتح وتتحول لخلفية متباينة في الوضع الداكن لضمان الوضوح */}
+                  {/* حاوية الأيقونة: تم تعديل الألوان لتكون ساطعة وواضحة جداً فوق الخلفية البيضاء */}
                   <div
-                    style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }}
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#093f89] group-hover:text-white dark:group-hover:bg-amber-400 dark:group-hover:text-zinc-950 transition-all duration-500 shadow-inner dark:text-blue-400"
+                    style={{ backgroundColor: `${COLOR_PRIMARY}10`, color: COLOR_PRIMARY }}
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#093f89] group-hover:text-white dark:group-hover:bg-[#fbc70f] dark:group-hover:text-zinc-950 transition-all duration-500 shadow-sm dark:text-blue-400"
                   >
                     <f.icon className="w-7 h-7" />
                   </div>
-                  <h3 className="font-bold text-lg md:text-xl mb-3 text-foreground group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">{f.title}</h3>
-                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{f.desc}</p>
+
+                  {/* عنوان الكرت: تم تعديل اللون إلى text-slate-900 بدلاً من الـ text-foreground العام لحل مشكلة التداخل */}
+                  <h3 className="font-bold text-xl mb-3 text-slate-950 dark:text-white group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">
+                    {f.title}
+                  </h3>
+
+                  {/* نص الوصف السفلي: أصبح الآن بلون رمادي احترافي مقروء جداً (text-slate-600) فوق الخلفية البيضاء */}
+                  <p className="text-slate-600 dark:text-zinc-400 text-xs md:text-sm leading-relaxed font-normal">
+                    {f.desc}
+                  </p>
                 </div>
               </div>
             </TiltCard>
