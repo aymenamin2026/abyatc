@@ -5,7 +5,7 @@ import { useLanguage } from "@/components/LanguageContext";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, Briefcase, Target, CheckCircle2, Eye, Rocket, ArrowRight } from "lucide-react";
 
-// المعرفات اللونية الثابتة للتصميم
+// المعرفات اللونية الثابتة للبراند
 const COLOR_PRIMARY = "#093f89"; // الأزرق الكحلي
 const COLOR_ACCENT = "#fbc70f";  // الأصفر الذهبي
 
@@ -63,7 +63,7 @@ function useTiltEffect() {
   return { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave };
 }
 
-// كرت زجاجي تفاعلي مدعوم بإضاءة النيون الخاصة بألوان براند لمعة أبيات
+// كرت زجاجي تفاعلي مضبوط للوضع الفاتح والمظلم بشكل متناسق تماماً
 function TiltCard({ children }: { children: React.ReactNode }) {
   const { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave } = useTiltEffect();
 
@@ -76,14 +76,14 @@ function TiltCard({ children }: { children: React.ReactNode }) {
       style={{ transformStyle: "preserve-3d" }}
       animate={{ rotateX: rotateX, rotateY: rotateY }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="relative overflow-hidden rounded-[24px] border border-slate-200/50 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl shadow-xl transition-all duration-300 h-full w-full group"
+      className="relative overflow-hidden rounded-[24px] border border-black/5 dark:border-white/10 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl transition-all duration-300 h-full w-full group"
     >
-      {/* سحر التفاعل: توهج نيون يدمج الكحلي مع وميض ذهبي عند تحريك الفأرة */}
+      {/* وميض الهوفير بلمسة خفيفة متناسقة مع الوضعين */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
         style={{
           opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(400px circle at ${glowX}px ${glowY}px, rgba(9, 63, 137, 0.08), rgba(251, 199, 15, 0.03), transparent 60%)`,
+          background: `radial-gradient(400px circle at ${glowX}px ${glowY}px, rgba(9, 63, 137, 0.06), rgba(251, 199, 15, 0.03), transparent 60%)`,
         }}
       />
       <div style={{ transform: "translateZ(20px)" }} className="h-full w-full">
@@ -174,7 +174,7 @@ const content = {
       { year: "2021", title: "التحول الرقمي والهندسي", desc: "دمج تقنيات الـ BIM الحديثة وأنظمة الذكاء الاصطناعي لإدارة الموارد والمشاريع." },
       { year: "2026", title: "الريادة والاستدامة", desc: "تصنيف الشركة ضمن النخبة الرائدة في تشييد البنى التحتية الذكية والمستدامة في المملكة." },
     ],
-    ctaTitle: "هل أنت مستعد لتجسيد رؤيتك على أرض الواقع؟",
+    ctaTitle: "هل أنت مستعد لتجسيد رؤيتك على أرض الواقع？",
     ctaSubtitle: "دعنا نعمل معاً لبناء صرحك القادم بأعلى معايير الإتقان والفخامة الهندسيّة.",
     ctaBtn: "ابدأ استشارتك الاستراتيجية الآن",
     footerQuote: "شركة لمعة أبيات للمقاولات... نبني المستقبل بإتقان."
@@ -199,26 +199,22 @@ export default function AboutPage() {
     <div
       ref={containerRef}
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 overflow-x-hidden w-full transition-colors duration-500 selection:bg-[#093f89]/20"
+      className="relative min-h-screen bg-background text-foreground overflow-x-hidden w-full transition-colors duration-500 selection:bg-primary/30"
     >
-      {/* لمسة خلفية فنية: دوائر نيون هادئة بألوان الهوية المحددة تمنح فخامة بصرية للموقع */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#093f89]/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-40 right-1/4 w-80 h-80 bg-[#fbc70f]/5 rounded-full blur-[100px] pointer-events-none" />
-
       {/* --- HERO SECTION WITH PARALLAX --- */}
       <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden w-full">
         <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8 w-full">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", delay: 0.1 }}>
-            {/* البادج: يعتمد هنا على لون الذهب والأزرق الكحلي معاً لإظهار التميز */}
+            {/* البادج: لمسة ذهبية ناعمة متوافقة مع الثيمين الفاتح والمظلم */}
             <span
-              style={{ borderColor: `${COLOR_PRIMARY}30`, color: COLOR_PRIMARY }}
-              className="inline-block px-5 py-2 rounded-full bg-white dark:bg-slate-900 text-xs font-bold uppercase tracking-widest border shadow-md"
+              style={{ borderColor: `${COLOR_PRIMARY}30` }}
+              className="inline-block px-4 py-1.5 rounded-full bg-card text-foreground text-xs font-bold uppercase tracking-widest border shadow-sm"
             >
               <span className="me-1" style={{ color: COLOR_ACCENT }}>✦</span> {text.badge}
             </span>
           </motion.div>
 
-          <h1 className="font-serif text-4xl md:text-7xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+          <h1 className="font-serif text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-tight">
             <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="block">
               {text.heroTitle}
             </motion.span>
@@ -227,7 +223,7 @@ export default function AboutPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               style={{ color: COLOR_PRIMARY }}
-              className="block mt-4 text-3xl md:text-5xl font-sans font-extrabold tracking-wide drop-shadow-sm"
+              className="block mt-4 text-3xl md:text-5xl font-sans font-extrabold tracking-wide dark:text-blue-400"
             >
               {text.heroSubtitle}
             </motion.span>
@@ -239,13 +235,17 @@ export default function AboutPage() {
       <section className="relative z-10 py-10 px-4 sm:px-6 max-w-7xl mx-auto -mt-16 w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
           {text.stats.map((stat, i) => (
-            <div key={i} className="p-6 text-center bg-white/60 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/50 backdrop-blur-md rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 w-full border-t-4" style={{ borderTopColor: COLOR_PRIMARY }}>
-              {/* تلوين العداد والرمز التابع بالأصفر الذهبي الملكي */}
+            <div
+              key={i}
+              style={{ borderTopColor: COLOR_PRIMARY }}
+              className="p-6 text-center bg-card border border-border rounded-2xl shadow-sm w-full border-t-4"
+            >
+              {/* إبراز أرقام العدادات باللون الذهبي البراق لكلا الوضعين */}
               <div style={{ color: COLOR_ACCENT }} className="text-3xl md:text-5xl font-extrabold font-mono mb-2 drop-shadow-sm">
                 <AnimatedCounter value={stat.value} />
                 <span className="text-xl md:text-3xl ml-1 font-sans">{stat.suffix}</span>
               </div>
-              <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm font-semibold uppercase tracking-wide line-clamp-1">
+              <p className="text-muted-foreground text-xs md:text-sm font-medium uppercase tracking-wide line-clamp-1">
                 {stat.label}
               </p>
             </div>
@@ -256,9 +256,9 @@ export default function AboutPage() {
       {/* --- WHY CHOOSE US (TILT & SPOTLIGHT CARDS) --- */}
       <section className="relative z-10 py-24 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-slate-900 dark:text-white">{text.featuresTitle}</h2>
+          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.featuresTitle}</h2>
           <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: COLOR_ACCENT }} />
-          <p className="text-sm md:text-lg text-slate-600 dark:text-slate-400">{text.featuresSubtitle}</p>
+          <p className="text-sm md:text-lg text-muted-foreground">{text.featuresSubtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
@@ -266,15 +266,15 @@ export default function AboutPage() {
             <TiltCard key={i}>
               <div className="p-6 md:p-8 h-full flex flex-col justify-between w-full">
                 <div>
-                  {/* حاوية الأيقونة: ملونة بالأزرق الكحلي مع تأثير تحول سلس عند الـ hover */}
+                  {/* خلفية الأيقونات: استخدام خلفية كحلية شفافة في الوضع الفاتح وتتحول لخلفية متباينة في الوضع الداكن لضمان الوضوح */}
                   <div
-                    style={{ backgroundColor: `${COLOR_PRIMARY}12`, color: COLOR_PRIMARY }}
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#093f89] group-hover:text-white transition-all duration-500 shadow-inner"
+                    style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }}
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#093f89] group-hover:text-white dark:group-hover:bg-amber-400 dark:group-hover:text-zinc-950 transition-all duration-500 shadow-inner dark:text-blue-400"
                   >
                     <f.icon className="w-7 h-7" />
                   </div>
-                  <h3 className="font-bold text-lg md:text-xl mb-3 text-slate-900 dark:text-white group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">{f.title}</h3>
-                  <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed">{f.desc}</p>
+                  <h3 className="font-bold text-lg md:text-xl mb-3 text-foreground group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">{f.title}</h3>
+                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{f.desc}</p>
                 </div>
               </div>
             </TiltCard>
@@ -286,39 +286,39 @@ export default function AboutPage() {
       <section className="relative z-10 py-16 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 w-full">
           {/* الرؤية */}
-          <motion.div whileHover={{ y: -6 }} className="p-6 md:p-10 bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
-            <div style={{ backgroundColor: `${COLOR_PRIMARY}12`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm"><Eye className="w-7 h-7" /></div>
+          <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card border border-border rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
+            <div style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm dark:text-blue-400"><Eye className="w-7 h-7" /></div>
             <div>
-              <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 text-slate-900 dark:text-white">{text.mvv.vision.title}</h3>
-              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">{text.mvv.vision.desc}</p>
+              <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 text-foreground">{text.mvv.vision.title}</h3>
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{text.mvv.vision.desc}</p>
             </div>
           </motion.div>
 
-          {/* الرسالة - تم تمييز العنوان باللون الكحلي */}
-          <motion.div whileHover={{ y: -6 }} className="p-6 md:p-10 bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
-            <div style={{ backgroundColor: `${COLOR_PRIMARY}12`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm"><Rocket className="w-7 h-7" /></div>
+          {/* الرسالة */}
+          <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card border border-border rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
+            <div style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm dark:text-blue-400"><Rocket className="w-7 h-7" /></div>
             <div>
-              <h3 style={{ color: COLOR_PRIMARY }} className="text-xl md:text-2xl font-bold font-serif mb-3 dark:text-white">{text.mvv.mission.title}</h3>
-              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">{text.mvv.mission.desc}</p>
+              <h3 style={{ color: COLOR_PRIMARY }} className="text-xl md:text-2xl font-bold font-serif mb-3 dark:text-blue-400">{text.mvv.mission.title}</h3>
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{text.mvv.mission.desc}</p>
             </div>
           </motion.div>
         </div>
 
-        {/* صندوق القيم الجوهرية */}
-        <div className="mt-12 p-8 md:p-12 bg-white/40 dark:bg-slate-900/30 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-[32px] shadow-lg w-full">
-          <h3 className="text-sm md:text-base font-bold tracking-widest text-center mb-12 uppercase text-slate-500 dark:text-slate-400">{text.mvv.values.title}</h3>
+        {/* قيمنا الجوهرية */}
+        <div className="mt-12 p-8 md:p-12 bg-card border border-border rounded-[32px] shadow-lg w-full">
+          <h3 className="text-xs md:text-sm font-bold tracking-widest text-center mb-12 uppercase text-muted-foreground">{text.mvv.values.title}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
             {text.mvv.values.items.map((item, idx) => (
               <div key={idx} className="space-y-4 text-center w-full group">
-                {/* ترقيم دائرى مميز باللون الكحلي والخط الذهبي */}
+                {/* ترقيم دائرى متناسق كحلي وبحدود ذهبية خفيفة */}
                 <div
-                  style={{ backgroundColor: `${COLOR_PRIMARY}12`, color: COLOR_PRIMARY, borderColor: `${COLOR_ACCENT}40` }}
-                  className="mx-auto w-12 h-12 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform duration-300"
+                  style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY, borderColor: `${COLOR_ACCENT}30` }}
+                  className="mx-auto w-12 h-12 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform duration-300 dark:text-blue-400"
                 >
                   {idx + 1}
                 </div>
-                <h4 className="font-bold text-base md:text-xl text-slate-900 dark:text-white">{item.title}</h4>
-                <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+                <h4 className="font-bold text-base md:text-xl text-foreground">{item.title}</h4>
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -328,28 +328,28 @@ export default function AboutPage() {
       {/* --- INTERACTIVE TIMELINE SECTION --- */}
       <section className="relative z-10 py-24 px-4 sm:px-6 max-w-5xl mx-auto w-full">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-slate-900 dark:text-white">{text.timelineTitle}</h2>
+          <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.timelineTitle}</h2>
           <div className="w-16 h-1 mx-auto rounded-full mt-3" style={{ backgroundColor: COLOR_ACCENT }} />
         </div>
-        {/* الخط الجانبي للتايم لاين يعتمد على الأزرق الكحلي */}
-        <div style={{ borderColor: `${COLOR_PRIMARY}30` }} className="relative border-s-2 ms-2 md:ms-32 space-y-12 py-4 w-full">
+        {/* خط التايم لاين متناسق مع الوضع الليلي والفاتح بـ border-border الأصلي لموقعك */}
+        <div className="relative border-s-2 border-border ms-2 md:ms-32 space-y-12 py-4 w-full">
           {text.timeline.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: isRtl ? 20 : -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative ps-6 md:ps-12 group w-full">
-              {/* النقطة التفاعلية الملونة برأس ذهبي وحد كحلي */}
+              {/* نقطة التايم لاين تتحول بالكامل للذهبي عند تمرير الماوس */}
               <div
                 style={{ borderColor: COLOR_PRIMARY }}
-                className="absolute -start-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-950 border-2 group-hover:bg-[#fbc70f] group-hover:border-[#fbc70f] transition-all duration-300 shadow-sm"
+                className="absolute -start-[9px] top-1.5 w-4 h-4 rounded-full bg-background border-2 group-hover:bg-[#fbc70f] group-hover:border-[#fbc70f] transition-all duration-300 shadow-sm"
               />
               <div
                 style={{ color: COLOR_PRIMARY }}
-                className="hidden md:block absolute -start-[140px] top-0 text-right w-24 font-mono font-extrabold text-2xl opacity-60 group-hover:opacity-100 group-hover:text-[#fbc70f] transition-all duration-300"
+                className="hidden md:block absolute -start-[140px] top-0 text-right w-24 font-mono font-extrabold text-2xl opacity-60 group-hover:opacity-100 group-hover:text-[#fbc70f] transition-all duration-300 dark:text-blue-400 dark:group-hover:text-amber-400"
               >
                 {item.year}
               </div>
-              <div className="p-6 bg-white/80 dark:bg-slate-900/50 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/50 shadow-md hover:shadow-xl transition-all duration-300 w-full max-w-[calc(100%-16px)]">
-                <span style={{ color: COLOR_PRIMARY }} className="inline-block md:hidden font-mono font-bold mb-1">[{item.year}]</span>
-                <h3 className="font-bold text-base md:text-lg mb-2 text-slate-900 dark:text-white group-hover:text-[#093f89] transition-colors duration-300">{item.title}</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed">{item.desc}</p>
+              <div className="p-6 bg-card rounded-2xl border border-border shadow-md hover:shadow-xl transition-all duration-300 w-full max-w-[calc(100%-16px)]">
+                <span style={{ color: COLOR_PRIMARY }} className="inline-block md:hidden font-mono font-bold mb-1 dark:text-blue-400">[{item.year}]</span>
+                <h3 className="font-bold text-base md:text-lg mb-2 text-foreground group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">{item.title}</h3>
+                <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{item.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -358,14 +358,13 @@ export default function AboutPage() {
 
       {/* --- CTA SECTION --- */}
       <section className="relative z-10 py-16 px-4 sm:px-6 max-w-6xl mx-auto mb-20 w-full">
-        {/* خلفية الـ CTA مدمجة بتدرج عميق ومحاطة بحدود كحلية خفيفة */}
-        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-white to-slate-100 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 p-8 md:p-16 shadow-2xl text-center space-y-8 w-full">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbc70f]/5 rounded-full blur-3xl pointer-events-none" />
-          <h2 className="text-3xl md:text-6xl font-serif font-bold text-slate-900 dark:text-white leading-tight">{text.ctaTitle}</h2>
-          <p className="text-slate-600 dark:text-slate-400 text-sm md:text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
+        {/* صندوق الـ CTA يعتمد على خلفية كارت موقعك الأصلية لحل مشاكل العرض الليلي */}
+        <div className="relative overflow-hidden rounded-[32px] bg-card border border-border p-8 md:p-16 shadow-2xl text-center space-y-8 w-full">
+          <h2 className="text-3xl md:text-6xl font-serif font-bold text-foreground leading-tight">{text.ctaTitle}</h2>
+          <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
 
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block w-full sm:w-auto">
-            {/* الزر الإستراتيجي اللامع: تم بناؤه بالكامل باللون الذهبي #fbc70f مع نصوص كحلية #093f89 لإعطاء أقصى درجات الفخامة ولفت النظر لطلب الخدمة */}
+            {/* زر الأكشن بلون ذهبي ثابت ونصوص كحلية واضحة جداً في النهار والليل لقراءة ممتازة وضمان النقرات */}
             <button
               style={{ backgroundColor: COLOR_ACCENT, color: COLOR_PRIMARY }}
               className="flex items-center justify-center gap-3 px-10 py-4 rounded-full font-bold shadow-lg shadow-amber-500/20 hover:brightness-105 transition-all duration-300 w-full"
@@ -378,8 +377,8 @@ export default function AboutPage() {
       </section>
 
       {/* --- FOOTER QUOTE --- */}
-      <footer className="relative z-10 py-14 text-center border-t border-slate-200/60 dark:border-slate-800/60 w-full bg-white/20 dark:bg-slate-950/40 backdrop-blur-sm">
-        <p style={{ color: COLOR_PRIMARY }} className="text-xl md:text-3xl font-serif font-bold max-w-4xl mx-auto px-6 tracking-wide drop-shadow-sm dark:text-amber-400">
+      <footer className="relative z-10 py-14 text-center border-t border-border w-full bg-card/40 backdrop-blur-sm">
+        <p style={{ color: COLOR_PRIMARY }} className="text-xl md:text-3xl font-serif font-bold max-w-4xl mx-auto px-6 tracking-wide dark:text-blue-400">
           {text.footerQuote}
         </p>
       </footer>
