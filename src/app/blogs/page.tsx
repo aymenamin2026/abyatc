@@ -289,7 +289,7 @@ export default function ArticlesPage() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="font-serif text-4xl sm:text-6xl lg:text-7xl font-light tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 leading-tight"
           >
-            {isRtl ? 'مدونة لمعة أبيات الرائدة' : 'Lamat Abyat Premium Blog'}
+            {isRtl ? 'مدونة لمعة أبيات ' : 'Lamat Abyat Blog'}
           </motion.h1>
 
           <motion.p
@@ -299,37 +299,13 @@ export default function ArticlesPage() {
             className="max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground font-light leading-relaxed opacity-90"
           >
             {isRtl
-              ? 'بوابتك المعرفية الشاملة حول آليات صيانة المعدات الثقيلة، معايير الأمن السيبراني للمنشآت، وأحدث تقنيات الإشراف الهندسي المعماري المتطور.'
-              : 'Your gateway to strategic knowledge on heavy machinery management, cybersecurity in structural enterprise, and optimal engineering methodologies.'}
+              ? ' اكتشف مقالاتنا المتخصصة حول أحدث تقنيات البناء، نصائح تشغيل وصيانة المعدات الثقيلة، وأفضل الممارسات لإدارة مشاريعك بنجاح.'
+              : 'Discover our expert articles on the latest construction technologies, heavy equipment operation and maintenance tips, and best practices for successful project management.'}
           </motion.p>
         </div>
       </section>
 
-      {/* ================= STATS / COUNTERS SECTION ================= */}
-      <section className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full z-10 border-b border-border/40">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {[
-            { en: "Active Projects", ar: "مشاريع نشطة", val: 42 },
-            { en: "Heavy Equipment", ar: "معدة ثقيلة مفعّلة", val: 88 },
-            { en: "Articles Published", ar: "مقال هندسي متقدم", val: 150 },
-            { en: "Expert Engineers", ar: "مهندس استشاري", val: 35 }
-          ].map((stat, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="p-6 rounded-2xl bg-card/20 backdrop-blur-md border border-border/40"
-            >
-              <h3 className="text-3xl sm:text-4xl font-serif font-bold text-primary mb-1">
-                +<AnimatedCounter value={stat.val} />
-              </h3>
-              <p className="text-xs sm:text-sm font-light text-muted-foreground">{isRtl ? stat.ar : stat.en}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+
 
       {/* ================= ARTICLES ARTICLES LAYOUT AREA ================= */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto w-full z-10">
@@ -369,7 +345,7 @@ export default function ArticlesPage() {
           >
             <div>
               <span className="text-xs tracking-[0.2em] font-semibold text-primary uppercase block mb-2">// {isRtl ? 'رسالتنا ورؤيتنا' : 'Identity Framework'}</span>
-              <h2 className="text-3xl sm:text-4xl font-serif font-light tracking-tight text-foreground">{isRtl ? 'القيادة المعرفية الرقمية' : 'The Paradigm of Authority'}</h2>
+              <h2 className="text-3xl sm:text-4xl font-serif font-light tracking-tight text-foreground">{isRtl ? 'ريادة البناء والتشييد' : 'The Paradigm of Construction'}</h2>
             </div>
 
             <div className="p-6 rounded-2xl border border-border/40 bg-card/30 backdrop-blur-xl space-y-3">
@@ -378,7 +354,7 @@ export default function ArticlesPage() {
                 <h4 className="font-semibold text-sm tracking-wide">{isRtl ? 'رسالتنا' : 'Our Mission'}</h4>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground font-light leading-relaxed">
-                {isRtl ? 'تمكين قطاعات الإنشاءات والمقاولات من بنية معلوماتية فائقة الأمان تحمي الأصول التشغيلية وتضمن استدامة سلاسل الإمداد الميداني.' : 'To reinforce construction sectors with flawless informational security architectures, maintaining structural resilience.'}
+                {isRtl ? 'تقديم حلول إنشائية متكاملة وخدمات تأجير معدات ثقيلة تلبي تطلعات عملائنا، والمساهمة الفعالة في النهضة العمرانية للمملكة العربية السعودية بما يتوافق مع رؤية 2030.' : 'To provide integrated construction solutions and heavy equipment rentals that meet customer aspirations, contributing to the Kingdom\'s development in alignment with Vision 2030.'}
               </p>
             </div>
 
@@ -388,7 +364,7 @@ export default function ArticlesPage() {
                 <h4 className="font-semibold text-sm tracking-wide">{isRtl ? 'رؤيتنا' : 'Our Vision'}</h4>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground font-light leading-relaxed">
-                {isRtl ? 'أن نصبح المرجع التكنولوجي الأول في الشرق الأوسط لربط هندسة البناء التقليدية بأنظمة الحماية والتحليل البرمجي الفعال.' : 'To become the supreme Middle-Eastern portal converging standard machinery tasks with automated secure testing vectors.'}
+                {isRtl ? 'أن نكون الشركة الرائدة والأكثر موثوقية في قطاع المقاولات وتوفير المعدات الثقيلة، من خلال تقديم أعلى معايير الجودة والابتكار في تنفيذ المشاريع.' : 'To be the leading and most trusted contracting and heavy equipment firm through top-tier quality standards and project innovation.'}
               </p>
             </div>
           </motion.div>
@@ -398,9 +374,9 @@ export default function ArticlesPage() {
             <h3 className="text-xs tracking-[0.3em] font-bold uppercase text-muted-foreground mb-4">{isRtl ? 'لماذا تختار لمعة أبيات؟ / قيمنا الجوهرية' : 'Strategic Pillars & Values'}</h3>
 
             {[
-              { titleAr: "النزاهة والمصداقية الهندسية", titleEn: "Engineering Authenticity", descAr: "نلتزم بتقديم تقارير وحقائق مبنية على قياسات دقيقة واختبارات فنية حقيقية.", descEn: "All evaluations originate strictly from precise algorithmic measures and true dynamic test suites.", icon: Award },
-              { titleAr: "الأمان السيبراني الشامل للأصول", titleEn: "Asset Cyber Defense", descAr: "نحمي أنظمة تشغيل المعدات وسيرفرات التحكم من أي اختراقات أو تلاعب بالشبكات اللاسلكية.", descEn: "Securing operational fleet telemetry from deep packet injectors and wireless network exploitation.", icon: ShieldCheck },
-              { titleAr: "الابتكار التكنولوجي المستمر", titleEn: "Persistent Tech Evolution", descAr: "ندمج أدوات الذكاء الاصطناعي المحلي والأتمتة لتسريع وتيرة اتخاذ القرار داخل المواقع.", descEn: "Deploying local containerized models and advanced shell automations to shorten lifecycle times.", icon: CheckCircle2 }
+              { titleAr: "النزاهة والشفافية المطلقة", titleEn: "Absolute Integrity", descAr: "نلتزم بالوضوح التام والمصداقية في كافة تعاملاتنا العقودية، وحساب التكاليف، وإدارة المشاريع الميدانية.", descEn: "We maintain total transparency and credibility across all contractual agreements, cost estimations, and field construction workflows.", icon: Award },
+              { titleAr: "الالتزام التام بمعايير السلامة", titleEn: "Uncompromising Safety", descAr: "نضع سلامة الكوادر البشرية وتأمين المواقع وتشغيل المعدات الثقيلة في مقدمة أولوياتنا التشغيلية بدون استثناء.", descEn: "Prioritizing human resource safety, site security, and heavy machinery operations above all operational metrics.", icon: ShieldCheck },
+              { titleAr: "الاستدامة والحلول الصديقة للبيئة", titleEn: "Sustainability Focus", descAr: "نتبنى أحدث ممارسات البناء المستدام وطرق التشغيل الفعالة لتقليل الأثر البيئي وتعظيم كفاءة الموارد.", descEn: "Adopting modern eco-friendly construction methods and resource-efficient operations to support green building goals.", icon: CheckCircle2 }
             ].map((item, index) => {
               const IconComp = item.icon;
               return (
@@ -427,19 +403,18 @@ export default function ArticlesPage() {
 
         </div>
       </section>
-
       {/* ================= INTERACTIVE EXPERIENCE TIMELINE SECTION ================= */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-12 max-w-5xl mx-auto w-full z-10">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs uppercase font-semibold tracking-widest text-primary">// {isRtl ? 'رحلتنا المعرفية' : 'Historical Trajectory'}</span>
+          <span className="text-xs uppercase font-semibold tracking-widest text-primary">// {isRtl ? 'مسيرتنا الإنشائية' : 'Corporate Journey'}</span>
           <h2 className="text-3xl font-serif font-light mt-2">{isRtl ? 'التطور التاريخي والزمني للمؤسسة' : 'Milestone Development Timeline'}</h2>
         </div>
 
         <div className="relative border-s border-border/60 ms-4 md:ms-32 space-y-12">
           {[
-            { date: "2024", titleAr: "تأسيس البوابة اللوجستية", titleEn: "Logistical Infrastructure Launch", textAr: "إطلاق ذراع النقل الثقيل وإدارة مجموعات الحمولات المتكاملة الإقليمية بين المدن.", textEn: "Inauguration of regional multi-axle logistics services and commercial fleet routing frameworks." },
-            { date: "2025", titleAr: "التحول الشامل للأنظمة السحابية", titleEn: "Cloud Enterprise Scale", textAr: "بناء أنظمة مخصصة عبر Laravel و Next.js لربط طلبات التسعير والتحكم بالعملاء إلكترونياً.", textEn: "Developing custom architecture with Next.js and robust secure layers to centralize quotation data flows." },
-            { date: "2026", titleAr: "تكامل الحماية وهندسة الأتمتة", titleEn: "Cyber Security & Automated Operations", textAr: "تفعيل طبقات فحص واختبار اختراق الشبكات مع تشغيل نماذج الذكاء الاصطناعي Ollama محلياً.", textEn: "Enforcing advanced packet analysis pipelines, wireless penetration testing blueprints, and localized AI." }
+            { date: "2024", titleAr: "تأسيس الأسطول اللوجستي للمعدات", titleEn: "Heavy Asset Fleet Foundation", textAr: "تأسيس النواة الأولى للشركة عبر توفير شاحنات النقل الثقيل والمعدات التخصصية وبدء تشغيل خدمات النقل والإمداد الميداني بين المدن.", textEn: "Launching our core logistical operations by introducing heavy duty lowbeds and specialized transport equipment for regional cross-city routing." },
+            { date: "2025", titleAr: "التوسع في قطاع المقاولات العامة", titleEn: "General Contracting Scale", textAr: "دخول قطاع التشييد والبناء وتوقيع شراكات استراتيجية لتنفيذ البنى التحتية والمشاريع الإنشائية بالاعتماد على أسطولنا المتكامل الكفاءة.", textEn: "Expanding directly into structural building, infrastructure works, and general contracting via our highly reliable integrated machinery fleet." },
+            { date: "2026", titleAr: "أتمتة العمليات والحلول الرقمية للمشاريع", titleEn: "Smart Fleet Management & Vision 2030 Aligned", textAr: "دمج أنظمة المتابعة الذكية لإدارة المعدات وتوسيع نطاق العمل لدعم مشاريع التنمية الكبرى بالمملكة العربية السعودية وفق أرقى معايير الجودة.", textEn: "Integrating digital heavy fleet tracking systems while scaling project executions to strongly back major infrastructure goals aligned with Vision 2030." }
           ].map((time, i) => (
             <motion.div
               key={i}
@@ -476,12 +451,12 @@ export default function ArticlesPage() {
 
           <div className="max-w-2xl mx-auto space-y-4">
             <h2 className="text-3xl sm:text-5xl font-serif font-light tracking-tight">
-              {isRtl ? 'هل لديك مشروع يحتاج إلى صياغة وحماية استشارية؟' : 'Ready to Reinforce Your Infrastructure?'}
+              {isRtl ? 'هل تبحث عن شريك موثوق لتنفيذ مشروعك القادم؟' : 'Ready to Elevate Your Next Construction Project?'}
             </h2>
             <p className="text-xs sm:text-sm md:text-base text-muted-foreground font-light leading-relaxed max-w-xl mx-auto">
               {isRtl
-                ? 'تواصل مع الطاقم التنفيذي في لمعة أبيات الآن، لنقوم بدراسة متطلباتك الهندسية وتوفير حلول برمجية وميدانية معززة بأعلى درجات الكفاءة.'
-                : 'Initiate a tactical layout session with Lamat Abyat expert taskforce. Let us align your physical fleet assets and local server environments.'}
+                ? 'تواصل مع فريق الخبراء والمهندسين في لمعة أبيات الآن، لنقوم بدراسة مخططاتك الهندسية وتوفير أحدث المعدات الثقيلة والحلول الإنشائية لضمان نجاح مشروعك.'
+                : 'Get in touch with Lamat Abyat engineering and heavy machinery experts today. Let us review your requirements and secure optimal construction workflows.'}
             </p>
           </div>
 
@@ -493,7 +468,7 @@ export default function ArticlesPage() {
             >
               <Link href="/contact" className="flex items-center justify-center gap-2 cursor-none">
                 <MessageSquare className="w-4 h-4" />
-                {isRtl ? 'طلب استشارة تنفيذية فورية' : 'Consult Our Engineers'}
+                {isRtl ? 'طلب تسعير ومناقشة المشروع' : 'Request Quote & Consultation'}
               </Link>
             </motion.button>
 
@@ -503,7 +478,7 @@ export default function ArticlesPage() {
               className="w-full sm:w-auto px-8 py-4 border border-border/80 hover:border-foreground/60 text-foreground font-semibold rounded-xl text-xs sm:text-sm tracking-widest uppercase backdrop-blur-sm transition-all duration-300 cursor-none"
             >
               <Link href="/shop" className="flex items-center justify-center gap-2 cursor-none">
-                {isRtl ? 'تصفح قائمة الخدمات والمعدات' : 'Explore Heavy Assets'}
+                {isRtl ? 'تصفح المعدات والخدمات المتاحة' : 'Explore Fleet & Services'}
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
             </motion.button>
