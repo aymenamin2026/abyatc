@@ -225,7 +225,7 @@ export default function AboutPage() {
     <div
       ref={containerRef}
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative min-h-screen bg-[#fafafa] text-neutral-900 dark:bg-[#070708] dark:text-neutral-50 overflow-hidden transition-colors duration-700 selection:bg-primary/30"
+      className="relative min-h-screen bg-white text-neutral-900 dark:bg-[#070708] dark:text-neutral-50 overflow-hidden transition-colors duration-700 selection:bg-primary/30"
     >
       {/* 1. Global Mouse Glow Background Effect */}
       <div
