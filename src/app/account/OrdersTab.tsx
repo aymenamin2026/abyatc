@@ -102,25 +102,50 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                     </span>
                   </td>
                   <td className="py-4 font-medium text-foreground">
-                    {isPriced ? (
-                      // إذا قام الأدمن بالتسعير، يظهر السعر والعملة بشكل طبيعي
-                      <span className="flex items-center gap-1">
-                        {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                          <>
-                            <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
-                            <Image src="/riyal-light.svg" alt="SAR" width={12} height={12} className="theme-dark-only" />
-                          </>
-                        ) : (
-                          <span>{currencySymbol}</span>
-                        )}
-                        {totalAmount.toFixed(2)}
-                      </span>
-                    ) : (
-                      // إذا كان السعر 0 (لم يتم التسعير بعد)، تظهر هذه الرسالة
-                      <span className="text-sm text-amber-500 font-normal bg-amber-500/10 px-2 py-0.5 rounded-md inline-block">
-                        {t('awaiting_pricing', lang) || 'قيد المراجعة'}
-                      </span>
-                    )}
+                    {(() => {
+                      // 1. حساب مجموع أسعار المنتجات الفعلي في الطلب بدقة للتحقق من التسعير
+                      const itemsSubtotal = order.items?.reduce((sum: number, item: any) => {
+                        const price = parseFloat(item.unit_price || item.price || '0');
+                        return sum + (price * (item.quantity || 1));
+                      }, 0) || 0;
+
+                      // يكون الطلب مسعراً فقط إذا كان مجموع أسعار المنتجات أكبر من صفر
+                      const orderIsReallyPriced = itemsSubtotal > 0;
+
+                      if (orderIsReallyPriced) {
+                        // جلب رسوم الشحن وقيمة الضريبة
+                        const shipping = parseFloat(order.shipping_amount || '0');
+                        const tax = (order.tax_amount !== undefined && order.tax_amount !== null)
+                          ? parseFloat(order.tax_amount)
+                          : taxRate;
+
+                        // حساب الإجمالي النهائي الصحيح بناءً على إعداد لوحة التحكم (شاملة أو مضافة)
+                        const finalTotalAmount = pricesIncludeTax
+                          ? (itemsSubtotal + shipping)
+                          : (itemsSubtotal + shipping + tax);
+
+                        return (
+                          <span className="flex items-center gap-1">
+                            {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                              <>
+                                <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
+                                <Image src="/riyal-light.svg" alt="SAR" width={12} height={12} className="theme-dark-only" />
+                              </>
+                            ) : (
+                              <span>{currencySymbol}</span>
+                            )}
+                            {finalTotalAmount.toFixed(2)}
+                          </span>
+                        );
+                      } else {
+                        return (
+                          // إذا كان مجموع المنتجات 0، تظهر هذه الرسالة البرتقالية فوراً حتى لو أرسل السيرفر إجمالي قديم
+                          <span className="text-sm text-amber-500 font-normal bg-amber-500/10 px-2 py-0.5 rounded-md inline-block">
+                            {t('awaiting_pricing', lang) || 'قيد المراجعة'}
+                          </span>
+                        );
+                      }
+                    })()}
                     <span className="text-xs text-muted-foreground block mt-1">
                       for {order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}
                     </span>
