@@ -194,19 +194,35 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
             </div>
 
             {/* Desktop Nav Links */}
-            <nav className="hidden lg:flex items-center gap-1 text-sm font-medium">
+            {/* Desktop Nav Links */}
+            <nav className="hidden lg:flex items-center gap-2 text-sm font-medium">
               {navLinks.map((link) => {
                 const active = pathname === link.href;
+
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`px-4 py-2 rounded-xl tracking-wide transition-all duration-300 ${active
-                      ? (shouldBeTransparent && !isScrolled ? "bg-white/20 text-white" : "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground")
-                      : (shouldBeTransparent && !isScrolled ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground")
+                    className={`relative px-4 py-2 rounded-xl tracking-wide transition-all duration-300
+        ${active
+                        ? shouldBeTransparent && !isScrolled
+                          ? "bg-white/15 text-white shadow-lg"
+                          : "bg-[#093f89]/10 text-[#093f89] dark:bg-[#093f89]/20 dark:text-[#fbc70f]"
+                        : shouldBeTransparent && !isScrolled
+                          ? "text-white/85 hover:bg-white/10 hover:text-[#fbc70f]"
+                          : "text-muted-foreground hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:bg-[#093f89]/5 dark:hover:bg-[#093f89]/10"
                       }`}
                   >
                     {link.label}
+
+                    {/* Underline */}
+                    <span
+                      className={`absolute left-1/2 -bottom-1 h-[2px] bg-[#fbc70f] rounded-full transition-all duration-300
+          ${active
+                          ? "w-8 -translate-x-1/2 opacity-100"
+                          : "w-0 -translate-x-1/2 opacity-0 group-hover:w-8"
+                        }`}
+                    />
                   </Link>
                 );
               })}
@@ -468,15 +484,20 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
               )}
 
               {/* Navigation */}
-              <nav className="flex-1 overflow-y-auto py-4 px-4 space-y-1 scrollbar-thin scrollbar-thumb-border">
+              {/* Navigation */}
+              <nav className="flex-1 overflow-y-auto py-4 px-4 space-y-2 scrollbar-thin scrollbar-thumb-border">
                 {navLinks.map((link) => {
                   const active = pathname === link.href;
+
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center px-4 py-3 text-sm rounded-2xl transition-all duration-300 ${active ? 'bg-primary text-primary-foreground shadow-md font-semibold' : 'text-foreground/80 hover:bg-muted font-medium'
+                      className={`group flex items-center px-4 py-3 text-sm rounded-2xl transition-all duration-300
+        ${active
+                          ? "bg-[#093f89] text-white border-r-4 border-[#fbc70f] shadow-lg shadow-[#093f89]/20 font-semibold"
+                          : "text-foreground/80 hover:bg-[#093f89]/5 dark:hover:bg-[#093f89]/10 hover:text-[#093f89] dark:hover:text-[#fbc70f] font-medium"
                         }`}
                     >
                       {link.label}
@@ -484,24 +505,52 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                   );
                 })}
 
-                <div className="border-t border-border/50 my-3" />
+                <div className="border-t border-[#093f89]/10 dark:border-white/10 my-4" />
 
                 {user ? (
-                  <div className="space-y-1">
-                    <Link href="/account" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl hover:bg-muted transition-colors">
-                      <LayoutDashboard className="w-4 h-4 text-muted-foreground" /> {lang === 'en' ? 'Dashboard' : 'لوحة التحكم'}
+                  <div className="space-y-2">
+                    <Link
+                      href="/account"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl hover:bg-[#093f89]/5 dark:hover:bg-[#093f89]/10 transition-all duration-300"
+                    >
+                      <LayoutDashboard className="w-4 h-4 text-muted-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors" />
+                      {lang === "en" ? "Dashboard" : "لوحة التحكم"}
                     </Link>
-                    <Link href="/account?tab=orders" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl hover:bg-muted transition-colors">
-                      <ShoppingBag className="w-4 h-4 text-muted-foreground" /> {t("my_orders", lang)}
+
+                    <Link
+                      href="/account?tab=orders"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl hover:bg-[#093f89]/5 dark:hover:bg-[#093f89]/10 transition-all duration-300"
+                    >
+                      <ShoppingBag className="w-4 h-4 text-muted-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors" />
+                      {t("my_orders", lang)}
                     </Link>
-                    <Link href="/account?tab=wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl hover:bg-muted transition-colors">
-                      <Heart className="w-4 h-4 text-muted-foreground" /> {lang === 'en' ? 'Wishlist' : 'المفضلة'}
-                      {wishlistCount > 0 && <span className="ms-auto text-[10px] font-bold bg-red-500 text-white px-2 py-[2px] rounded-full">{wishlistCount}</span>}
+
+                    <Link
+                      href="/account?tab=wishlist"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl hover:bg-[#093f89]/5 dark:hover:bg-[#093f89]/10 transition-all duration-300"
+                    >
+                      <Heart className="w-4 h-4 text-muted-foreground group-hover:text-[#fbc70f] transition-colors" />
+
+                      {lang === "en" ? "Wishlist" : "المفضلة"}
+
+                      {wishlistCount > 0 && (
+                        <span className="ms-auto text-[10px] font-bold bg-[#fbc70f] text-[#093f89] px-2 py-[2px] rounded-full shadow">
+                          {wishlistCount}
+                        </span>
+                      )}
                     </Link>
                   </div>
                 ) : (
-                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl hover:bg-muted transition-colors">
-                    <User className="w-4 h-4 text-muted-foreground" /> {lang === 'en' ? 'Login' : 'تسجيل الدخول'}
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl hover:bg-[#093f89]/5 dark:hover:bg-[#093f89]/10 transition-all duration-300"
+                  >
+                    <User className="w-4 h-4 text-muted-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors" />
+                    {lang === "en" ? "Login" : "تسجيل الدخول"}
                   </Link>
                 )}
               </nav>

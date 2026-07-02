@@ -214,8 +214,8 @@ export default async function Home() {
         <TestimonialsSlider testimonials={testimonials} lang={lang} />
       )}
 
-      {/* Features/Why Choose Us - متوافق مع الوضع الليلي */}
-      <section className="py-20 bg-muted/10 dark:bg-background">
+      {/* Features/Why Choose Us - متوافق بالكامل مع الوضع الليلي والنهار بألوان البراند */}
+      <section className="py-20 bg-slate-50/50 dark:bg-zinc-950 transition-colors duration-300">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -223,17 +223,35 @@ export default async function Home() {
               { icon: CalendarClock, title: t('tailored_fit', lang), desc: t('tailored_fit_desc', lang) },
               { icon: Lightbulb, title: t('easy_care', lang), desc: t('easy_care_desc', lang) }
             ].map((item, index) => (
-              <div key={index} className="relative p-[2px] rounded-[32px] overflow-hidden group">
-                {/* عنصر الضوء الدوار */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/60 via-primary to-primary/60 animate-spin-border opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div key={index} className="relative p-[1.5px] rounded-[32px] overflow-hidden group transition-all duration-300">
 
-                {/* محتوى البطاقة الداعم للوضع الليلي */}
-                <div className="relative bg-card p-8 rounded-[30px] h-full shadow-lg border border-border/50 group-hover:border-transparent transition-colors">
-                  <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                {/* عنصر الضوء الدوار: يدمج الآن الكحلي (#093f89) والذهبي (#fbc70f) بلمسة متوهجة احترافية عند الهوفير */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-spin-border"
+                  style={{
+                    background: `linear-gradient(90deg, #093f89 0%, #fbc70f 50%, #093f89 100%)`
+                  }}
+                />
+
+                {/* محتوى البطاقة: تم ضبطه ليكون أبيض ناصع في الفاتح وداكن عميق في المظلم لضمان تباين مذهل */}
+                <div className="relative bg-white dark:bg-zinc-900 p-8 rounded-[30px] h-full shadow-md dark:shadow-xl border border-slate-100 dark:border-zinc-800 group-hover:border-transparent transition-all duration-300">
+
+                  {/* حاوية الأيقونة: تعتمد على الكحلي كمظهر أساسي وتتحول للذهبي أو الكحلي الكامل عند التفاعل */}
+                  <div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 group-hover:shadow-md transition-all duration-300 text-[#093f89] dark:text-blue-400 bg-[#093f89]/10 group-hover:bg-[#093f89] group-hover:text-white dark:group-hover:bg-[#fbc70f] dark:group-hover:text-zinc-950"
+                  >
                     <item.icon className="w-7 h-7" />
                   </div>
-                  <h3 className="text-xl font-bold text-card-foreground mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+
+                  {/* العنوان: تباين عالي يتغير ليعكس هوية البراند الكحلية عند تمرير الماوس */}
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">
+                    {item.title}
+                  </h3>
+
+                  {/* الوصف: رمادي ناعم ومقروء تماماً في كلا الوضعين بدون أي تداخل ألوان مزعج */}
+                  <p className="text-slate-600 dark:text-zinc-400 leading-relaxed text-sm font-normal">
+                    {item.desc}
+                  </p>
                 </div>
               </div>
             ))}
