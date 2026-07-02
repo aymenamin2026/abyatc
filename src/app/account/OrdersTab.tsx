@@ -274,58 +274,94 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               </div>
 
               {/* Shipping & Delivery */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border">
-                <div>
-                  <h4 className="font-bold text-foreground mb-3 text-sm flex items-center gap-2">
-                    <Truck className="w-4 h-4 text-primary" />
-                    {t('shipping_address', lang)}
-                  </h4>
-                  <div className="text-xs text-muted-foreground leading-relaxed bg-muted/20 p-4 rounded-xl border border-border">
-                    <div className="font-bold text-foreground mb-1">
-                      {selectedOrder.shipping_address?.first_name} {selectedOrder.shipping_address?.last_name}
-                    </div>
-                    <div>{selectedOrder.shipping_address?.address_1}</div>
-                    {selectedOrder.shipping_address?.address_2 && <div>{selectedOrder.shipping_address?.address_2}</div>}
-                    <div>{selectedOrder.shipping_address?.city}, {selectedOrder.shipping_address?.postcode}</div>
-                    <div>{selectedOrder.shipping_address?.country_id === '198' ? 'Saudi Arabia' : selectedOrder.shipping_address?.country_id}</div>
-                    <div className="mt-2 text-primary">{selectedOrder.customer_email}</div>
-                  </div>
+              <div className="space-y-2 text-xs bg-primary/5 p-4 rounded-xl border border-primary/10">
+
+                {/* 1. المجموع الفرعي (Subtotal) */}
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground font-medium">{t('subtotal', lang)}</span>
+                  <span className="text-foreground font-bold">
+                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
+                    {(() => {
+                      const total = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0');
+                      const shipping = parseFloat(selectedOrder.shipping_amount || '0');
+                      const tax = parseFloat(selectedOrder.tax_amount || '0');
+
+                      // إذا كان الطلب لم يُسعر بعد من الأدمن
+                      if (total === 0 && tax === 0) return '0.00';
+
+                      if (selectedOrder.subtotal !== undefined && selectedOrder.subtotal !== null) {
+                        return parseFloat(selectedOrder.subtotal).toFixed(2);
+                      }
+
+                      const pureTotal = total - shipping;
+                      if (pricesIncludeTax) {
+                        return Math.max(0, pureTotal - taxRate).toFixed(2);
+                      }
+                      return pureTotal.toFixed(2);
+                    })()}
+                  </span>
                 </div>
-                <div className="flex flex-col">
-                  <h4 className="font-bold text-foreground mb-3 text-sm">{t('order_summary', lang)}</h4>
-                  {/* 4. الإجمالي النهائي (Total) */}
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="font-bold text-foreground">{t('total', lang)}</span>
-                    <span className="font-bold text-primary flex items-center gap-1 text-lg">
-                      {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                        <>
-                          <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
-                          <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
-                        </>
-                      ) : (
-                        <span>{currencySymbol}</span>
-                      )}
-                      {(() => {
-                        // جلب المجموع الفرعي ورسوم الشحن مباشرة
-                        const subtotal = parseFloat(selectedOrder.subtotal || '1000');
-                        const shipping = parseFloat(selectedOrder.shipping_amount || '0');
 
-                        // جلب قيمة الضريبة؛ نتحقق أولاً من الطلب ثم نعود للقيمة الافتراضية taxRate (مثل 150)
-                        const tax = (selectedOrder.tax_amount !== undefined && selectedOrder.tax_amount !== null)
-                          ? parseFloat(selectedOrder.tax_amount)
-                          : taxRate;
+                {/* 2. رسوم الشحن والتوصيل */}
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground font-medium">{t('processing_fees', lang)}</span>
+                  <span className="text-foreground font-bold text-green-600">
+                    {parseFloat(selectedOrder.shipping_amount) > 0 ? (
+                      `${currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}${parseFloat(selectedOrder.shipping_amount).toFixed(2)}`
+                    ) : 'Free'}
+                  </span>
+                </div>
 
-                        // إجبار الـ Frontend على حساب الإجمالي الحقيقي بناءً على مدخلات لوحة التحكم
-                        if (!pricesIncludeTax) {
-                          // إذا كانت غير شاملة: 1000 + 0 + 150 = 1150
-                          return (subtotal + shipping + tax).toFixed(2);
-                        }
+                {/* 3. قيمة الضريبة (Taxes) */}
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground font-medium">{t('taxes', lang)}</span>
+                  <span className="text-foreground font-bold">
+                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
+                    {(() => {
+                      const total = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0');
+                      // إذا لم يتم تسعير الطلب بعد، لا تعرض ضريبة الـ 150
+                      if (total === 0) return '0.00';
 
-                        // إذا كانت شاملة: يعود المجموع الكلي 1000 ريال
-                        return (subtotal + shipping).toFixed(2);
-                      })()}
-                    </span>
-                  </div>
+                      if (selectedOrder.tax_amount !== undefined && selectedOrder.tax_amount !== null) {
+                        return parseFloat(selectedOrder.tax_amount).toFixed(2);
+                      }
+                      return taxRate.toFixed(2);
+                    })()}
+                  </span>
+                </div>
+
+                <div className="h-px bg-border my-2"></div>
+
+                {/* 4. الإجمالي النهائي (Total) */}
+                <div className="flex justify-between items-center text-sm">
+                  <span className="font-bold text-foreground">{t('total', lang)}</span>
+                  <span className="font-bold text-primary flex items-center gap-1 text-lg">
+                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                      <>
+                        <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
+                        <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
+                      </>
+                    ) : (
+                      <span>{currencySymbol}</span>
+                    )}
+                    {(() => {
+                      const dbTotal = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0');
+
+                      // إذا كان الطلب في قاعدة البيانات صفر، فهذا يعني أنه بانتظار التسعير
+                      if (dbTotal === 0) return '0.00';
+
+                      const subtotal = parseFloat(selectedOrder.subtotal || '0');
+                      const shipping = parseFloat(selectedOrder.shipping_amount || '0');
+                      const tax = (selectedOrder.tax_amount !== undefined && selectedOrder.tax_amount !== null)
+                        ? parseFloat(selectedOrder.tax_amount)
+                        : taxRate;
+
+                      if (!pricesIncludeTax) {
+                        return (subtotal + shipping + tax).toFixed(2);
+                      }
+                      return (subtotal + shipping).toFixed(2);
+                    })()}
+                  </span>
                 </div>
               </div>
             </div>
