@@ -6,10 +6,6 @@ import Link from 'next/link';
 import { getImageUrl } from '@/lib/api';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-// المعرفات اللونية الرسمية للبراند
-const COLOR_PRIMARY = "#093f89"; // الأزرق الكحلي
-const COLOR_ACCENT = "#fbc70f";  // الأصفر الذهبي
-
 interface CategoriesSliderProps {
   categories: any[];
   lang: 'en' | 'ar';
@@ -18,7 +14,7 @@ interface CategoriesSliderProps {
 
 export default function CategoriesSlider({ categories, lang, settings }: CategoriesSliderProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const ticking = useRef(false);
+  const ticking = useRef(false); // للتحكم في معدل التحديث (Throttling) لرفع الأداء
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -30,6 +26,7 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
   const autoplay = settings?.categories_slider_autoplay ?? false;
   const autoplayTime = settings?.categories_slider_autoplay_time ?? 3000;
 
+  // استخدام useCallback لمنع إعادة إنشاء الدالة مع كل رندر
   const checkScroll = useCallback(() => {
     if (!scrollRef.current) return;
 
@@ -46,12 +43,13 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
 
     if (showDots && scrollRef.current.children.length > 0) {
       const itemWidth = scrollRef.current.children[0]?.clientWidth || 320;
-      const gap = 24;
+      const gap = 24; // 1.5rem (gap-6)
       const index = Math.round(absoluteScroll / (itemWidth + gap));
       setActiveIndex(Math.min(index, categories.length - 1));
     }
   }, [isRtl, showDots, categories.length]);
 
+  // تحسين الأداء: استخدام requestAnimationFrame لمنع اختناق الـ Main Thread أثناء التمرير
   const onScroll = useCallback(() => {
     if (!ticking.current) {
       window.requestAnimationFrame(() => {
@@ -66,8 +64,8 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
     const el = scrollRef.current;
     if (!el) return;
 
-    checkScroll();
-    el.addEventListener('scroll', onScroll, { passive: true });
+    checkScroll(); // الفحص المبدئي
+    el.addEventListener('scroll', onScroll, { passive: true }); // passive: true لتحسين سلاسة التمرير
     window.addEventListener('resize', onScroll, { passive: true });
 
     return () => {
@@ -76,6 +74,7 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
     };
   }, [onScroll, checkScroll]);
 
+  // Autoplay Logic
   useEffect(() => {
     if (!autoplay || categories.length <= 1) return;
 
@@ -87,6 +86,7 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
         if (absoluteScroll + clientWidth >= scrollWidth - 10) {
           scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
+          // حساب دقيق لاتجاه التمرير التلقائي بناءً على اللغة
           const itemWidth = scrollRef.current.children[0]?.clientWidth || 320;
           const scrollAmount = isRtl ? -(itemWidth + 24) : (itemWidth + 24);
           scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
@@ -102,7 +102,9 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
       const itemWidth = scrollRef.current.children[0]?.clientWidth || 320;
       let scrollAmount = direction === 'left' ? -(itemWidth + 24) : (itemWidth + 24);
 
+      // عكس الاتجاه إذا كانت اللغة عربية ليعمل الزر بشكل منطقي
       if (isRtl) scrollAmount = -scrollAmount;
+
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
@@ -111,23 +113,18 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
 
   return (
     <div className="relative group w-full">
-
-      {/* زر التنقل الأيسر: خلفية بيضاء ناصعة تتحول للكحلي عند الهوفير والأيقونة تصبح ذهبية */}
       <button
         onClick={() => scroll('left')}
-        style={{ borderColor: `${COLOR_PRIMARY}20` }}
-        className={`absolute left-0 top-1/2 -translate-y-1/2 -ml-5 z-10 bg-white dark:bg-zinc-900 text-slate-800 dark:text-white shadow-xl rounded-full p-3 transition-all duration-300 hidden md:block border hover:bg-[#093f89] dark:hover:bg-[#093f89] hover:text-[#fbc70f] dark:hover:text-[#fbc70f] ${canScrollLeft ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
+        className={`absolute left-0 top-1/2 -translate-y-1/2 -ml-5 z-10 bg-background/90 dark:bg-card/90 hover:bg-background dark:hover:bg-card text-foreground shadow-lg rounded-full p-3 transition-all duration-300 hidden md:block border border-border/50 ${canScrollLeft ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
         disabled={!canScrollLeft}
         aria-label="Scroll left"
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
 
-      {/* زر التنقل الأيمن: مطابقة لنفس الفلسفة الاحترافية للزر الأيسر */}
       <button
         onClick={() => scroll('right')}
-        style={{ borderColor: `${COLOR_PRIMARY}20` }}
-        className={`absolute right-0 top-1/2 -translate-y-1/2 -mr-5 z-10 bg-white dark:bg-zinc-900 text-slate-800 dark:text-white shadow-xl rounded-full p-3 transition-all duration-300 hidden md:block border hover:bg-[#093f89] dark:hover:bg-[#093f89] hover:text-[#fbc70f] dark:hover:text-[#fbc70f] ${canScrollRight ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
+        className={`absolute right-0 top-1/2 -translate-y-1/2 -mr-5 z-10 bg-background/90 dark:bg-card/90 hover:bg-background dark:hover:bg-card text-foreground shadow-lg rounded-full p-3 transition-all duration-300 hidden md:block border border-border/50 ${canScrollRight ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
         disabled={!canScrollRight}
         aria-label="Scroll right"
       >
@@ -148,39 +145,32 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
               key={category.id}
               className="group/card cursor-pointer block shrink-0 w-[80vw] sm:w-[320px] lg:w-[350px] snap-center sm:snap-start"
             >
-              {/* الكرت الأساسي: أبيض ناصع في الفاتح لمنع المشاكل الرمادية وداكن متناسق في المظلم */}
-              <div className="relative h-[320px] md:h-[400px] rounded-3xl overflow-hidden shadow-md dark:shadow-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800">
+              <div className="relative h-[320px] md:h-[400px] rounded-3xl overflow-hidden shadow-md bg-card border border-border/50">
                 <Image
                   src={category.image ? getImageUrl(category.image) : '/no-image.jpg'}
                   alt={catName}
                   fill
                   sizes="(max-width: 768px) 80vw, (max-width: 1200px) 320px, 350px"
-                  className="object-cover transition-transform duration-700 group-hover/card:scale-105"
+                  className="object-cover transition-transform duration-700 group-hover/card:scale-110"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 transition-opacity duration-300 group-hover/card:opacity-100" />
 
-                {/* تدرج الظل الأسود المعتمد لضمان مقروئية النصوص الفاتحة فوق أي صورة */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-85 transition-opacity duration-300 group-hover/card:opacity-95" />
-
-                <div className="absolute inset-x-0 bottom-0 flex flex-col p-6 text-white text-start z-10">
-                  <h3 className="font-serif text-xl md:text-2xl font-bold mb-2 drop-shadow-md">
+                <div className="absolute inset-x-0 bottom-0 flex flex-col p-6 text-white text-start">
+                  <h3 className="font-serif text-xl md:text-3xl font-bold mb-2 drop-shadow-lg relative z-10 transition-transform duration-500">
                     {catName}
                   </h3>
 
                   <div className="grid grid-rows-[0fr] group-hover/card:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
                     <div className="overflow-hidden">
                       {showDescription && catDesc && (
-                        <p className="text-slate-300 text-xs md:text-sm opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 delay-75 line-clamp-2 mb-4 font-normal">
+                        <p className="text-gray-300 text-xs md:text-sm opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 delay-100 line-clamp-2 mb-4">
                           {catDesc}
                         </p>
                       )}
 
-                      {/* زر استكشف: تمييزه باللون الأصفر الذهبي #fbc70f ليكون جذاباً جداً وواضحاً فوق الخلفية المعتمة */}
-                      <div className="opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 delay-100 inline-block mb-1">
-                        <span
-                          style={{ borderColor: COLOR_ACCENT, color: COLOR_ACCENT }}
-                          className="inline-block border-b pb-0.5 text-xs md:text-sm font-bold tracking-wider uppercase"
-                        >
-                          {isRtl ? 'استكشف الآن ←' : 'Explore Now →'}
+                      <div className="opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 delay-150 inline-block mb-1">
+                        <span className="inline-block border-b border-primary pb-1 text-sm font-medium uppercase tracking-wider text-primary-foreground">
+                          {isRtl ? 'استكشف' : 'Explore'}
                         </span>
                       </div>
                     </div>
@@ -193,7 +183,7 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
       </div>
 
       {showDots && categories.length > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-4 pb-2">
+        <div className="flex justify-center items-center gap-2 mt-2 pb-4">
           {categories.map((_, idx) => (
             <button
               key={idx}
@@ -207,11 +197,7 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
                   });
                 }
               }}
-              /* الدوتس التفاعلية: النقطة النشطة تظهر بالذهبي البراق والأخرى بالكحلي الخفيف لضمان مظهر براند أنيق */
-              style={{
-                backgroundColor: activeIndex === idx ? COLOR_ACCENT : `${COLOR_PRIMARY}30`
-              }}
-              className={`h-2 rounded-full transition-all duration-300 ${activeIndex === idx ? 'w-6 shadow-sm' : 'w-2 hover:bg-[#093f89]/60'}`}
+              className={`h-2 rounded-full transition-all duration-300 ${activeIndex === idx ? 'w-6 bg-primary' : 'w-2 bg-primary/30 hover:bg-primary/50'}`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}

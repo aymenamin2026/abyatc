@@ -223,18 +223,18 @@ export default async function Home() {
               { icon: CalendarClock, title: t('tailored_fit', lang), desc: t('tailored_fit_desc', lang) },
               { icon: Lightbulb, title: t('easy_care', lang), desc: t('easy_care_desc', lang) }
             ].map((item, index) => (
-              <div key={index} className="relative p-[1.5px] rounded-[32px] overflow-hidden group transition-all duration-300">
+              <div key={index} className="relative p-[2px] rounded-[32px] overflow-hidden group">
 
                 {/* عنصر الضوء الدوار: يدمج الآن الكحلي (#093f89) والذهبي (#fbc70f) بلمسة متوهجة احترافية عند الهوفير */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-spin-border"
+                  className="absolute inset-0 bg-gradient-to-r from-primary/60 via-primary to-primary/60 animate-spin-border opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                   style={{
                     background: `linear-gradient(90deg, #093f89 0%, #fbc70f 50%, #093f89 100%)`
                   }}
                 />
 
                 {/* محتوى البطاقة: تم ضبطه ليكون أبيض ناصع في الفاتح وداكن عميق في المظلم لضمان تباين مذهل */}
-                <div className="relative bg-white dark:bg-zinc-900 p-8 rounded-[30px] h-full shadow-md dark:shadow-xl border border-slate-100 dark:border-zinc-800 group-hover:border-transparent transition-all duration-300">
+                <div className="relative bg-card p-8 rounded-[30px] h-full shadow-lg border border-border/50 group-hover:border-transparent transition-colors">
 
                   {/* حاوية الأيقونة: تعتمد على الكحلي كمظهر أساسي وتتحول للذهبي أو الكحلي الكامل عند التفاعل */}
                   <div
@@ -249,7 +249,7 @@ export default async function Home() {
                   </h3>
 
                   {/* الوصف: رمادي ناعم ومقروء تماماً في كلا الوضعين بدون أي تداخل ألوان مزعج */}
-                  <p className="text-slate-600 dark:text-zinc-400 leading-relaxed text-sm font-normal">
+                  <p className="text-muted-foreground leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
