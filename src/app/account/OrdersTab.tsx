@@ -311,7 +311,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               {/* Shipping & Delivery */}
               <div className="space-y-2 text-xs bg-primary/5 p-4 rounded-xl border border-primary/10">
                 {(() => {
-                  // 1. حساب مجموع أسعار المنتجات الفعلي في الطلب لمعرفة هل تم تسعيره أم لا
+                  // 1. حساب مجموع أسعار المنتجات الفعلي في الطلب
                   const itemsSubtotal = selectedOrder.items?.reduce((sum: number, item: any) => {
                     const price = parseFloat(item.unit_price || item.price || '0');
                     return sum + (price * (item.quantity || 1));
@@ -320,28 +320,21 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                   // علامة لمعرفة إذا كان الطلب غير مسعر بعد من الإدارة
                   const isNotPricedYet = itemsSubtotal === 0;
 
-                  // جلب القيم الأساسية
-                  const dbTotal = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0');
+                  // جلب القيم الأساسية من الطلب أو الإعدادات
                   const shipping = parseFloat(selectedOrder.shipping_amount || '0');
                   const tax = (selectedOrder.tax_amount !== undefined && selectedOrder.tax_amount !== null)
                     ? parseFloat(selectedOrder.tax_amount)
                     : taxRate;
 
-                  // حساب المجموع الفرعي والإجمالي بناءً على حالة التسعير وحالة الضريبة
-                  let finalSubtotal = '0.00';
-                  let finalTax = '0.00';
-                  let finalTotal = '0.00';
+                  // حساب المجموع الفرعي والإجمالي بناءً على حالة الضريبة (هنا فرضنا الإضافة فوق السعر ليظهر 1150)
+                  let finalSubtotal = itemsSubtotal.toFixed(2);
+                  let finalTax = tax.toFixed(2);
+                  let finalTotal = (itemsSubtotal + shipping + tax).toFixed(2);
 
-                  if (!isNotPricedYet) {
-                    finalTax = tax.toFixed(2);
-
-                    if (pricesIncludeTax) {
-                      finalSubtotal = Math.max(0, itemsSubtotal - tax).toFixed(2);
-                      finalTotal = (itemsSubtotal + shipping).toFixed(2);
-                    } else {
-                      finalSubtotal = itemsSubtotal.toFixed(2);
-                      finalTotal = (itemsSubtotal + shipping + tax).toFixed(2);
-                    }
+                  // إذا كنت تريد تتبع الـ Toggle الخاص بلوحة التحكم بدقة:
+                  if (pricesIncludeTax) {
+                    finalSubtotal = Math.max(0, itemsSubtotal - tax).toFixed(2);
+                    finalTotal = (itemsSubtotal + shipping).toFixed(2);
                   }
 
                   return (
@@ -350,8 +343,16 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground font-medium">{t('subtotal', lang)}</span>
                         <span className="text-foreground font-bold">
-                          {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
-                          {finalSubtotal}
+                          {isNotPricedYet ? (
+                            <span className="text-amber-500 font-normal bg-amber-500/10 px-2 py-0.5 rounded-md text-[11px]">
+                              {t('awaiting_pricing', lang) || 'قيد المراجعة'}
+                            </span>
+                          ) : (
+                            <>
+                              {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
+                              {finalSubtotal}
+                            </>
+                          )}
                         </span>
                       </div>
 
@@ -359,7 +360,11 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground font-medium">{t('processing_fees', lang)}</span>
                         <span className="text-foreground font-bold text-green-600">
-                          {!isNotPricedYet && shipping > 0 ? (
+                          {isNotPricedYet ? (
+                            <span className="text-amber-500 font-normal bg-amber-500/10 px-2 py-0.5 rounded-md text-[11px]">
+                              {t('awaiting_pricing', lang) || 'قيد المراجعة'}
+                            </span>
+                          ) : shipping > 0 ? (
                             `${currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}${shipping.toFixed(2)}`
                           ) : 'Free'}
                         </span>
@@ -371,8 +376,16 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                           {t('taxes', lang)} {pricesIncludeTax && !isNotPricedYet ? `(${t('included', lang) || 'شاملة'})` : ''}
                         </span>
                         <span className="text-foreground font-bold">
-                          {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
-                          {finalTax}
+                          {isNotPricedYet ? (
+                            <span className="text-amber-500 font-normal bg-amber-500/10 px-2 py-0.5 rounded-md text-[11px]">
+                              {t('awaiting_pricing', lang) || 'قيد المراجعة'}
+                            </span>
+                          ) : (
+                            <>
+                              {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
+                              {finalTax}
+                            </>
+                          )}
                         </span>
                       </div>
 
@@ -382,15 +395,23 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       <div className="flex justify-between items-center text-sm">
                         <span className="font-bold text-foreground">{t('total', lang)}</span>
                         <span className="font-bold text-primary flex items-center gap-1 text-lg">
-                          {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                            <>
-                              <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
-                              <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
-                            </>
+                          {isNotPricedYet ? (
+                            <span className="text-sm text-amber-500 font-normal bg-amber-500/10 px-2 py-0.5 rounded-md">
+                              {t('awaiting_pricing', lang) || 'قيد المراجعة'}
+                            </span>
                           ) : (
-                            <span>{currencySymbol}</span>
+                            <>
+                              {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                                <>
+                                  <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
+                                  <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
+                                </>
+                              ) : (
+                                <span>{currencySymbol}</span>
+                              )}
+                              {finalTotal}
+                            </>
                           )}
-                          {finalTotal}
                         </span>
                       </div>
                     </>
