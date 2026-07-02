@@ -231,6 +231,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                           Qty: {item.quantity} × {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
                           {(() => {
                             const basePrice = parseFloat(item.unit_price || item.price || '0');
+
+                            // إذا كان المنتج غير مسعر بعد، يعرض 0.00 فوراً دون الدخول في حسبة الضريبة الشاملة
+                            if (basePrice === 0) return '0.00';
+
                             // إذا كانت الفاتورة شاملة الضريبة، نعرض سعر المنتج الصافي بعد خصم جزئه من الضريبة الثابتة
                             if (pricesIncludeTax && selectedOrder.items?.length > 0) {
                               const itemTaxShare = taxRate / selectedOrder.items.length;
@@ -246,7 +250,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                             <Image src="/riyal-dark.svg" alt="SAR" width={10} height={10} className="inline-block theme-light-only" />
                             <Image src="/riyal-light.svg" alt="SAR" width={10} height={10} className="theme-dark-only" />
                             {(() => {
-                              const itemTotal = parseFloat(item.total || (parseFloat(item.unit_price || item.price || '0') * item.quantity));
+                              const basePrice = parseFloat(item.unit_price || item.price || '0');
+                              if (basePrice === 0) return '0.00';
+
+                              const itemTotal = parseFloat(item.total || (basePrice * item.quantity));
                               if (pricesIncludeTax && selectedOrder.items?.length > 0) {
                                 const itemTaxShare = taxRate / selectedOrder.items.length;
                                 return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
@@ -258,7 +265,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                           <span>
                             {currencySymbol}
                             {(() => {
-                              const itemTotal = parseFloat(item.total || (parseFloat(item.unit_price || item.price || '0') * item.quantity));
+                              const basePrice = parseFloat(item.unit_price || item.price || '0');
+                              if (basePrice === 0) return '0.00';
+
+                              const itemTotal = parseFloat(item.total || (basePrice * item.quantity));
                               if (pricesIncludeTax && selectedOrder.items?.length > 0) {
                                 const itemTaxShare = taxRate / selectedOrder.items.length;
                                 return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
