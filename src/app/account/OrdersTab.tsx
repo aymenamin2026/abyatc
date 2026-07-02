@@ -275,94 +275,92 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
 
               {/* Shipping & Delivery */}
               <div className="space-y-2 text-xs bg-primary/5 p-4 rounded-xl border border-primary/10">
+                {(() => {
+                  // 1. حساب مجموع أسعار المنتجات الفعلي في الطلب لمعرفة هل تم تسعيره أم لا
+                  const itemsSubtotal = selectedOrder.items?.reduce((sum: number, item: any) => {
+                    const price = parseFloat(item.unit_price || item.price || '0');
+                    return sum + (price * (item.quantity || 1));
+                  }, 0) || 0;
 
-                {/* 1. المجموع الفرعي (Subtotal) */}
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground font-medium">{t('subtotal', lang)}</span>
-                  <span className="text-foreground font-bold">
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
-                    {(() => {
-                      const total = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0');
-                      const shipping = parseFloat(selectedOrder.shipping_amount || '0');
-                      const tax = parseFloat(selectedOrder.tax_amount || '0');
+                  // علامة لمعرفة إذا كان الطلب غير مسعر بعد من الإدارة
+                  const isNotPricedYet = itemsSubtotal === 0;
 
-                      // إذا كان الطلب لم يُسعر بعد من الأدمن
-                      if (total === 0 && tax === 0) return '0.00';
+                  // جلب القيم الأساسية
+                  const dbTotal = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0');
+                  const shipping = parseFloat(selectedOrder.shipping_amount || '0');
+                  const tax = (selectedOrder.tax_amount !== undefined && selectedOrder.tax_amount !== null)
+                    ? parseFloat(selectedOrder.tax_amount)
+                    : taxRate;
 
-                      if (selectedOrder.subtotal !== undefined && selectedOrder.subtotal !== null) {
-                        return parseFloat(selectedOrder.subtotal).toFixed(2);
-                      }
+                  // حساب المجموع الفرعي والإجمالي بناءً على حالة التسعير وحالة الضريبة
+                  let finalSubtotal = '0.00';
+                  let finalTax = '0.00';
+                  let finalTotal = '0.00';
 
-                      const pureTotal = total - shipping;
-                      if (pricesIncludeTax) {
-                        return Math.max(0, pureTotal - taxRate).toFixed(2);
-                      }
-                      return pureTotal.toFixed(2);
-                    })()}
-                  </span>
-                </div>
+                  if (!isNotPricedYet) {
+                    finalTax = tax.toFixed(2);
 
-                {/* 2. رسوم الشحن والتوصيل */}
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground font-medium">{t('processing_fees', lang)}</span>
-                  <span className="text-foreground font-bold text-green-600">
-                    {parseFloat(selectedOrder.shipping_amount) > 0 ? (
-                      `${currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}${parseFloat(selectedOrder.shipping_amount).toFixed(2)}`
-                    ) : 'Free'}
-                  </span>
-                </div>
+                    if (pricesIncludeTax) {
+                      finalSubtotal = Math.max(0, itemsSubtotal - tax).toFixed(2);
+                      finalTotal = (itemsSubtotal + shipping).toFixed(2);
+                    } else {
+                      finalSubtotal = itemsSubtotal.toFixed(2);
+                      finalTotal = (itemsSubtotal + shipping + tax).toFixed(2);
+                    }
+                  }
 
-                {/* 3. قيمة الضريبة (Taxes) */}
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground font-medium">{t('taxes', lang)}</span>
-                  <span className="text-foreground font-bold">
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
-                    {(() => {
-                      const total = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0');
-                      // إذا لم يتم تسعير الطلب بعد، لا تعرض ضريبة الـ 150
-                      if (total === 0) return '0.00';
+                  return (
+                    <>
+                      {/* المجموع الفرعي */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground font-medium">{t('subtotal', lang)}</span>
+                        <span className="text-foreground font-bold">
+                          {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
+                          {finalSubtotal}
+                        </span>
+                      </div>
 
-                      if (selectedOrder.tax_amount !== undefined && selectedOrder.tax_amount !== null) {
-                        return parseFloat(selectedOrder.tax_amount).toFixed(2);
-                      }
-                      return taxRate.toFixed(2);
-                    })()}
-                  </span>
-                </div>
+                      {/* رسوم التوصيل */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground font-medium">{t('processing_fees', lang)}</span>
+                        <span className="text-foreground font-bold text-green-600">
+                          {!isNotPricedYet && shipping > 0 ? (
+                            `${currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}${shipping.toFixed(2)}`
+                          ) : 'Free'}
+                        </span>
+                      </div>
 
-                <div className="h-px bg-border my-2"></div>
+                      {/* الضرائب المقدرة */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground font-medium">
+                          {t('taxes', lang)} {pricesIncludeTax && !isNotPricedYet ? `(${t('included', lang) || 'شاملة'})` : ''}
+                        </span>
+                        <span className="text-foreground font-bold">
+                          {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
+                          {finalTax}
+                        </span>
+                      </div>
 
-                {/* 4. الإجمالي النهائي (Total) */}
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-bold text-foreground">{t('total', lang)}</span>
-                  <span className="font-bold text-primary flex items-center gap-1 text-lg">
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                      <>
-                        <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
-                        <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
-                      </>
-                    ) : (
-                      <span>{currencySymbol}</span>
-                    )}
-                    {(() => {
-                      const dbTotal = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0');
+                      <div className="h-px bg-border my-2"></div>
 
-                      // إذا كان الطلب في قاعدة البيانات صفر، فهذا يعني أنه بانتظار التسعير
-                      if (dbTotal === 0) return '0.00';
-
-                      const subtotal = parseFloat(selectedOrder.subtotal || '0');
-                      const shipping = parseFloat(selectedOrder.shipping_amount || '0');
-                      const tax = (selectedOrder.tax_amount !== undefined && selectedOrder.tax_amount !== null)
-                        ? parseFloat(selectedOrder.tax_amount)
-                        : taxRate;
-
-                      if (!pricesIncludeTax) {
-                        return (subtotal + shipping + tax).toFixed(2);
-                      }
-                      return (subtotal + shipping).toFixed(2);
-                    })()}
-                  </span>
-                </div>
+                      {/* الإجمالي النهائي */}
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="font-bold text-foreground">{t('total', lang)}</span>
+                        <span className="font-bold text-primary flex items-center gap-1 text-lg">
+                          {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
+                            <>
+                              <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
+                              <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
+                            </>
+                          ) : (
+                            <span>{currencySymbol}</span>
+                          )}
+                          {finalTotal}
+                        </span>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
 
