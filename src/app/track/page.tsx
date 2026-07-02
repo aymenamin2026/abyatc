@@ -136,7 +136,7 @@ export default function TrackOrderPage() {
   const getStatusText = (status: string) => {
     const s = status.toLowerCase();
     if (s.includes('awaiting_payment') || s.includes('pending')) return lang === 'ar' ? 'تم استلام الطلب' : 'Order Received';
-    if (s.includes('processing')) return lang === 'ar' ? 'تحت المعالجة' : 'Under Processing';
+    if (s.includes('processing')) return lang === 'ar' ? 'تم اعتماد الطلب وجاري تجهيز العده' : 'Approved And Preparing the equipment';
     if (s.includes('in_way')) return lang === 'ar' ? 'في الطريق إليك' : 'On The Way';
     if (s.includes('delivered') || s.includes('completed')) return lang === 'ar' ? 'مكتمل' : 'Completed';
     if (s.includes('cancelled')) return lang === 'ar' ? 'ملغي' : 'Cancelled';
@@ -321,10 +321,18 @@ export default function TrackOrderPage() {
                   </div>
                 )}
 
-                {/* 4. المجموع النهائي الكلي */}
+                {/* 4. المجموع النهائي الكلي (محسوب ديناميكياً لضمان إضافة الضرائب والشحن) */}
                 <div className="flex justify-between items-center text-lg font-semibold text-foreground pt-3 border-t border-border/60">
                   <span>{lang === 'ar' ? 'المجموع الكلي' : 'Total Amount'}</span>
-                  <CurrencyFormat amount={order.total_amount} size={16} />
+                  <CurrencyFormat
+                    amount={
+                      // إذا كان السيرفر يرسل الحقول منفصلة، نقوم بجمعها هنا للتأكد من النتيجة
+                      (order.subtotal ?? order.items.reduce((acc, item) => acc + (Number(item.unit_price) * item.quantity), 0)) +
+                      Number(order.tax_amount ?? 0) +
+                      Number(order.shipping_amount ?? 0)
+                    }
+                    size={16}
+                  />
                 </div>
 
               </div>
