@@ -270,49 +270,40 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 <div className="flex flex-col">
                   <h4 className="font-bold text-foreground mb-3 text-sm">{t('order_summary', lang)}</h4>
                   <div className="space-y-2 text-xs bg-primary/5 p-4 rounded-xl border border-primary/10">
+
+                    {/* 1. المجموع الفرعي الصافي للمنتجات */}
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground font-medium">{t('subtotal', lang)}</span>
                       <span className="text-foreground font-bold">
                         {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
-                        {(() => {
-                          const total = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total);
-                          const shipping = parseFloat(selectedOrder.shipping_amount || 0);
-                          const pureTotal = total - shipping;
-                          if (pricesIncludeTax) {
-                            return (pureTotal / (1 + taxRate / 100)).toFixed(2);
-                          }
-                          return pureTotal.toFixed(2);
-                        })()}
+                        {parseFloat(selectedOrder.subtotal || (parseFloat(selectedOrder.total_amount) - parseFloat(selectedOrder.shipping_amount) - parseFloat(selectedOrder.tax_amount))).toFixed(2)}
                       </span>
                     </div>
+
+                    {/* 2. رسوم التوصيل */}
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground font-medium">{t('processing_fees', lang)} ({selectedOrder.shipping_method})</span>
+                      <span className="text-muted-foreground font-medium">{t('processing_fees', lang)} ({selectedOrder.shipping_method || 'Standard'})</span>
                       <span className="text-foreground font-bold text-green-600">
-                        {selectedOrder.shipping_amount > 0 ? (
+                        {parseFloat(selectedOrder.shipping_amount) > 0 ? (
                           `${currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}${parseFloat(selectedOrder.shipping_amount).toFixed(2)}`
                         ) : 'Free'}
                       </span>
                     </div>
+
+                    {/* 3. قيمة الضريبة الثابتة (150 ريال) */}
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground font-medium">{t('taxes', lang)} ({taxRate}%{pricesIncludeTax ? ' Incl.' : ''})</span>
+                      <span className="text-muted-foreground font-medium">
+                        {t('taxes', lang)} {pricesIncludeTax ? `(${t('included', lang) || 'شاملة'})` : ''}
+                      </span>
                       <span className="text-foreground font-bold">
                         {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
-                        {(() => {
-                          if (selectedOrder.tax_amount !== undefined && selectedOrder.tax_amount !== null) {
-                            return parseFloat(selectedOrder.tax_amount).toFixed(2);
-                          }
-                          const total = parseFloat(selectedOrder.total_amount || selectedOrder.grand_total);
-                          const shipping = parseFloat(selectedOrder.shipping_amount || 0);
-                          const pureTotal = total - shipping;
-                          if (pricesIncludeTax) {
-                            const beforeTax = pureTotal / (1 + taxRate / 100);
-                            return (pureTotal - beforeTax).toFixed(2);
-                          }
-                          return (pureTotal * (taxRate / 100)).toFixed(2);
-                        })()}
+                        {parseFloat(selectedOrder.tax_amount || taxRate).toFixed(2)}
                       </span>
                     </div>
+
                     <div className="h-px bg-border my-2"></div>
+
+                    {/* 4. الإجمالي الكلي الفعلي للطلب */}
                     <div className="flex justify-between items-center text-sm">
                       <span className="font-bold text-foreground">{t('total', lang)}</span>
                       <span className="font-bold text-primary flex items-center gap-1 text-lg">
@@ -324,9 +315,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                         ) : (
                           <span>{currencySymbol}</span>
                         )}
-                        {parseFloat(selectedOrder.total_amount || selectedOrder.grand_total).toFixed(2)}
+                        {parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0').toFixed(2)}
                       </span>
                     </div>
+
                   </div>
                 </div>
               </div>

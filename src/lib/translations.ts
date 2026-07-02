@@ -240,6 +240,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     awaiting_pricing:"Awaiting Pricing",
 
     // Footer
+    included:"included",
     location:"Riyadh, Al Faisaliyah District, Alwqarah Street",
     quick_links: "Quick Links",
     contact_us: "Contact Us",
@@ -280,6 +281,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     
     
     // Account Dashboard
+    included:"شامله",
     dashboard: "لوحة التحكم",
     my_orders: "طلباتي",
     my_addresses: "عناويني",
