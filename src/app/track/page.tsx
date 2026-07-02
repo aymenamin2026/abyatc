@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useLanguage } from '@/components/LanguageContext';
 import { t } from '@/lib/translations';
 import { getImageUrl, fetchSettings } from '@/lib/api';
-import { Truck, Search, Package, Clock, CheckCircle2, AlertCircle } from 'lucide-react'; // أيقونات التتبع
+import { Truck, Search, Package, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface OrderTimeline {
   id: number;
@@ -32,7 +32,10 @@ interface OrderItem {
 interface OrderData {
   order_number: string;
   status: string;
-  total_amount: number;
+  subtotal?: number;         // المجموع الفرعي قبل الضرائب والشحن
+  tax_amount?: number;       // مبلغ الضريبة المضافة
+  shipping_amount?: number;  // تكلفة الشحن
+  total_amount: number;      // الإجمالي النهائي
   tracking_number: string | null;
   shipping_method: string | null;
   created_at: string;
@@ -51,7 +54,6 @@ export default function TrackOrderPage() {
   const [currencySymbol, setCurrencySymbol] = useState<string>('SAR');
   const [loading, setLoading] = useState(false);
 
-  // 1. جلب إعدادات العملة للمتجر
   useEffect(() => {
     async function loadSettings() {
       try {
@@ -69,7 +71,6 @@ export default function TrackOrderPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
   const API_KEY = process.env.NEXT_PUBLIC_API_KEY || 'ak_zeMJGONZsh8S7wzrGjCrKYAMHIJJB5pP';
   const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || 'sk_IAnHqVXKSo4jiZTQLgk1MdK04jsqEoYucYHA6yRBsBTcCPFV';
-
 
   const performSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
@@ -101,7 +102,6 @@ export default function TrackOrderPage() {
     }
   };
 
-  // 3. التتبع التلقائي الذكي بمجرد الدخول
   useEffect(() => {
     const urlId = searchParams.get('id');
     const urlQuery = searchParams.get('query');
@@ -123,38 +123,42 @@ export default function TrackOrderPage() {
     router.push(`/track?${params.toString()}`);
   };
 
-  // 🎨 دالة جلب الألوان المتناسقة مع الحالات الأربع المحدثة
   const getStatusColor = (status: string) => {
     const s = status.toLowerCase();
-    if (s.includes('awaiting_payment') || s.includes('pending')) return 'bg-amber-500'; // الحالة 1: تم استلام الطلب (برتقالي)
-    if (s.includes('processing')) return 'bg-blue-500'; // الحالة 2: تحت المعالجة (أزرق)
-    if (s.includes('shipped')) return 'bg-indigo-500'; // الحالة 3: في الطريق إليك (نيلي)
-    if (s.includes('delivered') || s.includes('completed')) return 'bg-emerald-500'; // الحالة 4: مكتمل (أخضر)
-    if (s.includes('cancelled')) return 'bg-rose-500'; // حالة الإلغاء (أحمر)
+    if (s.includes('awaiting_payment') || s.includes('pending')) return 'bg-amber-500';
+    if (s.includes('processing')) return 'bg-blue-500';
+    if (s.includes('shipped') || s.includes('in_way')) return 'bg-indigo-500';
+    if (s.includes('delivered') || s.includes('completed')) return 'bg-emerald-500';
+    if (s.includes('cancelled')) return 'bg-rose-500';
     return 'bg-amber-500';
   };
 
-  // 📝 دالة مساعدة لترجمة حالات الطلب بدقة بناءً على المسميات الجديدة التي طلبتها
   const getStatusText = (status: string) => {
     const s = status.toLowerCase();
+    if (s.includes('awaiting_payment') || s.includes('pending')) return lang === 'ar' ? 'تم استلام الطلب' : 'Order Received';
+    if (s.includes('processing')) return lang === 'ar' ? 'تحت المعالجة' : 'Under Processing';
+    if (s.includes('in_way')) return lang === 'ar' ? 'في الطريق إليك' : 'On The Way';
+    if (s.includes('delivered') || s.includes('completed')) return lang === 'ar' ? 'مكتمل' : 'Completed';
+    if (s.includes('cancelled')) return lang === 'ar' ? 'ملغي' : 'Cancelled';
+    return status;
+  };
 
-    if (s.includes('awaiting_payment') || s.includes('pending')) {
-      return lang === 'ar' ? 'تم استلام الطلب' : 'Order Received';
-    }
-    if (s.includes('processing')) {
-      return lang === 'ar' ? 'تحت المعالجة' : 'Under Processing';
-    }
-    if (s.includes('in_way')) {
-      return lang === 'ar' ? 'في الطريق إليك' : 'On The Way';
-    }
-    if (s.includes('delivered') || s.includes('completed')) {
-      return lang === 'ar' ? 'مكتمل' : 'Completed';
-    }
-    if (s.includes('cancelled')) {
-      return lang === 'ar' ? 'ملغي' : 'Cancelled';
-    }
-
-    return status; // إرجاع الحالة الأصلية كإجراء احتياطي
+  // مكوّن صغير لعرض العملة بشكل موحد وبسيط لمنع تكرار الكود
+  const CurrencyFormat = ({ amount, size = 14 }: { amount: number; size?: number }) => {
+    const isImage = currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg';
+    return (
+      <span className="inline-flex items-center gap-1 font-medium text-foreground">
+        {isImage ? (
+          <>
+            <Image src="/riyal-dark.svg" alt="SAR" width={size} height={size} className="inline-block theme-light-only" />
+            <Image src="/riyal-light.svg" alt="SAR" width={size} height={size} className="theme-dark-only" />
+          </>
+        ) : (
+          <span dangerouslySetInnerHTML={{ __html: currencySymbol }} className="text-muted-foreground font-normal text-xs" />
+        )}
+        {Number(amount).toFixed(2)}
+      </span>
+    );
   };
 
   return (
@@ -165,9 +169,7 @@ export default function TrackOrderPage() {
             {lang === 'ar' ? 'تتبع طلبك' : 'Track Your Order'}
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            {lang === 'ar'
-              ? 'أدخل رقم الطلب أو رقم التتبع للتحقق من حالة الشحنة الخاصة بك.'
-              : 'Enter your order number or tracking number to check the live status of your shipment.'}
+            {lang === 'ar' ? 'أدخل رقم الطلب أو رقم التتبع للتحقق من حالة الشحنة الخاصة بك.' : 'Enter your order number or tracking number to check the live status of your shipment.'}
           </p>
         </div>
 
@@ -202,19 +204,18 @@ export default function TrackOrderPage() {
 
         {/* Results */}
         {order && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="space-y-8"
-          >
-            {/* Header Card */}
+          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8">
+
+            {/* Header Card & Timeline */}
             <div className="bg-background rounded-2xl shadow-sm border border-border p-6 lg:p-8">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-8 border-b border-border">
                 <div>
                   <h2 className="text-xl font-medium text-foreground mb-1">
                     {lang === 'ar' ? 'الطلب' : 'Order'} #{order.order_number}
                   </h2>
-                  <p className="text-sm text-muted-foreground">{new Date(order.created_at).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(order.created_at).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
                 </div>
                 <div className="text-left md:text-right">
                   <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted border border-border mb-2">
@@ -232,11 +233,9 @@ export default function TrackOrderPage() {
 
               <h3 className="text-lg font-medium text-foreground mb-6">{lang === 'ar' ? 'تاريخ التحديثات' : 'Tracking Timeline'}</h3>
 
-              {/* Timeline */}
               {order.histories && order.histories.length > 0 ? (
                 <div className="relative pl-4 md:pl-0">
                   <div className={`absolute top-2 bottom-0 w-px bg-border ${lang === 'ar' ? 'right-4 md:right-[150px]' : 'left-4 md:left-[150px]'}`}></div>
-
                   <div className="space-y-8">
                     {order.histories.map((history) => (
                       <div key={history.id} className="relative flex flex-col md:flex-row items-start md:items-center group">
@@ -244,19 +243,13 @@ export default function TrackOrderPage() {
                           <div>{new Date(history.created_at).toLocaleDateString()}</div>
                           <div className="text-xs text-muted-foreground/70">{new Date(history.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                         </div>
-
                         <div className={`absolute md:relative flex h-8 w-8 items-center justify-center bg-background rounded-full ring-4 ring-background border border-border shrink-0 z-10 ${lang === 'ar' ? '-right-4 md:right-0 ml-6' : '-left-4 md:left-0 mr-6'}`}>
                           <span className={`h-2.5 w-2.5 rounded-full ${getStatusColor(history.status)}`}></span>
                         </div>
-
                         <div className="bg-muted border border-border rounded-xl p-4 flex-1 w-full ml-6 md:ml-0 rtl:ml-0 rtl:mr-6 rtl:md:mr-0">
-                          <div className="md:hidden text-xs text-muted-foreground mb-1">
-                            {new Date(history.created_at).toLocaleString()}
-                          </div>
+                          <div className="md:hidden text-xs text-muted-foreground mb-1">{new Date(history.created_at).toLocaleString()}</div>
                           <h4 className="font-medium text-foreground mb-1">
-                            {lang === 'ar'
-                              ? `تغيرت الحالة إلى: ${getStatusText(history.status)}`
-                              : `Status changed to: ${getStatusText(history.status)}`}
+                            {lang === 'ar' ? `تغيرت الحالة إلى: ${getStatusText(history.status)}` : `Status changed to: ${getStatusText(history.status)}`}
                           </h4>
                           {history.tracking_number && (
                             <p className="text-sm text-muted-foreground">
@@ -274,12 +267,13 @@ export default function TrackOrderPage() {
               )}
             </div>
 
-            {/* Products Array Summary */}
+            {/* Products Summary & Financial Calculation */}
             <div className="bg-background rounded-2xl shadow-sm border border-border p-6 lg:p-8">
               <h3 className="text-lg font-medium text-foreground mb-6">{lang === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}</h3>
+
+              {/* قائمة المنتجات */}
               <div className="space-y-4">
                 {order.items.map(item => {
-
                   const productName = item.product?.name ?
                     (typeof item.product.name === 'string' ? item.product.name :
                       (item.product.name[lang] || item.product.name['en'] || 'Unknown Product'))
@@ -288,51 +282,56 @@ export default function TrackOrderPage() {
                   return (
                     <div key={item.id} className="flex items-center gap-4 pb-4 border-b border-border last:border-0 last:pb-0">
                       <div className="h-16 w-16 bg-muted rounded-lg overflow-hidden shrink-0 border border-border">
-                        <img
-                          src={getImageUrl(item.product?.images?.[0])}
-                          alt={productName}
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={getImageUrl(item.product?.images?.[0])} alt={productName} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1">
                         <h4 className="text-sm font-medium text-foreground line-clamp-1">{productName}</h4>
                         <p className="text-xs text-muted-foreground">{lang === 'ar' ? 'الكمية:' : 'Qty:'} {item.quantity}</p>
                       </div>
-                      <div className="text-sm font-medium text-foreground flex items-center">
-                        {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                          <span className="mr-1 inline-flex items-center">
-                            <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
-                            <Image src="/riyal-light.svg" alt="SAR" width={12} height={12} className="theme-dark-only" />
-                          </span>
-                        ) : (
-                          <span dangerouslySetInnerHTML={{ __html: currencySymbol }} className="mr-1" />
-                        )}
-                        {(Number(item.unit_price) * item.quantity).toFixed(2)}
+                      <div className="text-sm font-medium text-foreground">
+                        <CurrencyFormat amount={Number(item.unit_price) * item.quantity} />
                       </div>
                     </div>
                   );
                 })}
               </div>
 
-              <div className="mt-8 pt-6 border-t border-border flex justify-between items-center text-lg font-medium text-foreground">
-                <span>{lang === 'ar' ? 'المجموع الكلي' : 'Total Amount'}</span>
-                <span className="flex items-center">
-                  {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                    <span className="mr-1 inline-flex items-center">
-                      <Image src="/riyal-dark.svg" alt="SAR" width={16} height={16} className="inline-block theme-light-only" />
-                      <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className="theme-dark-only" />
-                    </span>
-                  ) : (
-                    <span dangerouslySetInnerHTML={{ __html: currencySymbol }} className="mr-1" />
-                  )}
-                  {Number(order.total_amount).toFixed(2)}
-                </span>
+              {/* تفاصيل الحسبة والضرائب المعدلة */}
+              <div className="mt-8 pt-6 border-t border-border space-y-3 text-sm">
+
+                {/* 1. المجموع الفرعي */}
+                <div className="flex justify-between items-center text-muted-foreground">
+                  <span>{lang === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</span>
+                  <CurrencyFormat amount={order.subtotal ?? order.items.reduce((acc, item) => acc + (Number(item.unit_price) * item.quantity), 0)} />
+                </div>
+
+                {/* 2. قيمة الضريبة المضافة */}
+                {order.tax_amount !== undefined && Number(order.tax_amount) > 0 && (
+                  <div className="flex justify-between items-center text-muted-foreground">
+                    <span>{lang === 'ar' ? 'الضريبة المضافة' : 'VAT'}</span>
+                    <CurrencyFormat amount={order.tax_amount} />
+                  </div>
+                )}
+
+                {/* 3. تكلفة الشحن */}
+                {order.shipping_amount !== undefined && Number(order.shipping_amount) > 0 && (
+                  <div className="flex justify-between items-center text-muted-foreground">
+                    <span>{lang === 'ar' ? 'الشحن' : 'Shipping'}</span>
+                    <CurrencyFormat amount={order.shipping_amount} />
+                  </div>
+                )}
+
+                {/* 4. المجموع النهائي الكلي */}
+                <div className="flex justify-between items-center text-lg font-semibold text-foreground pt-3 border-t border-border/60">
+                  <span>{lang === 'ar' ? 'المجموع الكلي' : 'Total Amount'}</span>
+                  <CurrencyFormat amount={order.total_amount} size={16} />
+                </div>
+
               </div>
             </div>
 
           </motion.div>
         )}
-
       </div>
     </main>
   );
