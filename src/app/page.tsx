@@ -215,7 +215,7 @@ export default async function Home() {
       )}
 
       {/* Features/Why Choose Us - متوافق بالكامل مع الوضع الليلي والنهار بألوان البراند */}
-      <section className="py-20 bg-slate-50/50 dark:bg-zinc-950 transition-colors duration-300">
+      <section className="py-20bg-muted/10 dark:bg-background transition-colors duration-300">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[

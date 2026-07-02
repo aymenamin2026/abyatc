@@ -166,7 +166,7 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <main className="min-h-screen pt-[104px] pb-24 bg-slate-50/50 dark:bg-zinc-950 transition-colors duration-300">
+    <main className="min-h-screen pt-[104px] pb-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <div className="text-center mb-12">
           {/* عنوان الصفحة الرئيسي مدعوم بلون كحلي فخم */}
