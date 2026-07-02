@@ -244,7 +244,7 @@ export default async function Home() {
                   </div>
 
                   {/* العنوان: تباين عالي يتغير ليعكس هوية البراند الكحلية عند تمرير الماوس */}
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">
+                  <h3 className="ttext-xl font-bold text-card-foreground mb-3 mb-3 group-hover:text-[#093f89] dark:group-hover:text-amber-400 transition-colors duration-300">
                     {item.title}
                   </h3>
 
