@@ -207,7 +207,6 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                   {t('order_items', lang)} ({selectedOrder.items?.length || 0})
                 </h4>
                 <div className="space-y-4">
-
                   {selectedOrder.items?.map((item: any) => (
                     <div key={item.id} className="flex gap-4 items-center p-3 rounded-xl border border-border hover:bg-muted/5 transition-colors">
                       <div className="w-14 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
@@ -230,7 +229,15 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                         </div>
                         <div className="text-xs font-medium text-foreground mt-1">
                           Qty: {item.quantity} × {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? 'SAR ' : currencySymbol}
-                          {parseFloat(item.unit_price || item.price).toFixed(2)}
+                          {(() => {
+                            const basePrice = parseFloat(item.unit_price || item.price || '0');
+                            // إذا كانت الفاتورة شاملة الضريبة، نعرض سعر المنتج الصافي بعد خصم جزئه من الضريبة الثابتة
+                            if (pricesIncludeTax && selectedOrder.items?.length > 0) {
+                              const itemTaxShare = taxRate / selectedOrder.items.length;
+                              return Math.max(0, basePrice - (itemTaxShare / item.quantity)).toFixed(2);
+                            }
+                            return basePrice.toFixed(2);
+                          })()}
                         </div>
                       </div>
                       <div className="text-sm font-bold text-foreground whitespace-nowrap">
@@ -238,10 +245,27 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                           <span className="flex items-center gap-1">
                             <Image src="/riyal-dark.svg" alt="SAR" width={10} height={10} className="inline-block theme-light-only" />
                             <Image src="/riyal-light.svg" alt="SAR" width={10} height={10} className="theme-dark-only" />
-                            {parseFloat(item.total || (item.price * item.quantity)).toFixed(2)}
+                            {(() => {
+                              const itemTotal = parseFloat(item.total || (parseFloat(item.unit_price || item.price || '0') * item.quantity));
+                              if (pricesIncludeTax && selectedOrder.items?.length > 0) {
+                                const itemTaxShare = taxRate / selectedOrder.items.length;
+                                return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
+                              }
+                              return itemTotal.toFixed(2);
+                            })()}
                           </span>
                         ) : (
-                          `${currencySymbol}${parseFloat(item.total || (item.price * item.quantity)).toFixed(2)}`
+                          <span>
+                            {currencySymbol}
+                            {(() => {
+                              const itemTotal = parseFloat(item.total || (parseFloat(item.unit_price || item.price || '0') * item.quantity));
+                              if (pricesIncludeTax && selectedOrder.items?.length > 0) {
+                                const itemTaxShare = taxRate / selectedOrder.items.length;
+                                return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
+                              }
+                              return itemTotal.toFixed(2);
+                            })()}
+                          </span>
                         )}
                       </div>
                     </div>
