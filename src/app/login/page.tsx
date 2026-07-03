@@ -192,19 +192,30 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md bg-background p-8 rounded-2xl shadow-sm border border-border/50">
         {authMode !== "verify" ? (
-          <div className="flex bg-muted/30 border border-border rounded-xl p-1 mb-6">
+          <div className="grid grid-cols-3 bg-muted/30 border border-border rounded-xl p-1 mb-6 text-center items-center">
+            {/* زر تسجيل الدخول التقليدي */}
             <button
               onClick={() => { setAuthMode("login"); setAuthError(""); }}
-              className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${authMode === "login" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`py-2.5 text-sm font-medium rounded-lg transition-all ${authMode === "login"
+                  ? "bg-background shadow-sm text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               {t('login', lang)}
             </button>
+
+            {/* زر إنشاء حساب جديد */}
             <button
               onClick={() => { setAuthMode("register"); setAuthError(""); }}
-              className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${authMode === "register" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`py-2.5 text-sm font-medium rounded-lg transition-all ${authMode === "register"
+                  ? "bg-background shadow-sm text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               {t('create_account', lang)}
             </button>
+
+            {/* زر جوجل المدمج بنفس التصميم */}
             <a
               href="https://api.abyatc.com/api/auth/google"
               className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium rounded-lg text-muted-foreground hover:text-foreground transition-all hover:bg-background/50 active:scale-[0.98]"
@@ -430,8 +441,20 @@ export default function LoginPage() {
             >
               {loading ? t('please_wait', lang) : (authMode === "login" ? t('login', lang) : t('create_account', lang))}
             </button>
+
           </form>
         )}
+        <a
+          href="https://api.abyatc.com/api/auth/google"
+          className="group w-full flex items-center justify-center gap-3 border border-border/70 bg-background hover:bg-muted/40 py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.99] shadow-sm text-sm text-foreground"
+        >
+          <img
+            src="/google-icon.svg"
+            alt="Google"
+            className="w-5 h-5 transition-transform duration-200 group-hover:scale-110"
+          />
+          <span>{lang === 'ar' ? 'تسجيل الدخول بواسطة جوجل' : 'Sign in with Google'}</span>
+        </a>
       </div>
 
       {/* Close dropdown on outside click */}
