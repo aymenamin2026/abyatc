@@ -227,6 +227,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     search_country: "Search country...",
 
     // Shop Page
+    showing:"Showing",
     shop_title: "Our equipment fleet",
     shop_subtitle: "Discover our integrated fleet of state-of-the-art heavy equipment, ready to execute even the largest contracting projects with high efficiency and reliable performance.",
     results: "Results",
@@ -522,7 +523,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     page_not_found_title: "404 - الصفحة غير موجودة",
     page_not_found_desc: "قد تكون الصفحة التي تبحث عنها قد تمت إزالتها أو تغير اسمها أو أنها غير متاحة مؤقتًا.",
     back_to_home: "العودة إلى الرئيسية",
-
+    showing:"عرض",
     // Wishlist
     my_wishlist: "المفضلة",
     wishlist: "المفضلة",
