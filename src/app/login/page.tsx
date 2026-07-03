@@ -8,6 +8,7 @@ import { useLanguage } from "@/components/LanguageContext";
 import { t } from "@/lib/translations";
 import Link from "next/link";
 import { useCart } from "@/components/CartContext";
+import { FcGoogle } from 'react-icons/fc';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -423,22 +424,14 @@ export default function LoginPage() {
 
           </form>
         )}
-        {/* زر تسجيل الدخول العادي (الأسود الحالي) */}
-        <button className="w-full bg-black text-white py-3.5 rounded-xl font-medium transition-colors shadow-sm">
-          تسجيل الدخول
-        </button>
-
-        {/* زر جوجل الاحترافي الجديد مع مسافة عازلة وتنسيق دقيق */}
+        {/* زر جوجل الاحترافي الجديد - مصلح ومضمون الظهور */}
         <a
           href="https://api.abyatc.com/api/auth/google"
           className="mt-4 group w-full flex items-center justify-center gap-3 border border-gray-200 bg-white hover:bg-gray-50 py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow-md text-sm text-gray-700 dir-rtl"
         >
-          {/* أيقونة جوجل الرسمية بدقة وحجم متناسق */}
-          <img
-            src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png"
-            alt="Google"
-            className="w-5 h-5 transition-transform duration-200 group-hover:scale-105 block shrink-0"
-          />
+          {/* أيقونة جوجل الرسمية كـ SVG مدمج يظهر فوراً بدون استدعاء روابط خارجية */}
+          <FcGoogle className="w-5 h-5 transition-transform duration-200 group-hover:scale-105 shrink-0" />
+
           <span className="font-semibold text-gray-800">
             {lang === 'ar' ? 'تسجيل الدخول بواسطة جوجل' : 'Sign in with Google'}
           </span>
