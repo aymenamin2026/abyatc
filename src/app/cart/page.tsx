@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Trash2, ArrowRight, ShieldCheck, Tag, ArrowLeft, X } from "lucide-react";
+import { Trash2, ArrowRight, ShieldCheck, Tag, ArrowLeft, X, ShoppingBag } from "lucide-react";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { useCart } from "@/components/CartContext";
 import { useLanguage } from "@/components/LanguageContext";
 import { t } from "@/lib/translations";
@@ -73,299 +75,301 @@ export default function CartPage() {
       discount = appliedCoupon.value;
     }
 
-    return Math.min(discount, subtotal); // Cannot discount more than subtotal
+    return Math.min(discount, subtotal);
   };
 
   const discountValue = calculateDiscountValue();
   const total = subtotal - discountValue;
 
+  // 1. حالة السلة الفارغة (Empty State) - بتصميم فخم ومتحرك
   if (items.length === 0) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
-          <svg className="w-10 h-10 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-        </div>
-        <h1 className="font-serif text-3xl font-bold mb-4">{t('your_cart', lang)}</h1>
-        <p className="text-muted-foreground mb-8 max-w-sm">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center bg-background relative overflow-hidden"
+      >
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#093f89]/5 blur-[120px] rounded-full pointer-events-none" />
+
+        <motion.div
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", bounce: 0.5 }}
+          className="w-32 h-32 bg-gradient-to-br from-[#093f89]/10 to-transparent dark:from-[#fbc70f]/10 rounded-full flex items-center justify-center mb-8 shadow-inner border border-[#093f89]/10 dark:border-[#fbc70f]/20 relative z-10"
+        >
+          <ShoppingBag className="w-14 h-14 text-[#093f89] dark:text-[#fbc70f]" strokeWidth={1.5} />
+        </motion.div>
+
+        <h1 className="font-serif text-4xl font-bold mb-4 text-foreground relative z-10">
+          {t('your_cart', lang)}
+        </h1>
+        <p className="text-muted-foreground mb-10 max-w-sm text-lg font-light relative z-10">
           {t('empty_cart', lang)}
         </p>
+
         <Link
           href="/shop"
-          className="bg-primary text-primary-foreground px-8 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors"
+          className="group relative px-10 py-4 bg-[#093f89] text-white rounded-full font-bold text-lg overflow-hidden shadow-[0_8px_30px_rgba(9,63,137,0.3)] hover:shadow-[0_8px_40px_rgba(251,199,15,0.3)] transition-all duration-300 hover:-translate-y-1 z-10"
         >
-          {t('shop_collection', lang)}
+          <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
+          <span className="relative z-10 group-hover:text-[#fbc70f] transition-colors">{t('shop_collection', lang)}</span>
         </Link>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
-      <div className="flex items-center gap-4 mb-8">
-        <Link href="/shop" className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-full hover:bg-secondary">
-          <ArrowLeft className={`w-5 h-5 ${lang === 'ar' ? 'rotate-180' : ''}`} />
+    <div className="container mx-auto px-4 py-12 max-w-6xl relative">
+      {/* إضاءة خلفية خفيفة جداً تعطي عمق للصفحة */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#fbc70f]/5 blur-[150px] rounded-full pointer-events-none -z-10" />
+
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-10 border-b border-border/40 pb-6">
+        <Link href="/shop" className="text-muted-foreground hover:text-[#093f89] dark:hover:text-[#fbc70f] transition-all p-3 rounded-full hover:bg-secondary/50 group">
+          <ArrowLeft className={`w-6 h-6 transition-transform group-hover:-translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:translate-x-1' : ''}`} />
         </Link>
-        <h1 className="font-serif text-4xl font-bold">{t('your_cart', lang)}</h1>
-        <span className="text-muted-foreground bg-secondary px-3 py-1 rounded-full text-sm font-medium">
+        <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground tracking-tight">{t('your_cart', lang)}</h1>
+        <span className="bg-[#093f89]/10 text-[#093f89] dark:bg-[#fbc70f]/10 dark:text-[#fbc70f] px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">
           {t('items_count', lang).replace('{count}', totalQuantity.toString())}
         </span>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-12">
+      <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+
         {/* Cart Items List */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+        <div className="lg:col-span-8 space-y-6">
+          <div className="bg-card/40 backdrop-blur-md border border-[#093f89]/10 dark:border-border/50 rounded-[32px] overflow-hidden shadow-sm">
+
             {/* Header row (desktop) */}
-            <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              <div className="col-span-6">{t('product', lang)}</div>
+            <div className="hidden md:grid grid-cols-12 gap-4 p-6 border-b border-border/50 bg-secondary/30 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <div className="col-span-8">{t('product', lang)}</div>
               {/* <div className="col-span-2 text-center">{t('price', lang)}</div> */}
-              <div className="col-span-2 text-center">{t('quantity', lang)}</div>
+              <div className="col-span-4 text-center">{t('quantity', lang)}</div>
               {/* <div className="col-span-2 text-right">{t('total', lang)}</div> */}
             </div>
 
-            {/* Item rows */}
-            <div className="divide-y divide-border">
-              {items.map((item) => {
-                const itemName = typeof item.name === 'object' && item.name !== null
-                  ? (item.name[lang] || item.name.en || "Product Name")
-                  : (item.name || "Product Name");
+            {/* Item rows with AnimatePresence for smooth removal */}
+            <div className="divide-y divide-border/50">
+              <AnimatePresence>
+                {items.map((item) => {
+                  const itemName = typeof item.name === 'object' && item.name !== null
+                    ? (item.name[lang] || item.name.en || "Product Name")
+                    : (item.name || "Product Name");
 
-                return (
-                  <div key={item.cart_item_id} className="p-4 sm:p-6 flex flex-col sm:grid sm:grid-cols-12 gap-4 sm:items-center">
+                  return (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -50, backgroundColor: "rgba(239, 68, 68, 0.1)" }}
+                      transition={{ duration: 0.3 }}
+                      key={item.cart_item_id}
+                      className="p-5 sm:p-6 flex flex-col sm:grid sm:grid-cols-12 gap-6 sm:items-center group hover:bg-secondary/20 transition-colors"
+                    >
 
-                    {/* Mobile Product Header */}
-                    <div className="flex justify-between sm:hidden mb-2">
-                      <span className="font-medium">{itemName}</span>
-                      <button onClick={() => setItemToRemove(item.cart_item_id)} className="text-muted-foreground hover:text-red-500">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Product Details (Desktop: Col 6) */}
-                    <div className="sm:col-span-6 flex items-start gap-4">
-                      <div className="w-20 h-28 sm:w-24 sm:h-32 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
-                        <Image src={item.image} alt={itemName} fill className="object-cover" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/shop/${item.product_id}`} className="hidden sm:block font-medium hover:text-primary transition-colors mb-1 truncate">
-                          {itemName}
-                        </Link>
-                        <div className="text-sm text-muted-foreground">
-                          {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
-                        </div>
-                        {/* Mobile Delete */}
-                        <button
-                          onClick={() => setItemToRemove(item.cart_item_id)}
-                          className="hidden sm:flex mt-4 text-xs text-muted-foreground hover:text-red-500 items-center gap-1 transition-colors"
-                        >
-                          <Trash2 className="w-3 h-3" /> {t('delete', lang)}
+                      {/* Mobile Product Header */}
+                      <div className="flex justify-between sm:hidden mb-2">
+                        <span className="font-bold text-lg">{itemName}</span>
+                        <button onClick={() => setItemToRemove(item.cart_item_id)} className="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                    </div>
 
-                    {/* Price (Desktop: Col 2) */}
-                    {/* <div className="hidden sm:flex sm:col-span-2 justify-center items-center gap-1 font-medium">
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                      <>
-                        <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
-                        <Image src="/riyal-light.svg" alt="SAR" width={12} height={12} className="theme-dark-only" />
-                      </>
-                    ) : (
-                      <span>{currencySymbol}</span>
-                    )}
-                    {item.price.toFixed(2)}
-                  </div> */}
+                      {/* Product Details (Desktop: Col 8) */}
+                      <div className="sm:col-span-8 flex items-start gap-5">
+                        <div className="w-24 h-32 sm:w-28 sm:h-36 bg-secondary/50 rounded-2xl overflow-hidden flex-shrink-0 relative border border-border/50 shadow-sm group-hover:shadow-md transition-shadow">
+                          <Image src={item.image} alt={itemName} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                        </div>
+                        <div className="flex flex-col justify-center h-full py-2">
+                          <Link href={`/shop/${item.product_id}`} className="hidden sm:block font-bold text-lg hover:text-[#093f89] dark:hover:text-[#fbc70f] transition-colors mb-2 truncate">
+                            {itemName}
+                          </Link>
+                          <div className="inline-flex items-center px-3 py-1 rounded-md bg-secondary text-sm text-muted-foreground font-medium border border-border/50 w-fit">
+                            {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
+                          </div>
 
-                    {/* Quantity (Desktop: Col 2) */}
-                    <div className="sm:col-span-2 flex justify-between sm:justify-center items-center mt-2 sm:mt-0">
-                      <span className="sm:hidden text-muted-foreground text-sm">{t('quantity', lang)}:</span>
-                      <div className="flex items-center border border-border rounded-full h-9 bg-background w-fit">
-                        <button
-                          onClick={() => updateQuantity(item.cart_item_id, item.quantity - 1)}
-                          disabled={item.quantity <= 1}
-                          className="w-8 h-full flex items-center justify-center text-lg hover:text-primary transition-colors disabled:opacity-30"
-                        >-</button>
-                        <span className="w-8 text-center text-sm font-medium border-x border-border h-full flex items-center justify-center">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(item.cart_item_id, item.quantity + 1)}
-                          className="w-8 h-full flex items-center justify-center text-lg hover:text-primary transition-colors"
-                        >+</button>
+                          {/* Desktop Delete */}
+                          <button
+                            onClick={() => setItemToRemove(item.cart_item_id)}
+                            className="hidden sm:flex mt-4 text-xs font-semibold text-muted-foreground hover:text-red-500 items-center gap-1.5 transition-colors w-fit"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> {t('delete', lang)}
+                          </button>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Total (Desktop: Col 2) */}
-                    {/* <div className="sm:col-span-2 flex justify-between sm:justify-end items-center mt-2 sm:mt-0 font-semibold text-lg sm:text-base gap-1">
-                    <span className="sm:hidden text-muted-foreground text-sm font-normal">{t('total', lang)}:</span>
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                      <>
-                        <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
-                        <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
-                      </>
-                    ) : (
-                      <span>{currencySymbol}</span>
-                    )}
-                    {(item.price * item.quantity).toFixed(2)}
-                  </div> */}
-                  </div>
-                );
-              })}
+                      {/* Quantity (Desktop: Col 4) */}
+                      <div className="sm:col-span-4 flex justify-between sm:justify-center items-center mt-2 sm:mt-0">
+                        <span className="sm:hidden text-muted-foreground text-sm font-medium">{t('quantity', lang)}:</span>
+                        <div className="flex items-center border-2 border-[#093f89]/10 dark:border-border/60 rounded-xl h-12 bg-background w-fit overflow-hidden shadow-sm">
+                          <button
+                            onClick={() => updateQuantity(item.cart_item_id, item.quantity - 1)}
+                            disabled={item.quantity <= 1}
+                            className="w-10 h-full flex items-center justify-center text-xl hover:bg-[#093f89]/5 hover:text-[#093f89] dark:hover:text-[#fbc70f] transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                          >-</button>
+                          <span className="w-12 text-center text-base font-bold border-x-2 border-[#093f89]/10 dark:border-border/60 h-full flex items-center justify-center bg-secondary/20">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item.cart_item_id, item.quantity + 1)}
+                            className="w-10 h-full flex items-center justify-center text-xl hover:bg-[#093f89]/5 hover:text-[#093f89] dark:hover:text-[#fbc70f] transition-colors"
+                          >+</button>
+                        </div>
+                      </div>
+
+                      {/* الأسعار مكومنتة كما أرسلتها في الكود الأصلي لتتناسب مع متطلباتك */}
+                      {/* <div className="sm:col-span-2 flex justify-between sm:justify-end items-center mt-2 sm:mt-0 font-bold text-lg gap-1">...</div> */}
+
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           </div>
         </div>
 
-        {/* Order Summary & Checkout */}
-        <div className="lg:col-span-1">
-
-          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm sticky top-24">
-            <h2 className="text-xl font-bold mb-6 font-serif">{t('order_summary', lang)}</h2>
+        {/* Order Summary Sidebar */}
+        <div className="lg:col-span-4">
+          <div className="bg-card/60 backdrop-blur-2xl border border-[#093f89]/10 dark:border-[#fbc70f]/20 rounded-[32px] p-8 shadow-xl sticky top-28">
+            <h2 className="text-2xl font-bold mb-8 font-serif text-foreground">{t('order_summary', lang)}</h2>
 
             {/* Promo Code section */}
-            <div className="mb-6 pb-6 border-b border-border">
+            <div className="mb-8 pb-8 border-b border-border/50">
               {appliedCoupon ? (
-                <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-3 rounded-lg flex items-center justify-between border border-green-200 dark:border-green-800">
-                  <div className="flex items-center gap-2">
-                    <Tag className="w-4 h-4" />
-                    <span className="font-semibold">{appliedCoupon.code}</span>
-                    <span className="text-sm">({appliedCoupon.type === 'percent' ? `${appliedCoupon.value}%` : `${appliedCoupon.value} ${currencySymbol}`} off)</span>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-4 rounded-2xl flex items-center justify-between border border-green-200 dark:border-green-800 shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <Tag className="w-5 h-5" />
+                    <span className="font-bold text-lg">{appliedCoupon.code}</span>
+                    <span className="text-sm font-medium opacity-80">
+                      ({appliedCoupon.type === 'percent' ? `${appliedCoupon.value}%` : `${appliedCoupon.value} ${currencySymbol}`} off)
+                    </span>
                   </div>
-                  <button onClick={removeCoupon} className="hover:text-red-500 transition-colors">
+                  <button onClick={removeCoupon} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
                     <X className="w-4 h-4" />
                   </button>
-                </div>
+                </motion.div>
               ) : (
                 <>
-                  <form onSubmit={handleApplyCoupon} className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder={t('coupon_code', lang)}
-                      value={couponCode}
-                      onChange={(e) => {
-                        setCouponCode(e.target.value);
-                        if (couponError) setCouponError(null);
-                      }}
-                      className="flex-1 w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                    />
-                    <button
-                      type="submit"
-                      disabled={isApplyingCoupon || !couponCode}
-                      className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50 whitespace-nowrap"
-                    >
-                      {isApplyingCoupon ? "..." : t('apply', lang)}
-                    </button>
+                  <form onSubmit={handleApplyCoupon} className="flex flex-col gap-3">
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('coupon_code', lang)}</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="e.g. DISCOUNT20"
+                        value={couponCode}
+                        onChange={(e) => {
+                          setCouponCode(e.target.value);
+                          if (couponError) setCouponError(null);
+                        }}
+                        className="flex-1 w-full px-5 py-3.5 border-2 border-border rounded-xl bg-background text-foreground font-medium focus:outline-none focus:border-[#093f89] dark:focus:border-[#fbc70f] transition-colors uppercase placeholder:normal-case"
+                      />
+                      <button
+                        type="submit"
+                        disabled={isApplyingCoupon || !couponCode}
+                        className="px-6 py-3.5 bg-[#093f89] text-white rounded-xl font-bold hover:shadow-lg hover:bg-[#093f89]/90 hover:text-[#fbc70f] transition-all disabled:opacity-50 whitespace-nowrap"
+                      >
+                        {isApplyingCoupon ? "..." : t('apply', lang)}
+                      </button>
+                    </div>
                   </form>
-                  {couponError && (
-                    <p className="text-red-500 text-xs mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
-                      {couponError}
-                    </p>
-                  )}
+                  <AnimatePresence>
+                    {couponError && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="text-red-500 text-sm font-medium mt-3 flex items-center gap-1.5"
+                      >
+                        <X className="w-4 h-4" /> {couponError}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </>
               )}
             </div>
 
-            {/* Totals table */}
-            <div className="space-y-3 mb-6">
-              {/* <div className="flex justify-between text-muted-foreground items-center">
-                <span>{t('subtotal', lang)}</span>
-                <span className="font-medium text-foreground flex items-center gap-1">
-                  {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                    <>
-                      <Image src="/riyal-dark.svg" alt="SAR" width={14} height={14} className="inline-block theme-light-only" />
-                      <Image src="/riyal-light.svg" alt="SAR" width={14} height={14} className="theme-dark-only" />
-                    </>
-                  ) : (
-                    <span>{currencySymbol}</span>
-                  )}
-                  {subtotal.toFixed(2)}
-                </span>
-              </div> */}
-
+            {/* Totals table (Subtotal & Total مكومنتة كما طلبت، لكن الكوبون يظهر إذا وجد) */}
+            <div className="space-y-4 mb-8">
               {appliedCoupon && (
-                <div className="flex justify-between text-green-600 dark:text-green-400 items-center">
-                  <span>{t('discount', lang)} ({appliedCoupon.code})</span>
-                  <span className="flex items-center gap-1">-
-                    {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                      <>
-                        <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
-                        <Image src="/riyal-light.svg" alt="SAR" width={12} height={12} className="theme-dark-only" />
-                      </>
-                    ) : (
-                      <span>{currencySymbol}</span>
-                    )}
-                    {discountValue.toFixed(2)}
+                <div className="flex justify-between text-green-600 dark:text-green-400 items-center font-medium bg-green-50/50 dark:bg-green-900/10 p-3 rounded-lg">
+                  <span>{t('discount', lang)}</span>
+                  <span className="flex items-center gap-1 font-bold">
+                    - {discountValue.toFixed(2)} {currencySymbol}
                   </span>
                 </div>
               )}
-
-              {/* <div className="flex justify-between text-muted-foreground">
-                <span>{t('shipping', lang)}</span>
-                <span>{t('calculated_at_checkout', lang)}</span>
-              </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>{t('taxes', lang)}</span>
-                <span>{t('calculated_at_checkout', lang)}</span>
-              </div> */}
-
-              {/* <div className="pt-4 mt-4 border-t border-border flex justify-between items-center text-xl font-bold">
-                <span>{t('total', lang)}</span>
-                <span className="flex items-center gap-1">
-                  {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
-                    <>
-                      <Image src="/riyal-dark.svg" alt="SAR" width={16} height={16} className="inline-block theme-light-only" />
-                      <Image src="/riyal-light.svg" alt="SAR" width={16} height={16} className="theme-dark-only" />
-                    </>
-                  ) : (
-                    <span>{currencySymbol}</span>
-                  )}
-                  {total.toFixed(2)}
-                </span>
-              </div> */}
             </div>
 
             <Link
               href="/checkout"
-              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition-all shadow-md hover:shadow-lg group"
+              className="group relative w-full flex items-center justify-center gap-3 bg-[#093f89] text-white py-5 rounded-2xl font-bold text-lg hover:shadow-[0_8px_30px_rgba(9,63,137,0.3)] dark:hover:shadow-[0_8px_30px_rgba(251,199,15,0.2)] transition-all overflow-hidden"
             >
-              {t('secure_checkout', lang)} <ArrowRight className={`w-5 h-5 transition-transform ${lang === 'ar' ? 'group-hover:-translate-x-1 rotate-180' : 'group-hover:translate-x-1'}`} />
+              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
+              <span className="relative z-10 group-hover:text-[#fbc70f] transition-colors">{t('secure_checkout', lang)}</span>
+              <ArrowRight className={`relative z-10 w-5 h-5 transition-all duration-300 group-hover:text-[#fbc70f] ${lang === 'ar' ? 'group-hover:-translate-x-2 rotate-180' : 'group-hover:translate-x-2'}`} />
             </Link>
 
-            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
-              <ShieldCheck className="w-4 h-4 text-green-600" />
+            <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground font-medium bg-secondary/30 py-2 rounded-lg">
+              <ShieldCheck className="w-5 h-5 text-green-500" />
               {t('secure_payment_info', lang)}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Remove Confirmation Modal */}
-      {itemToRemove !== null && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-background border border-border rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in duration-200">
-            <h3 className="font-serif text-2xl font-bold mb-3 text-foreground">{t('remove_item_title', lang)}</h3>
-            <p className="text-muted-foreground mb-8 text-sm">
-              {t('remove_item_confirm', lang)}
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setItemToRemove(null)}
-                className="flex-1 px-4 py-3 border border-border rounded-xl font-medium hover:bg-secondary transition-colors"
-              >
-                {t('cancel', lang)}
-              </button>
-              <button
-                onClick={() => {
-                  removeFromCart(itemToRemove!);
-                  setItemToRemove(null);
-                }}
-                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors shadow-sm"
-              >
-                {t('yes_remove', lang)}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Remove Confirmation Modal - Glassmorphism & Spring Animation */}
+      <AnimatePresence>
+        {itemToRemove !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[#093f89]/20 dark:bg-black/60 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-card/90 backdrop-blur-xl border border-border/50 rounded-[32px] p-8 max-w-sm w-full shadow-2xl relative overflow-hidden"
+            >
+              {/* شريط زخرفي علوي */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 to-rose-400" />
+
+              <div className="w-14 h-14 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center mb-6">
+                <Trash2 className="w-7 h-7" />
+              </div>
+
+              <h3 className="font-serif text-2xl font-bold mb-3 text-foreground">{t('remove_item_title', lang)}</h3>
+              <p className="text-muted-foreground mb-8 text-base leading-relaxed">
+                {t('remove_item_confirm', lang)}
+              </p>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setItemToRemove(null)}
+                  className="flex-1 px-4 py-3.5 border-2 border-border rounded-xl font-bold hover:bg-secondary transition-colors"
+                >
+                  {t('cancel', lang)}
+                </button>
+                <button
+                  onClick={() => {
+                    removeFromCart(itemToRemove!);
+                    setItemToRemove(null);
+                  }}
+                  className="flex-1 px-4 py-3.5 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/30 transition-all"
+                >
+                  {t('yes_remove', lang)}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

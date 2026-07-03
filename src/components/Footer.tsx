@@ -108,7 +108,7 @@ export default function Footer({ settings }: { settings?: any }) {
                       alt={siteName}
                       width={200}
                       height={80}
-                      className="h-16 md:h-20 w-auto object-contain transition-transform group-hover:scale-105 duration-500 dark:brightness-0 dark:invert"
+                      className="h-16 md:h-20 w-auto object-contain transition-transform group-hover:scale-105 duration-500"
                     />
                   ) : (
                     <h2 className="text-2xl md:text-3xl font-bold font-serif mt-1 leading-tight text-[#093f89] dark:text-[#fbc70f]">
