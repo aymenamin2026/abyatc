@@ -638,7 +638,6 @@ export default function Checkout() {
     const currentWhatsappNumber = currentRawNumber ? currentRawNumber.replace(/\D/g, '') : "966500000000";
 
     const cartSummaryText = cartItems.map((item, index) => {
-      // 1. جلب اسم المنتج الأساسي
       const itemName = typeof item.name === 'object' && item.name !== null
         ? (item.name[lang] || item.name.en || "Product Name")
         : (item.name || "Product Name");
@@ -651,32 +650,32 @@ export default function Checkout() {
         ? (item.size[lang] || item.size.en)
         : item.size;
 
-      // 2. تجميع النص الأصلي المدمج (مثل: مدة الإيجار: سنوي | فئة المعدات: 7 طن)
       const rawColorAndSize = [itemColor, itemSize].filter(Boolean).join(' | ');
 
-      // 3. تنظيف وتفكيك النص المرتبط بالأتربيوتس تلقائياً وتحويله لأسطر مرتبة
       let formattedAttributes = "";
       if (rawColorAndSize) {
-        // إزالة الأقواس الخارجية إن وجدت وتقسيم النص بناءً على الفواصل المتوقعة مثل | أو ، أو -
         const attributesArray = rawColorAndSize.replace(/[\(\)]/g, '').split(/[|•,]/);
 
         formattedAttributes = attributesArray
           .map(attr => attr.trim())
           .filter(Boolean)
-          .map(attr => `     ${attr}`) // عمل إزاحة (مسافة) لكل أتربيوت ليظهر منسقاً تحت المنتج
-          .join('\n');
+          .map(attr => `     ${attr}`) // الفراغات قبل الخيارات
+          .join('%0A'); // 👈 استخدام ترميز السطر الجديد هنا
       }
 
-      // 4. صياغة النص النهائي لكل منتج بالترقيم (الاسم في سطر والأتربيوتس المنسقة في أسطر مستقلة تحته)
       const productLine = `${index + 1}) ${itemName} x ${item.quantity}`;
-      return formattedAttributes ? `${productLine}\n${formattedAttributes}` : productLine;
-    }).join('\n\n'); // ترك سطر فارغ بين كل منتج لزيادة التنظيم
+      // 👈 استخدام %0A للفصل بين اسم المنتج والخيارات
+      return formattedAttributes ? `${productLine}%0A${formattedAttributes}` : productLine;
+    }).join('%0A%0A'); // 👈 سطرين فارغين بين كل معدة وأخرى لضمان الترتيب
 
-    const currentMessageText = lang === 'ar'
-      ? `مرحباً، أود الاستفسار عن سعر وتفاصيل المعدات التالية:\n\n${cartSummaryText}`
-      : `Hello, I would like to inquire about the price and details for the following products:\n\n${cartSummaryText}`;
+    // صياغة النص النهائي باستخدام %0A للسطور الثابتة أيضاً
+    const greetingText = lang === 'ar'
+      ? `مرحباً، أود الاستفسار عن سعر وتفاصيل المنتجات التالية:%0A%0A`
+      : `Hello, I would like to inquire about the price and details for the following products:%0A%0A`;
 
-    return `https://wa.me/${currentWhatsappNumber}?text=${encodeURIComponent(currentMessageText)}`;
+    // نقوم بدمج النصوص مباشرة دون الحاجة لـ encodeURIComponent كاملة لأننا قمنا بترميز السطور يدوياً، 
+    // ولكن لحماية الأسماء العربية نستخدمها فقط على متغير السلة بعد تجميعه
+    return `https://wa.me/${currentWhatsappNumber}?text=${greetingText}${encodeURIComponent(cartSummaryText)}`;
   };
   if (pricesIncludeTax) {
     // Inclusive Tax: Subtotal remains unchanged, Total is (subtotal - discount) + shipping.
