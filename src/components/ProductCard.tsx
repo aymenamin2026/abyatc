@@ -97,8 +97,8 @@ export default function ProductCard({
 
   // تكييف نص الرسالة بناءً على ما إذا كان السعر معروضاً أو مخفياً لطلب تسعيرة
   const messageText = shouldShowPrice
-    ? `مرحباً، أود الاستفسار عن منتج: ${name}\nرابط المنتج: ${productUrl}`
-    : `مرحباً، أود طلب تسعيرة للمنتج: ${name}\nالسعر غير معروض بالمتجر.\nرابط المنتج: ${productUrl}`;
+    ? `مرحباً، أود الاستفسار عن منتج: ${name}\nرابط المعدة: ${productUrl}`
+    : `مرحباً، أود طلب تسعيرة للمعدة: ${name}\nالسعر غير معروض بالمتجر.\nرابط المعدة: ${productUrl}`;
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 

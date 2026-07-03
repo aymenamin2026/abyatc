@@ -205,7 +205,7 @@ export default async function Home() {
             </Link>
           </div>
 
-          <FeaturedProductsGrid products={featuredProducts} currencySymbol={currencySymbol} />
+          <FeaturedProductsGrid settings={settings} products={featuredProducts} currencySymbol={currencySymbol} />
         </div>
       </section>
 

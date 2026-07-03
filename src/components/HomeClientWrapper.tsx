@@ -57,9 +57,10 @@ export default function HomeClientWrapper({ featuredProducts, currencySymbol, la
 interface FeaturedProductsGridProps {
   products: any[];
   currencySymbol: string;
+  settings?: any;
 }
 
-export function FeaturedProductsGrid({ products, currencySymbol }: FeaturedProductsGridProps) {
+export function FeaturedProductsGrid({ products, currencySymbol, settings }: FeaturedProductsGridProps) {
   if (!products || products.length === 0) return null;
 
   return (
@@ -70,6 +71,7 @@ export function FeaturedProductsGrid({ products, currencySymbol }: FeaturedProdu
           product={product}
           currencySymbol={currencySymbol}
           index={index}
+          settings={settings}
         />
       ))}
     </div>
