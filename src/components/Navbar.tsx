@@ -44,8 +44,13 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
   const { totalQuantity } = useCart();
   const { user, logout } = useAuth();
   const { wishlistCount } = useWishlist();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
+  // للتأكد من المزامنة الكاملة مع المتصفح وتفادي أخطاء الـ Hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const isRtl = lang === 'ar';
 
   useEffect(() => {
@@ -414,9 +419,23 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                           <span>{t("my_orders", lang)}</span>
                         </Link>
 
-                        <button onClick={() => { setTheme(theme === 'dark' ? 'light' : 'dark'); setAccountOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm rounded-2xl font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                          {theme === 'dark' ? <Sun className="w-4 h-4 text-[#fbc70f]" /> : <Moon className="w-4 h-4 text-[#093f89]" />}
-                          <span>{theme === 'dark' ? (lang === 'en' ? 'Light Mode' : 'الوضع الفاتح') : (lang === 'en' ? 'Dark Mode' : 'الوضع الداكن')}</span>
+                        <button
+                          onClick={() => {
+                            setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+                            setAccountOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm rounded-2xl font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        >
+                          {mounted && resolvedTheme === 'dark' ? (
+                            <Sun className="w-4 h-4 text-[#fbc70f]" />
+                          ) : (
+                            <Moon className="w-4 h-4 text-[#093f89]" />
+                          )}
+                          <span>
+                            {mounted && resolvedTheme === 'dark'
+                              ? (lang === 'en' ? 'Light Mode' : 'الوضع الفاتح')
+                              : (lang === 'en' ? 'Dark Mode' : 'الوضع الداكن')}
+                          </span>
                         </button>
 
                         <div className="border-t border-border/40 pt-1.5 mt-1.5">
@@ -544,11 +563,19 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                     <LanguageToggle />
                   </div>
                   <button
-                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
                     className="flex items-center justify-center gap-2 h-12 text-sm rounded-xl bg-card border border-border/60 text-foreground hover:bg-muted transition-colors shadow-sm font-semibold"
                   >
-                    {theme === 'dark' ? <Sun className="w-4 h-4 text-[#fbc70f]" /> : <Moon className="w-4 h-4 text-[#093f89]" />}
-                    <span>{theme === 'dark' ? (lang === 'en' ? 'Light' : 'فاتح') : (lang === 'en' ? 'Dark' : 'داكن')}</span>
+                    {mounted && resolvedTheme === 'dark' ? (
+                      <Sun className="w-4 h-4 text-[#fbc70f]" />
+                    ) : (
+                      <Moon className="w-4 h-4 text-[#093f89]" />
+                    )}
+                    <span>
+                      {mounted && resolvedTheme === 'dark'
+                        ? (lang === 'en' ? 'Light' : 'فاتح')
+                        : (lang === 'en' ? 'Dark' : 'داكن')}
+                    </span>
                   </button>
                 </div>
 
