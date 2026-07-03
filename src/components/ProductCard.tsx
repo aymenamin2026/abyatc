@@ -36,6 +36,7 @@ export default function ProductCard({
   const router = useRouter();
 
   const [showQuickView, setShowQuickView] = useState(false);
+  // 1. أبقينا على State الخاص برابط المنتج لاستخدامه في الهيدريشن
   const [productUrl, setProductUrl] = useState("");
 
   const name = product.name?.[lang] || product.name?.en || product.name || "Product Name";
@@ -77,21 +78,22 @@ export default function ProductCard({
   };
 
   // --- تجهيز رابط الواتساب ---
+  // هنا قمنا بدعم احتمالية وجود البيانات داخل settings مباشرة أو داخل settings.data أو settings.settings
   const rawNumber =
     settings?.whatsapp ||
     settings?.whatsapp_phone ||
     settings?.whatsapp_number ||
     settings?.phone ||
     settings?.contact_phone ||
+    settings?.data?.whatsapp || // احتمال إضافي شائع
+    settings?.settings?.whatsapp || // احتمال إضافي شائع
     "";
 
   const whatsappNumber = rawNumber
-    ? rawNumber.replace(/\D/g, "")
+    ? String(rawNumber).replace(/\D/g, "")
     : "966500000000";
 
-  const siteUrl =
-    typeof window !== "undefined" ? window.location.origin : "https://abyatc.vercel.app";
-  const productUrl = `${siteUrl}/shop/${product.slug || product.id}`;
+  // تم حذف السطر الذي كان يعيد تعريف productUrl هنا والاعتماد على الـ state المحدثة في الـ useEffect
 
   // تكييف نص الرسالة بناءً على ما إذا كان السعر معروضاً أو مخفياً لطلب تسعيرة
   const messageText = shouldShowPrice
