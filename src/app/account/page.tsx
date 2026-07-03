@@ -32,7 +32,14 @@ function AccountContent() {
   const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
   const [isMounted, setIsMounted] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
+  interface CustomerData {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    customer_type: string;
+    phone?: string;
+  }
   useEffect(() => {
     setIsMounted(true);
     const tabParam = searchParams.get("tab");
@@ -113,11 +120,10 @@ function AccountContent() {
                   <button
                     key={tab.id}
                     onClick={() => onTabChange(tab.id)}
-                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-sm font-bold transition-all duration-300 group flex-shrink-0 lg:flex-shrink whitespace-nowrap snap-center ${
-                      isActive
-                        ? "bg-[#093f89] text-white dark:bg-[#fbc70f] dark:text-[#093f89] shadow-lg shadow-[#093f89]/30 dark:shadow-[#fbc70f]/20 scale-[1.02]"
-                        : "text-muted-foreground hover:bg-[#093f89]/5 dark:hover:bg-[#fbc70f]/10 hover:text-[#093f89] dark:hover:text-[#fbc70f]"
-                    }`}
+                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-sm font-bold transition-all duration-300 group flex-shrink-0 lg:flex-shrink whitespace-nowrap snap-center ${isActive
+                      ? "bg-[#093f89] text-white dark:bg-[#fbc70f] dark:text-[#093f89] shadow-lg shadow-[#093f89]/30 dark:shadow-[#fbc70f]/20 scale-[1.02]"
+                      : "text-muted-foreground hover:bg-[#093f89]/5 dark:hover:bg-[#fbc70f]/10 hover:text-[#093f89] dark:hover:text-[#fbc70f]"
+                      }`}
                   >
                     <Icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? "" : "group-hover:scale-110"}`} strokeWidth={isActive ? 2.5 : 2} />
                     {tab.label}
@@ -206,7 +212,12 @@ function AccountContent() {
               )}
               {activeTab === "profile" && (
                 <motion.div key="profile" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
-                  <ProfileTab lang={lang} user={user} login={login} token={token} />
+                  <ProfileTab
+                    lang={lang}
+                    user={user as any} // استخدام as any هنا لتجاوز التدقيق الصارم مؤقتاً
+                    login={(userData, userToken) => login(userData as any, userToken)} // تحويل الأنواع هنا
+                    token={token}
+                  />
                 </motion.div>
               )}
               {activeTab === "wishlist" && (

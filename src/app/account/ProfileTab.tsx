@@ -9,11 +9,14 @@ import { t } from "@/lib/translations";
 
 // 1. تعريف الأنواع (Strict Typing)
 interface CustomerData {
+  id: number;
   first_name?: string;
   last_name?: string;
   email?: string;
   phone?: string;
+  customer_type: string;
   [key: string]: any;
+
 }
 
 interface Country {
@@ -26,8 +29,8 @@ interface Country {
 
 interface ProfileTabProps {
   lang: "en" | "ar";
-  user: CustomerData;
-  login: (user: CustomerData, token: string) => void;
+  user: CustomerData; // استخدام النوع الموحد هنا
+  login: (user: CustomerData, token: string) => void; // توحيد النوع هنا أيضاً
   token: string | null;
 }
 
