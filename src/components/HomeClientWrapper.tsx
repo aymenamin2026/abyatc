@@ -13,7 +13,6 @@ interface HomeClientWrapperProps {
 export default function HomeClientWrapper({ featuredProducts, currencySymbol, lang }: HomeClientWrapperProps) {
   const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
 
-  // تحسين اصطياد الحدث وتغليفه بـ useCallback لمنع إعادة تعريفه
   const handleQuickViewClick = useCallback((e: MouseEvent) => {
     const target = e.target as HTMLElement;
     const btn = target.closest('[data-quickview]') as HTMLElement;
@@ -21,7 +20,6 @@ export default function HomeClientWrapper({ featuredProducts, currencySymbol, la
     if (btn) {
       const productId = btn.getAttribute('data-quickview');
       if (productId) {
-        // استخدام السلسلة النصية لضمان تطابق الأنواع أثناء البحث
         const product = featuredProducts.find(p => String(p.id) === productId);
         if (product) {
           setQuickViewProduct(product);
@@ -31,7 +29,6 @@ export default function HomeClientWrapper({ featuredProducts, currencySymbol, la
   }, [featuredProducts]);
 
   useEffect(() => {
-    // التقاط الحدث في مرحلة الـ Capture لضمان عدم إيقافه بـ stopPropagation من مكونات أخرى
     document.addEventListener('click', handleQuickViewClick, { capture: true });
 
     return () => {
@@ -41,7 +38,6 @@ export default function HomeClientWrapper({ featuredProducts, currencySymbol, la
 
   return (
     <>
-      {/* عرض الـ Modal فقط إذا كان هناك منتج محدد لتحسين الأداء */}
       {quickViewProduct && (
         <ProductQuickView
           isOpen={true}
@@ -53,7 +49,6 @@ export default function HomeClientWrapper({ featuredProducts, currencySymbol, la
   );
 }
 
-// فصلت المكون المصدر (Exported) ليكون واضحاً
 interface FeaturedProductsGridProps {
   products: any[];
   currencySymbol: string;
@@ -64,7 +59,7 @@ export function FeaturedProductsGrid({ products, currencySymbol, settings }: Fea
   if (!products || products.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 sm:gap-x-8">
       {products.map((product: any, index: number) => (
         <ProductCard
           key={product.id}

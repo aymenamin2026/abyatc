@@ -14,7 +14,7 @@ interface CategoriesSliderProps {
 
 export default function CategoriesSlider({ categories, lang, settings }: CategoriesSliderProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const ticking = useRef(false); // للتحكم في معدل التحديث (Throttling) لرفع الأداء
+  const ticking = useRef(false);
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -26,7 +26,6 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
   const autoplay = settings?.categories_slider_autoplay ?? false;
   const autoplayTime = settings?.categories_slider_autoplay_time ?? 3000;
 
-  // استخدام useCallback لمنع إعادة إنشاء الدالة مع كل رندر
   const checkScroll = useCallback(() => {
     if (!scrollRef.current) return;
 
@@ -43,13 +42,12 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
 
     if (showDots && scrollRef.current.children.length > 0) {
       const itemWidth = scrollRef.current.children[0]?.clientWidth || 320;
-      const gap = 24; // 1.5rem (gap-6)
+      const gap = 24;
       const index = Math.round(absoluteScroll / (itemWidth + gap));
       setActiveIndex(Math.min(index, categories.length - 1));
     }
   }, [isRtl, showDots, categories.length]);
 
-  // تحسين الأداء: استخدام requestAnimationFrame لمنع اختناق الـ Main Thread أثناء التمرير
   const onScroll = useCallback(() => {
     if (!ticking.current) {
       window.requestAnimationFrame(() => {
@@ -64,8 +62,8 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
     const el = scrollRef.current;
     if (!el) return;
 
-    checkScroll(); // الفحص المبدئي
-    el.addEventListener('scroll', onScroll, { passive: true }); // passive: true لتحسين سلاسة التمرير
+    checkScroll();
+    el.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
 
     return () => {
@@ -74,7 +72,6 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
     };
   }, [onScroll, checkScroll]);
 
-  // Autoplay Logic
   useEffect(() => {
     if (!autoplay || categories.length <= 1) return;
 
@@ -86,7 +83,6 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
         if (absoluteScroll + clientWidth >= scrollWidth - 10) {
           scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
-          // حساب دقيق لاتجاه التمرير التلقائي بناءً على اللغة
           const itemWidth = scrollRef.current.children[0]?.clientWidth || 320;
           const scrollAmount = isRtl ? -(itemWidth + 24) : (itemWidth + 24);
           scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
@@ -102,7 +98,6 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
       const itemWidth = scrollRef.current.children[0]?.clientWidth || 320;
       let scrollAmount = direction === 'left' ? -(itemWidth + 24) : (itemWidth + 24);
 
-      // عكس الاتجاه إذا كانت اللغة عربية ليعمل الزر بشكل منطقي
       if (isRtl) scrollAmount = -scrollAmount;
 
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
@@ -113,27 +108,28 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
 
   return (
     <div className="relative group w-full">
+      {/* Navigation Buttons - Luxury Glassmorphism */}
       <button
         onClick={() => scroll('left')}
-        className={`absolute left-0 top-1/2 -translate-y-1/2 -ml-5 z-10 bg-background/90 dark:bg-card/90 hover:bg-background dark:hover:bg-card text-foreground shadow-lg rounded-full p-3 transition-all duration-300 hidden md:block border border-border/50 ${canScrollLeft ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
+        className={`absolute start-0 top-1/2 -translate-y-1/2 -ms-5 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl text-[#093f89] dark:text-[#fbc70f] hover:bg-[#093f89] hover:text-[#fbc70f] shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/40 dark:border-white/10 rounded-full p-3 transition-all duration-300 hidden md:flex items-center justify-center hover:scale-110 active:scale-95 ${canScrollLeft ? 'opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}
         disabled={!canScrollLeft}
         aria-label="Scroll left"
       >
-        <ChevronLeft className="w-6 h-6" />
+        <ChevronLeft className={`w-6 h-6 ${isRtl ? 'rotate-180' : ''}`} />
       </button>
 
       <button
         onClick={() => scroll('right')}
-        className={`absolute right-0 top-1/2 -translate-y-1/2 -mr-5 z-10 bg-background/90 dark:bg-card/90 hover:bg-background dark:hover:bg-card text-foreground shadow-lg rounded-full p-3 transition-all duration-300 hidden md:block border border-border/50 ${canScrollRight ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
+        className={`absolute end-0 top-1/2 -translate-y-1/2 -me-5 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl text-[#093f89] dark:text-[#fbc70f] hover:bg-[#093f89] hover:text-[#fbc70f] shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/40 dark:border-white/10 rounded-full p-3 transition-all duration-300 hidden md:flex items-center justify-center hover:scale-110 active:scale-95 ${canScrollRight ? 'opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}
         disabled={!canScrollRight}
         aria-label="Scroll right"
       >
-        <ChevronRight className="w-6 h-6" />
+        <ChevronRight className={`w-6 h-6 ${isRtl ? 'rotate-180' : ''}`} />
       </button>
 
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto gap-6 pb-6 pt-4 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0"
+        className="flex overflow-x-auto gap-6 pb-8 pt-4 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0"
       >
         {categories.map((category: any) => {
           const catName = category.name?.[lang] || category.name?.en || category.name;
@@ -143,34 +139,36 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
             <Link
               href={`/shop?category=${encodeURIComponent(catName)}`}
               key={category.id}
-              className="group/card cursor-pointer block shrink-0 w-[80vw] sm:w-[320px] lg:w-[350px] snap-center sm:snap-start"
+              className="group/card cursor-pointer block shrink-0 w-[80vw] sm:w-[320px] lg:w-[360px] snap-center sm:snap-start"
             >
-              <div className="relative h-[320px] md:h-[400px] rounded-3xl overflow-hidden shadow-md bg-card border border-border/50">
+              <div className="relative h-[340px] md:h-[420px] rounded-[2rem] overflow-hidden shadow-lg ring-1 ring-gray-900/5 dark:ring-white/10 bg-card transition-all duration-500 ease-in-out hover:shadow-2xl hover:-translate-y-2 hover:shadow-[#093f89]/20">
                 <Image
                   src={category.image ? getImageUrl(category.image) : '/no-image.jpg'}
                   alt={catName}
                   fill
-                  sizes="(max-width: 768px) 80vw, (max-width: 1200px) 320px, 350px"
-                  className="object-cover transition-transform duration-700 group-hover/card:scale-110"
+                  sizes="(max-width: 768px) 80vw, (max-width: 1200px) 320px, 360px"
+                  className="object-cover transition-transform duration-700 ease-in-out group-hover/card:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 transition-opacity duration-300 group-hover/card:opacity-100" />
 
-                <div className="absolute inset-x-0 bottom-0 flex flex-col p-6 text-white text-start">
-                  <h3 className="font-serif text-xl md:text-3xl font-bold mb-2 drop-shadow-lg relative z-10 transition-transform duration-500">
+                {/* Royal Blue Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#093f89]/95 via-black/40 to-transparent opacity-80 transition-opacity duration-500 group-hover/card:opacity-95" />
+
+                <div className="absolute inset-x-0 bottom-0 flex flex-col p-6 sm:p-8 text-white text-start">
+                  <h3 className="font-serif text-2xl md:text-3xl font-bold mb-2 drop-shadow-xl relative z-10 transition-colors duration-500 group-hover/card:text-[#fbc70f]">
                     {catName}
                   </h3>
 
-                  <div className="grid grid-rows-[0fr] group-hover/card:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
+                  <div className="grid grid-rows-[0fr] group-hover/card:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
                     <div className="overflow-hidden">
                       {showDescription && catDesc && (
-                        <p className="text-gray-300 text-xs md:text-sm opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 delay-100 line-clamp-2 mb-4">
+                        <p className="text-gray-200 text-sm opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 delay-100 line-clamp-2 mb-4 font-light leading-relaxed">
                           {catDesc}
                         </p>
                       )}
 
-                      <div className="opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 delay-150 inline-block mb-1">
-                        <span className="inline-block border-b border-primary pb-1 text-sm font-medium uppercase tracking-wider text-primary-foreground">
-                          {isRtl ? 'استكشف' : 'Explore'}
+                      <div className="opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 delay-200 inline-block mt-2">
+                        <span className="inline-block border-b-2 border-[#fbc70f] pb-1 text-xs font-bold uppercase tracking-widest text-[#fbc70f]">
+                          {isRtl ? 'استكشف المجموعة' : 'Explore Collection'}
                         </span>
                       </div>
                     </div>
@@ -182,8 +180,9 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
         })}
       </div>
 
+      {/* Pagination Dots */}
       {showDots && categories.length > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-2 pb-4">
+        <div className="flex justify-center items-center gap-2.5 mt-2 pb-2">
           {categories.map((_, idx) => (
             <button
               key={idx}
@@ -197,7 +196,10 @@ export default function CategoriesSlider({ categories, lang, settings }: Categor
                   });
                 }
               }}
-              className={`h-2 rounded-full transition-all duration-300 ${activeIndex === idx ? 'w-6 bg-primary' : 'w-2 bg-primary/30 hover:bg-primary/50'}`}
+              className={`h-2 rounded-full transition-all duration-500 ease-out ${activeIndex === idx
+                  ? 'w-8 bg-[#fbc70f] shadow-[0_0_10px_rgba(251,199,15,0.5)]'
+                  : 'w-2 bg-[#093f89]/20 dark:bg-white/20 hover:bg-[#093f89]/50 dark:hover:bg-white/40'
+                }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}

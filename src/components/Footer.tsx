@@ -23,7 +23,6 @@ import { useLanguage } from "./LanguageContext";
 export default function Footer({ settings }: { settings?: any }) {
   const footerRef = useRef<HTMLDivElement>(null);
 
-  // 1. حل مشكلة الـ Hydration Error: الاعتماد على الـ Context بدلاً من document.cookie
   const { lang } = useLanguage();
   const isRtl = lang === "ar";
 
@@ -54,7 +53,7 @@ export default function Footer({ settings }: { settings?: any }) {
     { href: settings?.linkedin_url, icon: Linkedin, name: "LinkedIn" },
   ].filter((s) => Boolean(s.href));
 
-  // 2. تحسين الأداء: استخدام CSS Variables بدلاً من State لتحديث تأثير الماوس
+  // أداء عالي: استخدام متغيرات CSS لتحديث موقع الإضاءة بدون Re-renders
   useEffect(() => {
     const el = footerRef.current;
     if (!el) return;
@@ -75,53 +74,56 @@ export default function Footer({ settings }: { settings?: any }) {
   return (
     <footer
       ref={footerRef}
-      className="relative overflow-hidden bg-background text-foreground transition-colors duration-500 border-t border-border/50"
+      className="relative overflow-hidden bg-background text-foreground transition-colors duration-500 border-t border-border/40 mt-10"
     >
       {/* LIGHT FOLLOW EFFECT (CSS-Driven) */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 lg:opacity-100 transition-opacity duration-500"
         style={{
-          background: `radial-gradient(700px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(var(--primary-rgb),0.08), transparent 45%)`,
+          background: `radial-gradient(700px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(9, 63, 137, 0.06), transparent 45%)`,
         }}
       />
 
-      {/* BACKGROUND AMBIENT LAYERS */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-25%] start-[-10%] w-[800px] h-[800px] bg-primary/5 blur-[160px] rounded-full" />
-        <div className="absolute bottom-[-35%] end-[-10%] w-[900px] h-[900px] bg-cyan-500/10 blur-[200px] rounded-full" />
-        <div className="absolute inset-0 opacity-[0.03] bg-[url('/noise.png')]" />
+      {/* BACKGROUND AMBIENT LAYERS - دمج ألوان الهوية */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-25%] start-[-10%] w-[800px] h-[800px] bg-[#093f89]/5 dark:bg-[#093f89]/10 blur-[150px] rounded-full" />
+        <div className="absolute bottom-[-35%] end-[-10%] w-[900px] h-[900px] bg-[#fbc70f]/5 dark:bg-[#fbc70f]/5 blur-[200px] rounded-full" />
+        <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.01] bg-[url('/noise.png')]" />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-12 py-24 md:py-36">
-        {/* CARD CONTAINER */}
-        <div className="relative rounded-[32px] md:rounded-[44px] border border-border bg-card/60 backdrop-blur-3xl shadow-xl p-8 sm:p-12 md:p-20 overflow-hidden">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-12 py-20 md:py-28">
+
+        {/* LUXURY GLASSMORPHISM CARD */}
+        <div className="relative rounded-[32px] md:rounded-[48px] border border-border/60 bg-card/60 backdrop-blur-3xl shadow-[0_8px_40px_rgba(0,0,0,0.04)] p-8 sm:p-12 md:p-20 overflow-hidden">
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-20 relative z-10">
+
             {/* BRANDING AREA */}
             <div className="md:col-span-2">
               <div className="flex flex-col items-start gap-4 mb-6">
                 <Link href="/" className="flex flex-col items-start gap-3 tracking-[0.15em] group">
-                  {logoUrl && (
+                  {logoUrl ? (
                     <img
                       src={logoUrl}
                       alt={siteName}
                       width={200}
                       height={80}
-                      className="h-16 md:h-20 w-auto object-contain transition-transform group-hover:scale-105 duration-500"
+                      className="h-16 md:h-20 w-auto object-contain transition-transform group-hover:scale-105 duration-500 dark:brightness-0 dark:invert"
                     />
+                  ) : (
+                    <h2 className="text-2xl md:text-3xl font-bold font-serif mt-1 leading-tight text-[#093f89] dark:text-[#fbc70f]">
+                      {siteName}
+                    </h2>
                   )}
-                  <h2 className="text-lg md:text-xl tracking-[0.2em] font-light font-serif mt-1 leading-tight text-foreground/90">
-                    {siteName}
-                  </h2>
                 </Link>
               </div>
 
               <div
-                className="text-sm text-muted-foreground max-w-md leading-relaxed"
+                className="text-sm text-muted-foreground max-w-md leading-relaxed font-light"
                 dangerouslySetInnerHTML={{ __html: decodeHTML(desc) }}
               />
 
-              {/* SOCIAL ICONS */}
+              {/* SOCIAL ICONS - تأثيرات فخمة باللون الكحلي والذهبي */}
               <div className="flex gap-3 mt-10 flex-wrap">
                 {socialLinks.map((s, i) => (
                   <a
@@ -130,9 +132,9 @@ export default function Footer({ settings }: { settings?: any }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={s.name}
-                    className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-muted/50 border border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                    className="w-11 h-11 flex items-center justify-center rounded-2xl bg-muted/50 border border-border/60 text-muted-foreground hover:bg-[#093f89] hover:text-[#fbc70f] hover:border-[#093f89] dark:hover:bg-[#fbc70f] dark:hover:text-[#093f89] dark:hover:border-[#fbc70f] hover:shadow-[0_8px_20px_rgba(9,63,137,0.2)] hover:-translate-y-1 transition-all duration-300"
                   >
-                    <s.icon className="w-4 h-4 md:w-5 md:h-5" />
+                    <s.icon className="w-5 h-5" />
                   </a>
                 ))}
               </div>
@@ -140,35 +142,52 @@ export default function Footer({ settings }: { settings?: any }) {
 
             {/* QUICK LINKS */}
             <div>
-              <h4 className="text-[10px] sm:text-xs font-bold tracking-[0.3em] text-foreground uppercase mb-6 flex items-center gap-2">
-                <span className="w-6 h-[2px] bg-primary rounded-full"></span>
+              <h4 className="text-xs font-bold tracking-[0.2em] text-foreground uppercase mb-6 flex items-center gap-3">
+                <span className="w-6 h-[3px] bg-[#fbc70f] rounded-full"></span>
                 {t('quick_links', lang)}
               </h4>
-              <ul className="space-y-4 text-sm text-muted-foreground">
-                <li><Link href="/shop" className="hover:text-primary hover:translate-s-1 transition-all inline-block">{t('shop_collection', lang)}</Link></li>
-                <li><Link href="/collections" className="hover:text-primary hover:translate-s-1 transition-all inline-block">{t('categories', lang)}</Link></li>
-                <li><Link href="/about" className="hover:text-primary hover:translate-s-1 transition-all inline-block">{t('about', lang)}</Link></li>
-                <li><Link href="/faq" className="hover:text-primary hover:translate-s-1 transition-all inline-block">{t('faq', lang)}</Link></li>
+              <ul className="space-y-4 text-sm font-medium text-muted-foreground">
+                <li>
+                  <Link href="/shop" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
+                    {t('shop_collection', lang)}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/collections" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
+                    {t('categories', lang)}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
+                    {t('about', lang)}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faq" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
+                    {t('faq', lang)}
+                  </Link>
+                </li>
               </ul>
             </div>
 
             {/* CONTACT INFO */}
             <div>
-              <h4 className="text-[10px] sm:text-xs font-bold tracking-[0.3em] text-foreground uppercase mb-6 flex items-center gap-2">
-                <span className="w-6 h-[2px] bg-primary rounded-full"></span>
+              <h4 className="text-xs font-bold tracking-[0.2em] text-foreground uppercase mb-6 flex items-center gap-3">
+                <span className="w-6 h-[3px] bg-[#fbc70f] rounded-full"></span>
                 {t('contact', lang)}
               </h4>
-              <div className="space-y-5 text-sm text-muted-foreground">
+              <div className="space-y-6 text-sm text-muted-foreground">
+
                 {settings?.support_email && (
-                  <div className="flex items-start gap-3 group">
-                    <div className="mt-0.5 p-2 rounded-full bg-muted border border-border group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground transition-colors">
-                      <Mail className="w-3.5 h-3.5" />
+                  <div className="flex items-start gap-4 group">
+                    <div className="mt-0.5 p-2.5 rounded-2xl bg-[#093f89]/5 dark:bg-[#fbc70f]/10 text-[#093f89] dark:text-[#fbc70f] group-hover:bg-[#093f89] group-hover:text-[#fbc70f] dark:group-hover:bg-[#fbc70f] dark:group-hover:text-[#093f89] transition-colors duration-300 shadow-sm">
+                      <Mail className="w-4 h-4" />
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-0.5">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-0.5 font-bold">
                         {t('email', lang)}
-                      </p>
-                      <a href={`mailto:${settings.support_email}`} className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+                      </span>
+                      <a href={`mailto:${settings.support_email}`} className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
                         {settings.support_email}
                       </a>
                     </div>
@@ -176,54 +195,59 @@ export default function Footer({ settings }: { settings?: any }) {
                 )}
 
                 {settings?.contact_phone && (
-                  <div className="flex items-start gap-3 group">
-                    <div className="mt-0.5 p-2 rounded-full bg-muted border border-border group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground transition-colors">
-                      <Phone className="w-3.5 h-3.5" />
+                  <div className="flex items-start gap-4 group">
+                    <div className="mt-0.5 p-2.5 rounded-2xl bg-[#093f89]/5 dark:bg-[#fbc70f]/10 text-[#093f89] dark:text-[#fbc70f] group-hover:bg-[#093f89] group-hover:text-[#fbc70f] dark:group-hover:bg-[#fbc70f] dark:group-hover:text-[#093f89] transition-colors duration-300 shadow-sm">
+                      <Phone className="w-4 h-4" />
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-0.5">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-0.5 font-bold">
                         {t('phone', lang)}
-                      </p>
-                      <a dir="ltr" href={`tel:${settings.contact_phone.replace(/\D/g, "")}`} className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+                      </span>
+                      <a dir="ltr" href={`tel:${settings.contact_phone.replace(/\D/g, "")}`} className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
                         {settings.contact_phone}
                       </a>
                     </div>
                   </div>
                 )}
 
-                {/* 3. إصلاح ألوان الوضع الداكن في خريطة الموقع */}
+                {/* خريطة الموقع بتأثير الزجاج */}
                 <a
                   href="https://maps.app.goo.gl/Kh4V7FyiMAP8dUSr9"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 hover:bg-muted border border-transparent hover:border-border transition-all w-fit group"
+                  className="flex items-center gap-4 p-3.5 rounded-2xl bg-muted/40 hover:bg-[#093f89]/5 dark:hover:bg-[#fbc70f]/5 border border-border/40 hover:border-[#093f89]/20 dark:hover:border-[#fbc70f]/20 transition-all duration-300 group shadow-sm"
                 >
-                  <div className="flex-shrink-0 p-2 rounded-full bg-background border border-border shadow-sm group-hover:text-primary transition-colors">
+                  <div className="flex-shrink-0 p-2 rounded-xl bg-background border border-border/60 shadow-sm text-[#093f89] dark:text-[#fbc70f] group-hover:scale-110 transition-transform duration-300">
                     <MapPin className="w-4 h-4" />
                   </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-0.5">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-0.5 font-bold">
                       {t('address', lang)}
-                    </p>
-                    <p className="text-sm font-medium text-foreground">
+                    </span>
+                    <span className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
                       {t('location', lang)}
-                    </p>
+                    </span>
                   </div>
                 </a>
               </div>
             </div>
+
           </div>
         </div>
 
         {/* BOTTOM SECTION */}
-        <div className="mt-12 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground border-t border-border/50 gap-4">
-          <p className="text-center md:text-start">
-            © {new Date().getFullYear()} {siteName}. {lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}
+        <div className="mt-12 pt-8 flex flex-col md:flex-row items-center justify-between text-sm text-muted-foreground border-t border-border/40 gap-4">
+          <p className="text-center md:text-start font-medium">
+            © {new Date().getFullYear()} <span className="text-foreground font-bold">{siteName}</span>. {lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}
           </p>
 
-          <div className="flex items-center gap-6">
-            <Link className="hover:text-foreground transition-colors font-medium" href="/privacy">{t('privacy', lang)}</Link>
-            <Link className="hover:text-foreground transition-colors font-medium" href="/terms">{t('termst', lang)}</Link>
+          <div className="flex items-center gap-8 font-semibold">
+            <Link className="hover:text-[#093f89] dark:hover:text-[#fbc70f] transition-colors duration-300" href="/privacy">
+              {t('privacy', lang)}
+            </Link>
+            <Link className="hover:text-[#093f89] dark:hover:text-[#fbc70f] transition-colors duration-300" href="/terms">
+              {t('termst', lang)}
+            </Link>
           </div>
         </div>
       </div>
