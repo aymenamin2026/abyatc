@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ChevronDown, SlidersHorizontal, Check, X, ArrowDownWideNarrow } from "lucide-react";
 
 import { t } from "@/lib/translations";
@@ -34,7 +34,7 @@ const colorClassMap: Record<string, string> = {
 };
 
 // المتغيرات الخاصة بالأنيميشن (Framer Motion Variants)
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -42,9 +42,17 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring" as const, // إضافة "as const" هنا يحل المشكلة
+      stiffness: 300,
+      damping: 24
+    }
+  }
 };
 
 export default function ShopClient({
