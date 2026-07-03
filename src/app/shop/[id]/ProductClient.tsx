@@ -61,11 +61,37 @@ export default function ProductClient({
   const rawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || settings?.contact_phone || "";
   const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000";
 
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
-  const productName = product.name?.[lang] || product.name?.en || product.name || "";
-  const messageText = `مرحباً، أود الاستفسار عن منتج: ${productName}\nرابط المنتج: ${currentUrl}`;
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+  // --- تجهيز رابط الواتساب الديناميكي المحدث شامل الخيارات المختارة ---
+  const getDynamicWhatsappUrl = () => {
+    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const productName = product.name?.[lang] || product.name?.en || product.name || "";
 
+    // تجميع الخيارات التي حددها المستخدم حالياً
+    const selectedOptionsText = productAttributes
+      .map((attr: any) => {
+        const key = (attr.slug || `attr_${attr.id}`).toLowerCase();
+
+        const attrName = attr.name?.[lang] || attr.name?.en || attr.name;
+
+        // جلب القيمة الإنجليزية المختارة والبحث عن ترجمتها المحلية
+        const selectedValueEn = selectedAttributes[key];
+        const fullValueObj = attr.values.find((v: any) => (v.value?.en || v.value) === selectedValueEn);
+        const value = fullValueObj
+          ? (fullValueObj.value?.[lang] || fullValueObj.value?.en || fullValueObj.value)
+          : selectedValueEn;
+
+        return value ? `${attrName}: ${value}` : null;
+      })
+      .filter(Boolean) // إزالة السمات التي لم يتم اختيارها بعد
+      .join(" - ");
+
+    // صياغة نص الرسالة بناءً على وجود مواصفات مختارة أو لا
+    const attributesPart = selectedOptionsText ? `\nالمواصفات المطلوبة: (${selectedOptionsText})` : "";
+
+    const messageText = `مرحباً، أود الاستفسار عن منتج: ${productName}${attributesPart}\nرابط المنتج: ${currentUrl}`;
+
+    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+  };
   const name = product.name?.[lang] || product.name?.en || product.name || "Product Name";
   const desc = product.description?.[lang] || product.description?.en || product.description || "No description available.";
   const catName = product.categories?.[0]?.name?.[lang] || product.categories?.[0]?.name?.en || product.categories?.[0]?.name || "Uncategorized";
@@ -577,9 +603,10 @@ export default function ProductClient({
             </div>
 
             {/* زر الواتساب الديناميكي المنسق لصفحة التفاصيل */}
+            {/* زر الواتساب الديناميكي المنسق لصفحة التفاصيل */}
             <div className="mb-8">
               <a
-                href={whatsappUrl}
+                href={getDynamicWhatsappUrl()} // 👈 قمنا بتعديل هذا السطر ليستدعي الدالة الديناميكية
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg rounded-full shadow-lg transition-all transform hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 text-center"
