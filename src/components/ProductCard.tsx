@@ -76,7 +76,7 @@ export default function ProductCard({
     setShowQuickView(true);
   };
 
-  // إعداد رابط الواتساب
+  // --- تجهيز رابط الواتساب ---
   const rawNumber =
     settings?.whatsapp ||
     settings?.whatsapp_phone ||
@@ -84,8 +84,16 @@ export default function ProductCard({
     settings?.phone ||
     settings?.contact_phone ||
     "";
-  const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, "") : "966500000000";
 
+  const whatsappNumber = rawNumber
+    ? rawNumber.replace(/\D/g, "")
+    : "966500000000";
+
+  const siteUrl =
+    typeof window !== "undefined" ? window.location.origin : "https://abyatc.vercel.app";
+  const productUrl = `${siteUrl}/shop/${product.slug || product.id}`;
+
+  // تكييف نص الرسالة بناءً على ما إذا كان السعر معروضاً أو مخفياً لطلب تسعيرة
   const messageText = shouldShowPrice
     ? `مرحباً، أود الاستفسار عن منتج: ${name}\nرابط المنتج: ${productUrl}`
     : `مرحباً، أود طلب تسعيرة للمنتج: ${name}\nالسعر غير معروض بالمتجر.\nرابط المنتج: ${productUrl}`;
@@ -97,23 +105,22 @@ export default function ProductCard({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.5) }} // حد أقصى للتأخير لرفع الأداء
+        transition={{ duration: 0.5, delay: index * 0.08 }}
         className="group flex flex-col w-full h-full"
       >
-        {/* IMAGE CONTAINER */}
+        {/* IMAGE CONTAINER WITH PREMIUM GLASS EFFECT */}
         <div className="relative aspect-[3/4] bg-muted/20 rounded-[24px] sm:rounded-[28px] overflow-hidden mb-4 sm:mb-5 border border-border/40 group-hover:border-primary/30 group-hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.08)] transition-all duration-500 z-10">
           <Link
             href={`/shop/${product.slug}`}
             className="block relative w-full h-full overflow-hidden"
-            prefetch={false} // تقليل الضغط على السيرفر في القوائم الطويلة
           >
             <Image
               src={image}
               alt={name}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              priority={index < 4} // تحميل أول 4 صور فوراً
+              priority={index < 3}
             />
           </Link>
 
@@ -122,8 +129,8 @@ export default function ProductCard({
             onClick={handleWishlistToggle}
             disabled={isTogglingThis}
             className={`absolute top-3 end-3 sm:top-4 sm:end-4 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md shadow-sm ${isFav
-                ? "bg-red-500/90 text-white border-red-500 hover:bg-red-600"
-                : "bg-background/60 text-foreground/70 border-border/40 hover:bg-background hover:text-red-500"
+              ? "bg-red-500/90 text-white border-red-500 hover:bg-red-600"
+              : "bg-background/60 text-foreground/70 border-border/40 hover:bg-background hover:text-red-500"
               } ${isTogglingThis ? "scale-90 opacity-70 cursor-wait" : "hover:scale-110 active:scale-95"}`}
             title={isFav ? t("remove_from_wishlist", lang) : t("add_to_wishlist", lang)}
             aria-label="Toggle Wishlist"
