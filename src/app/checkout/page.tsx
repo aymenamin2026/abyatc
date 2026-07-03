@@ -187,10 +187,14 @@ export default function Checkout() {
   }, [searchParams, token, lang, router]);
 
   // If user is already logged in, skip options
+  // ابحث عن هذا الـ useEffect في ملف Checkout وقارنه بالتعديل التالي:
   useEffect(() => {
-    if (user) {
+    const localToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+
+    if (user || localToken) {
+      // إذا وجد مستخدم أو وجد توكن محلي، يتم تحويل الوضع تلقائياً ليخفي خيارات التسجيل
       setAuthMode("guest");
-      if ((user as any).phone) setTabbyPhone((user as any).phone);
+      if (user && (user as any).phone) setTabbyPhone((user as any).phone);
     }
   }, [user]);
 
