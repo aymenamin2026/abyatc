@@ -633,30 +633,48 @@ export default function Checkout() {
   let taxes = 0;
   let total = 0;
   //  تجهيز دالة استخراج رابط الواتساب ديناميكياً عند الضغط للتأكد من جلب رقم لوحة التحكم
+  //  تجهيز دالة استخراج رابط الواتساب بشكل ديناميكي ومنسق بالترقيم والأسطر
   const getCheckoutWhatsappUrl = () => {
     const currentRawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || "";
     const currentWhatsappNumber = currentRawNumber ? currentRawNumber.replace(/\D/g, '') : "966500000000";
 
-    const cartSummaryText = cartItems.map((item) => {
+    // بناء نص ملخص الطلبات بشكل مرقم ومنظم جداً
+    const cartSummaryText = cartItems.map((item, index) => {
+      // 1. جلب اسم المنتج
       const itemName = typeof item.name === 'object' && item.name !== null
         ? (item.name[lang] || item.name.en || "Product Name")
         : (item.name || "Product Name");
 
-      const itemColor = typeof item.color === 'object' && item.color !== null
-        ? (item.color[lang] || item.color.en)
-        : item.color;
+      // 2. جلب وتجهيز الخيارات (Attributes) بشكل مصفوفة لترتيبها في أسطر جديدة
+      const details: string[] = [];
 
-      const itemSize = typeof item.size === 'object' && item.size !== null
-        ? (item.size[lang] || item.size.en)
-        : item.size;
+      if (item.color) {
+        const colorVal = typeof item.color === 'object' ? (item.color[lang] || item.color.en) : item.color;
+        if (colorVal) details.push(`▫️ ${lang === 'ar' ? 'اللون' : 'Color'}: ${colorVal}`);
+      }
 
-      const colorAndSize = (itemColor || itemSize)
-        ? ` (${[itemColor, itemSize].filter(Boolean).join(' / ')})`
-        : '';
+      if (item.size) {
+        const sizeVal = typeof item.size === 'object' ? (item.size[lang] || item.size.en) : item.size;
+        if (sizeVal) details.push(`▫️ ${lang === 'ar' ? 'المقاس' : 'Size'}: ${sizeVal}`);
+      }
 
-      return `- ${itemName}${colorAndSize} x ${item.quantity}`;
-    }).join('\n');
+      // دعم الخيارات الإضافية مثل (مدة الإيجار، فئة المعدات، إلخ) إذا كانت مدمجة في الـ item أو تأتي كـ دالة/نص
+      // هنا نقوم بفحص ما إذا كان هناك نص خيارات قادم من قاعدة البيانات ونقوم بتقسيمه لأسطر
+      const rawOptions = (item as any).options || (item as any).attributes_text || ""; if (rawOptions && typeof rawOptions === 'string') {
+        rawOptions.split(/[|,-]/).forEach(opt => {
+          const trimmed = opt.trim();
+          if (trimmed) details.push(`▫️ ${trimmed}`);
+        });
+      }
 
+      // تجميع تفاصيل المنتج الحالي: الاسم في سطر والخيارات تحته مباشرة بشكل مزاح
+      const itemHeader = `${index + 1}. 📦 *${itemName}* [ ${lang === 'ar' ? 'الكمية' : 'Qty'}: ${item.quantity} ]`;
+      const itemDetails = details.length > 0 ? `\n${details.join('\n')}` : '';
+
+      return `${itemHeader}${itemDetails}`;
+    }).join('\n\n'); // ترك سطر فارغ بين كل منتج والآخر
+
+    // صياغة نص الرسالة النهائي
     const currentMessageText = lang === 'ar'
       ? `مرحباً، أود الاستفسار عن سعر وتفاصيل المنتجات التالية:\n\n${cartSummaryText}`
       : `Hello, I would like to inquire about the price and details for the following products:\n\n${cartSummaryText}`;
