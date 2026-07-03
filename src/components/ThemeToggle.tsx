@@ -5,7 +5,8 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const { theme, setTheme } = useTheme();
+  // 🛠️ استدعاء resolvedTheme بدلاً من theme فقط
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -20,16 +21,20 @@ export function ThemeToggle({ className }: { className?: string }) {
     );
   }
 
+  // معرفة هل الوضع الحالي الحقيقي مظلم أم لا
+  const isDark = resolvedTheme === "dark";
+
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      // 🛠️ التبديل بناءً على الوضع الحقيقي المعروض على الشاشة
+      onClick={() => setTheme(isDark ? "light" : "dark")}
       className={`p-2 rounded-full transition-colors relative ${className || "text-foreground hover:bg-muted"}`}
       aria-label="Toggle theme"
     >
-      {theme === "dark" ? (
-        <Sun className="h-5 w-5" />
+      {isDark ? (
+        <Sun className="h-5 w-5 text-[#fbc70f]" />
       ) : (
-        <Moon className="h-5 w-5" />
+        <Moon className="h-5 w-5 text-[#093f89]" />
       )}
     </button>
   );
