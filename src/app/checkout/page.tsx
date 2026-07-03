@@ -16,6 +16,7 @@ import { Combobox } from '@headlessui/react';
 import { Check, Truck } from 'lucide-react';
 import { fetchShippingRates } from "@/lib/api";
 import { useSearchParams, useRouter } from "next/navigation";
+import { FcGoogle } from 'react-icons/fc';
 
 const cartItems = [
   {
@@ -787,14 +788,14 @@ export default function Checkout() {
                       {/* زر جوجل الاحترافي */}
                       <a
                         href="https://api.abyatc.com/api/auth/google"
-                        className="group w-full flex items-center justify-center gap-3 border border-border/70 bg-background hover:bg-muted/40 py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.99] shadow-sm text-sm text-foreground"
+                        className="mt-4 group w-full flex items-center justify-center gap-3 border border-gray-200 bg-white hover:bg-gray-50 py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow-md text-sm text-gray-700 dir-rtl"
                       >
-                        <img
-                          src="/google-icon.svg"
-                          alt="Google"
-                          className="w-5 h-5 transition-transform duration-200 group-hover:scale-110"
-                        />
-                        <span>{lang === 'ar' ? 'تسجيل الدخول بواسطة جوجل' : 'Sign in with Google'}</span>
+                        {/* أيقونة جوجل الرسمية كـ SVG مدمج يظهر فوراً بدون استدعاء روابط خارجية */}
+                        <FcGoogle className="w-5 h-5 transition-transform duration-200 group-hover:scale-105 shrink-0" />
+
+                        <span className="font-semibold text-gray-800">
+                          {lang === 'ar' ? 'تسجيل الدخول بواسطة جوجل' : 'Sign in with Google'}
+                        </span>
                       </a>
 
                       {/* زر الواتساب العصري */}

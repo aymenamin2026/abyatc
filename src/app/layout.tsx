@@ -97,11 +97,10 @@ export default async function RootLayout({
   const lang = (localeCookie?.value === "en" ? "en" : "ar");
   const dir = lang === "ar" ? "rtl" : "ltr";
 
-  // حقن الألوان الجديدة لتكون متاحة في جميع أنحاء التطبيق كمتغيرات CSS
   const themeStyles = {
     '--royal-blue': '#093f89',
     '--golden-yellow': '#fbc70f',
-    '--primary': settings?.primary_color || '#093f89', // جعل الأزرق الملكي هو الأساسي
+    '--primary': settings?.primary_color || '#093f89',
     '--btn-bg': settings?.button_bg_color || '#093f89',
     '--btn-text': settings?.button_text_color || "#ffffff",
     ...(settings?.text_color && { '--foreground': settings.text_color }),
@@ -109,7 +108,8 @@ export default async function RootLayout({
   } as React.CSSProperties;
 
   return (
-    <html lang={lang} dir={dir} suppressHydrationWarning>
+    // إضافة scroll-smooth لتجربة تنقل ناعمة بين أقسام الصفحة
+    <html lang={lang} dir={dir} className="scroll-smooth" suppressHydrationWarning>
       <head>
         <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js" strategy="beforeInteractive" />
         <Script id="google-tag-manager" strategy="afterInteractive">
@@ -122,12 +122,8 @@ export default async function RootLayout({
           `}
         </Script>
       </head>
-      {/* 
-        تطبيق نعومة الخطوط (antialiased)، 
-        ولون التحديد (selection) مدمج مع الذهبي الملكي 
-      */}
       <body
-        className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-[#fbc70f]/30 selection:text-[#093f89] dark:selection:text-[#fbc70f]`}
+        className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-[#fbc70f]/30 selection:text-[#093f89] dark:selection:text-[#fbc70f] dark:selection:bg-[#093f89]/50`}
         style={themeStyles}
       >
         <noscript>
@@ -140,9 +136,9 @@ export default async function RootLayout({
               <CartProvider>
                 <WishlistProvider>
                   <Navbar settings={settings} />
-                  <main className="flex-1 w-full flex flex-col relative z-0">
-                    {/* طبقة إضاءة خلفية ناعمة جداً للموقع بالكامل تعطي عمقاً فخماً */}
-                    <div className="absolute inset-0 z-[-1] pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#093f89]/5 via-background to-background dark:from-[#093f89]/10 dark:via-background dark:to-background"></div>
+                  <main className="flex-1 w-full flex flex-col relative z-0 overflow-x-hidden">
+                    {/* طبقة إضاءة خلفية ناعمة لتعزيز الفخامة في الوضعين الداكن والفاتح */}
+                    <div className="absolute inset-0 z-[-1] pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#093f89]/10 via-background to-background dark:from-[#093f89]/15 dark:via-background dark:to-background"></div>
                     {children}
                   </main>
                   <Footer settings={settings} />

@@ -19,10 +19,8 @@ export default function AuthCallback() {
         if (token) {
             isProcessed.current = true;
 
-            // 1. حفظ التوكن أولاً في الـ LocalStorage ليتم اعتماده في الطلبات
             localStorage.setItem('auth_token', token);
 
-            // 2. جلب بيانات العميل الحقيقية من الباك إند باستخدام التوكن
             const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.abyatc.com/api';
 
             fetch(`${API_URL}/user`, {
@@ -39,17 +37,21 @@ export default function AuthCallback() {
                     return res.json();
                 })
                 .then((customerData) => {
-                    // 3. تفعيل تسجيل الدخول بالبيانات القادمة مباشرة من الباك إند
                     if (typeof login === 'function') {
                         login(customerData, token);
                     }
 
-                    // 4. التوجيه الفوري إلى صفحة الـ checkout وهو مسجل دخول رسمياً
-                    router.push('/checkout?from=auth');
+                    // 🛠️ التعديل هنا: قراءة الصفحة التي جاء منها ومسحها من الذاكرة المؤقتة
+                    const redirectTo = sessionStorage.getItem('redirect_after_login') || '/';
+                    sessionStorage.removeItem('redirect_after_login');
+
+                    // إذا كان قادماً من صفحة تسجيل الدخول نفسها، لا نعيده إليها بل نرسله للرئيسية
+                    const finalTarget = redirectTo.includes('/login') ? '/' : redirectTo;
+
+                    router.push(finalTarget);
                 })
                 .catch((err) => {
                     console.error("خطأ أثناء جلب بيانات العميل الحقيقية:", err);
-                    // إذا فشل جلب البيانات، نقوم بمسح التوكن وإعادته لصفحة تسجيل الدخول
                     localStorage.removeItem('auth_token');
                     router.push('/login?error=fetch_user_failed');
                 });

@@ -427,6 +427,11 @@ export default function LoginPage() {
         {/* زر جوجل الاحترافي الجديد - مصلح ومضمون الظهور */}
         <a
           href="https://api.abyatc.com/api/auth/google"
+          onClick={() => {
+            // حفظ الرابط الحالي أو رابط الصفحة السابقة (Referrer)
+            const nextUrl = new URLSearchParams(window.location.search).get('next') || window.location.pathname;
+            sessionStorage.setItem('redirect_after_login', nextUrl);
+          }}
           className="mt-4 group w-full flex items-center justify-center gap-3 border border-gray-200 bg-white hover:bg-gray-50 py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow-md text-sm text-gray-700 dir-rtl"
         >
           {/* أيقونة جوجل الرسمية كـ SVG مدمج يظهر فوراً بدون استدعاء روابط خارجية */}
