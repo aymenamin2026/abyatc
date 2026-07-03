@@ -25,7 +25,7 @@ export default function AuthCallback() {
             // 2. جلب بيانات العميل الحقيقية من الباك إند باستخدام التوكن
             const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.abyatc.com/api';
 
-            fetch(`${API_URL}/user`, { // أو المسار المخصص لديك في لارافل لجلب بيانات الـ customer الحالي مثل /customer أو /me
+            fetch(`${API_URL}/user`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -39,15 +39,12 @@ export default function AuthCallback() {
                     return res.json();
                 })
                 .then((customerData) => {
-                    // 3. تفعيل تسجيل الدخول بالبيانات الحقيقية الكاملة القادمة من قاعدة البيانات
-                    // اعتماداً على هيكلة الـ API لديك، قد تكون البيانات داخل كائن مثل customerData.customer أو customerData مباشرة
-                    const actualCustomer = customerData.customer || customerData;
-
+                    // 3. تفعيل تسجيل الدخول بالبيانات القادمة مباشرة من الباك إند
                     if (typeof login === 'function') {
-                        login(actualCustomer, token);
+                        login(customerData, token);
                     }
 
-                    // 4. التوجيه الفوري إلى صفحة الـ checkout وهو مسجل دخول رسمياً في كل الموقع
+                    // 4. التوجيه الفوري إلى صفحة الـ checkout وهو مسجل دخول رسمياً
                     router.push('/checkout?from=auth');
                 })
                 .catch((err) => {
