@@ -419,11 +419,11 @@ export default function ProductClient({
                 {isAddedToCart ? (
                   <>
                     <Check className="w-6 h-6 animate-in zoom-in" />
-                    {t('add_to_cart', lang) === 'Add to Cart' ? 'Added Successfully' : 'تمت الإضافة بنجاح'}
+                    {t('add_to_cart', lang) === 'Add to Quote Request' ? 'Added Successfully' : 'تمت الإضافة بنجاح'}
                   </>
                 ) : (
                   <>
-                    <Image src="/cart-icon.svg" alt="cart" width={24} height={24} className="invert brightness-0" />
+
                     {t('add_to_cart', lang)}
                   </>
                 )}
@@ -451,10 +451,10 @@ export default function ProductClient({
 
             {/* Guarantees Section (أضيف لتعزيز ثقة العميل) */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-6 border-t border-border/60">
-              <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-secondary/20">
+              {/* <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-secondary/20">
                 <ShieldCheck className="w-8 h-8 text-primary mb-2" />
                 <span className="text-sm font-medium text-foreground">{lang === 'ar' ? 'دفع آمن 100%' : 'Secure Checkout'}</span>
-              </div>
+              </div> */}
               <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-secondary/20">
                 <Truck className="w-8 h-8 text-primary mb-2" />
                 <span className="text-sm font-medium text-foreground">{lang === 'ar' ? 'شحن سريع وموثوق' : 'Fast Shipping'}</span>
