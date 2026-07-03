@@ -182,7 +182,7 @@ export default function Navbar({ settings, transparent: initialTransparent = fal
                   <img
                     src={logoUrl}
                     alt={siteName}
-                    className="h-12 sm:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-105 p-1 dark:brightness-0 dark:invert"
+                    className="h-12 sm:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-105 p-1"
                   />
                 ) : (
                   <span className="group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">{siteName}</span>
