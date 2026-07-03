@@ -632,33 +632,37 @@ export default function Checkout() {
 
   let taxes = 0;
   let total = 0;
-  // 1. استخراج وتنظيف رقم الواتساب من الإعدادات
-  const rawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || "";
-  const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000";
+  //  تجهيز دالة استخراج رابط الواتساب ديناميكياً عند الضغط للتأكد من جلب رقم لوحة التحكم
+  const getCheckoutWhatsappUrl = () => {
+    const currentRawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || "";
+    const currentWhatsappNumber = currentRawNumber ? currentRawNumber.replace(/\D/g, '') : "966500000000";
 
-  // 2. بناء نص ملخص الطلبات بشكل مرتب للواتساب
-  const cartSummaryText = cartItems.map((item) => {
-    const itemName = typeof item.name === 'object' && item.name !== null
-      ? (item.name[lang] || item.name.en || "Product Name")
-      : (item.name || "Product Name");
+    const cartSummaryText = cartItems.map((item) => {
+      const itemName = typeof item.name === 'object' && item.name !== null
+        ? (item.name[lang] || item.name.en || "Product Name")
+        : (item.name || "Product Name");
 
-    const itemColor = typeof item.color === 'object' && item.color !== null
-      ? (item.color[lang] || item.color.en)
-      : item.color;
+      const itemColor = typeof item.color === 'object' && item.color !== null
+        ? (item.color[lang] || item.color.en)
+        : item.color;
 
-    const itemSize = typeof item.size === 'object' && item.size !== null
-      ? (item.size[lang] || item.size.en)
-      : item.size;
+      const itemSize = typeof item.size === 'object' && item.size !== null
+        ? (item.size[lang] || item.size.en)
+        : item.size;
 
-    return `- ${itemName} (${itemColor} / ${itemSize}) x ${item.quantity}`;
-  }).join('\n');
+      const colorAndSize = (itemColor || itemSize)
+        ? ` (${[itemColor, itemSize].filter(Boolean).join(' / ')})`
+        : '';
 
-  const messageText = lang === 'ar'
-    ? `مرحباً، أود الاستفسار عن سعر وتفاصيل المنتجات التالية:\n\n${cartSummaryText}`
-    : `Hello, I would like to inquire about the price and details for the following products:\n\n${cartSummaryText}`;
+      return `- ${itemName}${colorAndSize} x ${item.quantity}`;
+    }).join('\n');
 
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+    const currentMessageText = lang === 'ar'
+      ? `مرحباً، أود الاستفسار عن سعر وتفاصيل المنتجات التالية:\n\n${cartSummaryText}`
+      : `Hello, I would like to inquire about the price and details for the following products:\n\n${cartSummaryText}`;
 
+    return `https://wa.me/${currentWhatsappNumber}?text=${encodeURIComponent(currentMessageText)}`;
+  };
   if (pricesIncludeTax) {
     // Inclusive Tax: Subtotal remains unchanged, Total is (subtotal - discount) + shipping.
     taxes = (subtotal - discount) - ((subtotal - discount) / (1 + (taxRate / 100)));
@@ -745,7 +749,7 @@ export default function Checkout() {
                       {t('create_account', lang)}
                     </button>
                     <a
-                      href={whatsappUrl}
+                      href={getCheckoutWhatsappUrl()}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full flex items-center justify-center gap-2 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white py-4 rounded-xl font-medium transition-colors text-center text-base shadow-sm"
