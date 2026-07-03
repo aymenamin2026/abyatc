@@ -205,6 +205,17 @@ export default function LoginPage() {
             >
               {t('create_account', lang)}
             </button>
+            <a
+              href="https://api.abyatc.com/api/auth/google"
+              className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium rounded-lg text-muted-foreground hover:text-foreground transition-all hover:bg-background/50 active:scale-[0.98]"
+            >
+              <img
+                src="/google-icon.svg"
+                alt="Google"
+                className="w-4 h-4"
+              />
+              <span>{lang === 'ar' ? 'جوجل' : 'Google'}</span>
+            </a>
           </div>
         ) : (
           <div className="mb-6 text-center">

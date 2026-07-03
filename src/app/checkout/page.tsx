@@ -756,45 +756,72 @@ export default function Checkout() {
                   <h2 className="font-serif text-2xl font-bold text-foreground text-center mb-2">{t('welcome', lang)}</h2>
                   <p className="text-muted-foreground text-center mb-8">{t('checkout_how', lang)}</p>
 
-                  <div className="flex flex-col gap-4">
-                    <button onClick={() => setAuthMode('login')} className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-white py-4 rounded-xl font-medium transition-colors">
-                      {t('login', lang)}
-                    </button>
-                    <button onClick={() => setAuthMode('register')} className="w-full bg-primary text-white hover:bg-primary/90 py-4 rounded-xl font-medium transition-colors shadow-sm">
-                      {t('create_account', lang)}
-                    </button>
-                    <a
-                      href="https://api.abyatc.com/api/auth/google"
-                      className="flex items-center justify-center gap-2 border p-2 rounded-lg hover:bg-gray-50"
-                    >
-                      <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
-                      تسجيل الدخول باستخدام جوجل
-                    </a>
-                    <a
-                      href={getCheckoutWhatsappUrl()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full flex items-center justify-center gap-2 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white py-4 rounded-xl font-medium transition-colors text-center text-base shadow-sm"
-                    >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12.21 2c-5.464 0-9.91 4.39-9.91 9.782 0 1.723.454 3.407 1.316 4.898L2 22l5.485-1.422a9.96 9.96 0 004.723 1.185c5.464 0 9.91-4.39 9.91-9.781C22.12 6.39 17.674 2 12.21 2zm5.727 13.914c-.244.68-1.22 1.332-1.83 1.4-.61.07-1.373.13-3.832-.86-2.46-.99-4.04-3.46-4.162-3.62-.122-.17-1.012-1.33-1.012-2.53 0-1.2.634-1.8.854-2.03.22-.24.488-.3.653-.3.164 0 .33.01.47.01.147 0 .348-.06.543.4.195.47.67 1.61.73 1.73.061.12.1.26.02.42-.08.17-.183.28-.317.43-.134.15-.28.34-.4.48-.135.15-.275.31-.116.58.16.27.707 1.15 1.513 1.86.1.09.81.72 1.636 1.05.25.1.445.08.61-.09.214-.22.915-1.05 1.16-1.41.244-.36.488-.3.824-.18.335.12 2.122.99 2.488 1.17.366.18.61.27.695.41.085.15.085.86-.159 1.54z" />
-                      </svg>
-                      <span>{lang === 'ar' ? 'راسلنا لمعرفة السعر' : 'Inquire for price'}</span>
-                    </a>
-                    <div className="relative py-4">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-border"></span>
-                      </div>
-                      {/* <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-4 text-muted-foreground">{t('or', lang)}</span>
-                      </div> */}
+                  <div className="flex flex-col gap-5 max-w-md mx-auto w-full">
+                    {/* أزرار المصادقة الأساسية */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={() => setAuthMode('login')}
+                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/95 font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow text-center text-sm"
+                      >
+                        {t('login', lang)}
+                      </button>
+                      <button
+                        onClick={() => setAuthMode('register')}
+                        className="flex-1 border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 active:scale-[0.98] text-center text-sm"
+                      >
+                        {t('create_account', lang)}
+                      </button>
                     </div>
 
-                    {/* <button onClick={() => setAuthMode('guest')} className="w-full text-muted-foreground hover:text-foreground underline underline-offset-4 py-2 font-medium transition-colors">
-                      {t('checkout_as_guest', lang)}
-                    </button> */}
-                    {/* زر المراسلة عبر الواتساب الجديد */}
+                    {/* فاصل خطي أنيق يحمل كلمة "أو" لتنظيم الخيارات البديلة */}
+                    <div className="relative flex items-center my-2">
+                      <div className="flex-grow border-t border-border/80"></div>
+                      <span className="flex-shrink mx-4 text-xs font-medium text-muted-foreground/80 uppercase tracking-wider">
+                        {lang === 'ar' ? 'أو عبر خيارات أخرى' : 'Or via other options'}
+                      </span>
+                      <div className="flex-grow border-t border-border/80"></div>
+                    </div>
 
+                    {/* خيارات تسجيل الدخول والمراسلة الخارجية */}
+                    <div className="flex flex-col gap-3">
+                      {/* زر جوجل الاحترافي */}
+                      <a
+                        href="https://api.abyatc.com/api/auth/google"
+                        className="group w-full flex items-center justify-center gap-3 border border-border/70 bg-background hover:bg-muted/40 py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.99] shadow-sm text-sm text-foreground"
+                      >
+                        <img
+                          src="/google-icon.svg"
+                          alt="Google"
+                          className="w-5 h-5 transition-transform duration-200 group-hover:scale-110"
+                        />
+                        <span>{lang === 'ar' ? 'تسجيل الدخول بواسطة جوجل' : 'Sign in with Google'}</span>
+                      </a>
+
+                      {/* زر الواتساب العصري */}
+                      <a
+                        href={getCheckoutWhatsappUrl()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group w-full flex items-center justify-center gap-3 border border-emerald-500/20 dark:border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.99] text-center text-sm shadow-sm"
+                      >
+                        <svg
+                          className="w-5 h-5 transition-transform duration-200 group-hover:rotate-12"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12.21 2c-5.464 0-9.91 4.39-9.91 9.782 0 1.723.454 3.407 1.316 4.898L2 22l5.485-1.422a9.96 9.96 0 004.723 1.185c5.464 0 9.91-4.39 9.91-9.781C22.12 6.39 17.674 2 12.21 2zm5.727 13.914c-.244.68-1.22 1.332-1.83 1.4-.61.07-1.373.13-3.832-.86-2.46-.99-4.04-3.46-4.162-3.62-.122-.17-1.012-1.33-1.012-2.53 0-1.2.634-1.8.854-2.03.22-.24.488-.3.653-.3.164 0 .33.01.47.01.147 0 .348-.06.543.4.195.47.67 1.61.73 1.73.061.12.1.26.02.42-.08.17-.183.28-.317.43-.134.15-.28.34-.4.48-.135.15-.275.31-.116.58.16.27.707 1.15 1.513 1.86.1.09.81.72 1.636 1.05.25.1.445.08.61-.09.214-.22.915-1.05 1.16-1.41.244-.36.488-.3.824-.18.335.12 2.122.99 2.488 1.17.366.18.61.27.695.41.085.15.085.86-.159 1.54z" />
+                        </svg>
+                        <span>{lang === 'ar' ? 'راسلنا عبر واتساب لمعرفة السعر' : 'Inquire via WhatsApp for price'}</span>
+                      </a>
+                    </div>
+
+                    {/* خيار إضافي خفيف: إتمام الطلب كزائر إذا تم تفعيله لاحقاً */}
+                    {/* <button 
+    onClick={() => setAuthMode('guest')} 
+    className="mt-2 text-xs text-muted-foreground hover:text-foreground underline underline-offset-4 font-medium transition-colors text-center"
+  >
+    {t('checkout_as_guest', lang)}
+  </button> */}
                   </div>
                 </section>
               )}
