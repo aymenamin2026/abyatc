@@ -88,7 +88,7 @@ export default function ProductClient({
     // صياغة نص الرسالة بناءً على وجود مواصفات مختارة أو لا
     const attributesPart = selectedOptionsText ? `\nالمواصفات المطلوبة: (${selectedOptionsText})` : "";
 
-    const messageText = `مرحباً، أود الاستفسار عن منتج: ${productName}${attributesPart}\nرابط المنتج: ${currentUrl}`;
+    const messageText = `مرحباً، أود الاستفسار عن تسعيره المعده: ${productName}${attributesPart}\nرابط المعدة: ${currentUrl}`;
 
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
   };
@@ -230,7 +230,7 @@ export default function ProductClient({
       });
 
       if (hasVariations && missingAttribute) {
-        alert(lang === 'ar' ? 'يرجى تحديد جميع الخيارات المطلوبة للمنتج' : 'Please select all required product options');
+        alert(lang === 'ar' ? 'يرجى تحديد جميع الخيارات المطلوبة للمعده' : 'Please select all required product options');
         return;
       }
 
@@ -391,7 +391,7 @@ export default function ProductClient({
               }
               return currentSku ? (
                 <div className="text-sm text-muted-foreground mb-4">
-                  <span className="font-medium">{lang === 'ar' ? 'رمز المنتج' : 'SKU'}:</span> <span className="font-mono">{currentSku}</span>
+                  <span className="font-medium">{lang === 'ar' ? 'رمز المعدة' : 'SKU'}:</span> <span className="font-mono">{currentSku}</span>
                 </div>
               ) : null;
             })()}

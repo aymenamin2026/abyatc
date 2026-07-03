@@ -21,7 +21,6 @@ import { WishlistProvider } from "@/components/WishlistContext";
 import { fetchSettings, fetchPopups, getImageUrl } from "@/lib/api";
 import "./globals.css";
 
-// 1. تحسين أداء الخطوط باستخدام display: "swap" لمنع تأخير ظهور النص (FOIT)
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -47,10 +46,10 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: {
         default: siteName,
-        template: `%s | ${siteName}`, // أفضل ممارسات SEO لتوحيد شكل العناوين في الصفحات الفرعية
+        template: `%s | ${siteName}`,
       },
       description: desc,
-      icons: favicon ? { icon: favicon, apple: favicon } : undefined, // دعم أيقونات أجهزة Apple
+      icons: favicon ? { icon: favicon, apple: favicon } : undefined,
       keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform", "الزي الموحد الخبر", "لمعة ابيات"],
       verification: {
         google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U",
@@ -83,7 +82,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // 2. الجلب المتوازي (Parallel Data Fetching): تقليل وقت الاستجابة (TTFB) بنسبة كبيرة
   const settingsPromise = fetchSettings();
   const popupsPromise = fetchPopups();
   const cookieStorePromise = cookies();
@@ -96,13 +94,15 @@ export default async function RootLayout({
 
   const localeCookie = cookieStore.get("NEXT_LOCALE");
   const fallbackLang = settings?.default_language || "ar";
-  const lang = (localeCookie?.value === "en" ? "en" : "ar"); // تبسيط منطق التحقق
+  const lang = (localeCookie?.value === "en" ? "en" : "ar");
   const dir = lang === "ar" ? "rtl" : "ltr";
 
-  const primaryColor = settings?.primary_color || "#cda485";
+  // حقن الألوان الجديدة لتكون متاحة في جميع أنحاء التطبيق كمتغيرات CSS
   const themeStyles = {
-    '--primary': primaryColor,
-    '--btn-bg': settings?.button_bg_color || primaryColor,
+    '--royal-blue': '#093f89',
+    '--golden-yellow': '#fbc70f',
+    '--primary': settings?.primary_color || '#093f89', // جعل الأزرق الملكي هو الأساسي
+    '--btn-bg': settings?.button_bg_color || '#093f89',
     '--btn-text': settings?.button_text_color || "#ffffff",
     ...(settings?.text_color && { '--foreground': settings.text_color }),
     ...(settings?.background_color && { '--background': settings.background_color }),
@@ -111,12 +111,7 @@ export default async function RootLayout({
   return (
     <html lang={lang} dir={dir} suppressHydrationWarning>
       <head>
-        <Script
-          id="cookieyes"
-          src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js"
-          strategy="beforeInteractive"
-        />
-
+        <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js" strategy="beforeInteractive" />
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -127,18 +122,16 @@ export default async function RootLayout({
           `}
         </Script>
       </head>
-      {/* 3. تحسينات Tailwind: إضافة selection لتغيير لون تظليل النص بما يتناسب مع الهوية البصرية */}
+      {/* 
+        تطبيق نعومة الخطوط (antialiased)، 
+        ولون التحديد (selection) مدمج مع الذهبي الملكي 
+      */}
       <body
-        className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-primary/30 selection:text-foreground`}
+        className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-[#fbc70f]/30 selection:text-[#093f89] dark:selection:text-[#fbc70f]`}
         style={themeStyles}
       >
         <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-P69C8QCM"
-            height="0"
-            width="0"
-            className="hidden invisible" // 4. استبدال الـ inline styles بكلاسات Tailwind
-          ></iframe>
+          <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P69C8QCM" height="0" width="0" className="hidden invisible"></iframe>
         </noscript>
 
         <ThemeProvider attribute="class" defaultTheme={settings?.default_theme || "system"} enableSystem disableTransitionOnChange>
@@ -147,8 +140,9 @@ export default async function RootLayout({
               <CartProvider>
                 <WishlistProvider>
                   <Navbar settings={settings} />
-                  {/* 5. إزالة min-h-screen المكررة هنا، فئة flex-1 تقوم بالمهمة بامتياز داخل flex-col */}
-                  <main className="flex-1 w-full flex flex-col">
+                  <main className="flex-1 w-full flex flex-col relative z-0">
+                    {/* طبقة إضاءة خلفية ناعمة جداً للموقع بالكامل تعطي عمقاً فخماً */}
+                    <div className="absolute inset-0 z-[-1] pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#093f89]/5 via-background to-background dark:from-[#093f89]/10 dark:via-background dark:to-background"></div>
                     {children}
                   </main>
                   <Footer settings={settings} />

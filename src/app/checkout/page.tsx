@@ -674,7 +674,7 @@ export default function Checkout() {
 
     const currentMessageText = lang === 'ar'
       ? `مرحباً، أود الاستفسار عن سعر وتفاصيل المعدات التالية:\n\n${cartSummaryText}`
-      : `Hello, I would like to inquire about the price and details for the following products:\n\n${cartSummaryText}`;
+      : `Hello, I would like to inquire about the price and details for the following equipment:\n\n${cartSummaryText}`;
 
     return `https://wa.me/${currentWhatsappNumber}?text=${encodeURIComponent(currentMessageText)}`;
   };
