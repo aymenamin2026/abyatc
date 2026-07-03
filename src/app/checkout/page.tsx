@@ -764,6 +764,13 @@ export default function Checkout() {
                       {t('create_account', lang)}
                     </button>
                     <a
+                      href="https://api.abyatc.com/api/auth/google"
+                      className="flex items-center justify-center gap-2 border p-2 rounded-lg hover:bg-gray-50"
+                    >
+                      <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
+                      تسجيل الدخول باستخدام جوجل
+                    </a>
+                    <a
                       href={getCheckoutWhatsappUrl()}
                       target="_blank"
                       rel="noopener noreferrer"
