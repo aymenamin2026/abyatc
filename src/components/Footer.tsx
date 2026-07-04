@@ -34,7 +34,11 @@ export default function Footer({ settings }: { settings?: any }) {
     : settings?.site_description?.en || settings?.site_description || "";
 
   const decodeHTML = (html: string) =>
-    !html ? "" : html.replace(/</g, "<").replace(/>/g, ">").replace(/&/g, "&");
+    !html
+      ? ""
+      : html
+        .replace(/style="[^"]*"/g, "")
+        .replace(/color\s*:\s*[^;"]+;?/g, "");
 
   const socialLinks = [
     { href: settings?.tiktok_url, icon: Music, name: "TikTok" },
@@ -118,12 +122,14 @@ export default function Footer({ settings }: { settings?: any }) {
                 </Link>
               </div>
 
-              <div
-                className="text-sm max-w-md leading-relaxed font-light text-foreground
-  group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f]
-  transition-colors duration-300"
-                dangerouslySetInnerHTML={{ __html: decodeHTML(desc) }}
-              />
+              <div className="group">
+                <div
+                  className="text-sm max-w-md leading-relaxed font-light text-foreground
+    group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f]
+    transition-colors duration-300"
+                  dangerouslySetInnerHTML={{ __html: decodeHTML(desc) }}
+                />
+              </div>
               {/* SOCIAL ICONS - تأثيرات فخمة باللون الكحلي والذهبي */}
               <div className="flex gap-3 mt-10 flex-wrap">
                 {socialLinks.map((s, i) => (
