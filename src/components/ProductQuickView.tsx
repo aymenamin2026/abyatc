@@ -179,21 +179,79 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          className="relative w-full max-w-4xl bg-card/95 backdrop-blur-3xl border border-border/40 rounded-[2rem] sm:rounded-[3rem] shadow-[0_20px_60px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col md:flex-row z-20 max-h-[90vh] md:max-h-[85vh]"
+          className="
+relative
+w-full
+max-w-4xl
+bg-card/95
+backdrop-blur-3xl
+border
+border-[#093f89]/10
+dark:border-[#fbc70f]/20
+rounded-[2rem]
+sm:rounded-[3rem]
+shadow-[0_30px_90px_rgba(0,0,0,.35)]
+overflow-hidden
+flex
+flex-col
+md:flex-row
+z-20
+max-h-[90vh]
+md:max-h-[85vh]
+"
         >
+          {/* CLOSE BUTTON */}
           {/* CLOSE BUTTON */}
           <button
             onClick={onClose}
-            className="absolute top-4 end-4 sm:top-6 sm:end-6 z-30 p-2.5 bg-background/80 hover:bg-muted border border-border/50 text-foreground rounded-full backdrop-blur-md transition-all duration-300 shadow-sm hover:scale-110 active:scale-95"
+            className="
+    absolute
+    top-4
+    end-4
+    sm:top-6
+    sm:end-6
+    z-30
+    flex
+    items-center
+    justify-center
+    w-11
+    h-11
+    rounded-full
+    border
+    border-border/40
+    bg-white/90
+    dark:bg-slate-900/90
+    text-slate-700
+    dark:text-white
+    backdrop-blur-xl
+    shadow-lg
+    transition-all
+    duration-300
+    hover:bg-[#093f89]
+    hover:text-white
+    hover:rotate-90
+    hover:scale-110
+    active:scale-95
+  "
             aria-label="Close dialog"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
 
           {/* LEFT: IMAGE DISPLAY WITH BRAND GRADIENT */}
+          {/* LEFT: IMAGE DISPLAY WITH BRAND GRADIENT */}
           <div className="w-full md:w-1/2 h-64 sm:h-72 md:h-auto relative bg-background flex items-center justify-center p-6 border-b md:border-b-0 md:border-e border-border/30 overflow-hidden">
-            {/* Background Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#093f89]/5 to-transparent dark:from-[#fbc70f]/5 pointer-events-none z-0" />
+
+            {/* Luxury Background */}
+            <div className="absolute inset-0 pointer-events-none z-0">
+
+              <div className="absolute inset-0 bg-gradient-to-br from-[#093f89]/10 via-transparent to-[#fbc70f]/10" />
+
+              <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-[#093f89]/10 blur-3xl" />
+
+              <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-[#fbc70f]/10 blur-3xl" />
+
+            </div>
 
             {product.images && product.images.length > 0 ? (
               <div className="relative w-full h-full min-h-[220px] md:min-h-[400px] z-10">
@@ -220,14 +278,19 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
               {category}
             </div>
 
-            <h2 id="quickview-title" className="font-serif text-2xl md:text-3xl lg:text-4xl text-foreground font-bold tracking-tight leading-tight mb-5">
+            <div className="w-16 h-1 rounded-full bg-gradient-to-r from-[#fbc70f] to-[#093f89] mb-5" />
+
+            <h2
+              id="quickview-title"
+              className="font-serif text-2xl md:text-3xl lg:text-4xl text-foreground font-bold tracking-tight leading-tight mb-5"
+            >
               {productName}
             </h2>
 
             {/* PRODUCT DESCRIPTION */}
             {description && (
               <div
-                className="prose prose-sm dark:prose-invert text-muted-foreground font-light leading-relaxed mb-6 line-clamp-4"
+                className="prose prose-sm dark:prose-invert text-slate-600 dark:text-slate-300 leading-8 text-[15px] font-light leading-relaxed mb-6 line-clamp-4"
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             )}
@@ -257,7 +320,25 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                         <button
                           key={color.id}
                           onClick={() => setSelectedColor(cEn)}
-                          className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${bgClass} ${isSelected ? 'ring-2 ring-[#093f89] dark:ring-[#fbc70f] ring-offset-2 ring-offset-card scale-110' : 'hover:scale-110 hover:shadow-md'}`}
+                          className={`
+relative
+w-10
+h-10
+rounded-full
+flex
+items-center
+justify-center
+transition-all
+duration-300
+shadow-md
+${bgClass}
+${isSelected
+                              ?
+                              'ring-4 ring-[#fbc70f] dark:ring-[#093f89] ring-offset-2 ring-offset-card scale-110'
+                              :
+                              'hover:scale-125 hover:rotate-6 hover:shadow-xl'
+                            }
+`}
                           title={cLocal}
                           aria-label={`Select color ${cLocal}`}
                         >
@@ -289,10 +370,26 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
                         <button
                           key={size.id}
                           onClick={() => setSelectedSize(sEn)}
-                          className={`py-2.5 px-2 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 flex items-center justify-center border
-                            ${isSelected
-                              ? 'border-[#093f89] bg-[#093f89] text-white dark:border-[#fbc70f] dark:bg-[#fbc70f] dark:text-[#093f89] shadow-md shadow-[#093f89]/20 dark:shadow-[#fbc70f]/20'
-                              : 'border-border/60 bg-muted/20 hover:border-[#093f89]/40 dark:hover:border-[#fbc70f]/40 hover:bg-muted text-foreground'}`}
+                          className={`
+    py-2.5
+    px-2
+    rounded-xl
+    text-xs
+    font-bold
+    tracking-wider
+    flex
+    items-center
+    justify-center
+    border
+    transition-all
+    duration-300
+    hover:shadow-[0_0_25px_rgba(9,63,137,.35)]
+    hover:-translate-y-0.5
+    ${isSelected
+                              ? "border-[#093f89] bg-gradient-to-r from-[#093f89] to-[#0d5dbf] text-white dark:border-[#fbc70f] dark:bg-[#fbc70f] dark:text-[#093f89] shadow-md shadow-[#093f89]/20 dark:shadow-[#fbc70f]/20"
+                              : "border-border/60 bg-muted/20 hover:border-[#093f89]/40 dark:hover:border-[#fbc70f]/40 hover:bg-muted text-foreground"
+                            }
+  `}
                         >
                           {sLocal}
                         </button>
@@ -308,10 +405,45 @@ export default function ProductQuickView({ isOpen, onClose, product }: ProductQu
               <Link
                 href={`/shop/${product.slug}`}
                 onClick={onClose}
-                className="group w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-sm tracking-widest uppercase bg-[#093f89] text-white dark:bg-[#fbc70f] dark:text-[#093f89] hover:opacity-90 transition-all duration-300 shadow-[0_8px_20px_rgba(9,63,137,0.2)] dark:shadow-[0_8px_20px_rgba(251,199,15,0.2)] active:scale-[0.98]"
+                className="
+group
+relative
+overflow-hidden
+flex
+items-center
+justify-center
+gap-2
+w-full
+py-4
+rounded-2xl
+font-bold
+uppercase
+tracking-widest
+bg-gradient-to-r
+from-[#093f89]
+to-[#0c58b9]
+text-white
+transition-all
+duration-500
+hover:scale-[1.02]
+hover:shadow-[0_20px_40px_rgba(9,63,137,.35)]
+active:scale-95
+"
               >
-                {t('view_details', lang)}
-                <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${isRtl ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
+
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+                <span className="relative z-10">
+                  {t('view_details', lang)}
+                </span>
+
+                <ArrowRight
+                  className={`relative z-10 w-4 h-4 transition-transform duration-300 ${isRtl
+                    ? 'rotate-180 group-hover:-translate-x-1'
+                    : 'group-hover:translate-x-1'
+                    }`}
+                />
+
               </Link>
             </div>
 
