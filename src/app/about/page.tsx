@@ -201,11 +201,34 @@ export default function AboutClientPage({ settings, initialLang }: AboutClientPa
 
   // دالة تحويل المستخدم إلى الواتساب بالاعتماد على الـ props القادمة من السيرفر
   const handleConsultationClick = () => {
-    const rawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || "";
+    // طباعة الإعدادات في متصفحك لمعاينة الاسم الصحيح للحقل إذا استمرت المشكلة
+    console.log("البيانات القادمة من لوحة التحكم:", settings);
+
+    // فحص شامل لجميع المسميات المتوقعة لحقل الواتساب في قواعد البيانات
+    const rawNumber =
+      settings?.whatsapp ||
+      settings?.whatsapp_phone ||
+      settings?.whatsapp_number ||
+      settings?.site_whatsapp ||
+      settings?.contact_whatsapp ||
+      settings?.phone ||
+      settings?.mobile ||
+      "";
+
+    // تنظيف الرقم من أي مسافات أو علامات زائد (+) ليقبله رابط الواتساب بمرونة
     const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000";
 
+    // إذا لم يجد رقم نهائياً في الإعدادات سيخبرك عبر التنبيه بالأسفل
+    if (whatsappNumber === "966500000000") {
+      alert(
+        isRtl
+          ? "تنبيه: لم يتم العثور على رقم واتساب في إعدادات لوحة التحكم، يرجى التحقق من تسمية الحقل."
+          : "Alert: WhatsApp number not found in control panel settings, please check the field name."
+      );
+    }
+
     const message = currentLang === "ar"
-      ? "مرحبا ً شركة لمعة أبيات للمقاوالت، أود الحصول على استشارة استراتيجية لمشروعي"
+      ? "مرحبا ً شركة لمعة أبيات للمقاولات، أود الحصول على استشارة استراتيجية لمشروعي"
       : "Hello Lamea Abyat Contracting, I would like to get a strategic consultation for my project";
 
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
