@@ -119,7 +119,9 @@ export default function Footer({ settings }: { settings?: any }) {
               </div>
 
               <div
-                className="text-sm text-muted-foreground max-w-md leading-relaxed font-light group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300"
+                className="text-sm max-w-md leading-relaxed font-light text-foreground
+  group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f]
+  transition-colors duration-300"
                 dangerouslySetInnerHTML={{ __html: decodeHTML(desc) }}
               />
               {/* SOCIAL ICONS - تأثيرات فخمة باللون الكحلي والذهبي */}
