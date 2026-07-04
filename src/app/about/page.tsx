@@ -4,15 +4,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/components/LanguageContext";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, Briefcase, Target, CheckCircle2, Eye, Rocket, ArrowRight } from "lucide-react";
+import { fetchSettings } from "@/lib/api"; // استيراد دالة الجلب الخاصة بك
 
 // المعرفات اللونية الثابتة للبراند
 const COLOR_PRIMARY = "#093f89"; // الأزرق الكحلي
 const COLOR_ACCENT = "#fbc70f";  // الأصفر الذهبي
-
-interface AboutClientPageProps {
-  settings: any;
-  initialLang: "en" | "ar";
-}
 
 // --- Animated Counter Component ---
 function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: number }) {
@@ -184,11 +180,12 @@ const content = {
   },
 };
 
-export default function AboutClientPage({ settings, initialLang }: AboutClientPageProps) {
+export default function AboutPage() {
   const { lang } = useLanguage();
-  const currentLang = lang || initialLang;
-  const text = content[currentLang as keyof typeof content];
-  const isRtl = currentLang === "ar";
+  const [settings, setSettings] = useState<any>(null); // حالة حفظ الإعدادات في العميل
+
+  const text = content[(lang === "en" ? "en" : "ar")];
+  const isRtl = lang !== "en";
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -199,37 +196,35 @@ export default function AboutClientPage({ settings, initialLang }: AboutClientPa
   const yHero = useTransform(scrollYProgress, [0, 0.3], [0, -50]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
-  // دالة تحويل المستخدم إلى الواتساب بالاعتماد على الـ props القادمة من السيرفر
-  const handleConsultationClick = () => {
-    // طباعة الإعدادات في متصفحك لمعاينة الاسم الصحيح للحقل إذا استمرت المشكلة
-    console.log("البيانات القادمة من لوحة التحكم:", settings);
+  // جلب الإعدادات تلقائياً من الـ API عند تحميل الصفحة بداخل مكون العميل
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const data = await fetchSettings();
+        setSettings(data);
+      } catch (error) {
+        console.error("Error loading settings:", error);
+      }
+    }
+    loadSettings();
+  }, []);
 
-    // فحص شامل لجميع المسميات المتوقعة لحقل الواتساب في قواعد البيانات
+  // دالة تشغيل الواتساب الفورية
+  const handleConsultationClick = () => {
     const rawNumber =
       settings?.whatsapp ||
       settings?.whatsapp_phone ||
       settings?.whatsapp_number ||
       settings?.site_whatsapp ||
-      settings?.contact_whatsapp ||
       settings?.phone ||
-      settings?.mobile ||
       "";
 
-    // تنظيف الرقم من أي مسافات أو علامات زائد (+) ليقبله رابط الواتساب بمرونة
+    // تنظيف الرقم وإزالة الرموز والمسافات
     const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000";
 
-    // إذا لم يجد رقم نهائياً في الإعدادات سيخبرك عبر التنبيه بالأسفل
-    if (whatsappNumber === "966500000000") {
-      alert(
-        isRtl
-          ? "تنبيه: لم يتم العثور على رقم واتساب في إعدادات لوحة التحكم، يرجى التحقق من تسمية الحقل."
-          : "Alert: WhatsApp number not found in control panel settings, please check the field name."
-      );
-    }
-
-    const message = currentLang === "ar"
-      ? "مرحبا ً شركة لمعة أبيات للمقاولات، أود الحصول على استشارة استراتيجية لمشروعي"
-      : "Hello Lamea Abyat Contracting, I would like to get a strategic consultation for my project";
+    const message = lang === "en"
+      ? "Hello Lamea Abyat Contracting, I would like to get a strategic consultation for my project"
+      : "مرحبا بك شركة لمعة أبيات للمقاولات، أود الحصول على استشارة استراتيجية لمشروعي";
 
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
@@ -241,6 +236,12 @@ export default function AboutClientPage({ settings, initialLang }: AboutClientPa
       dir={isRtl ? "rtl" : "ltr"}
       className="relative min-h-screen bg-background text-foreground overflow-x-hidden w-full transition-colors duration-500 selection:bg-primary/30"
     >
+      {/* BACKGROUND LAYERS */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-10%] end-[-10%] w-[600px] md:w-[800px] h-[600px] md:h-[800px] bg-[#093f89]/10 dark:bg-[#093f89]/15 blur-[140px] rounded-full animate-[pulse_8s_ease-in-out_infinite_alternate]" />
+        <div className="absolute top-[40%] start-[-20%] w-[500px] md:w-[700px] h-[500px] md:h-[700px] bg-[#fbc70f]/10 dark:bg-[#fbc70f]/5 blur-[160px] rounded-full animate-[pulse_10s_ease-in-out_infinite_alternate_reverse]" />
+      </div>
+
       {/* --- HERO SECTION --- */}
       <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden w-full">
         <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8 w-full">
