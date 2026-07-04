@@ -63,13 +63,13 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
   return (
     <section className="py-20 md:py-28 bg-muted/50 relative overflow-hidden" dir={lang === "ar" ? "rtl" : "ltr"}>
       {/* Decorative elements */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
+      <div className="absolute top-0 left-0 w-72 h-72 bg-[#093f89]/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#fbc70f]/5 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#093f89] mb-4">
             {t('testimonials_title', lang)}
           </h2>
           <p className="text-muted-foreground text-lg">
@@ -84,9 +84,9 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
             onMouseEnter={() => setIsAutoPlaying(false)}
             onMouseLeave={() => setIsAutoPlaying(true)}
           >
-            {/* Quote Icon */}
-            <div className="absolute -top-5 left-8 md:left-12 w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/25">
-              <Quote className="w-5 h-5 text-primary-foreground" />
+            {/* Quote Icon - تم تحديثه ليتناسب مع الهوية البصرية */}
+            <div className="absolute -top-5 left-8 md:left-12 w-10 h-10 bg-[#093f89] border border-[#fbc70f]/30 rounded-full flex items-center justify-center shadow-lg shadow-[#093f89]/20">
+              <Quote className="w-5 h-5 text-[#fbc70f]" />
             </div>
 
             {/* Content */}
@@ -94,7 +94,7 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
               {/* Avatar */}
               <div className="shrink-0">
                 {imageUrl ? (
-                  <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden ring-4 ring-primary/10 shadow-lg">
+                  <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden ring-4 ring-[#093f89]/10 shadow-lg">
                     <Image
                       src={imageUrl}
                       alt={name}
@@ -103,9 +103,9 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
                     />
                   </div>
                 ) : (
-                  // تم تعديل الخلفية هنا إلى اللون السماوي (bg-cyan-500)
-                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-cyan-500 flex items-center justify-center ring-4 ring-primary/10 shadow-lg">
-                    <span className="text-3xl md:text-4xl font-bold text-white">
+                  // تم استبدال الـ Cyan باللون الأزرق الداكن الفخم لإبراز الحرف الأول بالأصفر المشع
+                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-[#093f89] border-2 border-[#fbc70f]/40 flex items-center justify-center ring-4 ring-[#093f89]/5 shadow-lg">
+                    <span className="text-3xl md:text-4xl font-bold text-[#fbc70f]">
                       {name.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -120,7 +120,7 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
                     <Star
                       key={i}
                       className={`w-5 h-5 ${i < testimonial.rating
-                        ? "fill-amber-400 text-amber-400"
+                        ? "fill-[#fbc70f] text-[#fbc70f]"
                         : "fill-muted text-muted-foreground/30"
                         }`}
                     />
@@ -135,7 +135,7 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
 
                 {/* Author Info */}
                 <div>
-                  <p className="font-bold text-foreground text-lg">{name}</p>
+                  <p className="font-bold text-[#093f89] text-lg">{name}</p>
                   {(position || company) && (
                     <p className="text-muted-foreground text-sm mt-1">
                       {position}
@@ -152,14 +152,14 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
               <>
                 <button
                   onClick={lang === "ar" ? next : prev}
-                  className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-5 w-10 h-10 rounded-full bg-background border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all hover:scale-110 active:scale-95"
+                  className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-5 w-10 h-10 rounded-full bg-background border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-[#093f89] hover:border-[#093f89]/30 transition-all hover:scale-110 active:scale-95"
                   aria-label="Previous testimonial"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button
                   onClick={lang === "ar" ? prev : next}
-                  className="absolute top-1/2 -translate-y-1/2 -right-4 md:-right-5 w-10 h-10 rounded-full bg-background border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all hover:scale-110 active:scale-95"
+                  className="absolute top-1/2 -translate-y-1/2 -right-4 md:-right-5 w-10 h-10 rounded-full bg-background border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-[#093f89] hover:border-[#093f89]/30 transition-all hover:scale-110 active:scale-95"
                   aria-label="Next testimonial"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -168,16 +168,16 @@ export default function TestimonialsSlider({ testimonials, lang }: TestimonialsS
             )}
           </div>
 
-          {/* Dots Indicator */}
+          {/* Dots Indicator - التعديل الأساسي للنقاط يقع هنا */}
           {total > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-8">
+            <div className="flex items-center justify-center gap-2.5 mt-8">
               {testimonials.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
                   className={`rounded-full transition-all duration-300 ${i === current
-                    ? "w-8 h-2.5 bg-primary"
-                    : "w-2.5 h-2.5 bg-muted-foreground/25 hover:bg-muted-foreground/40"
+                    ? "w-9 h-2.5 bg-[#fbc70f] shadow-[0_0_12px_rgba(251,199,15,0.6)] border border-[#093f89]/10"
+                    : "w-2.5 h-2.5 bg-[#093f89]/20 hover:bg-[#093f89]/50"
                     }`}
                   aria-label={`Go to testimonial ${i + 1}`}
                 />
