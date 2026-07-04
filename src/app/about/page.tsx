@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/components/LanguageContext";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, Briefcase, Target, CheckCircle2, Eye, Rocket, ArrowRight } from "lucide-react";
-import { fetchSettings } from "@/lib/api"; // استيراد دالة الجلب الخاصة بك
 
 // المعرفات اللونية الثابتة للبراند
 const COLOR_PRIMARY = "#093f89"; // الأزرق الكحلي
@@ -29,6 +28,7 @@ function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: nu
   return <span>{count}</span>;
 }
 
+// تعديل الهوك ليركز فقط على حركة الماوس التفاعلية (Tilt) دون جلب بيانات
 function useTiltEffect() {
   const ref = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
@@ -182,10 +182,10 @@ const content = {
 
 export default function AboutPage() {
   const { lang } = useLanguage();
-  const [settings, setSettings] = useState<any>(null); // حالة حفظ الإعدادات في العميل
+  const [settings, setSettings] = useState<any>(null); // نقلت الـ state هنا لتصبح متاحة للصفحة بالكامل
 
-  const text = content[(lang === "en" ? "en" : "ar")];
-  const isRtl = lang !== "en";
+  const text = content[lang as keyof typeof content] || content.ar;
+  const isRtl = lang === "ar";
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -196,39 +196,22 @@ export default function AboutPage() {
   const yHero = useTransform(scrollYProgress, [0, 0.3], [0, -50]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
-  // جلب الإعدادات تلقائياً من الـ API عند تحميل الصفحة بداخل مكون العميل
+  // نقل الـ useEffect إلى جذر الصفحة ليتم الاستدعاء مرة واحدة فقط وبشكل صحيح
   useEffect(() => {
     async function loadSettings() {
       try {
-        const data = await fetchSettings();
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+        const res = await fetch(`${apiUrl}/settings`);
+        if (!res.ok) throw new Error("Network response was not ok");
+        const data = await res.json();
         setSettings(data);
-      } catch (error) {
-        console.error("Error loading settings:", error);
+      } catch (err) {
+        console.log("Error loading settings", err);
       }
     }
+
     loadSettings();
   }, []);
-
-  // دالة تشغيل الواتساب الفورية
-  const handleConsultationClick = () => {
-    const rawNumber =
-      settings?.whatsapp ||
-      settings?.whatsapp_phone ||
-      settings?.whatsapp_number ||
-      settings?.site_whatsapp ||
-      settings?.phone ||
-      "";
-
-    // تنظيف الرقم وإزالة الرموز والمسافات
-    const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000";
-
-    const message = lang === "en"
-      ? "Hello Lamea Abyat Contracting, I would like to get a strategic consultation for my project"
-      : "مرحبا بك شركة لمعة أبيات للمقاولات، أود الحصول على استشارة استراتيجية لمشروعي";
-
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  };
 
   return (
     <div
@@ -236,12 +219,6 @@ export default function AboutPage() {
       dir={isRtl ? "rtl" : "ltr"}
       className="relative min-h-screen bg-background text-foreground overflow-x-hidden w-full transition-colors duration-500 selection:bg-primary/30"
     >
-      {/* BACKGROUND LAYERS */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] end-[-10%] w-[600px] md:w-[800px] h-[600px] md:h-[800px] bg-[#093f89]/10 dark:bg-[#093f89]/15 blur-[140px] rounded-full animate-[pulse_8s_ease-in-out_infinite_alternate]" />
-        <div className="absolute top-[40%] start-[-20%] w-[500px] md:w-[700px] h-[500px] md:h-[700px] bg-[#fbc70f]/10 dark:bg-[#fbc70f]/5 blur-[160px] rounded-full animate-[pulse_10s_ease-in-out_infinite_alternate_reverse]" />
-      </div>
-
       {/* --- HERO SECTION --- */}
       <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden w-full">
         <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8 w-full">
@@ -396,7 +373,27 @@ export default function AboutPage() {
 
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block w-full sm:w-auto">
             <button
-              onClick={handleConsultationClick}
+              onClick={() => {
+                // فحص الحقول المحتملة لرقم الواتساب لمنع الـ undefined
+                const rawNumber =
+                  settings?.whatsapp ||
+                  settings?.whatsapp_phone ||
+                  settings?.whatsapp_number ||
+                  settings?.site_whatsapp ||
+                  settings?.phone ||
+                  "";
+
+                const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000";
+
+                const message = lang === "en"
+                  ? "Hello Lamea Abyat Contracting, I would like to get a strategic consultation for my project"
+                  : "مرحباً شركة لمعة أبيات للمقاولات، أود الحصول على استشارة استراتيجية لمشروعي";
+
+                window.open(
+                  `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`,
+                  "_blank"
+                );
+              }}
               style={{ backgroundColor: COLOR_ACCENT, color: COLOR_PRIMARY }}
               className="flex items-center justify-center gap-3 px-10 py-4 rounded-full font-bold shadow-lg shadow-amber-500/20 hover:brightness-105 transition-all duration-300 w-full"
             >
