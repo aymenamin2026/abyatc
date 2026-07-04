@@ -34,11 +34,7 @@ export default function Footer({ settings }: { settings?: any }) {
     : settings?.site_description?.en || settings?.site_description || "";
 
   const decodeHTML = (html: string) =>
-    !html
-      ? ""
-      : html
-        .replace(/style="[^"]*"/g, "")
-        .replace(/color\s*:\s*[^;"]+;?/g, "");
+    !html ? "" : html.replace(/</g, "<").replace(/>/g, ">").replace(/&/g, "&");
 
   const socialLinks = [
     { href: settings?.tiktok_url, icon: Music, name: "TikTok" },
@@ -153,24 +149,36 @@ export default function Footer({ settings }: { settings?: any }) {
                 <span className="w-6 h-[3px] bg-[#fbc70f] rounded-full"></span>
                 {t('quick_links', lang)}
               </h4>
-              <ul className="space-y-4 text-sm font-medium text-muted-foreground">
+              <ul className="space-y-4 text-sm font-medium">
                 <li>
-                  <Link href="/shop" className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
+                  <Link
+                    href="/shop"
+                    className="text-black dark:text-white hover:text-[#fbc70f] dark:hover:text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
+                  >
                     {t('shop_collection', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/collections" className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
+                  <Link
+                    href="/collections"
+                    className="text-black dark:text-white hover:text-[#fbc70f] dark:hover:text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
+                  >
                     {t('categories', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/about" className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
+                  <Link
+                    href="/about"
+                    className="text-black dark:text-white hover:text-[#fbc70f] dark:hover:text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
+                  >
                     {t('about', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
+                  <Link
+                    href="/faq"
+                    className="text-black dark:text-white hover:text-[#fbc70f] dark:hover:text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
+                  >
                     {t('faq', lang)}
                   </Link>
                 </li>
