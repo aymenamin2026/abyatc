@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/components/LanguageContext";
+import { useSettings } from "@/hooks/useSettings"; // 👈 استيراد هوك الإعدادات (تأكد من مساره الصحيح في مشروعك)
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, Briefcase, Target, CheckCircle2, Eye, Rocket, ArrowRight } from "lucide-react";
 
@@ -174,7 +175,7 @@ const content = {
       { year: "2021", title: "التحول الرقمي والهندسي", desc: "دمج تقنيات الـ BIM الحديثة وأنظمة الذكاء الاصطناعي لإدارة الموارد والمشاريع." },
       { year: "2026", title: "الريادة والاستدامة", desc: "تصنيف الشركة ضمن النخبة الرائدة في تشييد البنى التحتية الذكية والمستدامة في المملكة." },
     ],
-    ctaTitle: "هل أنت مستعد لتجسيد رؤيتك على أرض الواقع？",
+    ctaTitle: "هل أنت مستعد لتجسيد رؤيتك على أرض الواقع؟",
     ctaSubtitle: "دعنا نعمل معاً لبناء صرحك القادم بأعلى معايير الإتقان والفخامة الهندسيّة.",
     ctaBtn: "ابدأ استشارتك الاستراتيجية الآن",
     footerQuote: "شركة لمعة أبيات للمقاولات... نبني المستقبل بإتقان."
@@ -183,6 +184,7 @@ const content = {
 
 export default function AboutPage() {
   const { lang } = useLanguage();
+  const { settings } = useSettings(); // 👈 جلب بيانات الإعدادات المخزنة بلوحة التحكم ديناميكياً
   const text = content[lang as keyof typeof content];
   const isRtl = lang === "ar";
 
@@ -195,6 +197,19 @@ export default function AboutPage() {
   const yHero = useTransform(scrollYProgress, [0, 0.3], [0, -50]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
+  // 👈 دالة التوجيه للواتساب بالرقم المحدث والرسالة المخصصة
+  const handleConsultationClick = () => {
+    const rawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || "";
+    const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000"; // رقم احتياطي في حال عدم تعيينه
+
+    const message = lang === "ar"
+      ? "مرحبا ً شركة لمعة أبيات للمقاوالت، أود الحصول على استشارة استراتيجية لمشروعي"
+      : "Hello Lamea Abyat Contracting, I would like to get a strategic consultation for my project";
+
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div
       ref={containerRef}
@@ -205,7 +220,6 @@ export default function AboutPage() {
       <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden w-full">
         <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8 w-full">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", delay: 0.1 }}>
-            {/* البادج: لمسة ذهبية ناعمة متوافقة مع الثيمين الفاتح والمظلم */}
             <span
               style={{ borderColor: `${COLOR_PRIMARY}30` }}
               className="inline-block px-4 py-1.5 rounded-full bg-card text-foreground text-xs font-bold uppercase tracking-widest border shadow-sm"
@@ -240,7 +254,6 @@ export default function AboutPage() {
               style={{ borderTopColor: COLOR_PRIMARY }}
               className="p-6 text-center bg-card border border-border rounded-2xl shadow-sm w-full border-t-4"
             >
-              {/* إبراز أرقام العدادات باللون الذهبي البراق لكلا الوضعين */}
               <div style={{ color: COLOR_ACCENT }} className="text-3xl md:text-5xl font-extrabold font-mono mb-2 drop-shadow-sm">
                 <AnimatedCounter value={stat.value} />
                 <span className="text-xl md:text-3xl ml-1 font-sans">{stat.suffix}</span>
@@ -266,7 +279,6 @@ export default function AboutPage() {
             <TiltCard key={i}>
               <div className="p-6 md:p-8 h-full flex flex-col justify-between w-full">
                 <div>
-                  {/* خلفية الأيقونات: استخدام خلفية كحلية شفافة في الوضع الفاتح وتتحول لخلفية متباينة في الوضع الداكن لضمان الوضوح */}
                   <div
                     style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }}
                     className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#093f89] group-hover:text-white dark:group-hover:bg-amber-400 dark:group-hover:text-zinc-950 transition-all duration-500 shadow-inner dark:text-blue-400"
@@ -285,7 +297,7 @@ export default function AboutPage() {
       {/* --- MISSION & VISION (ADVANCED GLASSMORPHISM) --- */}
       <section className="relative z-10 py-16 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 w-full">
-          {/* الرؤية */}
+          {/* Vision */}
           <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card border border-border rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
             <div style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm dark:text-blue-400"><Eye className="w-7 h-7" /></div>
             <div>
@@ -294,7 +306,7 @@ export default function AboutPage() {
             </div>
           </motion.div>
 
-          {/* الرسالة */}
+          {/* Mission */}
           <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card border border-border rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
             <div style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm dark:text-blue-400"><Rocket className="w-7 h-7" /></div>
             <div>
@@ -304,13 +316,12 @@ export default function AboutPage() {
           </motion.div>
         </div>
 
-        {/* قيمنا الجوهرية */}
+        {/* Values */}
         <div className="mt-12 p-8 md:p-12 bg-card border border-border rounded-[32px] shadow-lg w-full">
           <h3 className="text-xs md:text-sm font-bold tracking-widest text-center mb-12 uppercase text-muted-foreground">{text.mvv.values.title}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
             {text.mvv.values.items.map((item, idx) => (
               <div key={idx} className="space-y-4 text-center w-full group">
-                {/* ترقيم دائرى متناسق كحلي وبحدود ذهبية خفيفة */}
                 <div
                   style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY, borderColor: `${COLOR_ACCENT}30` }}
                   className="mx-auto w-12 h-12 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform duration-300 dark:text-blue-400"
@@ -331,11 +342,9 @@ export default function AboutPage() {
           <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.timelineTitle}</h2>
           <div className="w-16 h-1 mx-auto rounded-full mt-3" style={{ backgroundColor: COLOR_ACCENT }} />
         </div>
-        {/* خط التايم لاين متناسق مع الوضع الليلي والفاتح بـ border-border الأصلي لموقعك */}
         <div className="relative border-s-2 border-border ms-2 md:ms-32 space-y-12 py-4 w-full">
           {text.timeline.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: isRtl ? 20 : -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative ps-6 md:ps-12 group w-full">
-              {/* نقطة التايم لاين تتحول بالكامل للذهبي عند تمرير الماوس */}
               <div
                 style={{ borderColor: COLOR_PRIMARY }}
                 className="absolute -start-[9px] top-1.5 w-4 h-4 rounded-full bg-background border-2 group-hover:bg-[#fbc70f] group-hover:border-[#fbc70f] transition-all duration-300 shadow-sm"
@@ -358,14 +367,14 @@ export default function AboutPage() {
 
       {/* --- CTA SECTION --- */}
       <section className="relative z-10 py-16 px-4 sm:px-6 max-w-6xl mx-auto mb-20 w-full">
-        {/* صندوق الـ CTA يعتمد على خلفية كارت موقعك الأصلية لحل مشاكل العرض الليلي */}
         <div className="relative overflow-hidden rounded-[32px] bg-card border border-border p-8 md:p-16 shadow-2xl text-center space-y-8 w-full">
           <h2 className="text-3xl md:text-6xl font-serif font-bold text-foreground leading-tight">{text.ctaTitle}</h2>
           <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
 
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block w-full sm:w-auto">
-            {/* زر الأكشن بلون ذهبي ثابت ونصوص كحلية واضحة جداً في النهار والليل لقراءة ممتازة وضمان النقرات */}
+            {/* 👈 تم ربط الزر هنا بـ onClick لتنفيذ دالة الواتساب الديناميكية */}
             <button
+              onClick={handleConsultationClick}
               style={{ backgroundColor: COLOR_ACCENT, color: COLOR_PRIMARY }}
               className="flex items-center justify-center gap-3 px-10 py-4 rounded-full font-bold shadow-lg shadow-amber-500/20 hover:brightness-105 transition-all duration-300 w-full"
             >

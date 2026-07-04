@@ -173,11 +173,11 @@ export default function ProjectDetailPage() {
 
         {/* زر العودة الذكي */}
         <Link
-          href="/blogs"
+          href="/projects"
           className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors bg-muted/40 px-4 py-2 rounded-full border border-border/40 backdrop-blur-sm mb-10 group"
         >
           {lang === 'ar' ? <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" /> : <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />}
-          <span>{lang === 'en' ? 'Back to Blogs' : 'العودة للمدونة'}</span>
+          <span>{lang === 'en' ? 'Back to Our Project' : 'العودة الئ مشاريعنا'}</span>
         </Link>
 
         {/* غلاف المقال عائم وسينمائي */}
