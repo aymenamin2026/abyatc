@@ -153,7 +153,7 @@ export default function Footer({ settings }: { settings?: any }) {
                 <li>
                   <Link
                     href="/shop"
-                    className="text-black dark:text-white hover:text-[#fbc70f] dark:hover:text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
+                    className="!text-black dark:!text-white hover:!text-[#fbc70f] dark:hover:!text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
                   >
                     {t('shop_collection', lang)}
                   </Link>
@@ -161,7 +161,7 @@ export default function Footer({ settings }: { settings?: any }) {
                 <li>
                   <Link
                     href="/collections"
-                    className="text-black dark:text-white hover:text-[#fbc70f] dark:hover:text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
+                    className="!text-black dark:!text-white hover:!text-[#fbc70f] dark:hover:!text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
                   >
                     {t('categories', lang)}
                   </Link>
@@ -169,7 +169,7 @@ export default function Footer({ settings }: { settings?: any }) {
                 <li>
                   <Link
                     href="/about"
-                    className="text-black dark:text-white hover:text-[#fbc70f] dark:hover:text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
+                    className="!text-black dark:!text-white hover:!text-[#fbc70f] dark:hover:!text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
                   >
                     {t('about', lang)}
                   </Link>
@@ -177,14 +177,13 @@ export default function Footer({ settings }: { settings?: any }) {
                 <li>
                   <Link
                     href="/faq"
-                    className="text-black dark:text-white hover:text-[#fbc70f] dark:hover:text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
+                    className="!text-black dark:!text-white hover:!text-[#fbc70f] dark:hover:!text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
                   >
                     {t('faq', lang)}
                   </Link>
                 </li>
               </ul>
             </div>
-
             {/* CONTACT INFO */}
             <div>
               <h4 className="text-xs font-bold tracking-[0.2em] text-foreground uppercase mb-6 flex items-center gap-3">
