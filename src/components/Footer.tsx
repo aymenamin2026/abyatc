@@ -143,7 +143,7 @@ export default function Footer({ settings }: { settings?: any }) {
               </div>
             </div>
 
-            {/* QUICK LINKS */}
+            {/* QUICK LINKS  يي*/}
             <div>
               <h4 className="text-xs font-bold tracking-[0.2em] text-foreground uppercase mb-6 flex items-center gap-3">
                 <span className="w-6 h-[3px] bg-[#fbc70f] rounded-full"></span>
