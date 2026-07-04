@@ -145,8 +145,8 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
   if (style === 'bottom_banner') {
     return (
       <div className={`fixed bottom-0 inset-x-0 z-[100] transition-all duration-500 transform ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
-        <div className="bg-primary text-primary-foreground shadow-[0_-10px_40px_rgba(0,0,0,0.1)] relative">
-          <button onClick={closeCurrent} className="absolute top-1/2 -translate-y-1/2 right-4 p-2 hover:bg-black/10 rounded-full transition-colors">
+        <div style={{ backgroundColor: '#093f89' }} className="text-white shadow-[0_-10px_40px_rgba(0,0,0,0.15)] relative">
+          <button onClick={closeCurrent} className="absolute top-1/2 -translate-y-1/2 right-4 p-2 hover:bg-white/10 rounded-full transition-colors text-white">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
           <div className="container mx-auto px-4 py-4 md:py-3 flex flex-col md:flex-row items-center justify-center md:justify-between gap-4 pr-12">
@@ -160,7 +160,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
               )}
             </div>
             {currentPopup.button_text && currentPopup.button_url && (
-              <a href={currentPopup.button_url} className="shrink-0 bg-background text-foreground px-6 py-2 rounded-full font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md">
+              <a href={currentPopup.button_url} style={{ backgroundColor: '#fbc70f' }} className="shrink-0 text-slate-900 px-6 py-2 rounded-full font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md">
                 {currentPopup.button_text}
               </a>
             )}
@@ -180,11 +180,11 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
 
       {style === 'minimal' && (
         <div className={`relative bg-background rounded-3xl shadow-2xl overflow-hidden w-full max-w-md flex flex-col transition-all duration-500 transform ${isOpen ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95'}`}>
-          <button onClick={closeCurrent} className="absolute top-4 right-4 z-20 bg-muted hover:bg-muted-foreground/20 text-foreground rounded-full p-2 transition-colors">
+          <button onClick={closeCurrent} style={{ color: '#093f89' }} className="absolute top-4 right-4 z-20 bg-muted hover:bg-muted-foreground/20 rounded-full p-2 transition-colors">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
           <div className="p-8 md:p-10 flex flex-col items-center justify-center text-center w-full mt-2">
-            {currentPopup.title && <h2 className="text-2xl font-serif font-bold text-foreground mb-4">{currentPopup.title}</h2>}
+            {currentPopup.title && <h2 style={{ color: '#093f89' }} className="text-2xl font-serif font-bold mb-4">{currentPopup.title}</h2>}
             {currentPopup.content && (
               <div
                 className="text-muted-foreground mb-8 text-sm leading-relaxed"
@@ -192,7 +192,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
               />
             )}
             {currentPopup.button_text && currentPopup.button_url && (
-              <a href={currentPopup.button_url} className="inline-flex justify-center flex-shrink-0 items-center px-8 py-3 bg-primary text-primary-foreground rounded-full font-bold w-full hover:bg-primary/90 transition-all shadow-lg active:scale-95">
+              <a href={currentPopup.button_url} style={{ backgroundColor: '#093f89' }} className="inline-flex justify-center flex-shrink-0 items-center px-8 py-3 text-white rounded-full font-bold w-full hover:bg-opacity-90 transition-all shadow-lg active:scale-95 hover:shadow-[#093f89]/20">
                 {currentPopup.button_text}
               </a>
             )}
@@ -202,7 +202,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
 
       {style === 'center_cover' && (
         <div className={`relative bg-black rounded-2xl shadow-2xl overflow-hidden w-full max-w-2xl min-h-[400px] flex flex-col transition-all duration-500 transform ${isOpen ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95'}`}>
-          <button onClick={closeCurrent} className="absolute top-4 right-4 z-20 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 backdrop-blur-md transition-colors border border-white/10">
+          <button onClick={closeCurrent} style={{ backgroundColor: '#093f89' }} className="absolute top-4 right-4 z-20 text-white rounded-full p-2 transition-colors border border-white/10 hover:bg-opacity-90">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
 
@@ -224,7 +224,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
               />
             )}
             {currentPopup.button_text && currentPopup.button_url && (
-              <a href={currentPopup.button_url} className="inline-flex justify-center items-center px-10 py-4 bg-white text-black rounded-full font-bold hover:bg-gray-100 transition-all shadow-xl active:scale-95">
+              <a href={currentPopup.button_url} style={{ backgroundColor: '#fbc70f' }} className="inline-flex justify-center items-center px-10 py-4 text-slate-900 rounded-full font-bold hover:scale-105 transition-all shadow-xl active:scale-95">
                 {currentPopup.button_text}
               </a>
             )}
@@ -234,7 +234,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
 
       {style === 'default' && (
         <div className={`relative bg-background rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl flex flex-col md:flex-row transition-all duration-500 transform ${isOpen ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95'}`}>
-          <button onClick={closeCurrent} className="absolute top-4 right-4 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-1.5 backdrop-blur-sm transition-colors border border-white/10">
+          <button onClick={closeCurrent} style={{ backgroundColor: '#093f89' }} className="absolute top-4 right-4 z-20 text-white rounded-full p-1.5 transition-colors border border-white/10 hover:bg-opacity-90">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
 
@@ -247,7 +247,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
           )}
 
           <div className={`p-8 md:p-12 flex flex-col justify-center w-full ${currentPopup.media_type !== 'none' ? 'md:w-1/2' : ''}`}>
-            {currentPopup.title && <h2 className="text-2xl md:text-4xl font-serif font-bold text-foreground mb-4 leading-tight">{currentPopup.title}</h2>}
+            {currentPopup.title && <h2 style={{ color: '#093f89' }} className="text-2xl md:text-4xl font-serif font-bold mb-4 leading-tight">{currentPopup.title}</h2>}
             {currentPopup.content && (
               <div
                 className="text-muted-foreground mb-8 text-sm md:text-base leading-relaxed whitespace-pre-wrap"
@@ -255,7 +255,7 @@ export default function PopupManager({ popups, settings }: { popups: any[], sett
               />
             )}
             {currentPopup.button_text && currentPopup.button_url && (
-              <a href={currentPopup.button_url} className="inline-flex justify-center items-center px-8 py-4 bg-primary text-primary-foreground font-bold rounded-full w-full md:w-auto text-center hover:bg-primary/90 transition-all shadow-lg active:scale-95">
+              <a href={currentPopup.button_url} style={{ backgroundColor: '#093f89' }} className="inline-flex justify-center items-center px-8 py-4 text-white font-bold rounded-full w-full md:w-auto text-center hover:bg-opacity-90 transition-all shadow-lg active:scale-95 hover:shadow-[#093f89]/20">
                 {currentPopup.button_text}
               </a>
             )}
