@@ -272,31 +272,53 @@ md:max-h-[85vh]
           </div>
 
           {/* RIGHT: DETAILS AREA */}
-          <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col overflow-y-auto custom-scrollbar bg-card">
+          <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col overflow-y-auto custom-scrollbar bg-white dark:bg-slate-900">
 
-            <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#093f89] dark:text-[#fbc70f] mb-3 inline-block bg-[#093f89]/5 dark:bg-[#fbc70f]/10 px-3 py-1 rounded-full w-fit">
+            <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#a87400] dark:text-[#fbc70f] mb-3 inline-block bg-[#093f89]/5 dark:bg-[#fbc70f]/10 px-3 py-1 rounded-full w-fit">
               {category}
             </div>
 
             <div className="w-16 h-1 rounded-full bg-gradient-to-r from-[#fbc70f] to-[#093f89] mb-5" />
-
             <h2
               id="quickview-title"
-              className="font-serif text-2xl md:text-3xl lg:text-4xl text-foreground font-bold tracking-tight leading-tight mb-5"
+              className="
+    font-serif
+    text-3xl
+    md:text-4xl
+    font-bold
+    leading-tight
+    tracking-tight
+    mb-5
+    text-slate-900
+    dark:text-white
+  "
             >
               {productName}
             </h2>
 
+
             {/* PRODUCT DESCRIPTION */}
             {description && (
               <div
-                className="prose prose-sm dark:prose-invert text-slate-600 dark:text-slate-300 leading-8 text-[15px] font-light leading-relaxed mb-6 line-clamp-4"
+                className="
+prose
+prose-sm
+dark:prose-invert
+max-w-none
+text-slate-600
+dark:text-slate-300
+leading-8
+text-[15px]
+font-normal
+mb-6
+line-clamp-4
+"
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             )}
 
             {/* OPTIONS SECTION */}
-            <div className="space-y-6 border-t border-border/40 pt-6 mb-8 mt-auto">
+            <div className="space-y-6 border-t border-slate-300 dark:border-slate-700 pt-6 mb-8 mt-auto">
 
               {/* COLORS */}
               {availableColors.length > 0 && (
