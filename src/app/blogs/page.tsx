@@ -7,12 +7,12 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import Link from "next/link";
 import { Calendar, User, ArrowLeft, ArrowRight, Eye, Sparkles, Target, Compass, Award, ShieldCheck, CheckCircle2, MessageSquare, ArrowUpRight } from "lucide-react";
 
-// المسميات الافتراضية للفئات الملونة
+// تم تعديل الفئات لتعكس مزيجاً فخماً متناسقاً مع الألوان الجديدة
 const categoryColorMap: Record<string, string> = {
-  general: "from-blue-500 to-cyan-500",
-  construction: "from-amber-500 to-orange-600",
-  equipment: "from-emerald-500 to-teal-600",
-  security: "from-red-500 to-rose-600",
+  general: "from-[#093f89] to-[#fbc70f]",
+  construction: "from-[#093f89] via-[#1a5cb4] to-[#fbc70f]",
+  equipment: "from-[#fbc70f] to-[#d4a007]",
+  security: "from-[#093f89] to-[#041e42]",
 };
 
 // --- Animated Counter Component ---
@@ -40,7 +40,7 @@ function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: nu
   return <span ref={nodeRef}>{count}</span>;
 }
 
-// --- Premium Tilt Card Element with Spotlight Glow & Animated Gradient Border ---
+// --- Premium Tilt Card Element with Gold & Navy Luxury Glow ---
 function PremiumArticleCard({ article, index, lang }: { article: any; index: number; lang: 'ar' | 'en' }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -51,7 +51,9 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
   const authorName = article.author?.name?.[lang] || article.author?.name?.en || 'Admin';
   const categoryName = article.category?.name?.[lang] || article.category?.name?.en || 'General';
   const catKey = (article.category?.slug || 'general').toLowerCase();
-  const gradientClass = categoryColorMap[catKey] || "from-primary to-cyan-500";
+
+  // خلفية التدرج الافتراضية المدمجة بفخامة بين الكحلي والذهبي
+  const gradientClass = categoryColorMap[catKey] || "from-[#093f89] to-[#fbc70f]";
 
   return (
     <motion.article
@@ -62,12 +64,15 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, delay: Math.min(index * 0.1, 0.3) }}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-[32px] border border-border/40 bg-card/40 backdrop-blur-xl p-4 shadow-xl hover:shadow-3xl dark:hover:shadow-primary/5 transition-all duration-500 h-full w-full"
+      className="group relative flex flex-col justify-between overflow-hidden rounded-[32px] border border-border/40 bg-card/40 backdrop-blur-xl p-4 shadow-xl hover:shadow-[0_20px_50px_rgba(9,63,137,0.15)] transition-all duration-500 h-full w-full"
     >
-      {/* 1. Animated Moving Gradient Border */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[32px] p-[1.5px] bg-gradient-to-r from-primary via-cyan-500 to-amber-500 bg-[length:200%_auto] animate-gradient-shift" />
+      {/* 1. إطار متوهج متحرك بمزيج الكحلي الملكي والذهبي الفخم عند التمرير */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[32px] p-[1.5px] bg-gradient-to-r from-[#093f89] via-[#fbc70f] to-[#093f89] bg-[length:200%_auto] animate-gradient-shift" />
 
-      {/* Image Container with Cinematic Shine & Zoom */}
+      {/* خلفية كارد سفلية بتدرج ناعم يعطي عمق فخم */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent to-[#093f89]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[32px]" />
+
+      {/* Image Container */}
       <div className="relative z-10 w-full aspect-[16/10] rounded-[24px] overflow-hidden bg-muted/50 mb-5 shadow-inner">
         <Link href={`/blogs/${article.slug}`} className="block w-full h-full">
           <img
@@ -79,24 +84,24 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
         </Link>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine pointer-events-none z-10" />
 
-        {/* Hover View Detail Overlay Button */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-center justify-center gap-3 z-20">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 rounded-full bg-white text-black shadow-2xl flex items-center justify-center">
+        {/* تأثير التمرير فوق الصورة - زر العين بالذهبي الملكي */}
+        <div className="absolute inset-0 bg-[#041e42]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-center justify-center gap-3 z-20">
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 rounded-full bg-[#fbc70f] text-[#093f89] shadow-2xl flex items-center justify-center">
             <Link href={`/blogs/${article.slug}`} className="flex items-center justify-center w-full h-full"><Eye className="w-5 h-5" /></Link>
           </motion.div>
         </div>
 
-        {/* Badge Floating */}
+        {/* Badge Floating - التدرج المخصص */}
         <span className={`absolute top-4 start-4 px-3.5 py-1 text-[10px] font-bold tracking-widest uppercase text-white bg-gradient-to-r ${gradientClass} rounded-full shadow-lg border border-white/10 backdrop-blur-md`}>
           {categoryName}
         </span>
       </div>
 
-      {/* Card Metadata & Typography Details */}
+      {/* Card Metadata & Typography */}
       <div className="relative z-10 flex-1 flex flex-col justify-between px-2">
         <div className="space-y-3">
           <Link href={`/blogs/${article.slug}`} className="block">
-            <h3 className="text-xl font-bold text-foreground font-serif tracking-tight line-clamp-2 leading-snug group-hover:text-primary transition-colors duration-300">
+            <h3 className="text-xl font-bold text-foreground font-serif tracking-tight line-clamp-2 leading-snug group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
               {title}
             </h3>
           </Link>
@@ -108,7 +113,7 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
         <div className="mt-6 pt-4 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-3.5">
             <div className="flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5 text-primary/70" />
+              <User className="w-3.5 h-3.5 text-[#093f89] dark:text-[#fbc70f]/80" />
               <span className="font-medium max-w-[90px] truncate">{authorName}</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -121,8 +126,9 @@ function PremiumArticleCard({ article, index, lang }: { article: any; index: num
             </div>
           </div>
 
+          {/* زر السهم - يتحول بالكامل للذهبي الفخم والكحلي عند الـ Hover */}
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-            <Link href={`/blogs/${article.slug}`} className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-muted/60 border border-border/60 text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+            <Link href={`/blogs/${article.slug}`} className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-muted/60 border border-border/60 text-foreground group-hover:bg-[#093f89] group-hover:text-white dark:group-hover:bg-[#fbc70f] dark:group-hover:text-[#093f89] transition-all duration-300">
               {lang === 'ar' ? <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" /> : <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" />}
             </Link>
           </motion.div>
@@ -157,7 +163,7 @@ export default function ArticlesPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Parallax Mechanics via Framer Motion useScroll
+  // Parallax Mechanics
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
   const bgTransformY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
@@ -188,10 +194,10 @@ export default function ArticlesPage() {
   return (
     <div ref={containerRef} dir={isRtl ? "rtl" : "ltr"} className="flex flex-col min-h-screen bg-background text-foreground overflow-x-hidden w-full">
 
-      {/* Static Noise Background and ambient layers */}
+      {/* الإضاءة الخلفية المحيطية - تم تعديلها لتشع باللون الكحلي والذهبي الفخم */}
       <motion.div style={{ y: bgTransformY }} className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] end-[-10%] w-[700px] h-[700px] bg-primary/5 blur-[150px] rounded-full animate-pulse duration-10000" />
-        <div className="absolute bottom-[20%] start-[-10%] w-[800px] h-[800px] bg-cyan-500/5 blur-[180px] rounded-full animate-pulse duration-7000" />
+        <div className="absolute top-[-10%] end-[-10%] w-[700px] h-[700px] bg-[#093f89]/10 blur-[150px] rounded-full animate-pulse duration-10000" />
+        <div className="absolute bottom-[20%] start-[-10%] w-[800px] h-[800px] bg-[#fbc70f]/5 blur-[180px] rounded-full animate-pulse duration-7000" />
         <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.01] bg-[url('/noise.png')]" />
       </motion.div>
 
@@ -201,21 +207,23 @@ export default function ArticlesPage() {
         onMouseMove={handleHeroMouseMove}
         className="relative pt-36 pb-24 px-4 sm:px-6 lg:px-12 text-center overflow-hidden border-b border-border/40 bg-gradient-to-b from-muted/10 to-transparent z-10 w-full"
       >
+        {/* تفاعل الماوس مع الهيدر بإضاءة ذهبية/كحلية خافتة وملكية */}
         <div
-          className="pointer-events-none absolute inset-0 transition-all duration-300 opacity-50 mix-blend-screen dark:mix-blend-normal"
+          className="pointer-events-none absolute inset-0 transition-all duration-300 opacity-40 mix-blend-screen dark:mix-blend-normal"
           style={{
-            background: `radial-gradient(700px circle at ${heroMouse.x}% ${heroMouse.y}%, rgba(var(--primary-rgb), 0.12), transparent 70%)`,
+            background: `radial-gradient(700px circle at ${heroMouse.x}% ${heroMouse.y}%, rgba(9, 63, 137, 0.15), rgba(251, 199, 15, 0.08), transparent 70%)`,
           }}
         />
 
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
+          {/* البادج العلوي - خلفية كحلية شفافة مع خط حدود ذهبي وأيقونة براقة ذهبية */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-xl text-primary text-xs font-semibold tracking-widest uppercase"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#093f89]/10 border border-[#fbc70f]/40 backdrop-blur-xl text-[#093f89] dark:text-[#fbc70f] text-xs font-semibold tracking-widest uppercase"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <Sparkles className="w-3.5 h-3.5 text-[#fbc70f]" />
             {isRtl ? 'رؤى هندسية وأخبار المقاولات' : 'Construction Insights & Tech Trends'}
           </motion.div>
 
@@ -223,7 +231,7 @@ export default function ArticlesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-serif text-3xl sm:text-6xl lg:text-7xl font-light tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 leading-tight"
+            className="font-serif text-3xl sm:text-6xl lg:text-7xl font-light tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-[#093f89] dark:via-[#fbc70f] to-foreground/80 leading-tight"
           >
             {isRtl ? 'مدونة لمعة أبيات' : 'Lamat Abyat Blog'}
           </motion.h1>
@@ -241,7 +249,7 @@ export default function ArticlesPage() {
         </div>
       </section>
 
-      {/* ================= ARTICLES ARTICLES LAYOUT AREA ================= */}
+      {/* ================= ARTICLES LAYOUT AREA ================= */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto w-full z-10">
         <div className="mb-12 flex flex-col md:flex-row items-start md:items-end justify-between gap-4 border-b border-border/30 pb-6">
           <div>
@@ -264,8 +272,6 @@ export default function ArticlesPage() {
           </div>
         )}
       </section>
-
-
 
     </div>
   );
