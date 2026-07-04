@@ -118,14 +118,11 @@ export default function Footer({ settings }: { settings?: any }) {
                 </Link>
               </div>
 
-              <div className="group">
-                <div
-                  className="text-sm max-w-md leading-relaxed font-light text-foreground
-    group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f]
-    transition-colors duration-300"
-                  dangerouslySetInnerHTML={{ __html: decodeHTML(desc) }}
-                />
-              </div>
+              <div
+                className="text-sm text-muted-foreground max-w-md leading-relaxed font-light"
+                dangerouslySetInnerHTML={{ __html: decodeHTML(desc) }}
+              />
+
               {/* SOCIAL ICONS - تأثيرات فخمة باللون الكحلي والذهبي */}
               <div className="flex gap-3 mt-10 flex-wrap">
                 {socialLinks.map((s, i) => (
@@ -143,47 +140,36 @@ export default function Footer({ settings }: { settings?: any }) {
               </div>
             </div>
 
-            {/* QUICK LINKS  يي*/}
+            {/* QUICK LINKS */}
             <div>
               <h4 className="text-xs font-bold tracking-[0.2em] text-foreground uppercase mb-6 flex items-center gap-3">
                 <span className="w-6 h-[3px] bg-[#fbc70f] rounded-full"></span>
                 {t('quick_links', lang)}
               </h4>
-              <ul className="space-y-4 text-sm font-medium">
+              <ul className="space-y-4 text-sm font-medium text-muted-foreground">
                 <li>
-                  <Link
-                    href="/shop"
-                    className="!text-black dark:!text-white hover:!text-[#fbc70f] dark:hover:!text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
-                  >
+                  <Link href="/shop" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
                     {t('shop_collection', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/collections"
-                    className="!text-black dark:!text-white hover:!text-[#fbc70f] dark:hover:!text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
-                  >
+                  <Link href="/collections" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
                     {t('categories', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/about"
-                    className="!text-black dark:!text-white hover:!text-[#fbc70f] dark:hover:!text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
-                  >
+                  <Link href="/about" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
                     {t('about', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/faq"
-                    className="!text-black dark:!text-white hover:!text-[#fbc70f] dark:hover:!text-[#fbc70f] hover:translate-x-1 transition-all duration-300 inline-block"
-                  >
+                  <Link href="/faq" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
                     {t('faq', lang)}
                   </Link>
                 </li>
               </ul>
             </div>
+
             {/* CONTACT INFO */}
             <div>
               <h4 className="text-xs font-bold tracking-[0.2em] text-foreground uppercase mb-6 flex items-center gap-3">
