@@ -2,13 +2,17 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/components/LanguageContext";
-import { useSettings } from "@/hooks/useSettings"; // 👈 استيراد هوك الإعدادات (تأكد من مساره الصحيح في مشروعك)
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, Briefcase, Target, CheckCircle2, Eye, Rocket, ArrowRight } from "lucide-react";
 
 // المعرفات اللونية الثابتة للبراند
 const COLOR_PRIMARY = "#093f89"; // الأزرق الكحلي
 const COLOR_ACCENT = "#fbc70f";  // الأصفر الذهبي
+
+interface AboutClientPageProps {
+  settings: any;
+  initialLang: "en" | "ar";
+}
 
 // --- Animated Counter Component ---
 function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: number }) {
@@ -64,7 +68,6 @@ function useTiltEffect() {
   return { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave };
 }
 
-// كرت زجاجي تفاعلي مضبوط للوضع الفاتح والمظلم بشكل متناسق تماماً
 function TiltCard({ children }: { children: React.ReactNode }) {
   const { ref, rotateX, rotateY, glowX, glowY, isHovered, setIsHovered, handleMouseMove, handleMouseLeave } = useTiltEffect();
 
@@ -79,7 +82,6 @@ function TiltCard({ children }: { children: React.ReactNode }) {
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="relative overflow-hidden rounded-[24px] border border-black/5 dark:border-white/10 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl transition-all duration-300 h-full w-full group"
     >
-      {/* وميض الهوفير بلمسة خفيفة متناسقة مع الوضعين */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
         style={{
@@ -182,11 +184,11 @@ const content = {
   },
 };
 
-export default function AboutPage() {
+export default function AboutClientPage({ settings, initialLang }: AboutClientPageProps) {
   const { lang } = useLanguage();
-  const { settings } = useSettings(); // 👈 جلب بيانات الإعدادات المخزنة بلوحة التحكم ديناميكياً
-  const text = content[lang as keyof typeof content];
-  const isRtl = lang === "ar";
+  const currentLang = lang || initialLang;
+  const text = content[currentLang as keyof typeof content];
+  const isRtl = currentLang === "ar";
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -197,12 +199,12 @@ export default function AboutPage() {
   const yHero = useTransform(scrollYProgress, [0, 0.3], [0, -50]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
-  // 👈 دالة التوجيه للواتساب بالرقم المحدث والرسالة المخصصة
+  // دالة تحويل المستخدم إلى الواتساب بالاعتماد على الـ props القادمة من السيرفر
   const handleConsultationClick = () => {
     const rawNumber = settings?.whatsapp || settings?.whatsapp_phone || settings?.whatsapp_number || settings?.phone || "";
-    const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000"; // رقم احتياطي في حال عدم تعيينه
+    const whatsappNumber = rawNumber ? rawNumber.replace(/\D/g, '') : "966500000000";
 
-    const message = lang === "ar"
+    const message = currentLang === "ar"
       ? "مرحبا ً شركة لمعة أبيات للمقاوالت، أود الحصول على استشارة استراتيجية لمشروعي"
       : "Hello Lamea Abyat Contracting, I would like to get a strategic consultation for my project";
 
@@ -216,7 +218,7 @@ export default function AboutPage() {
       dir={isRtl ? "rtl" : "ltr"}
       className="relative min-h-screen bg-background text-foreground overflow-x-hidden w-full transition-colors duration-500 selection:bg-primary/30"
     >
-      {/* --- HERO SECTION WITH PARALLAX --- */}
+      {/* --- HERO SECTION --- */}
       <section className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden w-full">
         <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 max-w-5xl mx-auto text-center space-y-8 w-full">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", delay: 0.1 }}>
@@ -245,7 +247,7 @@ export default function AboutPage() {
         </motion.div>
       </section>
 
-      {/* --- STATS SECTION (ANIMATED COUNTERS) --- */}
+      {/* --- STATS SECTION --- */}
       <section className="relative z-10 py-10 px-4 sm:px-6 max-w-7xl mx-auto -mt-16 w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
           {text.stats.map((stat, i) => (
@@ -266,7 +268,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- WHY CHOOSE US (TILT & SPOTLIGHT CARDS) --- */}
+      {/* --- WHY CHOOSE US --- */}
       <section className="relative z-10 py-24 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
           <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.featuresTitle}</h2>
@@ -294,10 +296,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- MISSION & VISION (ADVANCED GLASSMORPHISM) --- */}
+      {/* --- MISSION & VISION --- */}
       <section className="relative z-10 py-16 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 w-full">
-          {/* Vision */}
           <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card border border-border rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
             <div style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm dark:text-blue-400"><Eye className="w-7 h-7" /></div>
             <div>
@@ -306,7 +307,6 @@ export default function AboutPage() {
             </div>
           </motion.div>
 
-          {/* Mission */}
           <motion.div whileHover={{ y: -4 }} className="p-6 md:p-10 bg-card border border-border rounded-[32px] shadow-xl flex flex-col sm:flex-row gap-6 items-start w-full">
             <div style={{ backgroundColor: `${COLOR_PRIMARY}15`, color: COLOR_PRIMARY }} className="p-4 rounded-2xl shrink-0 shadow-sm dark:text-blue-400"><Rocket className="w-7 h-7" /></div>
             <div>
@@ -316,7 +316,6 @@ export default function AboutPage() {
           </motion.div>
         </div>
 
-        {/* Values */}
         <div className="mt-12 p-8 md:p-12 bg-card border border-border rounded-[32px] shadow-lg w-full">
           <h3 className="text-xs md:text-sm font-bold tracking-widest text-center mb-12 uppercase text-muted-foreground">{text.mvv.values.title}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
@@ -336,7 +335,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- INTERACTIVE TIMELINE SECTION --- */}
+      {/* --- TIMELINE SECTION --- */}
       <section className="relative z-10 py-24 px-4 sm:px-6 max-w-5xl mx-auto w-full">
         <div className="text-center mb-20">
           <h2 className="text-3xl md:text-5xl font-bold font-serif tracking-tight text-foreground">{text.timelineTitle}</h2>
@@ -372,7 +371,6 @@ export default function AboutPage() {
           <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">{text.ctaSubtitle}</p>
 
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block w-full sm:w-auto">
-            {/* 👈 تم ربط الزر هنا بـ onClick لتنفيذ دالة الواتساب الديناميكية */}
             <button
               onClick={handleConsultationClick}
               style={{ backgroundColor: COLOR_ACCENT, color: COLOR_PRIMARY }}
