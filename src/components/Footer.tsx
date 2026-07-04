@@ -122,7 +122,6 @@ export default function Footer({ settings }: { settings?: any }) {
                 className="text-sm text-muted-foreground max-w-md leading-relaxed font-light group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300"
                 dangerouslySetInnerHTML={{ __html: decodeHTML(desc) }}
               />
-
               {/* SOCIAL ICONS - تأثيرات فخمة باللون الكحلي والذهبي */}
               <div className="flex gap-3 mt-10 flex-wrap">
                 {socialLinks.map((s, i) => (
