@@ -155,22 +155,22 @@ export default function Footer({ settings }: { settings?: any }) {
               </h4>
               <ul className="space-y-4 text-sm font-medium text-muted-foreground">
                 <li>
-                  <Link href="/shop" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
+                  <Link href="/shop" className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
                     {t('shop_collection', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/collections" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
+                  <Link href="/collections" className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
                     {t('categories', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/about" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
+                  <Link href="/about" className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
                     {t('about', lang)}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="hover:text-[#093f89] dark:hover:text-[#fbc70f] hover:translate-s-1 transition-all duration-300 inline-block">
+                  <Link href="/faq" className="text-sm font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors duration-300">
                     {t('faq', lang)}
                   </Link>
                 </li>
