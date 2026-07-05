@@ -137,7 +137,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
 
             {/* Footer */}
             <div className="border-t border-border p-6 bg-muted/30">
-              <div className="flex justify-between mb-2">
+              {/* <div className="flex justify-between mb-2">
                 <span className="text-muted-foreground">{t('subtotal', lang)}</span>
                 <span className="font-semibold flex items-center gap-1">
                   {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
@@ -153,7 +153,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
               </div>
               <p className="text-sm text-muted-foreground mb-6">
                 {pricesIncludeTax ? t('shipping_calculated_checkout', lang) || "Shipping calculated at checkout. Taxes are included." : t('shipping_taxes_calculated', lang) || "Shipping & taxes calculated at checkout."}
-              </p>
+              </p> */}
 
               <div className="flex flex-col gap-3">
                 <Link
