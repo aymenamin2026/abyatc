@@ -762,7 +762,7 @@ export default function Checkout() {
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button
                         onClick={() => setAuthMode('login')}
-                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/95 font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow text-center text-sm"
+                        className="flex-1 bg-[#fbc70f] text-primary-foreground hover:bg-primary/95 font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow text-center text-sm"
                       >
                         {t('login', lang)}
                       </button>
@@ -971,7 +971,7 @@ export default function Checkout() {
                       />
                     )}
 
-                    <button type="submit" className="w-full bg-primary text-white py-4 rounded-xl font-medium mt-4 shadow-sm hover:shadow-md transition-all">
+                    <button type="submit" className="w-full bg-[#fbc70f] text-white py-4 rounded-xl font-medium mt-4 shadow-sm hover:shadow-md transition-all">
                       {authMode === "login" ? t('login', lang) : t('create_account', lang)}
                     </button>
                   </form>
@@ -1498,7 +1498,7 @@ export default function Checkout() {
                       isPlacingOrder ||
                       cartItems.length === 0
                     }
-                    className="w-full bg-primary text-primary-foreground py-5 rounded-xl font-medium text-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-[#fbc70f] text-primary-foreground py-5 rounded-xl font-medium text-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isPlacingOrder ? (
                       <div className="flex items-center gap-2">

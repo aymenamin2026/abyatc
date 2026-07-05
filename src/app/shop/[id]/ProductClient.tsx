@@ -413,7 +413,7 @@ export default function ProductClient({
               <button
                 onClick={handleAddToCart}
                 className={`flex-1 h-16 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg flex items-center justify-center gap-3
-                  ${isAddedToCart ? 'bg-green-500 text-white shadow-green-500/25 scale-[0.98]' : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-primary/25 hover:-translate-y-1'}`}
+                  ${isAddedToCart ? 'bg-green-500 text-white shadow-green-500/25 scale-[0.98]' : 'bg-[#fbc70f] text-primary-foreground hover:bg-primary/90 hover:shadow-primary/25 hover:-translate-y-1'}`}
                 disabled={isAddedToCart || (hasVariations && productAttributes.some(attr => !selectedAttributes[attr.slug || attr.name?.en?.toLowerCase()]))}
               >
                 {isAddedToCart ? (

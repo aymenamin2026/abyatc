@@ -65,8 +65,8 @@ function CheckoutResultContent() {
         <p className="text-muted-foreground mb-6 leading-relaxed">
           {isSuccess
             ? lang === "ar"
-              ? "تم تأكيد طلبك وسيتم معالجته قريباً. شكراً لتسوقك معنا!"
-              : "Your order has been confirmed and will be processed shortly. Thank you for shopping with us!"
+              ? "تم تأكيد طلبك التاجير وسيتم التواصل معكم قريباً. شكراً لاختياركم لمعة ابيات للمقاولات!"
+              : "Your rental request has been confirmed, and we will contact you shortly. Thank you for choosing Lamaat Abyat for Contracting."
             : isPending
               ? lang === "ar"
                 ? "دفعتك قيد المعالجة. سيتم تحديث حالة الطلب تلقائياً."
@@ -115,7 +115,7 @@ function CheckoutResultContent() {
             <>
               <Link
                 href="/account?tab=orders"
-                className="flex-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg active:scale-95"
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-[#fbc70f] text-primary-foreground px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg active:scale-95"
               >
                 <ShoppingBag className="w-4 h-4" />
                 {lang === "ar" ? "طلباتي" : "My Orders"}
