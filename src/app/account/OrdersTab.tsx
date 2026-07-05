@@ -242,41 +242,42 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-card text-foreground rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-border"
+              className="bg-white dark:bg-[#121212] text-slate-900 dark:text-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-gray-100 dark:border-zinc-800"
             >
               {/* Modal Header */}
-              <div className="p-6 border-b border-border flex items-center justify-between bg-muted/40 dark:bg-[#1a1a1a]">
+              <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between bg-gray-50 dark:bg-[#1a1a1a]">
                 <div>
-                  <h3 className="text-2xl font-bold text-foreground font-serif">{t('order_details', lang)}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 font-medium">{t('order_id', lang)} #{selectedOrder.order_number}</p>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white font-serif">{t('order_details', lang)}</h3>
+                  <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1 font-medium">{t('order_id', lang)} #{selectedOrder.order_number}</p>
                 </div>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="p-2 hover:bg-muted text-muted-foreground rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-400 dark:text-zinc-500 rounded-full transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
               {/* Modal Body */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar bg-card">
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-white dark:bg-[#121212]">
 
                 {/* Order Info Bar */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-background rounded-2xl border border-border shadow-sm">
+                {/* 👈 تم التعديل: إجبار الخلفية على اللون الرمادي الفاتح جداً في الفاتح، والأسود في المظلم */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-2xl border border-gray-100 dark:border-zinc-800/50 shadow-sm">
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">{t('order_status', lang)}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('order_status', lang)}</div>
                     <div className="text-sm font-bold capitalize text-[#093f89] dark:text-[#fbc70f]">{t(selectedOrder.status as any, lang)}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">{t('order_date', lang)}</div>
-                    <div className="text-sm font-bold text-foreground">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('order_date', lang)}</div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">{t('contact_det', lang)}</div>
-                    <div className="text-sm font-bold capitalize text-foreground">{selectedOrder.payment_method || '-'}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('contact_det', lang)}</div>
+                    <div className="text-sm font-bold capitalize text-slate-900 dark:text-white">{selectedOrder.payment_method || '-'}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">{t('order_total', lang)}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('order_total', lang)}</div>
                     {(() => {
                       const { isNotPricedYet, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
                       return isNotPricedYet ? (
@@ -284,7 +285,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                           {awaitingPricingText}
                         </span>
                       ) : (
-                        <div className="text-sm font-bold flex items-center text-foreground">
+                        <div className="text-sm font-bold flex items-center text-slate-900 dark:text-white">
                           {renderCurrency()}
                           {finalTotal.toFixed(2)}
                         </div>
@@ -295,7 +296,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
 
                 {/* Items List */}
                 <div>
-                  <h4 className="font-bold text-foreground mb-4 flex items-center gap-2 text-lg">
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 text-lg">
                     <Package className="w-5 h-5 text-[#093f89] dark:text-[#fbc70f]" />
                     {t('order_items', lang)} ({selectedOrder.items?.length || 0})
                   </h4>
@@ -305,8 +306,9 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       const isItemUnpriced = basePrice === 0;
 
                       return (
-                        <div key={item.id} className="flex gap-4 items-center p-4 rounded-2xl border border-border hover:bg-muted/30 transition-colors bg-background">
-                          <div className="w-16 h-20 rounded-xl bg-muted overflow-hidden shrink-0 border border-border">
+                        /* 👈 تم التعديل: جعل خلفية كرت المنتج بيضاء تماماً في الفاتح وداكنة في المظلم لتأمين التباين للنصوص */
+                        <div key={item.id} className="flex gap-4 items-center p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
+                          <div className="w-16 h-20 rounded-xl bg-gray-50 dark:bg-zinc-900 overflow-hidden shrink-0 border border-gray-100 dark:border-zinc-800">
                             <img
                               src={getImageUrl(item.product?.images?.[0] || item.product?.image || item.image)}
                               alt="Product"
@@ -316,11 +318,12 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-bold text-foreground truncate">
+                            {/* 👈 هنا اسم المنتج أصبح text-slate-900 ليظهر بالأسود الصريح */}
+                            <div className="text-sm font-bold text-slate-900 dark:text-white truncate">
                               {item.product?.name ? (item.product.name[lang as keyof typeof item.product.name] || item.product.name.en || item.product.name) : (item.name || 'Product')}
                             </div>
                             {(item.color || item.size) && (
-                              <div className="text-xs text-muted-foreground mt-1 font-medium">
+                              <div className="text-xs text-gray-400 dark:text-zinc-500 mt-1 font-medium">
                                 {item.color} {item.color && item.size && '|'} {item.size}
                               </div>
                             )}
@@ -344,7 +347,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                               )}
                             </div>
                           </div>
-                          <div className="text-base font-bold text-foreground whitespace-nowrap flex items-center">
+                          <div className="text-base font-bold text-slate-900 dark:text-white whitespace-nowrap flex items-center">
                             {isItemUnpriced ? (
                               <span className="text-xs text-yellow-600 dark:text-[#fbc70f]">-</span>
                             ) : (
@@ -368,15 +371,16 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 </div>
 
                 {/* Shipping & Delivery */}
-                <div className="space-y-4 text-sm bg-muted/40 dark:bg-[#1a1a1a] p-6 rounded-2xl border border-border">
+                {/* 👈 تم التعديل: تحسين كتل الأسعار السفلية لتصبح بخلفية فاتحة متناسقة تماماً ومقروءة */}
+                <div className="space-y-4 text-sm bg-gray-50 dark:bg-[#0a0a0a] p-6 rounded-2xl border border-gray-100 dark:border-zinc-800/50">
                   {(() => {
                     const { isNotPricedYet, shipping, finalTax, finalSubtotal, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
 
                     return (
                       <>
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground font-medium">{t('subtotal', lang)}</span>
-                          <span className="text-foreground font-bold flex items-center">
+                          <span className="text-gray-500 dark:text-zinc-400 font-medium">{t('subtotal', lang)}</span>
+                          <span className="text-slate-900 dark:text-white font-bold flex items-center">
                             {isNotPricedYet ? (
                               <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
                             ) : (<>{renderCurrency()}{finalSubtotal.toFixed(2)}</>)}
@@ -384,7 +388,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                         </div>
 
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground font-medium">{t('processing_fees', lang)}</span>
+                          <span className="text-gray-500 dark:text-zinc-400 font-medium">{t('processing_fees', lang)}</span>
                           <span className="text-green-600 dark:text-green-400 font-bold flex items-center">
                             {isNotPricedYet ? (
                               <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
@@ -395,20 +399,20 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                         </div>
 
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground font-medium">
+                          <span className="text-gray-500 dark:text-zinc-400 font-medium">
                             {t('taxes', lang)} {pricesIncludeTax && !isNotPricedYet ? <span className="text-xs opacity-70">({t('included', lang) || 'شاملة'})</span> : ''}
                           </span>
-                          <span className="text-foreground font-bold flex items-center">
+                          <span className="text-slate-900 dark:text-white font-bold flex items-center">
                             {isNotPricedYet ? (
                               <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
                             ) : (<>{renderCurrency()}{finalTax.toFixed(2)}</>)}
                           </span>
                         </div>
 
-                        <div className="h-px bg-border my-4"></div>
+                        <div className="h-px bg-gray-200 dark:bg-zinc-800 my-4"></div>
 
                         <div className="flex justify-between items-center text-base">
-                          <span className="font-bold text-foreground">{t('total', lang)}</span>
+                          <span className="font-bold text-slate-900 dark:text-white">{t('total', lang)}</span>
                           <span className="font-bold text-[#093f89] dark:text-[#fbc70f] flex items-center text-xl">
                             {isNotPricedYet ? (
                               <span className="text-sm bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-3 py-1.5 rounded-lg border border-[#fbc70f]/20 flex items-center gap-1.5">
@@ -425,7 +429,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-6 border-t border-border bg-muted/40 dark:bg-[#1a1a1a] flex gap-3">
+              <div className="p-6 border-t border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-[#1a1a1a] flex gap-3">
                 <Link
                   href={`/track?query=${selectedOrder.order_number}`}
                   className="flex-1 bg-[#093f89] dark:bg-[#fbc70f] text-white dark:text-black py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#093f89]/20 dark:shadow-[#fbc70f]/20 hover:-translate-y-0.5 active:scale-95"
@@ -435,7 +439,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 </Link>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="px-8 py-3.5 bg-background text-foreground border border-border rounded-xl font-bold hover:bg-muted transition-all active:scale-95"
+                  className="px-8 py-3.5 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl font-bold hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all active:scale-95"
                 >
                   {t('cancel', lang)}
                 </button>
