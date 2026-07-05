@@ -89,7 +89,8 @@ export default function WishlistTab({ lang, currencySymbol = "SAR" }: WishlistTa
         </p>
         <Link
           href="/shop"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm"
+          // 👈 تم استبدال bg-primary و text-primary-foreground بالألوان المباشرة مع الحفاظ على تأثير الـ hover الناعم
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#fbc70f] text-black font-semibold rounded-xl hover:brightness-95 transition-all shadow-sm"
         >
           <ShoppingCart className="w-4 h-4" />
           {t("browse_products" as any, lang)}

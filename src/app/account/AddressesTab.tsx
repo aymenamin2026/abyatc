@@ -160,12 +160,15 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
             </div>
           ) : (
             addresses.map(addr => (
-              <div key={addr.id} className="border border-border rounded-2xl p-5 hover:border-primary/50 transition-colors bg-secondary/5 relative">
+              // 👈 1. تم تعديل حواف الكارت عند التمرير لتصبح صفراء بدلاً من التداخل القديم: hover:border-[#fbc70f]/50
+              <div key={addr.id} className="border border-border rounded-2xl p-5 hover:border-[#fbc70f]/50 transition-colors bg-secondary/5 relative">
                 {addr.is_default && (
-                  <span className="absolute top-4 end-4 bg-primary/10 text-primary text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded">{t('default', lang)}</span>
+                  // 👈 2. تم تعديل شارة "افتراضي" لتصبح بخلفية صفراء خفيفة ونص أصفر ذهبي متناسق
+                  <span className="absolute top-4 end-4 bg-[#fbc70f]/10 text-[#e2b20d] text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded">{t('default', lang)}</span>
                 )}
                 <div className="flex items-center gap-2 mb-2 text-foreground font-semibold">
-                  {addr.address_type === 'home' && <MapPin className="w-4 h-4 text-primary" />}
+                  {/* 👈 3. تم تعديل أيقونة الخريطة للمنزل لتأخذ لونك الأصفر المميز text-[#fbc70f] */}
+                  {addr.address_type === 'home' && <MapPin className="w-4 h-4 text-[#fbc70f]" />}
                   {addr.address_type === 'office' && <MapPin className="w-4 h-4 text-blue-500" />}
                   {addr.address_type === 'other' && <MapPin className="w-4 h-4 text-green-500" />}
                   <span className="capitalize">{addr.address_type === 'home' ? (lang === 'ar' ? 'منزل' : 'Home') : addr.address_type === 'office' ? (lang === 'ar' ? 'عمل' : 'Office') : (lang === 'ar' ? 'آخر' : 'Other')} {t('address', lang)}</span>
@@ -176,7 +179,8 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
                   {addr.city}, {addr.state} {addr.postcode}
                 </div>
                 <div className="flex items-center gap-3 pt-4 border-t border-border">
-                  <button onClick={() => handleEditAddressClick(addr)} className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">{t('edit', lang)}</button>
+                  {/* 👈 4. تم تعديل زر "تعديل" النصي ليصبح باللون الأصفر وعند التمرير يغمق بنعومة text-[#fbc70f] hover:text-[#e2b20d] */}
+                  <button onClick={() => handleEditAddressClick(addr)} className="text-sm font-medium text-[#fbc70f] hover:text-[#e2b20d] transition-colors">{t('edit', lang)}</button>
                   <span className="w-1 h-1 rounded-full bg-border"></span>
                   <button onClick={() => setAddressToDelete(addr.id)} className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
                     {t('delete', lang)}
@@ -361,7 +365,8 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
                   type="button"
                   onClick={handleSaveAddress}
                   disabled={isSavingAddress || !newAddress.first_name || !newAddress.last_name || !newAddress.address_1 || !newAddress.city || !newAddress.postcode || !newAddress.country_id}
-                  className="bg-primary text-primary-foreground px-8 py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all shadow-sm disabled:opacity-50"
+                  // 👈 تم التعديل هنا: استخدام نفس الخلفية الصفراء والنص الأسود والتمرير الذكي الناعم
+                  className="bg-[#fbc70f] text-black px-8 py-2.5 rounded-xl font-medium hover:brightness-95 transition-all shadow-sm disabled:opacity-50 disabled:pointer-events-none"
                 >
                   {isSavingAddress ? t('saving', lang) : (editingAddressId ? t('update_address', lang) : t('save_address', lang))}
                 </button>

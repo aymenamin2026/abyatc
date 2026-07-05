@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, X, Eye, Truck } from "lucide-react";
+import { Package, X, Eye, Truck, AlertCircle } from "lucide-react";
 
 import { fetchCustomerOrders, fetchSettings, getImageUrl } from "@/lib/api";
 import { t } from "@/lib/translations";
 
-// 1. تعريف الأنواع (Strict Typing)
+// 1. Types Definitions
 interface OrderItem {
   id: string | number;
   product?: { name?: any; images?: string[]; image?: string };
@@ -36,16 +36,30 @@ interface Order {
   items: OrderItem[];
 }
 
-// 2. فصل المنطق المحاسبي خارج الـ Component لتحسين الأداء وسهولة القراءة
+// 2. المحاسبة والمنطق
 const calculateOrderTotals = (order: Order, taxRate: number, pricesIncludeTax: boolean) => {
   const itemsSubtotal = order.items?.reduce((sum: number, item: OrderItem) => {
     const price = parseFloat(String(item.unit_price || item.price || '0'));
     return sum + (price * (item.quantity || 1));
   }, 0) || 0;
 
+  // إذا كان المجموع 0، فهذا يعني أن الطلب بانتظار التسعير
   const isNotPricedYet = itemsSubtotal === 0;
-  const shipping = parseFloat(String(order.shipping_amount || '0'));
-  const tax = (order.tax_amount !== undefined && order.tax_amount !== null)
+
+  if (isNotPricedYet) {
+    return {
+      itemsSubtotal: 0,
+      isNotPricedYet: true,
+      shipping: 0,
+      finalTax: 0,
+      finalSubtotal: 0,
+      finalTotal: 0,
+    };
+  }
+
+  // إذا تم التسعير، نكمل الحسابات بشكل طبيعي
+  let shipping = parseFloat(String(order.shipping_amount || '0'));
+  let tax = (order.tax_amount !== undefined && order.tax_amount !== null)
     ? parseFloat(String(order.tax_amount))
     : taxRate;
 
@@ -53,7 +67,7 @@ const calculateOrderTotals = (order: Order, taxRate: number, pricesIncludeTax: b
   let finalTax = tax;
   let finalTotal = itemsSubtotal + shipping + tax;
 
-  if (pricesIncludeTax && !isNotPricedYet) {
+  if (pricesIncludeTax) {
     finalSubtotal = Math.max(0, itemsSubtotal - tax);
     finalTotal = itemsSubtotal + shipping;
   }
@@ -108,23 +122,25 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
     return <span className="mx-1">{currencySymbol}</span>;
   };
 
+  const awaitingPricingText = lang === 'ar' ? 'بانتظار تسعير الإدارة' : 'Awaiting Admin Pricing';
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-[#093f89]/20 dark:border-[#fbc70f]/20 border-t-[#093f89] dark:border-t-[#fbc70f] rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (orders.length === 0) {
     return (
-      <div className="text-center py-16 flex flex-col items-center justify-center bg-card/30 rounded-3xl border border-border/50 backdrop-blur-sm">
-        <div className="bg-primary/10 p-5 rounded-full mb-5">
-          <Package className="w-10 h-10 text-primary" />
+      <div className="text-center py-16 flex flex-col items-center justify-center bg-white dark:bg-[#121212] rounded-3xl border border-[#093f89]/10 dark:border-[#fbc70f]/20 shadow-sm">
+        <div className="bg-[#093f89]/10 dark:bg-[#fbc70f]/10 p-5 rounded-full mb-5">
+          <Package className="w-10 h-10 text-[#093f89] dark:text-[#fbc70f]" />
         </div>
-        <h3 className="text-2xl font-serif font-bold text-foreground mb-3">{t('no_orders', lang)}</h3>
-        <p className="text-muted-foreground mb-8 max-w-md">{t('no_orders_desc', lang)}</p>
-        <Link href="/shop" className="bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:-translate-y-1">
+        <h3 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-3">{t('no_orders', lang)}</h3>
+        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md">{t('no_orders_desc', lang)}</p>
+        <Link href="/shop" className="bg-[#093f89] dark:bg-[#fbc70f] text-white dark:text-[#0a0a0a] px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-[#093f89]/20 dark:shadow-[#fbc70f]/20 hover:-translate-y-1">
           {t("shop", lang)}
         </Link>
       </div>
@@ -134,56 +150,57 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground">{t("my_orders", lang)}</h2>
+        <h2 className="font-serif text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{t("my_orders", lang)}</h2>
       </div>
 
-      <div className="overflow-x-auto custom-scrollbar bg-background rounded-3xl border border-border shadow-sm">
+      <div className="overflow-x-auto custom-scrollbar bg-white dark:bg-[#121212] rounded-3xl border border-[#093f89]/10 dark:border-[#fbc70f]/20 shadow-[0_4px_20px_rgb(9,63,137,0.03)] dark:shadow-[0_4px_20px_rgb(251,199,15,0.02)]">
         <table className="w-full text-start border-collapse min-w-[600px]">
           <thead>
-            <tr className="border-b border-border bg-muted/20">
-              <th className="py-5 px-6 font-semibold text-start text-muted-foreground">{t('order_id', lang)}</th>
-              <th className="py-5 px-6 font-semibold text-start text-muted-foreground">{t('order_date', lang)}</th>
-              <th className="py-5 px-6 font-semibold text-start text-muted-foreground">{t('order_status', lang)}</th>
-              <th className="py-5 px-6 font-semibold text-start text-muted-foreground">{t('order_total', lang)}</th>
-              <th className="py-5 px-6 font-semibold text-end text-muted-foreground">{t('order_actions', lang)}</th>
+            <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1a1a1a]">
+              <th className="py-5 px-6 font-semibold text-start text-gray-500 dark:text-gray-400">{t('order_id', lang)}</th>
+              <th className="py-5 px-6 font-semibold text-start text-gray-500 dark:text-gray-400">{t('order_date', lang)}</th>
+              <th className="py-5 px-6 font-semibold text-start text-gray-500 dark:text-gray-400">{t('order_status', lang)}</th>
+              <th className="py-5 px-6 font-semibold text-start text-gray-500 dark:text-gray-400">{t('order_total', lang)}</th>
+              <th className="py-5 px-6 font-semibold text-end text-gray-500 dark:text-gray-400">{t('order_actions', lang)}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
             {orders.map((order) => {
               const { isNotPricedYet, finalTotal } = calculateOrderTotals(order, taxRate, pricesIncludeTax);
 
               return (
-                <tr key={order.id} className="group hover:bg-muted/10 transition-colors">
+                <tr key={order.id} className="group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                   <td className="py-5 px-6">
-                    <span className="font-bold text-foreground">#{order.order_number}</span>
+                    <span className="font-bold text-gray-900 dark:text-white">#{order.order_number}</span>
                   </td>
-                  <td className="py-5 px-6 text-muted-foreground text-sm font-medium">
+                  <td className="py-5 px-6 text-gray-500 dark:text-gray-400 text-sm font-medium">
                     {new Date(order.created_at).toLocaleDateString()}
                   </td>
                   <td className="py-5 px-6">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold capitalize shadow-sm
-                      ${order.status === 'pending' ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/20' : ''}
-                      ${order.status === 'processing' ? 'bg-blue-500/10 text-blue-600 border border-blue-500/20' : ''}
-                      ${order.status === 'completed' ? 'bg-green-500/10 text-green-600 border border-green-500/20' : ''}
-                      ${order.status === 'cancelled' ? 'bg-red-500/10 text-red-600 border border-red-500/20' : ''}
-                      ${order.status === 'in_way' ? 'bg-indigo-500/10 text-indigo-600 border border-indigo-500/20' : ''}
-                      ${order.status === 'awaiting_payment' ? 'bg-orange-500/10 text-orange-600 border border-orange-500/20' : ''}
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold capitalize
+                      ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400' : ''}
+                      ${order.status === 'processing' ? 'bg-[#093f89]/10 text-[#093f89] dark:bg-[#093f89]/20 dark:text-blue-400' : ''}
+                      ${order.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400' : ''}
+                      ${order.status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400' : ''}
+                      ${order.status === 'in_way' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400' : ''}
+                      ${order.status === 'awaiting_payment' ? 'bg-orange-100 text-orange-700 dark:bg-orange-500/10 dark:text-orange-400' : ''}
                     `}>
                       {t(order.status as any, lang)}
                     </span>
                   </td>
-                  <td className="py-5 px-6 font-bold text-foreground">
+                  <td className="py-5 px-6 font-bold text-gray-900 dark:text-white">
                     {!isNotPricedYet ? (
                       <span className="flex items-center text-lg">
                         {renderCurrency()}
                         {finalTotal.toFixed(2)}
                       </span>
                     ) : (
-                      <span className="text-sm text-amber-500 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20 inline-block">
-                        {t('awaiting_pricing', lang) || 'قيد المراجعة'}
+                      <span className="flex items-center gap-1.5 text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-3 py-1.5 rounded-lg border border-[#fbc70f]/20 w-max">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {awaitingPricingText}
                       </span>
                     )}
-                    <span className="text-xs text-muted-foreground block mt-1 font-medium">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 block mt-1 font-medium">
                       {order.items?.length || 0} {t('order_items', lang)}
                     </span>
                   </td>
@@ -191,15 +208,15 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                     <div className="flex items-center justify-end gap-3">
                       <button
                         onClick={() => setSelectedOrder(order)}
-                        className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors group/btn"
+                        className="p-2 text-[#093f89] dark:text-[#fbc70f] hover:bg-[#093f89]/10 dark:hover:bg-[#fbc70f]/10 rounded-xl transition-colors group/btn"
                         title={t('view', lang)}
                       >
                         <Eye className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                       </button>
-                      <div className="w-px h-5 bg-border"></div>
+                      <div className="w-px h-5 bg-gray-200 dark:bg-gray-700"></div>
                       <Link
                         href={`/track?query=${order.order_number}`}
-                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors group/btn"
+                        className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group/btn"
                         title={t('track_order', lang)}
                       >
                         <Truck className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
@@ -213,26 +230,26 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
         </table>
       </div>
 
-      {/* 3. نافذة تفاصيل الطلب مع Framer Motion */}
+      {/* 3. نافذة تفاصيل الطلب */}
       <AnimatePresence>
         {selectedOrder && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/40 dark:bg-black/70 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-card/95 backdrop-blur-3xl rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-border/60"
+              className="bg-white dark:bg-[#121212] rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-gray-100 dark:border-gray-800"
             >
               {/* Modal Header */}
-              <div className="p-6 border-b border-border/50 flex items-center justify-between bg-muted/10">
+              <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-[#1a1a1a]">
                 <div>
-                  <h3 className="text-2xl font-bold text-foreground font-serif">{t('order_details', lang)}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 font-medium">{t('order_id', lang)} #{selectedOrder.order_number}</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-serif">{t('order_details', lang)}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{t('order_id', lang)} #{selectedOrder.order_number}</p>
                 </div>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="p-2 hover:bg-rose-500/10 hover:text-rose-500 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -240,108 +257,134 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
 
               {/* Modal Body */}
               <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+
                 {/* Order Info Bar */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-background rounded-2xl border border-border shadow-sm">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-white dark:bg-[#0a0a0a] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">{t('order_status', lang)}</div>
-                    <div className="text-sm font-bold capitalize text-primary">{t(selectedOrder.status as any, lang)}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 font-bold">{t('order_status', lang)}</div>
+                    <div className="text-sm font-bold capitalize text-[#093f89] dark:text-[#fbc70f]">{t(selectedOrder.status as any, lang)}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">{t('order_date', lang)}</div>
-                    <div className="text-sm font-bold">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 font-bold">{t('order_date', lang)}</div>
+                    <div className="text-sm font-bold text-gray-900 dark:text-white">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">{t('contact_det', lang)}</div>
-                    <div className="text-sm font-bold capitalize">{selectedOrder.payment_method || '-'}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 font-bold">{t('contact_det', lang)}</div>
+                    <div className="text-sm font-bold capitalize text-gray-900 dark:text-white">{selectedOrder.payment_method || '-'}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">{t('order_total', lang)}</div>
-                    <div className="text-sm font-bold flex items-center text-foreground">
-                      {renderCurrency()}
-                      {parseFloat(selectedOrder.total_amount || selectedOrder.grand_total || '0').toFixed(2)}
-                    </div>
+                    <div className="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 font-bold">{t('order_total', lang)}</div>
+                    {(() => {
+                      const { isNotPricedYet, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
+                      return isNotPricedYet ? (
+                        <span className="inline-block text-[11px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-0.5 rounded border border-[#fbc70f]/20 font-bold">
+                          {awaitingPricingText}
+                        </span>
+                      ) : (
+                        <div className="text-sm font-bold flex items-center text-gray-900 dark:text-white">
+                          {renderCurrency()}
+                          {finalTotal.toFixed(2)}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 
                 {/* Items List */}
                 <div>
-                  <h4 className="font-bold text-foreground mb-4 flex items-center gap-2 text-lg">
-                    <Package className="w-5 h-5 text-primary" />
+                  <h4 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2 text-lg">
+                    <Package className="w-5 h-5 text-[#093f89] dark:text-[#fbc70f]" />
                     {t('order_items', lang)} ({selectedOrder.items?.length || 0})
                   </h4>
                   <div className="space-y-3">
-                    {selectedOrder.items?.map((item: OrderItem) => (
-                      <div key={item.id} className="flex gap-4 items-center p-4 rounded-2xl border border-border/60 hover:bg-muted/30 transition-colors bg-background">
-                        <div className="w-16 h-20 rounded-xl bg-muted/50 overflow-hidden shrink-0 border border-border/50">
-                          <img
-                            src={getImageUrl(item.product?.images?.[0] || item.product?.image || item.image)}
-                            alt="Product"
-                            loading="lazy"
-                            decoding="async"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-bold text-foreground truncate">
-                            {item.product?.name ? (item.product.name[lang as keyof typeof item.product.name] || item.product.name.en || item.product.name) : (item.name || 'Product')}
+                    {selectedOrder.items?.map((item: OrderItem) => {
+                      const basePrice = parseFloat(String(item.unit_price || item.price || '0'));
+                      const isItemUnpriced = basePrice === 0;
+
+                      return (
+                        <div key={item.id} className="flex gap-4 items-center p-4 rounded-2xl border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors bg-white dark:bg-[#0a0a0a]">
+                          <div className="w-16 h-20 rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border border-gray-200 dark:border-gray-700">
+                            <img
+                              src={getImageUrl(item.product?.images?.[0] || item.product?.image || item.image)}
+                              alt="Product"
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-                          {(item.color || item.size) && (
-                            <div className="text-xs text-muted-foreground mt-1 font-medium">
-                              {item.color} {item.color && item.size && '|'} {item.size}
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                              {item.product?.name ? (item.product.name[lang as keyof typeof item.product.name] || item.product.name.en || item.product.name) : (item.name || 'Product')}
                             </div>
-                          )}
-                          <div className="text-xs font-bold text-primary mt-2">
-                            Qty: {item.quantity} × {renderCurrency()}
-                            {(() => {
-                              const basePrice = parseFloat(String(item.unit_price || item.price || '0'));
-                              if (basePrice === 0) return '0.00';
-                              if (pricesIncludeTax && selectedOrder.items?.length > 0) {
-                                const itemTaxShare = taxRate / selectedOrder.items.length;
-                                return Math.max(0, basePrice - (itemTaxShare / item.quantity)).toFixed(2);
-                              }
-                              return basePrice.toFixed(2);
-                            })()}
+                            {(item.color || item.size) && (
+                              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">
+                                {item.color} {item.color && item.size && '|'} {item.size}
+                              </div>
+                            )}
+                            <div className="text-xs font-bold text-[#093f89] dark:text-[#fbc70f] mt-2 flex items-center gap-1">
+                              Qty: {item.quantity} ×
+                              {isItemUnpriced ? (
+                                <span className="text-[10px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-1.5 py-0.5 rounded border border-[#fbc70f]/20">
+                                  {awaitingPricingText}
+                                </span>
+                              ) : (
+                                <>
+                                  {renderCurrency()}
+                                  {(() => {
+                                    if (pricesIncludeTax && selectedOrder.items?.length > 0) {
+                                      const itemTaxShare = taxRate / selectedOrder.items.length;
+                                      return Math.max(0, basePrice - (itemTaxShare / item.quantity)).toFixed(2);
+                                    }
+                                    return basePrice.toFixed(2);
+                                  })()}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-base font-bold text-gray-900 dark:text-white whitespace-nowrap flex items-center">
+                            {isItemUnpriced ? (
+                              <span className="text-xs text-yellow-600 dark:text-[#fbc70f]">-</span>
+                            ) : (
+                              <>
+                                {renderCurrency()}
+                                {(() => {
+                                  const itemTotal = parseFloat(String(item.total || (basePrice * item.quantity)));
+                                  if (pricesIncludeTax && selectedOrder.items?.length > 0) {
+                                    const itemTaxShare = taxRate / selectedOrder.items.length;
+                                    return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
+                                  }
+                                  return itemTotal.toFixed(2);
+                                })()}
+                              </>
+                            )}
                           </div>
                         </div>
-                        <div className="text-base font-bold text-foreground whitespace-nowrap flex items-center">
-                          {renderCurrency()}
-                          {(() => {
-                            const basePrice = parseFloat(String(item.unit_price || item.price || '0'));
-                            if (basePrice === 0) return '0.00';
-                            const itemTotal = parseFloat(String(item.total || (basePrice * item.quantity)));
-                            if (pricesIncludeTax && selectedOrder.items?.length > 0) {
-                              const itemTaxShare = taxRate / selectedOrder.items.length;
-                              return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
-                            }
-                            return itemTotal.toFixed(2);
-                          })()}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
                 {/* Shipping & Delivery */}
-                <div className="space-y-3 text-sm bg-primary/5 p-6 rounded-2xl border border-primary/10">
+                <div className="space-y-4 text-sm bg-gray-50 dark:bg-[#1a1a1a] p-6 rounded-2xl border border-gray-100 dark:border-gray-800">
                   {(() => {
                     const { isNotPricedYet, shipping, finalTax, finalSubtotal, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
 
                     return (
                       <>
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground font-medium">{t('subtotal', lang)}</span>
-                          <span className="text-foreground font-bold flex items-center">
+                          <span className="text-gray-600 dark:text-gray-400 font-medium">{t('subtotal', lang)}</span>
+                          <span className="text-gray-900 dark:text-white font-bold flex items-center">
                             {isNotPricedYet ? (
-                              <span className="text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded text-[11px]">{t('awaiting_pricing', lang) || 'قيد المراجعة'}</span>
+                              <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
                             ) : (<>{renderCurrency()}{finalSubtotal.toFixed(2)}</>)}
                           </span>
                         </div>
 
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground font-medium">{t('processing_fees', lang)}</span>
-                          <span className="text-green-600 font-bold flex items-center">
+                          <span className="text-gray-600 dark:text-gray-400 font-medium">{t('processing_fees', lang)}</span>
+                          <span className="text-green-600 dark:text-green-400 font-bold flex items-center">
                             {isNotPricedYet ? (
-                              <span className="text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded text-[11px]">{t('awaiting_pricing', lang) || 'قيد المراجعة'}</span>
+                              <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
                             ) : shipping > 0 ? (
                               <>{renderCurrency()}{shipping.toFixed(2)}</>
                             ) : 'Free'}
@@ -349,23 +392,26 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                         </div>
 
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground font-medium">
+                          <span className="text-gray-600 dark:text-gray-400 font-medium">
                             {t('taxes', lang)} {pricesIncludeTax && !isNotPricedYet ? <span className="text-xs opacity-70">({t('included', lang) || 'شاملة'})</span> : ''}
                           </span>
-                          <span className="text-foreground font-bold flex items-center">
+                          <span className="text-gray-900 dark:text-white font-bold flex items-center">
                             {isNotPricedYet ? (
-                              <span className="text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded text-[11px]">{t('awaiting_pricing', lang) || 'قيد المراجعة'}</span>
+                              <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
                             ) : (<>{renderCurrency()}{finalTax.toFixed(2)}</>)}
                           </span>
                         </div>
 
-                        <div className="h-px bg-primary/10 my-3"></div>
+                        <div className="h-px bg-gray-200 dark:bg-gray-700 my-4"></div>
 
                         <div className="flex justify-between items-center text-base">
-                          <span className="font-bold text-foreground">{t('total', lang)}</span>
-                          <span className="font-bold text-primary flex items-center text-xl">
+                          <span className="font-bold text-gray-900 dark:text-white">{t('total', lang)}</span>
+                          <span className="font-bold text-[#093f89] dark:text-[#fbc70f] flex items-center text-xl">
                             {isNotPricedYet ? (
-                              <span className="text-sm text-amber-500 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20">{t('awaiting_pricing', lang) || 'قيد المراجعة'}</span>
+                              <span className="text-sm bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-3 py-1.5 rounded-lg border border-[#fbc70f]/20 flex items-center gap-1.5">
+                                <AlertCircle className="w-4 h-4" />
+                                {awaitingPricingText}
+                              </span>
                             ) : (<>{renderCurrency()}{finalTotal.toFixed(2)}</>)}
                           </span>
                         </div>
@@ -376,17 +422,17 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-6 border-t border-border/50 bg-muted/10 flex gap-3">
+              <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1a1a1a] flex gap-3">
                 <Link
                   href={`/track?query=${selectedOrder.order_number}`}
-                  className="flex-1 bg-primary text-primary-foreground py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95"
+                  className="flex-1 bg-[#093f89] dark:bg-[#fbc70f] text-white dark:text-[#0a0a0a] py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#093f89]/20 dark:shadow-[#fbc70f]/20 hover:-translate-y-0.5 active:scale-95"
                 >
                   <Truck className="w-5 h-5" />
                   {t('track_order', lang)}
                 </Link>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="px-8 py-3.5 border border-border/80 rounded-xl font-bold hover:bg-muted transition-all active:scale-95"
+                  className="px-8 py-3.5 bg-white dark:bg-[#121212] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all active:scale-95"
                 >
                   {t('cancel', lang)}
                 </button>
