@@ -206,11 +206,13 @@ export default function ProjectDetailPage() {
           className="space-y-5"
         >
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-medium text-muted-foreground">
-            <span className="bg-primary/10 text-primary border border-primary/20 px-3.5 py-1 rounded-full font-bold tracking-wide uppercase">
+            {/* 👈 تعديل الشارة: خلفية صفراء خفيفة، حدود صفراء، ونص ذهبي داكن فخم */}
+            <span className="bg-[#fbc70f]/10 text-[#d8aa0d] border border-[#fbc70f]/20 px-3.5 py-1 rounded-full font-bold tracking-wide uppercase">
               {categoryName}
             </span>
             <div className="flex items-center gap-1.5 bg-muted/40 px-3 py-1 rounded-full border border-border/30">
-              <User className="w-3.5 h-3.5 text-primary/70" />
+              {/* 👈 تعديل أيقونة الكاتب لتصبح كحلية فخمة لتتناسق مع البراند */}
+              <User className="w-3.5 h-3.5 text-[#093f89]/70" />
               <span>{authorName}</span>
             </div>
             <div className="flex items-center gap-1.5 bg-muted/40 px-3 py-1 rounded-full border border-border/30">

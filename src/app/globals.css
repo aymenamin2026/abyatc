@@ -80,7 +80,7 @@ html:not(.dark) .theme-dark-only {
 }
 
 body {
-background: var(--api-background, var(--background)); 
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -96,7 +96,4 @@ background: var(--api-background, var(--background));
 }
 .animate-spin-border {
   animation: spin-border 3s linear infinite;
-}
-.dark body {
-  background: var(--background) !important;
 }

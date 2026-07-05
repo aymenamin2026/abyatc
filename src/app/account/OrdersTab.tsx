@@ -153,7 +153,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
         <h2 className="font-serif text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{t("my_orders", lang)}</h2>
       </div>
 
-      <div className="overflow-x-auto custom-scrollbar bg-white dark:bg-[#121212] rounded-3xl border border-[#093f89]/10 dark:border-[#fbc70f]/20 shadow-[0_4px_20px_rgb(9,63,137,0.03)] dark:shadow-[0_4px_20px_rgb(251,199,15,0.02)]">
+      <div className="overflow-x-auto custom-scrollbar bg-background rounded-3xl border border-border shadow-sm">
         <table className="w-full text-start border-collapse min-w-[600px]">
           <thead>
             <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1a1a1a]">
@@ -233,7 +233,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
       {/* 3. نافذة تفاصيل الطلب */}
       <AnimatePresence>
         {selectedOrder && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/40 dark:bg-black/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}

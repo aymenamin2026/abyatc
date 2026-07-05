@@ -95,7 +95,7 @@ function AccountContent() {
       </div>
 
       {/* 2. HEADER BANNER */}
-      <section className="relative pt-32 pb-16 px-4 sm:px-6 text-center z-10 border-b border-border/40 bg-white/30 dark:bg-[#121212]/30 backdrop-blur-md">
+      <section className="relative pt-32 pb-16 px-4 sm:px-6 text-center z-10 border-b border-border/40 bg-card/30 backdrop-blur-md">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground drop-shadow-sm mb-4">
             {t("dashboard", lang)}
@@ -112,27 +112,28 @@ function AccountContent() {
           {/* 3. SIDEBAR NAVIGATION */}
           <aside className="w-full lg:w-80 flex-shrink-0 lg:sticky lg:top-32 z-20">
             {/* تحسين تجربة الموبايل: إضافة snap-x والتمرير الناعم */}
-            <nav className="flex lg:flex-col gap-3 bg-white/60 dark:bg-[#121212]/80 backdrop-blur-2xl p-4 lg:p-6 rounded-[2rem] shadow-lg border border-border/60 overflow-x-auto lg:overflow-visible custom-scrollbar snap-x snap-mandatory">              {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => onTabChange(tab.id)}
-                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-sm font-bold transition-all duration-300 group flex-shrink-0 lg:flex-shrink whitespace-nowrap snap-center ${isActive
-                    ? "bg-[#093f89] text-white dark:bg-[#fbc70f] dark:text-[#093f89] shadow-lg shadow-[#093f89]/30 dark:shadow-[#fbc70f]/20 scale-[1.02]"
-                    : "text-muted-foreground hover:bg-[#093f89]/5 dark:hover:bg-[#fbc70f]/10 hover:text-[#093f89] dark:hover:text-[#fbc70f]"
-                    }`}
-                >
-                  <Icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? "" : "group-hover:scale-110"}`} strokeWidth={isActive ? 2.5 : 2} />
-                  {tab.label}
+            <nav className="flex lg:flex-col gap-3 bg-card/60 backdrop-blur-2xl p-4 lg:p-6 rounded-[2rem] shadow-lg border border-border/60 overflow-x-auto lg:overflow-visible custom-scrollbar snap-x snap-mandatory">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => onTabChange(tab.id)}
+                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-sm font-bold transition-all duration-300 group flex-shrink-0 lg:flex-shrink whitespace-nowrap snap-center ${isActive
+                      ? "bg-[#093f89] text-white dark:bg-[#fbc70f] dark:text-[#093f89] shadow-lg shadow-[#093f89]/30 dark:shadow-[#fbc70f]/20 scale-[1.02]"
+                      : "text-muted-foreground hover:bg-[#093f89]/5 dark:hover:bg-[#fbc70f]/10 hover:text-[#093f89] dark:hover:text-[#fbc70f]"
+                      }`}
+                  >
+                    <Icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? "" : "group-hover:scale-110"}`} strokeWidth={isActive ? 2.5 : 2} />
+                    {tab.label}
 
-                  {isActive && (
-                    <ChevronRight className={`hidden lg:block w-4 h-4 ms-auto opacity-70 transition-transform ${isRtl ? 'rotate-180' : ''}`} />
-                  )}
-                </button>
-              );
-            })}
+                    {isActive && (
+                      <ChevronRight className={`hidden lg:block w-4 h-4 ms-auto opacity-70 transition-transform ${isRtl ? 'rotate-180' : ''}`} />
+                    )}
+                  </button>
+                );
+              })}
 
               <div className="hidden lg:block my-2 border-t border-border/50"></div>
 
@@ -147,83 +148,84 @@ function AccountContent() {
           </aside>
 
           {/* 4. MAIN CONTENT AREA */}
-          <main className="flex-1 w-full bg-white/60 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[2.5rem] shadow-xl border border-border/60 p-6 sm:p-10 lg:p-12 min-h-[600px]">            <AnimatePresence mode="wait">
-            {activeTab === "dashboard" && (
-              <motion.div
-                key="dashboard"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="space-y-10"
-              >
-                <div className="space-y-3">
-                  <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-                    {t('dashboard_welcome', lang)}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#093f89] to-[#093f89]/70 dark:from-[#fbc70f] dark:to-[#fbc70f]/70">{user.first_name}</span>!
-                  </h2>
-                  <p className="text-muted-foreground text-lg leading-relaxed font-light">
-                    {t('dashboard_intro', lang)}
-                  </p>
-                </div>
+          <main className="flex-1 w-full bg-card/60 backdrop-blur-2xl rounded-[2.5rem] shadow-xl border border-border/60 p-6 sm:p-10 lg:p-12 min-h-[600px]">
+            <AnimatePresence mode="wait">
+              {activeTab === "dashboard" && (
+                <motion.div
+                  key="dashboard"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="space-y-10"
+                >
+                  <div className="space-y-3">
+                    <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+                      {t('dashboard_welcome', lang)}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#093f89] to-[#093f89]/70 dark:from-[#fbc70f] dark:to-[#fbc70f]/70">{user.first_name}</span>!
+                    </h2>
+                    <p className="text-muted-foreground text-lg leading-relaxed font-light">
+                      {t('dashboard_intro', lang)}
+                    </p>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 pt-4">
-                  <button onClick={() => onTabChange("orders")} className="p-8 bg-background border border-border/60 hover:border-[#093f89]/40 dark:hover:border-[#fbc70f]/40 rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-[#093f89]/15 dark:hover:shadow-[#fbc70f]/10 hover:-translate-y-2 group">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#093f89]/5 to-transparent dark:from-[#fbc70f]/10 text-[#093f89] dark:text-[#fbc70f] flex items-center justify-center group-hover:from-[#093f89] group-hover:text-[#fbc70f] dark:group-hover:from-[#fbc70f] dark:group-hover:text-[#093f89] transition-all duration-500 shadow-sm group-hover:scale-110">
-                      <ShoppingBag className="w-7 h-7" strokeWidth={1.5} />
-                    </div>
-                    <span className="font-bold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">{t("my_orders", lang)}</span>
-                  </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 pt-4">
+                    <button onClick={() => onTabChange("orders")} className="p-8 bg-background border border-border/60 hover:border-[#093f89]/40 dark:hover:border-[#fbc70f]/40 rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-[#093f89]/15 dark:hover:shadow-[#fbc70f]/10 hover:-translate-y-2 group">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#093f89]/5 to-transparent dark:from-[#fbc70f]/10 text-[#093f89] dark:text-[#fbc70f] flex items-center justify-center group-hover:from-[#093f89] group-hover:text-[#fbc70f] dark:group-hover:from-[#fbc70f] dark:group-hover:text-[#093f89] transition-all duration-500 shadow-sm group-hover:scale-110">
+                        <ShoppingBag className="w-7 h-7" strokeWidth={1.5} />
+                      </div>
+                      <span className="font-bold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">{t("my_orders", lang)}</span>
+                    </button>
 
-                  <button onClick={() => onTabChange("addresses")} className="p-8 bg-background border border-border/60 hover:border-[#093f89]/40 dark:hover:border-[#fbc70f]/40 rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-[#093f89]/15 dark:hover:shadow-[#fbc70f]/10 hover:-translate-y-2 group">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#093f89]/5 to-transparent dark:from-[#fbc70f]/10 text-[#093f89] dark:text-[#fbc70f] flex items-center justify-center group-hover:from-[#093f89] group-hover:text-[#fbc70f] dark:group-hover:from-[#fbc70f] dark:group-hover:text-[#093f89] transition-all duration-500 shadow-sm group-hover:scale-110">
-                      <MapPin className="w-7 h-7" strokeWidth={1.5} />
-                    </div>
-                    <span className="font-bold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">{t("my_addresses", lang)}</span>
-                  </button>
+                    <button onClick={() => onTabChange("addresses")} className="p-8 bg-background border border-border/60 hover:border-[#093f89]/40 dark:hover:border-[#fbc70f]/40 rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-[#093f89]/15 dark:hover:shadow-[#fbc70f]/10 hover:-translate-y-2 group">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#093f89]/5 to-transparent dark:from-[#fbc70f]/10 text-[#093f89] dark:text-[#fbc70f] flex items-center justify-center group-hover:from-[#093f89] group-hover:text-[#fbc70f] dark:group-hover:from-[#fbc70f] dark:group-hover:text-[#093f89] transition-all duration-500 shadow-sm group-hover:scale-110">
+                        <MapPin className="w-7 h-7" strokeWidth={1.5} />
+                      </div>
+                      <span className="font-bold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">{t("my_addresses", lang)}</span>
+                    </button>
 
-                  <button onClick={() => onTabChange("profile")} className="p-8 bg-background border border-border/60 hover:border-[#093f89]/40 dark:hover:border-[#fbc70f]/40 rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-[#093f89]/15 dark:hover:shadow-[#fbc70f]/10 hover:-translate-y-2 group">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#093f89]/5 to-transparent dark:from-[#fbc70f]/10 text-[#093f89] dark:text-[#fbc70f] flex items-center justify-center group-hover:from-[#093f89] group-hover:text-[#fbc70f] dark:group-hover:from-[#fbc70f] dark:group-hover:text-[#093f89] transition-all duration-500 shadow-sm group-hover:scale-110">
-                      <UserSquare2 className="w-7 h-7" strokeWidth={1.5} />
-                    </div>
-                    <span className="font-bold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">{t("account_details", lang)}</span>
-                  </button>
+                    <button onClick={() => onTabChange("profile")} className="p-8 bg-background border border-border/60 hover:border-[#093f89]/40 dark:hover:border-[#fbc70f]/40 rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-[#093f89]/15 dark:hover:shadow-[#fbc70f]/10 hover:-translate-y-2 group">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#093f89]/5 to-transparent dark:from-[#fbc70f]/10 text-[#093f89] dark:text-[#fbc70f] flex items-center justify-center group-hover:from-[#093f89] group-hover:text-[#fbc70f] dark:group-hover:from-[#fbc70f] dark:group-hover:text-[#093f89] transition-all duration-500 shadow-sm group-hover:scale-110">
+                        <UserSquare2 className="w-7 h-7" strokeWidth={1.5} />
+                      </div>
+                      <span className="font-bold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">{t("account_details", lang)}</span>
+                    </button>
 
-                  <button onClick={() => onTabChange("wishlist")} className="p-8 bg-background border border-border/60 hover:border-red-300 rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-red-500/15 hover:-translate-y-2 group">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500/5 to-transparent text-red-500 flex items-center justify-center group-hover:from-red-500 group-hover:text-white transition-all duration-500 shadow-sm group-hover:scale-110">
-                      <Heart className="w-7 h-7" strokeWidth={1.5} />
-                    </div>
-                    <span className="font-bold text-foreground group-hover:text-red-500 transition-colors">{t("my_wishlist" as any, lang)}</span>
-                  </button>
-                </div>
-              </motion.div>
-            )}
+                    <button onClick={() => onTabChange("wishlist")} className="p-8 bg-background border border-border/60 hover:border-red-300 rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-red-500/15 hover:-translate-y-2 group">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500/5 to-transparent text-red-500 flex items-center justify-center group-hover:from-red-500 group-hover:text-white transition-all duration-500 shadow-sm group-hover:scale-110">
+                        <Heart className="w-7 h-7" strokeWidth={1.5} />
+                      </div>
+                      <span className="font-bold text-foreground group-hover:text-red-500 transition-colors">{t("my_wishlist" as any, lang)}</span>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
 
-            {activeTab === "orders" && (
-              <motion.div key="orders" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
-                <OrdersTab lang={lang} />
-              </motion.div>
-            )}
-            {activeTab === "addresses" && (
-              <motion.div key="addresses" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
-                <AddressesTab lang={lang} user={user} />
-              </motion.div>
-            )}
-            {activeTab === "profile" && (
-              <motion.div key="profile" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
-                <ProfileTab
-                  lang={lang}
-                  user={user as any} // استخدام as any هنا لتجاوز التدقيق الصارم مؤقتاً
-                  login={(userData, userToken) => login(userData as any, userToken)} // تحويل الأنواع هنا
-                  token={token}
-                />
-              </motion.div>
-            )}
-            {activeTab === "wishlist" && (
-              <motion.div key="wishlist" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
-                <WishlistTab lang={lang} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+              {activeTab === "orders" && (
+                <motion.div key="orders" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                  <OrdersTab lang={lang} />
+                </motion.div>
+              )}
+              {activeTab === "addresses" && (
+                <motion.div key="addresses" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                  <AddressesTab lang={lang} user={user} />
+                </motion.div>
+              )}
+              {activeTab === "profile" && (
+                <motion.div key="profile" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                  <ProfileTab
+                    lang={lang}
+                    user={user as any} // استخدام as any هنا لتجاوز التدقيق الصارم مؤقتاً
+                    login={(userData, userToken) => login(userData as any, userToken)} // تحويل الأنواع هنا
+                    token={token}
+                  />
+                </motion.div>
+              )}
+              {activeTab === "wishlist" && (
+                <motion.div key="wishlist" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                  <WishlistTab lang={lang} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </main>
 
         </div>

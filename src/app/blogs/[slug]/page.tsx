@@ -37,14 +37,14 @@ export default function ArticleDetailPage() {
     setFetchingCaptcha(true);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/captcha/math`, {
-          headers: {
-              'X-API-KEY': process.env.NEXT_PUBLIC_API_KEY || '',
-              'X-SECRET-KEY': process.env.NEXT_PUBLIC_SECRET_KEY || '',
-          }
+        headers: {
+          'X-API-KEY': process.env.NEXT_PUBLIC_API_KEY || '',
+          'X-SECRET-KEY': process.env.NEXT_PUBLIC_SECRET_KEY || '',
+        }
       });
       const data = await res.json();
       setMathCaptcha({ question: data.question, id: data.question_id });
-      setCaptchaAnswer(""); 
+      setCaptchaAnswer("");
     } catch (err) {
       console.error(err);
     } finally {
@@ -161,7 +161,7 @@ export default function ArticleDetailPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
-      
+
       {/* BACKGROUND AMBIENT LAYERS - لضمان نفس روح الأنيميشن الفخم */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-primary/5 blur-[130px] rounded-full" />
@@ -170,10 +170,10 @@ export default function ArticleDetailPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 w-full relative z-10">
-        
+
         {/* زر العودة الذكي */}
-        <Link 
-          href="/blogs" 
+        <Link
+          href="/blogs"
           className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors bg-muted/40 px-4 py-2 rounded-full border border-border/40 backdrop-blur-sm mb-10 group"
         >
           {lang === 'ar' ? <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" /> : <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />}
@@ -182,15 +182,15 @@ export default function ArticleDetailPage() {
 
         {/* غلاف المقال عائم وسينمائي */}
         {image && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="aspect-[21/10] md:aspect-[21/9] rounded-[32px] overflow-hidden mb-10 bg-muted shadow-2xl border border-border/50 relative group"
           >
-            <img 
-              src={image} 
-              alt={title} 
+            <img
+              src={image}
+              alt={title}
               className="w-full h-full object-cover transform scale-100 group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
               onError={(e) => { (e.target as HTMLImageElement).src = '/no-image.jpg'; }}
             />
@@ -206,11 +206,13 @@ export default function ArticleDetailPage() {
           className="space-y-5"
         >
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-medium text-muted-foreground">
-            <span className="bg-primary/10 text-primary border border-primary/20 px-3.5 py-1 rounded-full font-bold tracking-wide uppercase">
+            {/* 👈 تعديل الشارة: خلفية صفراء خفيفة، حدود صفراء، ونص ذهبي داكن فخم */}
+            <span className="bg-[#fbc70f]/10 text-[#d8aa0d] border border-[#fbc70f]/20 px-3.5 py-1 rounded-full font-bold tracking-wide uppercase">
               {categoryName}
             </span>
             <div className="flex items-center gap-1.5 bg-muted/40 px-3 py-1 rounded-full border border-border/30">
-              <User className="w-3.5 h-3.5 text-primary/70" />
+              {/* 👈 تعديل أيقونة الكاتب لتصبح كحلية فخمة لتتناسق مع البراند */}
+              <User className="w-3.5 h-3.5 text-[#093f89]/70" />
               <span>{authorName}</span>
             </div>
             <div className="flex items-center gap-1.5 bg-muted/40 px-3 py-1 rounded-full border border-border/30">
@@ -247,18 +249,20 @@ export default function ArticleDetailPage() {
 
           {/* نموذج كتابة تعليق جديد زجاجي فخم */}
           <div className="bg-card/40 backdrop-blur-xl border border-border/80 rounded-[24px] p-5 sm:p-8 shadow-xl relative overflow-hidden mb-14" id="comment-form">
-            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-            
+            {/* 👈 فخامة: الخط المضيء العلوي أصبح يتدرج عبر لونك الأصفر الذهبي المميز */}
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#fbc70f]/40 to-transparent" />
+
             <h4 className="font-bold text-lg mb-5 text-foreground tracking-wide">
               {replyingTo ? (lang === 'en' ? `Reply to ${replyingTo.name}` : `الرد على ${replyingTo.name}`) : (lang === 'en' ? 'Leave a Comment' : 'شاركنا برأيك')}
             </h4>
-            
+
             <form onSubmit={handleSubmitComment} className="space-y-4 relative z-10">
               {replyingTo && (
-                <div className="flex items-center justify-between bg-primary/10 px-4 py-2.5 rounded-xl border border-primary/20 text-xs animate-in fade-in slide-in-from-top-1 duration-200">
+                // 👈 تعديل شارة الرد: ألوان متناسقة بالأصفر الفخم
+                <div className="flex items-center justify-between bg-[#fbc70f]/10 px-4 py-2.5 rounded-xl border border-[#fbc70f]/20 text-xs animate-in fade-in slide-in-from-top-1 duration-200">
                   <span className="text-foreground/80 flex items-center gap-2">
-                    <CornerDownRight className="w-3.5 h-3.5 text-primary" />
-                    <span>{lang === 'en' ? 'Replying to' : 'جاري الرد على'} <span className="font-bold text-primary">{replyingTo.name}</span></span>
+                    <CornerDownRight className="w-3.5 h-3.5 text-[#d8aa0d]" />
+                    <span>{lang === 'en' ? 'Replying to' : 'جاري الرد على'} <span className="font-bold text-[#d8aa0d]">{replyingTo.name}</span></span>
                   </span>
                   <button type="button" onClick={() => setReplyingTo(null)} className="p-1 text-muted-foreground hover:text-rose-500 rounded-full hover:bg-muted transition-colors">
                     <X className="w-4 h-4" />
@@ -275,7 +279,8 @@ export default function ArticleDetailPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="w-full h-12 px-4 bg-muted/40 backdrop-blur-sm border border-border/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground transition-all"
+                      // 👈 إضاءة الحقل عند التركيز أصبحت بلون الـ focus:ring-[#fbc70f]/30
+                      className="w-full h-12 px-4 bg-muted/40 backdrop-blur-sm border border-border/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/30 focus:border-[#fbc70f]/50 text-foreground transition-all"
                     />
                   </div>
                   <div className="space-y-1">
@@ -285,7 +290,8 @@ export default function ArticleDetailPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full h-12 px-4 bg-muted/40 backdrop-blur-sm border border-border/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground transition-all"
+                      // 👈 إضاءة الحقل عند التركيز
+                      className="w-full h-12 px-4 bg-muted/40 backdrop-blur-sm border border-border/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/30 focus:border-[#fbc70f]/50 text-foreground transition-all"
                     />
                   </div>
                 </div>
@@ -297,31 +303,33 @@ export default function ArticleDetailPage() {
                 onChange={(e) => setCommentText(e.target.value)}
                 required
                 rows={4}
-                className="w-full p-4 bg-muted/40 backdrop-blur-sm border border-border/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground resize-none transition-all leading-relaxed"
+                // 👈 إضاءة منطقة النص عند التركيز
+                className="w-full p-4 bg-muted/40 backdrop-blur-sm border border-border/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/30 focus:border-[#fbc70f]/50 text-foreground resize-none transition-all leading-relaxed"
               ></textarea>
 
-              {/* الكابتشا بتنسيق عصري */}
+              {/* الكابتشا بتنسيق عصري وفخم */}
               {article.captcha_type !== 'none' && article.captcha_on_comments && (
                 <div className="py-1">
                   {article.captcha_type === 'math' && mathCaptcha ? (
-                    <div className="inline-flex items-center gap-4 bg-primary/5 p-3.5 px-4 rounded-xl border border-primary/20 shadow-inner">
-                      <div className="flex items-center gap-2 text-sm text-primary font-bold">
-                        <ShieldCheck className="w-4 h-4" />
+                    // 👈 الكابتشا الرياضية: خلفية صفراء ناعمة جداً مع حدود متناسقة وشعار كحلي
+                    <div className="inline-flex items-center gap-4 bg-[#fbc70f]/5 p-3.5 px-4 rounded-xl border border-[#fbc70f]/20 shadow-inner">
+                      <div className="flex items-center gap-2 text-sm text-[#093f89] font-bold">
+                        <ShieldCheck className="w-4 h-4 text-[#d8aa0d]" />
                         <span className="font-sans">{mathCaptcha.question}</span>
                       </div>
-                      <input 
-                        type="text" 
-                        required 
-                        value={captchaAnswer} 
+                      <input
+                        type="text"
+                        required
+                        value={captchaAnswer}
                         onChange={(e) => setCaptchaAnswer(e.target.value)}
                         placeholder="?"
-                        className="w-16 h-9 px-2 bg-background border border-border rounded-lg text-center font-bold text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
+                        className="w-16 h-9 px-2 bg-background border border-border rounded-lg text-center font-bold text-sm focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/30 text-foreground"
                       />
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         onClick={refreshMathCaptcha}
                         disabled={fetchingCaptcha}
-                        className="p-1.5 hover:bg-primary/10 rounded-lg text-primary transition-colors disabled:opacity-50"
+                        className="p-1.5 hover:bg-[#fbc70f]/10 rounded-lg text-[#093f89] transition-colors disabled:opacity-50"
                         title="Refresh Captcha"
                       >
                         <RefreshCw className={`w-4 h-4 ${fetchingCaptcha ? 'animate-spin' : ''}`} />
@@ -329,14 +337,14 @@ export default function ArticleDetailPage() {
                     </div>
                   ) : article.captcha_type === 'google' && (
                     <div className="flex flex-col gap-2">
-                      <Script 
+                      <Script
                         src={`https://www.google.com/recaptcha/api.js?hl=${lang}`}
                         onLoad={() => {
                           const win = window as any;
                           if (win.grecaptcha) {
                             win.grecaptcha.render('recaptcha-main', {
-                              'sitekey' : article.recaptcha_site_key,
-                              'callback' : (response: string) => setGRecaptchaResponse(response),
+                              'sitekey': article.recaptcha_site_key,
+                              'callback': (response: string) => setGRecaptchaResponse(response),
                               'theme': 'dark'
                             });
                           }
@@ -348,10 +356,11 @@ export default function ArticleDetailPage() {
                 </div>
               )}
 
+              {/* 👈 زر الإرسال الفخم والمضمون: خلفية صفراء ثابتة، نص أسود، وتمرير ذكي ناعم */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center gap-2 px-6 h-12 bg-primary text-primary-foreground font-semibold text-sm rounded-xl hover:bg-primary/95 transition-all shadow-md shadow-primary/10 active:scale-[0.98] disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 px-6 h-12 bg-[#fbc70f] text-black font-semibold text-sm rounded-xl hover:brightness-95 transition-all shadow-md shadow-[#fbc70f]/10 active:scale-[0.98] disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
                 <span>{isSubmitting ? (lang === 'en' ? 'Posting...' : 'جاري النشر...') : (lang === 'en' ? 'Post Comment' : 'إرسال التعليق')}</span>
@@ -374,20 +383,20 @@ export default function ArticleDetailPage() {
             ) : (
               comments.map((cmt: any) => (
                 <div key={cmt.id} className="space-y-4 group/item">
-                  
+
                   {/* كارد التعليق الأساسي الفاخر */}
                   <div className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-[22px] p-5 sm:p-6 shadow-sm hover:border-primary/20 transition-all duration-300 flex flex-col relative">
                     <div className="flex justify-between items-start mb-3">
                       <div className="font-bold text-foreground text-sm flex items-center gap-2.5">
-                         <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xs font-bold border border-primary/20 shadow-sm">
-                           {(cmt.user?.first_name?.[0] || cmt.name?.[0] || 'G').toUpperCase()}
-                         </div>
-                         <div className="flex flex-col">
-                           <span className="text-foreground font-semibold">{cmt.user ? `${cmt.user.first_name || ''} ${cmt.user.last_name || ''}`.trim() : cmt.name}</span>
-                           <span className="text-[10px] text-muted-foreground font-normal mt-0.5">{formatTimeAgo(cmt.created_at)}</span>
-                         </div>
+                        <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xs font-bold border border-primary/20 shadow-sm">
+                          {(cmt.user?.first_name?.[0] || cmt.name?.[0] || 'G').toUpperCase()}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-foreground font-semibold">{cmt.user ? `${cmt.user.first_name || ''} ${cmt.user.last_name || ''}`.trim() : cmt.name}</span>
+                          <span className="text-[10px] text-muted-foreground font-normal mt-0.5">{formatTimeAgo(cmt.created_at)}</span>
+                        </div>
                       </div>
-                      
+
                       {/* تاريخ تفصيلي أنيق عند الماوس */}
                       <div className="relative group/time flex items-center">
                         <div className="absolute opacity-0 group-hover/time:opacity-100 transition-opacity duration-200 bg-foreground text-background text-[10px] px-2.5 py-1.5 rounded-lg shadow-2xl whitespace-nowrap pointer-events-none z-10 bottom-full end-0 mb-2 font-medium">
@@ -395,19 +404,19 @@ export default function ArticleDetailPage() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <p className="text-foreground/90 text-sm leading-relaxed mb-4 pl-0 sm:pl-10">
                       {cmt.comment}
                     </p>
 
-                    <button 
+                    <button
                       onClick={() => {
                         if (inlineReplyId === cmt.id) {
-                            setInlineReplyId(null);
-                            setReplyingTo(null);
+                          setInlineReplyId(null);
+                          setReplyingTo(null);
                         } else {
-                            setInlineReplyId(cmt.id);
-                            setReplyingTo({ id: cmt.id, name: cmt.user ? cmt.user.first_name : cmt.name });
+                          setInlineReplyId(cmt.id);
+                          setReplyingTo({ id: cmt.id, name: cmt.user ? cmt.user.first_name : cmt.name });
                         }
                       }}
                       className="text-xs text-primary font-bold hover:underline self-start flex items-center gap-1.5 sm:ml-10 bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/10 transition-colors"
@@ -427,7 +436,7 @@ export default function ArticleDetailPage() {
                           rows={3}
                           className="w-full p-3 bg-muted/40 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground resize-none transition-all leading-relaxed"
                         ></textarea>
-                        
+
                         {!user && (
                           <div className="grid grid-cols-2 gap-3">
                             <input
@@ -458,16 +467,16 @@ export default function ArticleDetailPage() {
                                   <ShieldCheck className="w-3.5 h-3.5" />
                                   <span className="font-sans">{mathCaptcha.question}</span>
                                 </div>
-                                <input 
-                                  type="text" 
-                                  required 
-                                  value={captchaAnswer} 
+                                <input
+                                  type="text"
+                                  required
+                                  value={captchaAnswer}
                                   onChange={(e) => setCaptchaAnswer(e.target.value)}
                                   placeholder="?"
                                   className="w-14 h-8 bg-background border border-border rounded-md text-center font-bold text-xs text-foreground"
                                 />
-                                <button 
-                                  type="button" 
+                                <button
+                                  type="button"
                                   onClick={refreshMathCaptcha}
                                   disabled={fetchingCaptcha}
                                   className="p-1 hover:bg-primary/10 rounded-md text-primary transition-colors disabled:opacity-50"
@@ -477,14 +486,14 @@ export default function ArticleDetailPage() {
                               </div>
                             ) : article.captcha_type === 'google' && (
                               <div className="scale-90 origin-left">
-                                <Script 
+                                <Script
                                   src={`https://www.google.com/recaptcha/api.js?hl=${lang}`}
                                   onLoad={() => {
                                     const win = window as any;
                                     if (win.grecaptcha) {
                                       win.grecaptcha.render(`recaptcha-reply-${cmt.id}`, {
-                                        'sitekey' : article.recaptcha_site_key,
-                                        'callback' : (response: string) => setGRecaptchaResponse(response),
+                                        'sitekey': article.recaptcha_site_key,
+                                        'callback': (response: string) => setGRecaptchaResponse(response),
                                         'theme': 'dark'
                                       });
                                     }
@@ -521,13 +530,13 @@ export default function ArticleDetailPage() {
                         <div key={reply.id} className="bg-muted/30 border border-border/40 rounded-[18px] p-4 flex flex-col hover:border-border transition-colors">
                           <div className="flex justify-between items-center mb-2">
                             <div className="font-semibold text-foreground text-xs flex items-center gap-2">
-                               <div className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-[10px] font-bold border border-indigo-500/20">
-                                 {(reply.user?.first_name?.[0] || reply.name?.[0] || 'G').toUpperCase()}
-                               </div>
-                               <div className="flex flex-col">
-                                 <span className="text-foreground/90 font-bold">{reply.user ? `${reply.user.first_name || ''} ${reply.user.last_name || ''}`.trim() : reply.name}</span>
-                                 <span className="text-[9px] text-muted-foreground font-normal mt-0.5">{formatTimeAgo(reply.created_at)}</span>
-                               </div>
+                              <div className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-[10px] font-bold border border-indigo-500/20">
+                                {(reply.user?.first_name?.[0] || reply.name?.[0] || 'G').toUpperCase()}
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-foreground/90 font-bold">{reply.user ? `${reply.user.first_name || ''} ${reply.user.last_name || ''}`.trim() : reply.name}</span>
+                                <span className="text-[9px] text-muted-foreground font-normal mt-0.5">{formatTimeAgo(reply.created_at)}</span>
+                              </div>
                             </div>
                           </div>
                           <p className="text-foreground/80 text-sm leading-relaxed pl-8">
