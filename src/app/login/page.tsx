@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { Loader2, Mail, Lock, User, Phone, CheckCircle2 } from "lucide-react";
 
@@ -37,7 +36,6 @@ export default function LoginPage() {
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationEmail, setVerificationEmail] = useState("");
 
-  // Country code state
   const [countries, setCountries] = useState<any[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<any>(null);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
@@ -159,7 +157,6 @@ export default function LoginPage() {
     setAuthError("");
     try {
       await resendVerificationCode(verificationEmail);
-      // يمكن استبدالها بـ Toast Message مستقبلاً
       alert(t('code_resent_success', lang));
     } catch (err: any) {
       setAuthError(err.message);
@@ -176,27 +173,15 @@ export default function LoginPage() {
 
   if (user) return null;
 
-  // Animation variants
-  const formVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
-  };
-
   return (
-    <div className="min-h-[calc(100vh-100px)] flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* تأثيرات الإضاءة الخلفية */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#093f89]/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-[#fbc70f]/10 blur-[120px] rounded-full pointer-events-none" />
+    // استخدام pt-32 لإبعاد المحتوى عن النافبار بشكل قطعي
+    <div className="min-h-screen bg-muted/20 flex flex-col items-center justify-start pt-32 pb-12 p-4">
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md relative z-10"
-      >
+      <div className="w-full max-w-md bg-background rounded-2xl shadow-lg border border-border p-6 sm:p-8">
+
+        {/* الترويسة داخل البطاقة لضمان التباين */}
         <div className="text-center mb-8">
-          <Link href="/" className="font-serif text-4xl font-bold tracking-tight text-[#093f89] dark:text-white inline-block hover:scale-105 transition-transform duration-300">
+          <Link href="/" className="font-serif text-3xl font-bold tracking-tight text-[#093f89] dark:text-[#fbc70f]">
             {siteName}
           </Link>
           <p className="text-muted-foreground mt-2 text-sm">
@@ -204,318 +189,268 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl ring-1 ring-gray-900/5 dark:ring-white/10">
+        {authMode !== "verify" ? (
+          <div className="flex bg-muted/50 p-1 rounded-xl mb-6 border border-border">
+            <button
+              type="button"
+              onClick={() => { setAuthMode("login"); setAuthError(""); }}
+              className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${authMode === "login"
+                  ? "bg-background text-foreground shadow-sm border border-border"
+                  : "text-muted-foreground hover:text-foreground"
+                }`}
+            >
+              {t('login', lang)}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setAuthMode("register"); setAuthError(""); }}
+              className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${authMode === "register"
+                  ? "bg-[#093f89] text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                }`}
+            >
+              {t('create_account', lang)}
+            </button>
+          </div>
+        ) : (
+          <div className="mb-6 text-center">
+            <div className="w-12 h-12 bg-[#093f89]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <CheckCircle2 className="w-6 h-6 text-[#093f89]" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-1">{t('verify_email', lang)}</h2>
+            <p className="text-sm text-muted-foreground">
+              {t('verification_sent_msg', lang).replace('{email}', verificationEmail)}
+            </p>
+          </div>
+        )}
 
-          {authMode !== "verify" ? (
-            <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-2xl mb-8 relative">
-              <button
-                type="button"
-                onClick={() => { setAuthMode("login"); setAuthError(""); }}
-                className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 ${authMode === "login" ? "text-white" : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                  }`}
-              >
-                {t('login', lang)}
-              </button>
-              <button
-                type="button"
-                onClick={() => { setAuthMode("register"); setAuthError(""); }}
-                className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 ${authMode === "register" ? "text-[#093f89] dark:text-gray-900" : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                  }`}
-              >
-                {t('create_account', lang)}
-              </button>
+        {authError && (
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm mb-6 border border-red-200 dark:border-red-800/30">
+            {authError}
+          </div>
+        )}
 
-              {/* Animated Tab Indicator */}
-              <motion.div
-                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl shadow-md ${authMode === "login" ? "bg-[#093f89]" : "bg-[#fbc70f]"
-                  }`}
-                initial={false}
-                animate={{
-                  x: authMode === "login" ? (lang === 'ar' ? "0%" : "0%") : (lang === 'ar' ? "-100%" : "100%")
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        {authMode === "verify" ? (
+          <form onSubmit={handleVerifySubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('verification_code', lang)}</label>
+              <input
+                type="text"
+                required
+                maxLength={6}
+                placeholder="000000"
+                value={verificationCode}
+                onChange={e => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
+                className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-transparent text-center text-2xl tracking-[0.5em] font-mono text-foreground"
               />
             </div>
-          ) : (
-            <div className="mb-8 text-center">
-              <div className="w-16 h-16 bg-[#093f89]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="w-8 h-8 text-[#093f89]" />
-              </div>
-              <h2 className="text-2xl font-bold font-serif text-foreground mb-2">{t('verify_email', lang)}</h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t('verification_sent_msg', lang).replace('{email}', verificationEmail)}
-              </p>
+
+            <button
+              type="submit"
+              disabled={loading || verificationCode.length !== 6}
+              className="w-full bg-[#093f89] text-white py-3.5 rounded-lg font-medium mt-2 hover:bg-[#093f89]/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {loading ? t('verifying', lang) : t('verify_code', lang)}
+            </button>
+
+            <div className="text-center pt-2 space-y-2">
+              <button type="button" onClick={handleResendCode} className="block w-full text-sm text-[#093f89] dark:text-[#fbc70f] hover:underline font-medium">
+                {t('resend_code', lang)}
+              </button>
+              <button type="button" onClick={() => setAuthMode("register")} className="block w-full text-xs text-muted-foreground hover:text-foreground">
+                {t('change_email_back', lang)}
+              </button>
             </div>
-          )}
-
-          <AnimatePresence mode="wait">
-            {authError && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-xl text-sm mb-6 border border-red-200 dark:border-red-800/30 flex items-center gap-3"
-              >
-                <div className="w-1.5 h-1.5 rounded-full bg-red-600 dark:bg-red-400 shrink-0" />
-                {authError}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence mode="wait">
-            {authMode === "verify" ? (
-              <motion.form
-                key="verify"
-                variants={formVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                onSubmit={handleVerifySubmit}
-                className="space-y-6"
-              >
+          </form>
+        ) : (
+          <form onSubmit={handleAuthSubmit} className="space-y-4">
+            {authMode === "register" && (
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t('verification_code', lang)}</label>
-                  <input
-                    type="text"
-                    required
-                    maxLength={6}
-                    placeholder="••••••"
-                    value={verificationCode}
-                    onChange={e => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
-                    className="w-full border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-[#fbc70f] focus:border-[#093f89] bg-gray-50/50 dark:bg-gray-800/50 text-center text-3xl tracking-[1em] font-mono font-bold transition-all"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading || verificationCode.length !== 6}
-                  className="w-full bg-[#093f89] text-white py-4 rounded-xl font-bold mt-4 shadow-lg shadow-[#093f89]/20 hover:shadow-[#093f89]/40 hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
-                >
-                  {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                  {loading ? t('verifying', lang) : t('verify_code', lang)}
-                </button>
-
-                <div className="flex flex-col items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
-                  <button type="button" onClick={handleResendCode} className="text-sm text-[#093f89] dark:text-[#fbc70f] hover:underline font-medium transition-colors">
-                    {t('resend_code', lang)}
-                  </button>
-                  <button type="button" onClick={() => setAuthMode("register")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    {t('change_email_back', lang)}
-                  </button>
-                </div>
-              </motion.form>
-            ) : (
-              <motion.form
-                key={authMode}
-                variants={formVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                onSubmit={handleAuthSubmit}
-                className="space-y-5"
-              >
-                {authMode === "register" && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="relative group">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t('first_name', lang)}</label>
-                      <div className="relative">
-                        <User className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#093f89] transition-colors" />
-                        <input
-                          type="text"
-                          required
-                          value={credentials.first_name}
-                          onChange={e => setCredentials({ ...credentials, first_name: e.target.value })}
-                          className="w-full border border-gray-200 dark:border-gray-800 rounded-xl pr-10 pl-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/50 focus:border-[#093f89] bg-gray-50 dark:bg-gray-800/50 transition-all text-sm"
-                        />
-                      </div>
-                    </div>
-                    <div className="relative group">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t('last_name', lang)}</label>
-                      <div className="relative">
-                        <User className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#093f89] transition-colors" />
-                        <input
-                          type="text"
-                          required
-                          value={credentials.last_name}
-                          onChange={e => setCredentials({ ...credentials, last_name: e.target.value })}
-                          className="w-full border border-gray-200 dark:border-gray-800 rounded-xl pr-10 pl-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/50 focus:border-[#093f89] bg-gray-50 dark:bg-gray-800/50 transition-all text-sm"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="relative group">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t('auth_email', lang)}</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('first_name', lang)}</label>
                   <div className="relative">
-                    <Mail className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#093f89] transition-colors" />
+                    <User className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
-                      type="email"
+                      type="text"
                       required
-                      value={credentials.email}
-                      onChange={e => setCredentials({ ...credentials, email: e.target.value })}
-                      className="w-full border border-gray-200 dark:border-gray-800 rounded-xl pr-10 pl-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/50 focus:border-[#093f89] bg-gray-50 dark:bg-gray-800/50 transition-all text-sm dir-ltr"
+                      value={credentials.first_name}
+                      onChange={e => setCredentials({ ...credentials, first_name: e.target.value })}
+                      className="w-full border border-border rounded-lg pr-9 pl-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-transparent text-foreground text-sm"
                     />
                   </div>
                 </div>
-
-                {authMode === "register" && (
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t('mobile_number', lang)}</label>
-                    <div className="flex gap-0 group relative">
-                      {/* Country Code Selector */}
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setShowCountryDropdown(!showCountryDropdown)}
-                          className="flex items-center gap-2 border border-gray-200 dark:border-gray-800 border-l-0 rounded-r-xl px-4 py-3.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors h-full focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/50 relative z-10"
-                        >
-                          <span className="text-sm font-bold text-foreground font-mono" dir="ltr">
-                            {selectedCountry?.phone_code || "+966"}
-                          </span>
-                        </button>
-
-                        {/* Dropdown */}
-                        <AnimatePresence>
-                          {showCountryDropdown && (
-                            <motion.div
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              className="absolute top-[calc(100%+8px)] right-0 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl z-50 overflow-hidden"
-                            >
-                              <div className="p-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-                                <input
-                                  type="text"
-                                  placeholder={t('search_country', lang)}
-                                  value={countrySearch}
-                                  onChange={e => setCountrySearch(e.target.value)}
-                                  className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-white dark:bg-gray-900"
-                                  autoFocus
-                                />
-                              </div>
-                              <div className="max-h-60 overflow-y-auto custom-scrollbar">
-                                {filteredCountries.map((country: any) => (
-                                  <button
-                                    key={country.id || country.phone_code}
-                                    type="button"
-                                    onClick={() => {
-                                      setSelectedCountry(country);
-                                      setCountrySearch("");
-                                      setShowCountryDropdown(false);
-                                    }}
-                                    className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-colors ${selectedCountry?.id === country.id ? 'bg-[#093f89]/5 text-[#093f89] font-bold' : 'text-foreground hover:bg-gray-50 dark:hover:bg-gray-800'
-                                      }`}
-                                  >
-                                    <span>{country.name}</span>
-                                    <span className="font-mono text-muted-foreground">{country.phone_code || "—"}</span>
-                                  </button>
-                                ))}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-
-                      {/* Phone Input */}
-                      <div className="relative flex-1">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#093f89] transition-colors z-10" />
-                        <input
-                          type="tel"
-                          required
-                          placeholder={selectedCountry?.min_digits === selectedCountry?.max_digits ? t('enter_digits', lang).replace('{digits}', selectedCountry?.min_digits) : t('mobile_number', lang)}
-                          value={credentials.phone}
-                          minLength={selectedCountry?.min_digits}
-                          maxLength={selectedCountry?.max_digits}
-                          onChange={e => {
-                            const val = e.target.value.replace(/[^0-9]/g, '');
-                            if (selectedCountry?.max_digits && val.length > selectedCountry.max_digits) return;
-                            setCredentials({ ...credentials, phone: val });
-                          }}
-                          className="w-full border border-gray-200 dark:border-gray-800 rounded-l-xl pl-10 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/50 focus:border-[#093f89] bg-gray-50 dark:bg-gray-800/50 transition-all text-sm font-mono"
-                          dir="ltr"
-                        />
-                      </div>
-                    </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('last_name', lang)}</label>
+                  <div className="relative">
+                    <User className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      required
+                      value={credentials.last_name}
+                      onChange={e => setCredentials({ ...credentials, last_name: e.target.value })}
+                      className="w-full border border-border rounded-lg pr-9 pl-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-transparent text-foreground text-sm"
+                    />
                   </div>
-                )}
+                </div>
+              </div>
+            )}
 
-                <div className="relative group">
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('auth_password', lang)}</label>
-                    {authMode === "login" && (
-                      <Link href="/forgot-password" title={t('forgot_password', lang)} className="text-[11px] text-[#093f89] dark:text-[#fbc70f] hover:underline font-bold transition-colors">
-                        {t('forgot_password', lang)}
-                      </Link>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('auth_email', lang)}</label>
+              <div className="relative">
+                <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="email"
+                  required
+                  value={credentials.email}
+                  onChange={e => setCredentials({ ...credentials, email: e.target.value })}
+                  className="w-full border border-border rounded-lg pr-9 pl-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-transparent text-foreground text-sm dir-ltr"
+                />
+              </div>
+            </div>
+
+            {authMode === "register" && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('mobile_number', lang)}</label>
+                <div className="flex">
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                      className="flex items-center justify-center gap-1 border border-border border-l-0 rounded-r-lg px-3 py-2.5 bg-muted/30 hover:bg-muted/50 transition-colors h-full min-w-[80px]"
+                    >
+                      <span className="text-sm font-semibold text-foreground dir-ltr">
+                        {selectedCountry?.phone_code || "+966"}
+                      </span>
+                    </button>
+
+                    {showCountryDropdown && (
+                      <div className="absolute top-full right-0 mt-1 w-64 bg-background border border-border rounded-lg shadow-xl z-50">
+                        <div className="p-2 border-b border-border">
+                          <input
+                            type="text"
+                            placeholder={t('search_country', lang)}
+                            value={countrySearch}
+                            onChange={e => setCountrySearch(e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-transparent text-foreground"
+                            autoFocus
+                          />
+                        </div>
+                        <div className="max-h-48 overflow-y-auto">
+                          {filteredCountries.map((country: any) => (
+                            <button
+                              key={country.id || country.phone_code}
+                              type="button"
+                              onClick={() => {
+                                setSelectedCountry(country);
+                                setCountrySearch("");
+                                setShowCountryDropdown(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-muted/50 ${selectedCountry?.id === country.id ? 'bg-[#093f89]/5 text-[#093f89]' : 'text-foreground'
+                                }`}
+                            >
+                              <span>{country.name}</span>
+                              <span className="font-mono text-muted-foreground">{country.phone_code || "—"}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
-                  <div className="relative">
-                    <Lock className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#093f89] transition-colors" />
+
+                  <div className="relative flex-1">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
-                      type="password"
+                      type="tel"
                       required
-                      value={credentials.password}
-                      onChange={e => setCredentials({ ...credentials, password: e.target.value })}
-                      className="w-full border border-gray-200 dark:border-gray-800 rounded-xl pr-10 pl-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/50 focus:border-[#093f89] bg-gray-50 dark:bg-gray-800/50 transition-all text-sm dir-ltr"
+                      placeholder={selectedCountry?.min_digits === selectedCountry?.max_digits ? t('enter_digits', lang).replace('{digits}', selectedCountry?.min_digits) : t('mobile_number', lang)}
+                      value={credentials.phone}
+                      minLength={selectedCountry?.min_digits}
+                      maxLength={selectedCountry?.max_digits}
+                      onChange={e => {
+                        const val = e.target.value.replace(/[^0-9]/g, '');
+                        if (selectedCountry?.max_digits && val.length > selectedCountry.max_digits) return;
+                        setCredentials({ ...credentials, phone: val });
+                      }}
+                      className="w-full border border-border rounded-l-lg pl-9 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-transparent text-foreground text-sm dir-ltr"
                     />
                   </div>
                 </div>
-
-                {authMode === "register" && (
-                  <div className="relative group">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t('confirm_password', lang)}</label>
-                    <div className="relative">
-                      <Lock className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#093f89] transition-colors" />
-                      <input
-                        type="password"
-                        required
-                        value={credentials.password_confirmation}
-                        onChange={e => setCredentials({ ...credentials, password_confirmation: e.target.value })}
-                        className="w-full border border-gray-200 dark:border-gray-800 rounded-xl pr-10 pl-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/50 focus:border-[#093f89] bg-gray-50 dark:bg-gray-800/50 transition-all text-sm dir-ltr"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#093f89] text-white py-4 rounded-xl font-bold mt-2 shadow-lg shadow-[#093f89]/20 hover:shadow-[#093f89]/40 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:hover:translate-y-0 flex items-center justify-center gap-2 group/btn"
-                >
-                  {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                  <span className="group-hover/btn:text-[#fbc70f] transition-colors duration-300">
-                    {loading ? t('please_wait', lang) : (authMode === "login" ? t('login', lang) : t('create_account', lang))}
-                  </span>
-                </button>
-
-                <div className="relative flex items-center py-4">
-                  <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
-                  <span className="flex-shrink-0 mx-4 text-xs text-muted-foreground uppercase tracking-widest font-semibold">
-                    {lang === 'ar' ? 'أو' : 'OR'}
-                  </span>
-                  <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
-                </div>
-
-                <a
-                  href="https://api.abyatc.com/api/auth/google"
-                  onClick={() => {
-                    const nextUrl = new URLSearchParams(window.location.search).get('next') || window.location.pathname;
-                    sessionStorage.setItem('redirect_after_login', nextUrl);
-                  }}
-                  className="group w-full flex items-center justify-center gap-3 border-2 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 py-3.5 px-6 rounded-xl font-bold transition-all duration-300 active:scale-[0.98] shadow-sm hover:shadow-md hover:border-gray-200 dark:hover:border-gray-700 dir-rtl text-gray-700 dark:text-gray-200"
-                >
-                  <FcGoogle className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 shrink-0" />
-                  <span>
-                    {lang === 'ar' ? 'المتابعة باستخدام جوجل' : 'Continue with Google'}
-                  </span>
-                </a>
-              </motion.form>
+              </div>
             )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
 
-      {/* إغلاق القائمة المنسدلة للدول عند النقر خارجها */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('auth_password', lang)}</label>
+                {authMode === "login" && (
+                  <Link href="/forgot-password" title={t('forgot_password', lang)} className="text-xs text-[#093f89] dark:text-[#fbc70f] hover:underline font-medium">
+                    {t('forgot_password', lang)}
+                  </Link>
+                )}
+              </div>
+              <div className="relative">
+                <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="password"
+                  required
+                  value={credentials.password}
+                  onChange={e => setCredentials({ ...credentials, password: e.target.value })}
+                  className="w-full border border-border rounded-lg pr-9 pl-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-transparent text-foreground text-sm dir-ltr"
+                />
+              </div>
+            </div>
+
+            {authMode === "register" && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('confirm_password', lang)}</label>
+                <div className="relative">
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <input
+                    type="password"
+                    required
+                    value={credentials.password_confirmation}
+                    onChange={e => setCredentials({ ...credentials, password_confirmation: e.target.value })}
+                    className="w-full border border-border rounded-lg pr-9 pl-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#093f89] bg-transparent text-foreground text-sm dir-ltr"
+                  />
+                </div>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#093f89] text-white py-3.5 rounded-lg font-medium mt-4 hover:bg-[#093f89]/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {loading ? t('please_wait', lang) : (authMode === "login" ? t('login', lang) : t('create_account', lang))}
+            </button>
+
+            <div className="relative flex items-center py-2">
+              <div className="flex-grow border-t border-border"></div>
+              <span className="flex-shrink-0 mx-4 text-xs text-muted-foreground uppercase">
+                {lang === 'ar' ? 'أو' : 'OR'}
+              </span>
+              <div className="flex-grow border-t border-border"></div>
+            </div>
+
+            <a
+              href="https://api.abyatc.com/api/auth/google"
+              onClick={() => {
+                const nextUrl = new URLSearchParams(window.location.search).get('next') || window.location.pathname;
+                sessionStorage.setItem('redirect_after_login', nextUrl);
+              }}
+              className="w-full flex items-center justify-center gap-2 border border-border bg-background hover:bg-muted/50 py-3 rounded-lg font-medium transition-colors text-foreground text-sm dir-rtl"
+            >
+              <FcGoogle className="w-5 h-5 shrink-0" />
+              <span>
+                {lang === 'ar' ? 'المتابعة باستخدام جوجل' : 'Continue with Google'}
+              </span>
+            </a>
+          </form>
+        )}
+      </div>
+
       {showCountryDropdown && (
         <div className="fixed inset-0 z-40" onClick={() => { setShowCountryDropdown(false); setCountrySearch(""); }} />
       )}
