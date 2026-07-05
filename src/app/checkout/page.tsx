@@ -660,27 +660,47 @@ export default function Checkout() {
       // 2. تجميع النص الأصلي المدمج (مثل: مدة الإيجار: سنوي | فئة المعدات: 7 طن)
       const rawColorAndSize = [itemColor, itemSize].filter(Boolean).join(' | ');
 
-      // 3. تنظيف وتفكيك النص المرتبط بالأتربيوتس تلقائياً وتحويله لأسطر مرتبة
       let formattedAttributes = "";
+
       if (rawColorAndSize) {
-        // إزالة الأقواس الخارجية إن وجدت وتقسيم النص بناءً على الفواصل المتوقعة مثل | أو ، أو -
-        const attributesArray = rawColorAndSize.replace(/[\(\)]/g, '').split(/[|•,]/);
+        const attributesArray = rawColorAndSize
+          .replace(/[\(\)]/g, "")
+          .split("|")
+          .map(attr => attr.trim())
+          .filter(Boolean);
 
         formattedAttributes = attributesArray
-          .map(attr => attr.trim())
-          .filter(Boolean)
-          .map(attr => `     ${attr}`) // عمل إزاحة (مسافة) لكل أتربيوت ليظهر منسقاً تحت المنتج
-          .join('\n');
+          .map(attr => `• ${attr}`)
+          .join("\n");
       }
 
       // 4. صياغة النص النهائي لكل منتج بالترقيم (الاسم في سطر والأتربيوتس المنسقة في أسطر مستقلة تحته)
-      const productLine = `${index + 1}) ${itemName} x ${item.quantity}`;
-      return formattedAttributes ? `${productLine}\n${formattedAttributes}` : productLine;
-    }).join('\n\n'); // ترك سطر فارغ بين كل منتج لزيادة التنظيم
+      const productLine = `${index + 1}) ${itemName} × ${item.quantity}`;
+      return formattedAttributes
+        ? `${productLine}\n\n${formattedAttributes}`
+        : productLine;
+    }).join('\n\n━━━━━━━━━━━━━━━━━━\n\n'); // ترك سطر فارغ بين كل منتج لزيادة التنظيم
 
-    const currentMessageText = lang === 'ar'
-      ? `مرحباً، أود الاستفسار عن سعر وتفاصيل المعدات التالية:\n\n${cartSummaryText}`
-      : `Hello, I would like to inquire about the price and details for the following equipment:\n\n${cartSummaryText}`;
+    const currentMessageText =
+      lang === "ar"
+        ? `مرحباً شركة لمعة أبيات للمقاولات،
+
+أود الاستفسار عن سعر وتفاصيل المعدات التالية:
+
+━━━━━━━━━━━━━━━━━━
+
+${cartSummaryText}
+
+━━━━━━━━━━━━━━━━━━
+
+شكراً لكم 🌹`
+        : `Hello,
+
+I would like to inquire about the following equipment:
+
+${cartSummaryText}
+
+Thank you.`;
 
     return `https://wa.me/${currentWhatsappNumber}?text=${encodeURIComponent(currentMessageText)}`;
   };

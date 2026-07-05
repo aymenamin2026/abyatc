@@ -67,17 +67,45 @@ export default function ProductClient({
     const selectedOptionsText = productAttributes
       .map((attr: any) => {
         const key = (attr.slug || `attr_${attr.id}`).toLowerCase();
-        const attrName = attr.name?.[lang] || attr.name?.en || attr.name;
+
+        const attrName =
+          attr.name?.[lang] || attr.name?.en || attr.name;
+
         const selectedValueEn = selectedAttributes[key];
-        const fullValueObj = attr.values.find((v: any) => (v.value?.en || v.value) === selectedValueEn);
-        const value = fullValueObj ? (fullValueObj.value?.[lang] || fullValueObj.value?.en || fullValueObj.value) : selectedValueEn;
-        return value ? `${attrName}: ${value}` : null;
+
+        const fullValueObj = attr.values.find(
+          (v: any) => (v.value?.en || v.value) === selectedValueEn
+        );
+
+        const value = fullValueObj
+          ? (fullValueObj.value?.[lang] ||
+            fullValueObj.value?.en ||
+            fullValueObj.value)
+          : selectedValueEn;
+
+        return value ? `• ${attrName}: ${value}` : null;
       })
       .filter(Boolean)
-      .join(" - ");
+      .join("\n");
 
-    const attributesPart = selectedOptionsText ? `\nالمواصفات المختارة: (${selectedOptionsText})` : "";
-    const messageText = `مرحباً، أود الاستفسار عن: ${productName}${attributesPart}\nرابط المنتج: ${currentUrl}`;
+    const attributesPart = selectedOptionsText
+      ? `
+
+📋 المواصفات المختارة:
+
+${selectedOptionsText}`
+      : "";
+    const messageText = `مرحباً شركة لمعة أبيات للمقاولات،
+
+أود الاستفسار عن المعدة التالية:
+
+📦 اسم المعدة:
+${productName}${attributesPart}
+
+🔗 رابط المنتج:
+${currentUrl}
+
+شكراً لكم 🌹`;
 
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
   };
