@@ -97,6 +97,7 @@ export default async function RootLayout({
   const lang = (localeCookie?.value === "en" ? "en" : "ar");
   const dir = lang === "ar" ? "rtl" : "ltr";
 
+  // استخدام resolvedTheme أو التحقق من الكلاس الحالي إذا أمكن
   const themeStyles = {
     '--royal-blue': '#093f89',
     '--golden-yellow': '#fbc70f',
@@ -104,7 +105,8 @@ export default async function RootLayout({
     '--btn-bg': settings?.button_bg_color || '#093f89',
     '--btn-text': settings?.button_text_color || "#ffffff",
     ...(settings?.text_color && { '--foreground': settings.text_color }),
-    ...(settings?.background_color && { '--background': settings.background_color }),
+    // قمنا بتغيير اسم المتغير حتى لا يطغى على المتغير الأساسي للوضع المظلم
+    ...(settings?.background_color && { '--api-background': settings.background_color }),
   } as React.CSSProperties;
 
   return (
