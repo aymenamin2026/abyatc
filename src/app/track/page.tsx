@@ -274,6 +274,7 @@ export default function TrackOrderPage() {
               {/* قائمة المنتجات */}
               <div className="space-y-4">
                 {order.items.map(item => {
+                  console.log("Item data from dashboard:", item);
                   const productName = item.product?.name ?
                     (typeof item.product.name === 'string' ? item.product.name :
                       (item.product.name[lang] || item.product.name['en'] || 'Unknown Product'))
