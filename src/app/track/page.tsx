@@ -310,62 +310,70 @@ export default function TrackOrderPage() {
                 </div>
 
                 <h3 className="text-lg font-bold text-foreground mb-8 font-serif">{isRtl ? 'مسار الطلب' : 'Tracking Journey'}</h3>
+                {/* نقوم بتعريف مصفوفة العرض: إذا كان هناك histories من الـ API نستخدمها، وإذا لم يكن، نستخدم الحالة الحالية كنقطة بداية */}
+                {(() => {
+                  const displayHistories = order.histories && order.histories.length > 0
+                    ? order.histories
+                    : [
+                      {
+                        id: 9999, // ID وهمي للواجهة
+                        status: order.status,
+                        tracking_number: order.tracking_number,
+                        created_at: order.created_at
+                      }
+                    ];
 
-                {order.histories && order.histories.length > 0 ? (
-                  <div className="relative pl-6 md:pl-0">
-                    <div className={`absolute top-2 bottom-4 w-[2px] bg-gradient-to-b from-[#093f89] via-[#fbc70f] to-border/30 rounded-full ${isRtl ? 'right-6 md:right-[140px]' : 'left-6 md:left-[140px]'}`}></div>
+                  return (
+                    <div className="relative pl-6 md:pl-0">
+                      <div className={`absolute top-2 bottom-4 w-[2px] bg-gradient-to-b from-[#093f89] via-[#fbc70f] to-border/30 rounded-full ${isRtl ? 'right-6 md:right-[140px]' : 'left-6 md:left-[140px]'}`}></div>
 
-                    <div className="space-y-10">
-                      {order.histories.map((history, idx) => {
-                        const isLatest = idx === 0;
-                        const visual = getStatusVisuals(history.status);
-                        const StatusIcon = visual.icon;
+                      <div className="space-y-10">
+                        {displayHistories.map((history, idx) => {
+                          const isLatest = idx === 0;
+                          const visual = getStatusVisuals(history.status);
+                          const StatusIcon = visual.icon;
 
-                        return (
-                          <motion.div
-                            initial={{ opacity: 0, x: isRtl ? 20 : -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.1 }}
-                            key={history.id}
-                            className="relative flex flex-col md:flex-row items-start md:items-center group"
-                          >
-                            <div className={`hidden md:block w-[120px] shrink-0 text-sm ${isLatest ? 'text-foreground font-bold' : 'text-muted-foreground'} ${isRtl ? 'text-left pl-8' : 'text-right pr-8'}`}>
-                              <div>{new Date(history.created_at).toLocaleDateString()}</div>
-                              <div className="text-xs opacity-70 mt-0.5">{new Date(history.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                            </div>
-
-                            <div className={`absolute md:relative flex h-10 w-10 items-center justify-center bg-background rounded-full ring-4 ring-background border-2 ${isLatest ? 'border-[#093f89] dark:border-[#fbc70f] shadow-[0_0_15px_rgba(251,199,15,0.4)]' : 'border-border'} shrink-0 z-10 ${isRtl ? '-right-6 md:right-0 ml-8 md:translate-x-5' : '-left-6 md:left-0 mr-8 md:-translate-x-5'}`}>
-                              <StatusIcon className={`w-4 h-4 ${isLatest ? 'text-[#093f89] dark:text-[#fbc70f]' : 'text-muted-foreground'}`} />
-                            </div>
-
-                            <div className={`bg-card border ${isLatest ? 'border-[#093f89]/30 dark:border-[#fbc70f]/30 shadow-md bg-[#093f89]/5 dark:bg-[#fbc70f]/5' : 'border-border/60 bg-muted/20'} rounded-2xl p-5 flex-1 w-full ml-6 md:ml-0 rtl:ml-0 rtl:mr-6 rtl:md:mr-0 transition-all duration-300 hover:shadow-lg`}>
-                              <div className="md:hidden text-xs text-muted-foreground mb-2 flex items-center gap-1 font-medium">
-                                <Clock className="w-3.5 h-3.5" />
-                                {new Date(history.created_at).toLocaleString()}
+                          return (
+                            <motion.div
+                              initial={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: idx * 0.1 }}
+                              key={history.id}
+                              className="relative flex flex-col md:flex-row items-start md:items-center group"
+                            >
+                              <div className={`hidden md:block w-[120px] shrink-0 text-sm ${isLatest ? 'text-foreground font-bold' : 'text-muted-foreground'} ${isRtl ? 'text-left pl-8' : 'text-right pr-8'}`}>
+                                <div>{new Date(history.created_at).toLocaleDateString()}</div>
+                                <div className="text-xs opacity-70 mt-0.5">{new Date(history.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                               </div>
-                              <h4 className={`text-base font-bold mb-1 ${isLatest ? 'text-[#093f89] dark:text-[#fbc70f]' : 'text-foreground'}`}>
-                                {getStatusText(history.status)}
-                              </h4>
-                              {history.tracking_number && (
-                                <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
-                                  {isRtl ? 'رقم التتبع:' : 'Tracking:'}
-                                  <span className="font-mono text-foreground font-bold bg-background px-2 py-1 rounded-md border border-border shadow-sm">
-                                    {history.tracking_number}
-                                  </span>
-                                </p>
-                              )}
-                            </div>
-                          </motion.div>
-                        );
-                      })}
+
+                              <div className={`absolute md:relative flex h-10 w-10 items-center justify-center bg-background rounded-full ring-4 ring-background border-2 ${isLatest ? 'border-[#093f89] dark:border-[#fbc70f] shadow-[0_0_15px_rgba(251,199,15,0.4)]' : 'border-border'} shrink-0 z-10 ${isRtl ? '-right-6 md:right-0 ml-8 md:translate-x-5' : '-left-6 md:left-0 mr-8 md:-translate-x-5'}`}>
+                                <StatusIcon className={`w-4 h-4 ${isLatest ? 'text-[#093f89] dark:text-[#fbc70f]' : 'text-muted-foreground'}`} />
+                              </div>
+
+                              <div className={`bg-card border ${isLatest ? 'border-[#093f89]/30 dark:border-[#fbc70f]/30 shadow-md bg-[#093f89]/5 dark:bg-[#fbc70f]/5' : 'border-border/60 bg-muted/20'} rounded-2xl p-5 flex-1 w-full ml-6 md:ml-0 rtl:ml-0 rtl:mr-6 rtl:md:mr-0 transition-all duration-300 hover:shadow-lg`}>
+                                <div className="md:hidden text-xs text-muted-foreground mb-2 flex items-center gap-1 font-medium">
+                                  <Clock className="w-3.5 h-3.5" />
+                                  {new Date(history.created_at).toLocaleString()}
+                                </div>
+                                <h4 className={`text-base font-bold mb-1 ${isLatest ? 'text-[#093f89] dark:text-[#fbc70f]' : 'text-foreground'}`}>
+                                  {getStatusText(history.status)}
+                                </h4>
+                                {history.tracking_number && (
+                                  <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
+                                    {isRtl ? 'رقم التتبع:' : 'Tracking:'}
+                                    <span className="font-mono text-foreground font-bold bg-background px-2 py-1 rounded-md border border-border shadow-sm">
+                                      {history.tracking_number}
+                                    </span>
+                                  </p>
+                                )}
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-12 bg-secondary/30 rounded-2xl border border-dashed border-border">
-                    <Clock className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
-                    <p className="text-muted-foreground text-sm font-medium">{isRtl ? 'لا يوجد تحديثات مسجلة حتى الآن.' : 'No timeline updates recorded yet.'}</p>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
             </div>
 
