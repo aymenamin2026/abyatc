@@ -792,7 +792,14 @@ export default function Checkout() {
                     <div className="flex flex-col gap-3">
                       {/* زر جوجل الاحترافي */}
                       <a
+
                         href="https://api.abyatc.com/api/auth/google"
+                        onClick={() => {
+                          sessionStorage.setItem(
+                            "redirect_after_login",
+                            window.location.pathname
+                          );
+                        }}
                         className="mt-4 group w-full flex items-center justify-center gap-3 border border-gray-200 bg-white hover:bg-gray-50 py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow-md text-sm text-gray-700 dir-rtl"
                       >
                         {/* أيقونة جوجل الرسمية كـ SVG مدمج يظهر فوراً بدون استدعاء روابط خارجية */}
