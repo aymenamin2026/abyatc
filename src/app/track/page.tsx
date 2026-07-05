@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '@/components/LanguageContext';
-import { t } from '@/lib/translations';
 import { getImageUrl, fetchSettings } from '@/lib/api';
-import { Truck, Search, Package, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Search, Package, CheckCircle2, Clock, Truck, ShieldAlert, XCircle } from 'lucide-react';
 
 interface OrderTimeline {
   id: number;
@@ -22,6 +21,8 @@ interface OrderItem {
   quantity: number;
   unit_price: number;
   total: number;
+  product_size?: string; // أضفنا هذه بناءً على مخرجاتك
+  product_color?: string; // أضفنا هذه بناءً على مخرجاتك
   product?: {
     id: number;
     name: any;
@@ -32,10 +33,10 @@ interface OrderItem {
 interface OrderData {
   order_number: string;
   status: string;
-  subtotal?: number;         // المجموع الفرعي قبل الضرائب والشحن
-  tax_amount?: number;       // مبلغ الضريبة المضافة
-  shipping_amount?: number;  // تكلفة الشحن
-  total_amount: number;      // الإجمالي النهائي
+  subtotal?: number;
+  tax_amount?: number;
+  shipping_amount?: number;
+  total_amount: number;
   tracking_number: string | null;
   shipping_method: string | null;
   created_at: string;
@@ -45,6 +46,7 @@ interface OrderData {
 
 export default function TrackOrderPage() {
   const { lang } = useLanguage();
+  const isRtl = lang === 'ar';
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -91,7 +93,7 @@ export default function TrackOrderPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || (lang === 'ar' ? 'لم نتمكن من العثور على طلب بهذا الرقم.' : 'Order not found'));
+        throw new Error(data.message || (isRtl ? 'لم نتمكن من العثور على طلب بهذا الرقم.' : 'Order not found'));
       }
 
       setOrder(data.order);
@@ -123,218 +125,365 @@ export default function TrackOrderPage() {
     router.push(`/track?${params.toString()}`);
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusVisuals = (status: string) => {
     const s = status.toLowerCase();
-    if (s.includes('awaiting_payment') || s.includes('pending')) return 'bg-amber-500';
-    if (s.includes('processing')) return 'bg-blue-500';
-    if (s.includes('shipped') || s.includes('in_way')) return 'bg-indigo-500';
-    if (s.includes('delivered') || s.includes('completed')) return 'bg-emerald-500';
-    if (s.includes('cancelled')) return 'bg-rose-500';
-    return 'bg-amber-500';
+    if (s.includes('awaiting_payment') || s.includes('pending'))
+      return {
+        color: 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 border-amber-200 dark:border-amber-500/30',
+        dot: 'bg-amber-500', icon: Clock
+      };
+    if (s.includes('processing'))
+      return {
+        color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 border-blue-200 dark:border-blue-500/30',
+        dot: 'bg-blue-500', icon: Package
+      };
+    if (s.includes('shipped') || s.includes('in_way'))
+      return {
+        color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/30',
+        dot: 'bg-indigo-500', icon: Truck
+      };
+    if (s.includes('delivered') || s.includes('completed'))
+      return {
+        color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30',
+        dot: 'bg-emerald-500', icon: CheckCircle2
+      };
+    if (s.includes('cancelled'))
+      return {
+        color: 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 border-rose-200 dark:border-rose-500/30',
+        dot: 'bg-rose-500', icon: XCircle
+      };
+    return { color: 'bg-gray-100 text-gray-700 dark:bg-gray-500/20 dark:text-gray-400 border-gray-200 dark:border-gray-500/30', dot: 'bg-gray-500', icon: ShieldAlert };
   };
 
   const getStatusText = (status: string) => {
     const s = status.toLowerCase();
-    if (s.includes('awaiting_payment') || s.includes('pending')) return lang === 'ar' ? 'تم استلام الطلب' : 'Order Received';
-    if (s.includes('processing')) return lang === 'ar' ? 'تم اعتماد الطلب وجاري تجهيز العده' : 'Approved And Preparing the equipment';
-    if (s.includes('in_way')) return lang === 'ar' ? 'في الطريق إليك' : 'On The Way';
-    if (s.includes('delivered') || s.includes('completed')) return lang === 'ar' ? 'مكتمل' : 'Completed';
-    if (s.includes('cancelled')) return lang === 'ar' ? 'ملغي' : 'Cancelled';
+    if (s.includes('awaiting_payment') || s.includes('pending')) return isRtl ? 'تم استلام الطلب' : 'Order Received';
+    if (s.includes('processing')) return isRtl ? 'جاري تجهيز المعدة' : 'Preparing Equipment';
+    if (s.includes('in_way')) return isRtl ? 'في الطريق إليك' : 'On The Way';
+    if (s.includes('delivered') || s.includes('completed')) return isRtl ? 'مكتمل' : 'Completed';
+    if (s.includes('cancelled')) return isRtl ? 'ملغي' : 'Cancelled';
     return status;
   };
 
-  // مكوّن صغير لعرض العملة بشكل موحد وبسيط لمنع تكرار الكود
-  const CurrencyFormat = ({ amount, size = 14 }: { amount: number; size?: number }) => {
+  const CurrencyFormat = ({ amount, size = 14, className = "" }: { amount: number; size?: number, className?: string }) => {
     const isImage = currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg';
     return (
-      <span className="inline-flex items-center gap-1 font-medium text-foreground">
+      <span className={`inline-flex items-center gap-1 font-bold ${className}`}>
         {isImage ? (
           <>
             <Image src="/riyal-dark.svg" alt="SAR" width={size} height={size} className="inline-block theme-light-only" />
             <Image src="/riyal-light.svg" alt="SAR" width={size} height={size} className="theme-dark-only" />
           </>
         ) : (
-          <span dangerouslySetInnerHTML={{ __html: currencySymbol }} className="text-muted-foreground font-normal text-xs" />
+          <span dangerouslySetInnerHTML={{ __html: currencySymbol }} className="text-muted-foreground/80 font-normal text-xs" />
         )}
         {Number(amount).toFixed(2)}
       </span>
     );
   };
 
+  // ----------------------------------------------------------------------
+  // منطق التحقق من حالة التسعير (إذا كان المجموع الفرعي 0 فإنه قيد التسعير)
+  // ----------------------------------------------------------------------
+  const calculatedSubtotal = order ? (order.subtotal ?? order.items.reduce((acc, item) => acc + (Number(item.unit_price) * item.quantity), 0)) : 0;
+  const isAwaitingPricing = calculatedSubtotal === 0;
+
   return (
-    <main className="min-h-screen pt-[104px] pb-24 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-        <div className="text-center mb-12">
-          <h1 className="font-serif text-4xl text-foreground mb-4">
-            {lang === 'ar' ? 'تتبع طلبك' : 'Track Your Order'}
-          </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            {lang === 'ar' ? 'أدخل رقم الطلب أو رقم التتبع للتحقق من حالة الشحنة الخاصة بك.' : 'Enter your order number or tracking number to check the live status of your shipment.'}
-          </p>
+    <main className="min-h-screen pt-36 pb-24 bg-background relative overflow-hidden flex flex-col items-center">
+
+      {/* Ambient Background Lights */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-10%] end-[-10%] w-[500px] h-[500px] bg-[#093f89]/10 dark:bg-[#093f89]/15 blur-[140px] rounded-full animate-[pulse_8s_ease-in-out_infinite_alternate]" />
+        <div className="absolute top-[40%] start-[-10%] w-[400px] h-[400px] bg-[#fbc70f]/10 dark:bg-[#fbc70f]/5 blur-[120px] rounded-full animate-[pulse_10s_ease-in-out_infinite_alternate_reverse]" />
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.015] bg-[url('/noise.png')] mix-blend-overlay" />
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-12 max-w-6xl relative z-10 w-full">
+
+        {/* Header Section */}
+        <div className="text-center mb-12 max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#093f89]/10 border border-[#093f89]/20 backdrop-blur-xl text-[#093f89] dark:text-[#fbc70f] text-xs font-bold tracking-widest uppercase mb-4"
+          >
+            <Package className="w-3.5 h-3.5" />
+            {isRtl ? 'نظام التتبع الذكي' : 'Smart Tracking System'}
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="font-serif text-4xl sm:text-5xl font-bold text-foreground mb-4 tracking-tight drop-shadow-sm"
+          >
+            {isRtl ? 'تتبع طلبك' : 'Track Your Order'}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-muted-foreground text-sm sm:text-base font-light"
+          >
+            {isRtl ? 'أدخل رقم الطلب أو رقم التتبع للتحقق من حالة الشحنة الخاصة بك لحظة بلحظة.' : 'Enter your order number or tracking number to check the live status of your shipment.'}
+          </motion.p>
         </div>
 
         {/* Search Box */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-background rounded-2xl shadow-sm border border-border p-6 md:p-8 mb-8"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="bg-card/60 backdrop-blur-2xl rounded-[32px] shadow-lg border border-[#093f89]/10 dark:border-border/50 p-4 sm:p-6 mb-12 max-w-3xl mx-auto"
         >
-          <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={lang === 'ar' ? "رقم الطلب أو التتبع..." : "Order # or Tracking #..."}
-              className="flex-1 bg-muted border-transparent focus:border-foreground focus:ring-0 rounded-xl px-5 py-3.5 text-foreground placeholder-muted-foreground"
-            />
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRtl ? 'right-5' : 'left-5'}`} />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => { setQuery(e.target.value); setError(''); }}
+                placeholder={isRtl ? "رقم الطلب (مثال: ORD-123)..." : "Order # or Tracking #..."}
+                className={`w-full bg-background/50 border-2 border-border focus:border-[#093f89] dark:focus:border-[#fbc70f] rounded-2xl ${isRtl ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-4 text-foreground font-medium placeholder-muted-foreground transition-colors outline-none`}
+              />
+            </div>
             <button
               type="submit"
               disabled={loading || !query.trim()}
-              className="bg-foreground hover:bg-foreground/80 text-background px-8 py-3.5 rounded-xl font-medium transition-colors disabled:opacity-50"
+              className="group relative bg-[#093f89] text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-[0_8px_30px_rgba(9,63,137,0.3)] dark:hover:shadow-[0_8px_30px_rgba(251,199,15,0.2)] transition-all duration-300 disabled:opacity-50 overflow-hidden flex items-center justify-center gap-2 min-w-[140px]"
             >
-              {loading ? (lang === 'ar' ? 'جاري البحث...' : 'Searching...') : (lang === 'ar' ? 'تتبع' : 'Track')}
+              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
+              <span className="relative z-10 group-hover:text-[#fbc70f] transition-colors">
+                {loading ? (isRtl ? 'جاري البحث...' : 'Searching...') : (isRtl ? 'تتبع الآن' : 'Track Now')}
+              </span>
             </button>
           </form>
-          {error && (
-            <div className="mt-4 p-4 bg-rose-50 text-rose-600 rounded-xl text-sm border border-rose-100">
-              {error}
-            </div>
-          )}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                className="px-5 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm border border-red-200 dark:border-red-800/50 flex items-center gap-2 font-medium"
+              >
+                <XCircle className="w-4 h-4 shrink-0" />
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
-        {/* Results */}
+        {/* Results Area */}
         {order && (
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="grid lg:grid-cols-12 gap-8 lg:gap-10"
+          >
 
-            {/* Header Card & Timeline */}
-            <div className="bg-background rounded-2xl shadow-sm border border-border p-6 lg:p-8">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-8 border-b border-border">
-                <div>
-                  <h2 className="text-xl font-medium text-foreground mb-1">
-                    {lang === 'ar' ? 'الطلب' : 'Order'} #{order.order_number}
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(order.created_at).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </p>
-                </div>
-                <div className="text-left md:text-right">
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted border border-border mb-2">
-                    <span className={`w-2 h-2 rounded-full ${getStatusColor(order.status)}`}></span>
-                    <span className="text-sm font-medium text-foreground">{getStatusText(order.status)}</span>
+            {/* Column 1: Order Timeline (Left on LTR, Right on RTL) */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="bg-card/40 backdrop-blur-xl rounded-[32px] shadow-sm border border-[#093f89]/10 dark:border-border/50 p-6 sm:p-8 h-full">
+
+                {/* Header of Timeline */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-border/60">
+                  <div>
+                    <h2 className="text-2xl font-serif font-bold text-foreground mb-1">
+                      {isRtl ? 'الطلب' : 'Order'} <span className="text-[#093f89] dark:text-[#fbc70f]">#{order.order_number}</span>
+                    </h2>
+                    <p className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
+                      <Clock className="w-4 h-4 opacity-70" />
+                      {new Date(order.created_at).toLocaleDateString(isRtl ? 'ar-SA' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
                   </div>
-                  {order.tracking_number && (
-                    <div className="text-sm font-mono text-muted-foreground">
-                      <span className="text-muted-foreground/70 uppercase text-xs mr-2">{order.shipping_method}</span>
-                      {order.tracking_number}
+                  <div className="text-start sm:text-end">
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border ${getStatusVisuals(order.status).color} mb-2 shadow-sm`}>
+                      <span className={`w-2.5 h-2.5 rounded-full ${getStatusVisuals(order.status).dot} animate-pulse`}></span>
+                      <span className="text-sm font-bold tracking-wide">{getStatusText(order.status)}</span>
                     </div>
-                  )}
+                    {order.tracking_number && (
+                      <div className="text-sm font-mono text-muted-foreground flex items-center sm:justify-end gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 w-fit sm:ml-auto">
+                        <span className="text-xs uppercase font-bold">{order.shipping_method || 'Tracking'}:</span>
+                        <span className="text-foreground">{order.tracking_number}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                <h3 className="text-lg font-bold text-foreground mb-8 font-serif">{isRtl ? 'مسار الطلب' : 'Tracking Journey'}</h3>
+
+                {order.histories && order.histories.length > 0 ? (
+                  <div className="relative pl-6 md:pl-0">
+                    <div className={`absolute top-2 bottom-4 w-[2px] bg-gradient-to-b from-[#093f89] via-[#fbc70f] to-border/30 rounded-full ${isRtl ? 'right-6 md:right-[140px]' : 'left-6 md:left-[140px]'}`}></div>
+
+                    <div className="space-y-10">
+                      {order.histories.map((history, idx) => {
+                        const isLatest = idx === 0;
+                        const visual = getStatusVisuals(history.status);
+                        const StatusIcon = visual.icon;
+
+                        return (
+                          <motion.div
+                            initial={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            key={history.id}
+                            className="relative flex flex-col md:flex-row items-start md:items-center group"
+                          >
+                            <div className={`hidden md:block w-[120px] shrink-0 text-sm ${isLatest ? 'text-foreground font-bold' : 'text-muted-foreground'} ${isRtl ? 'text-left pl-8' : 'text-right pr-8'}`}>
+                              <div>{new Date(history.created_at).toLocaleDateString()}</div>
+                              <div className="text-xs opacity-70 mt-0.5">{new Date(history.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>
+
+                            <div className={`absolute md:relative flex h-10 w-10 items-center justify-center bg-background rounded-full ring-4 ring-background border-2 ${isLatest ? 'border-[#093f89] dark:border-[#fbc70f] shadow-[0_0_15px_rgba(251,199,15,0.4)]' : 'border-border'} shrink-0 z-10 ${isRtl ? '-right-6 md:right-0 ml-8 md:translate-x-5' : '-left-6 md:left-0 mr-8 md:-translate-x-5'}`}>
+                              <StatusIcon className={`w-4 h-4 ${isLatest ? 'text-[#093f89] dark:text-[#fbc70f]' : 'text-muted-foreground'}`} />
+                            </div>
+
+                            <div className={`bg-card border ${isLatest ? 'border-[#093f89]/30 dark:border-[#fbc70f]/30 shadow-md bg-[#093f89]/5 dark:bg-[#fbc70f]/5' : 'border-border/60 bg-muted/20'} rounded-2xl p-5 flex-1 w-full ml-6 md:ml-0 rtl:ml-0 rtl:mr-6 rtl:md:mr-0 transition-all duration-300 hover:shadow-lg`}>
+                              <div className="md:hidden text-xs text-muted-foreground mb-2 flex items-center gap-1 font-medium">
+                                <Clock className="w-3.5 h-3.5" />
+                                {new Date(history.created_at).toLocaleString()}
+                              </div>
+                              <h4 className={`text-base font-bold mb-1 ${isLatest ? 'text-[#093f89] dark:text-[#fbc70f]' : 'text-foreground'}`}>
+                                {getStatusText(history.status)}
+                              </h4>
+                              {history.tracking_number && (
+                                <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
+                                  {isRtl ? 'رقم التتبع:' : 'Tracking:'}
+                                  <span className="font-mono text-foreground font-bold bg-background px-2 py-1 rounded-md border border-border shadow-sm">
+                                    {history.tracking_number}
+                                  </span>
+                                </p>
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-secondary/30 rounded-2xl border border-dashed border-border">
+                    <Clock className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+                    <p className="text-muted-foreground text-sm font-medium">{isRtl ? 'لا يوجد تحديثات مسجلة حتى الآن.' : 'No timeline updates recorded yet.'}</p>
+                  </div>
+                )}
               </div>
+            </div>
 
-              <h3 className="text-lg font-medium text-foreground mb-6">{lang === 'ar' ? 'تاريخ التحديثات' : 'Tracking Timeline'}</h3>
+            {/* Column 2: Order Details & Pricing */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="bg-card/60 backdrop-blur-2xl rounded-[32px] shadow-lg border border-[#093f89]/10 dark:border-border/50 p-6 sm:p-8 sticky top-28">
+                <h3 className="text-2xl font-serif font-bold text-foreground mb-6">{isRtl ? 'تفاصيل المشتريات' : 'Order Details'}</h3>
 
-              {order.histories && order.histories.length > 0 ? (
-                <div className="relative pl-4 md:pl-0">
-                  <div className={`absolute top-2 bottom-0 w-px bg-border ${lang === 'ar' ? 'right-4 md:right-[150px]' : 'left-4 md:left-[150px]'}`}></div>
-                  <div className="space-y-8">
-                    {order.histories.map((history) => (
-                      <div key={history.id} className="relative flex flex-col md:flex-row items-start md:items-center group">
-                        <div className={`hidden md:block w-[130px] shrink-0 text-sm text-muted-foreground ${lang === 'ar' ? 'text-left pl-6' : 'text-right pr-6'}`}>
-                          <div>{new Date(history.created_at).toLocaleDateString()}</div>
-                          <div className="text-xs text-muted-foreground/70">{new Date(history.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                {/* Items List */}
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {order.items.map(item => {
+                    const productName = item.product?.name ?
+                      (typeof item.product.name === 'string' ? item.product.name :
+                        (item.product.name[lang] || item.product.name['en'] || 'Unknown Product'))
+                      : 'Unknown Product';
+
+                    const itemTotal = Number(item.unit_price) * item.quantity;
+                    const hasVariations = item.product_size || item.product_color;
+
+                    return (
+                      <div key={item.id} className="flex items-center gap-4 p-3 bg-secondary/30 rounded-2xl border border-border/50 hover:bg-secondary/60 transition-colors">
+                        <div className="relative h-16 w-16 bg-card rounded-xl overflow-hidden shrink-0 border border-border shadow-sm">
+                          <Image
+                            src={getImageUrl(item.product?.images?.[0]) || '/no-image.jpg'}
+                            alt={productName}
+                            fill
+                            unoptimized={true}
+                            className="object-cover"
+                          />
                         </div>
-                        <div className={`absolute md:relative flex h-8 w-8 items-center justify-center bg-background rounded-full ring-4 ring-background border border-border shrink-0 z-10 ${lang === 'ar' ? '-right-4 md:right-0 ml-6' : '-left-4 md:left-0 mr-6'}`}>
-                          <span className={`h-2.5 w-2.5 rounded-full ${getStatusColor(history.status)}`}></span>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-bold text-foreground line-clamp-2 leading-snug">{productName}</h4>
+                          <p className="text-xs text-muted-foreground mt-1.5 font-medium flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span>{isRtl ? 'الكمية:' : 'Qty:'} <span className="text-foreground">{item.quantity}</span></span>
+
+                            {/* إظهار المقاس/المدة أو اللون إن وجد */}
+                            {hasVariations && <span className="text-border mx-0.5">|</span>}
+                            {item.product_size && <span>{item.product_size}</span>}
+                            {item.product_color && <span className="flex items-center gap-1">{item.product_color}</span>}
+                          </p>
                         </div>
-                        <div className="bg-muted border border-border rounded-xl p-4 flex-1 w-full ml-6 md:ml-0 rtl:ml-0 rtl:mr-6 rtl:md:mr-0">
-                          <div className="md:hidden text-xs text-muted-foreground mb-1">{new Date(history.created_at).toLocaleString()}</div>
-                          <h4 className="font-medium text-foreground mb-1">
-                            {lang === 'ar' ? `تغيرت الحالة إلى: ${getStatusText(history.status)}` : `Status changed to: ${getStatusText(history.status)}`}
-                          </h4>
-                          {history.tracking_number && (
-                            <p className="text-sm text-muted-foreground">
-                              {lang === 'ar' ? 'رقم التتبع' : 'Tracking number'}
-                              <span className="font-mono text-foreground bg-background px-1.5 py-0.5 rounded border border-border ml-1">{history.tracking_number}</span>
-                            </p>
+                        <div className="text-sm shrink-0 text-end pl-2 rtl:pl-0 rtl:pr-2">
+                          {itemTotal === 0 ? (
+                            <span className="inline-flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#093f89] dark:text-[#fbc70f] bg-[#093f89]/10 dark:bg-[#fbc70f]/10 px-2.5 py-1.5 rounded-lg border border-[#093f89]/20 dark:border-[#fbc70f]/20">
+                              <Clock className="w-3.5 h-3.5" />
+                              {isRtl ? 'قيد التسعير' : 'Awaiting Price'}
+                            </span>
+                          ) : (
+                            <CurrencyFormat amount={itemTotal} />
                           )}
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
-              ) : (
-                <p className="text-muted-foreground text-sm italic">{lang === 'ar' ? 'لا يوجد تحديثات مسجلة بعد.' : 'No timeline updates recorded yet.'}</p>
-              )}
-            </div>
 
-            {/* Products Summary & Financial Calculation */}
-            <div className="bg-background rounded-2xl shadow-sm border border-border p-6 lg:p-8">
-              <h3 className="text-lg font-medium text-foreground mb-6">{lang === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}</h3>
+                {/* Financial Calculation */}
+                {isAwaitingPricing ? (
+                  // الشاشة البديلة عند انتظار التسعير
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="mt-8 pt-6 border-t-2 border-border/60"
+                  >
+                    <div className="relative overflow-hidden flex flex-col sm:flex-row items-start gap-4 bg-gradient-to-br from-[#fbc70f]/10 to-transparent border border-[#fbc70f]/30 p-5 rounded-2xl shadow-sm">
+                      <div className="absolute top-0 end-0 w-32 h-32 bg-[#fbc70f]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
 
-              {/* قائمة المنتجات */}
-              <div className="space-y-4">
-                {order.items.map(item => {
-                  console.log("Item data from dashboard:", item);
-                  const productName = item.product?.name ?
-                    (typeof item.product.name === 'string' ? item.product.name :
-                      (item.product.name[lang] || item.product.name['en'] || 'Unknown Product'))
-                    : 'Unknown Product';
-
-                  return (
-                    <div key={item.id} className="flex items-center gap-4 pb-4 border-b border-border last:border-0 last:pb-0">
-                      <div className="h-16 w-16 bg-muted rounded-lg overflow-hidden shrink-0 border border-border">
-                        <img src={getImageUrl(item.product?.images?.[0])} alt={productName} className="w-full h-full object-cover" />
+                      <div className="w-12 h-12 rounded-full bg-background flex items-center justify-center shrink-0 border border-[#fbc70f]/40 shadow-inner z-10">
+                        <Clock className="w-6 h-6 text-[#093f89] dark:text-[#fbc70f]" />
                       </div>
-                      <div className="flex-1">
-                        <h4 className="text-sm font-medium text-foreground line-clamp-1">{productName}</h4>
-                        <p className="text-xs text-muted-foreground">{lang === 'ar' ? 'الكمية:' : 'Qty:'} {item.quantity}</p>
-                      </div>
-                      <div className="text-sm font-medium text-foreground">
-                        <CurrencyFormat amount={Number(item.unit_price) * item.quantity} />
+                      <div className="z-10">
+                        <h4 className="text-base font-bold text-foreground mb-1.5">
+                          {isRtl ? 'بانتظار تسعير الإدارة' : 'Awaiting Admin Pricing'}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-muted-foreground font-medium leading-relaxed">
+                          {isRtl
+                            ? 'تم استلام طلبك بنجاح وهو الآن قيد المراجعة لتحديد التسعيرة النهائية. سيتم تحديث الفاتورة هنا (بما في ذلك الضرائب والشحن) قريباً.'
+                            : 'Your order has been received and is under review for final pricing. The total invoice (including VAT and shipping) will be updated here soon.'}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                  </motion.div>
+                ) : (
+                  // الحسبة المالية الطبيعية إذا كان هناك سعر
+                  <div className="mt-8 pt-6 border-t-2 border-border/60 space-y-4">
+                    <div className="flex justify-between items-center text-muted-foreground font-medium">
+                      <span>{isRtl ? 'المجموع الفرعي' : 'Subtotal'}</span>
+                      <CurrencyFormat className="text-foreground" amount={calculatedSubtotal} />
+                    </div>
 
-              {/* تفاصيل الحسبة والضرائب المعدلة */}
-              <div className="mt-8 pt-6 border-t border-border space-y-3 text-sm">
+                    {order.tax_amount !== undefined && Number(order.tax_amount) > 0 && (
+                      <div className="flex justify-between items-center text-muted-foreground font-medium">
+                        <span>{isRtl ? 'الضريبة المضافة' : 'VAT'}</span>
+                        <CurrencyFormat className="text-foreground" amount={order.tax_amount} />
+                      </div>
+                    )}
 
-                {/* 1. المجموع الفرعي */}
-                <div className="flex justify-between items-center text-muted-foreground">
-                  <span>{lang === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</span>
-                  <CurrencyFormat amount={order.subtotal ?? order.items.reduce((acc, item) => acc + (Number(item.unit_price) * item.quantity), 0)} />
-                </div>
+                    {order.shipping_amount !== undefined && Number(order.shipping_amount) > 0 && (
+                      <div className="flex justify-between items-center text-muted-foreground font-medium">
+                        <span>{isRtl ? 'الشحن' : 'Shipping'}</span>
+                        <CurrencyFormat className="text-foreground" amount={order.shipping_amount} />
+                      </div>
+                    )}
 
-                {/* 2. قيمة الضريبة المضافة */}
-                {order.tax_amount !== undefined && Number(order.tax_amount) > 0 && (
-                  <div className="flex justify-between items-center text-muted-foreground">
-                    <span>{lang === 'ar' ? 'الضريبة المضافة' : 'VAT'}</span>
-                    <CurrencyFormat amount={order.tax_amount} />
+                    <div className="flex justify-between items-center pt-4 mt-2 border-t border-border/60">
+                      <span className="text-lg font-bold text-foreground">{isRtl ? 'المجموع الكلي' : 'Total Amount'}</span>
+                      <CurrencyFormat
+                        className="text-[#093f89] dark:text-[#fbc70f] text-xl"
+                        amount={
+                          calculatedSubtotal +
+                          Number(order.tax_amount ?? 0) +
+                          Number(order.shipping_amount ?? 0)
+                        }
+                        size={18}
+                      />
+                    </div>
                   </div>
                 )}
-
-                {/* 3. تكلفة الشحن */}
-                {order.shipping_amount !== undefined && Number(order.shipping_amount) > 0 && (
-                  <div className="flex justify-between items-center text-muted-foreground">
-                    <span>{lang === 'ar' ? 'الشحن' : 'Shipping'}</span>
-                    <CurrencyFormat amount={order.shipping_amount} />
-                  </div>
-                )}
-
-                {/* 4. المجموع النهائي الكلي (محسوب ديناميكياً لضمان إضافة الضرائب والشحن) */}
-                <div className="flex justify-between items-center text-lg font-semibold text-foreground pt-3 border-t border-border/60">
-                  <span>{lang === 'ar' ? 'المجموع الكلي' : 'Total Amount'}</span>
-                  <CurrencyFormat
-                    amount={
-                      // إذا كان السيرفر يرسل الحقول منفصلة، نقوم بجمعها هنا للتأكد من النتيجة
-                      (order.subtotal ?? order.items.reduce((acc, item) => acc + (Number(item.unit_price) * item.quantity), 0)) +
-                      Number(order.tax_amount ?? 0) +
-                      Number(order.shipping_amount ?? 0)
-                    }
-                    size={16}
-                  />
-                </div>
 
               </div>
             </div>

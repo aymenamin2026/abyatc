@@ -10,27 +10,27 @@ import MapPickerModal from "@/components/MapPickerModal";
 export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: any }) {
   const [addresses, setAddresses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
   const [isDeletingAddress, setIsDeletingAddress] = useState<number | null>(null);
   const [addressToDelete, setAddressToDelete] = useState<number | null>(null);
   const [showMapModal, setShowMapModal] = useState(false);
-  
+
   const [countries, setCountries] = useState<any[]>([]);
   const [zones, setZones] = useState<any[]>([]);
   const [defaultCountryId, setDefaultCountryId] = useState<string>("");
-  
+
   const [countryQuery, setCountryQuery] = useState('');
   const [zoneQuery, setZoneQuery] = useState('');
-  
+
   const filteredCountries = countryQuery === '' ? countries : countries.filter((country) => country.name.toLowerCase().includes(countryQuery.toLowerCase()));
   const filteredZones = zoneQuery === '' ? zones : zones.filter((zone) => zone.name.toLowerCase().includes(zoneQuery.toLowerCase()));
-  
+
   const [newAddress, setNewAddress] = useState({
     first_name: "", last_name: "", address_1: "", address_2: "", city: "", postcode: "", state: "", country_id: "", zone_id: "", latitude: "", longitude: "", is_default: false, address_type: "home"
   });
-  
+
   const [isSavingAddress, setIsSavingAddress] = useState(false);
   const [addressError, setAddressError] = useState("");
 
@@ -44,7 +44,7 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
         ]);
         setAddresses(userAddresses || []);
         if (countriesData) setCountries(countriesData);
-        
+
         // Auto-set default country from admin settings
         if (settings?.default_country_id) {
           const defaultId = settings.default_country_id.toString();
@@ -74,12 +74,12 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
       longitude: addr.longitude || "", is_default: addr.is_default || false,
       address_type: addr.address_type || "home"
     });
-    
+
     if (addr.country_id) {
-       try {
-         const fetchedZones = await fetchZones(addr.country_id);
-         setZones(fetchedZones);
-       } catch(e) {}
+      try {
+        const fetchedZones = await fetchZones(addr.country_id);
+        setZones(fetchedZones);
+      } catch (e) { }
     }
   };
 
@@ -107,10 +107,10 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
       } else {
         await createCustomerAddress(newAddress);
       }
-      
+
       const userAddresses = await fetchCustomerAddresses();
       setAddresses(userAddresses || []);
-      
+
       setIsAddingNewAddress(false);
       setEditingAddressId(null);
       setNewAddress({ first_name: "", last_name: "", address_1: "", address_2: "", city: "", postcode: "", state: "", country_id: "", zone_id: "", latitude: "", longitude: "", is_default: false, address_type: "home" });
@@ -133,9 +133,9 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
     <div className="space-y-8">
       <div className="flex justify-between items-center bg-background">
         <h2 className="font-serif text-2xl font-bold text-foreground">{t("my_addresses", lang)}</h2>
-        
+
         {!isAddingNewAddress && (
-          <button 
+          <button
             onClick={() => { setIsAddingNewAddress(true); setEditingAddressId(null); setNewAddress({ first_name: user?.first_name || "", last_name: user?.last_name || "", address_1: "", address_2: "", city: "", postcode: "", state: "", country_id: "", zone_id: "", latitude: "", longitude: "", is_default: false, address_type: "home" }); }}
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
           >
@@ -154,7 +154,7 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
               <p className="text-sm text-muted-foreground/70 mb-4">{t('no_addresses_desc', lang)}</p>
             </div>
           ) : (
-             addresses.map(addr => (
+            addresses.map(addr => (
               <div key={addr.id} className="border border-border rounded-2xl p-5 hover:border-primary/50 transition-colors bg-secondary/5 relative">
                 {addr.is_default && (
                   <span className="absolute top-4 end-4 bg-primary/10 text-primary text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded">{t('default', lang)}</span>
@@ -167,7 +167,7 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
                 </div>
                 <div className="text-foreground font-medium mb-1">{addr.first_name} {addr.last_name}</div>
                 <div className="text-muted-foreground text-sm leading-relaxed mb-4">
-                  {addr.address_1} {addr.address_2 && `, ${addr.address_2}`}<br/>
+                  {addr.address_1} {addr.address_2 && `, ${addr.address_2}`}<br />
                   {addr.city}, {addr.state} {addr.postcode}
                 </div>
                 <div className="flex items-center gap-3 pt-4 border-t border-border">
@@ -178,7 +178,7 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
                   </button>
                 </div>
               </div>
-             ))
+            ))
           )}
         </div>
       )}
@@ -199,13 +199,13 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
                 {addressError}
               </div>
             )}
-            
+
             <div className="flex bg-background border border-border rounded-lg p-1 w-full max-w-sm mb-6">
               {['home', 'office', 'other'].map(type => (
                 <button
                   key={type}
                   type="button"
-                  onClick={() => setNewAddress({...newAddress, address_type: type})}
+                  onClick={() => setNewAddress({ ...newAddress, address_type: type })}
                   className={`flex-1 py-2 text-sm text-center rounded-md font-medium capitalize transition-all ${newAddress.address_type === type ? 'bg-primary/10 text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   {type === 'home' ? (lang === 'ar' ? 'منزل' : 'Home') : type === 'office' ? (lang === 'ar' ? 'عمل' : 'Office') : (lang === 'ar' ? 'آخر' : 'Other')}
@@ -215,17 +215,17 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <input type="text" placeholder={t('first_name', lang)} value={newAddress.first_name} onChange={e => setNewAddress({...newAddress, first_name: e.target.value})} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
+                <input type="text" placeholder={t('first_name', lang)} value={newAddress.first_name} onChange={e => setNewAddress({ ...newAddress, first_name: e.target.value })} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
               </div>
               <div>
-                <input type="text" placeholder={t('last_name', lang)} value={newAddress.last_name} onChange={e => setNewAddress({...newAddress, last_name: e.target.value})} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
+                <input type="text" placeholder={t('last_name', lang)} value={newAddress.last_name} onChange={e => setNewAddress({ ...newAddress, last_name: e.target.value })} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
               </div>
               <div className="md:col-span-2">
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <input type="text" placeholder={t('address', lang)} value={newAddress.address_1} onChange={e => setNewAddress({...newAddress, address_1: e.target.value})} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
+                    <input type="text" placeholder={t('address', lang)} value={newAddress.address_1} onChange={e => setNewAddress({ ...newAddress, address_1: e.target.value })} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
                   </div>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowMapModal(true)}
                     className="px-4 border border-border rounded-xl hover:bg-secondary transition-colors text-primary flex items-center justify-center shrink-0"
@@ -236,68 +236,68 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
                 </div>
               </div>
               <div className="md:col-span-2">
-                <input type="text" placeholder={lang === 'ar' ? 'رقم الشقة، الجناح، إلخ (اختياري)' : 'Apartment, suite, etc. (optional)'} value={newAddress.address_2} onChange={e => setNewAddress({...newAddress, address_2: e.target.value})} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
+                <input type="text" placeholder={lang === 'ar' ? 'رقم الشقة، الجناح، إلخ (اختياري)' : 'Apartment, suite, etc. (optional)'} value={newAddress.address_2} onChange={e => setNewAddress({ ...newAddress, address_2: e.target.value })} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
               </div>
-              
+
               {/* Hidden input for country */}
               <input type="hidden" name="country_id" value={newAddress.country_id} />
 
               {/* Only show country picker when no store-level default is set */}
               {!defaultCountryId && (
-              <div className="md:col-span-2 relative z-50">
-                <Combobox value={newAddress.country_id || ""} onChange={async (val) => {
-                  setNewAddress({...newAddress, country_id: val || '', zone_id: '', state: ''});
-                  if (val) {
-                    const fetchedZones = await fetchZones(val);
-                    setZones(fetchedZones);
-                  } else {
-                    setZones([]);
-                  }
-                }}>
-                  <div className="relative">
-                    <Combobox.Input
-                      className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background text-foreground"
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCountryQuery(event.target.value)}
-                      displayValue={(countryId: string) => countries.find((c: any) => c.id.toString() === countryId)?.name || ''}
-                      placeholder={lang === 'ar' ? 'اختر الدولة' : 'Select Country'}
-                    />
-                    <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                      <ChevronRight className="h-5 w-5 text-gray-400" />
-                    </Combobox.Button>
-                  </div>
-                  <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-xl bg-background border border-border py-1 text-base shadow-lg focus:outline-none sm:text-sm">
-                    {filteredCountries.length === 0 && countryQuery !== '' ? (
-                      <div className="relative cursor-default select-none py-2 px-4 text-gray-700">{lang === 'ar' ? 'لا يوجد نتائج' : 'Nothing found.'}</div>
-                    ) : (
-                      filteredCountries.map((country) => (
-                        <Combobox.Option
-                          key={country.id}
-                          className={({ active }) => `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active ? 'bg-primary/10 text-primary' : 'text-foreground'}`}
-                          value={country.id.toString()}
-                        >
-                          {({ selected, active }) => (
-                            <>
-                              <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>{country.name}</span>
-                              {selected ? (<span className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-primary' : 'text-primary'}`}><Check className="h-5 w-5" /></span>) : null}
-                            </>
-                          )}
-                        </Combobox.Option>
-                      ))
-                    )}
-                  </Combobox.Options>
-                </Combobox>
-              </div>
+                <div className="md:col-span-2 relative z-50">
+                  <Combobox value={newAddress.country_id || ""} onChange={async (val) => {
+                    setNewAddress({ ...newAddress, country_id: val || '', zone_id: '', state: '' });
+                    if (val) {
+                      const fetchedZones = await fetchZones(val);
+                      setZones(fetchedZones);
+                    } else {
+                      setZones([]);
+                    }
+                  }}>
+                    <div className="relative">
+                      <Combobox.Input
+                        className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background text-foreground"
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCountryQuery(event.target.value)}
+                        displayValue={(countryId: string) => countries.find((c: any) => c.id.toString() === countryId)?.name || ''}
+                        placeholder={lang === 'ar' ? 'اختر الدولة' : 'Select Country'}
+                      />
+                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                        <ChevronRight className="h-5 w-5 text-gray-400" />
+                      </Combobox.Button>
+                    </div>
+                    <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-xl bg-background border border-border py-1 text-base shadow-lg focus:outline-none sm:text-sm">
+                      {filteredCountries.length === 0 && countryQuery !== '' ? (
+                        <div className="relative cursor-default select-none py-2 px-4 text-gray-700">{lang === 'ar' ? 'لا يوجد نتائج' : 'Nothing found.'}</div>
+                      ) : (
+                        filteredCountries.map((country) => (
+                          <Combobox.Option
+                            key={country.id}
+                            className={({ active }) => `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active ? 'bg-primary/10 text-primary' : 'text-foreground'}`}
+                            value={country.id.toString()}
+                          >
+                            {({ selected, active }) => (
+                              <>
+                                <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>{country.name}</span>
+                                {selected ? (<span className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-primary' : 'text-primary'}`}><Check className="h-5 w-5" /></span>) : null}
+                              </>
+                            )}
+                          </Combobox.Option>
+                        ))
+                      )}
+                    </Combobox.Options>
+                  </Combobox>
+                </div>
               )}
 
               <div>
-                <input type="text" placeholder={t('city', lang)} value={newAddress.city} onChange={e => setNewAddress({...newAddress, city: e.target.value})} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
+                <input type="text" placeholder={t('city', lang)} value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="relative z-50">
                   <Combobox value={newAddress.zone_id || ""} onChange={(val) => {
-                      const selectedZone = zones.find(z => z.id.toString() === val);
-                      setNewAddress({...newAddress, zone_id: val || '', state: selectedZone ? selectedZone.name : '' });
+                    const selectedZone = zones.find(z => z.id.toString() === val);
+                    setNewAddress({ ...newAddress, zone_id: val || '', state: selectedZone ? selectedZone.name : '' });
                   }} disabled={zones.length === 0}>
                     <div className="relative">
                       <Combobox.Input
@@ -332,28 +332,28 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
                     </Combobox.Options>
                   </Combobox>
                 </div>
-                <input type="text" placeholder={t('zip_code', lang)} value={newAddress.postcode} onChange={e => setNewAddress({...newAddress, postcode: e.target.value})} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
+                <input type="text" placeholder={t('zip_code', lang)} value={newAddress.postcode} onChange={e => setNewAddress({ ...newAddress, postcode: e.target.value })} className="w-full border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background" />
               </div>
-              
+
               <div className="md:col-span-2 pt-2">
                 <label className="flex items-center gap-3 cursor-pointer group w-fit">
-                    <button type="button" onClick={() => setNewAddress({...newAddress, is_default: !newAddress.is_default})} className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-2 ring-transparent focus:ring-primary/50 ${newAddress.is_default ? 'bg-primary' : 'bg-secondary'}`}>
-                        <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${newAddress.is_default ? 'translate-x-full' : 'translate-x-0'}`}></span>
-                    </button>
-                    <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{t('set_as_default', lang)}</span>
+                  <button type="button" onClick={() => setNewAddress({ ...newAddress, is_default: !newAddress.is_default })} className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-2 ring-transparent focus:ring-primary/50 ${newAddress.is_default ? 'bg-primary' : 'bg-secondary'}`}>
+                    <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${newAddress.is_default ? 'translate-x-full' : 'translate-x-0'}`}></span>
+                  </button>
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{t('set_as_default', lang)}</span>
                 </label>
               </div>
 
               <div className="md:col-span-2 pt-6 flex justify-end gap-3 border-t border-border mt-2">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => { setIsAddingNewAddress(false); setEditingAddressId(null); }}
                   className="px-6 py-2.5 rounded-xl font-medium text-muted-foreground hover:bg-secondary transition-colors"
                 >
                   {t('cancel', lang)}
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={handleSaveAddress}
                   disabled={isSavingAddress || !newAddress.first_name || !newAddress.last_name || !newAddress.address_1 || !newAddress.city || !newAddress.postcode || !newAddress.country_id}
                   className="bg-primary text-primary-foreground px-8 py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all shadow-sm disabled:opacity-50"
@@ -376,10 +376,10 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
           let determinedCountryId = defaultCountryId || newAddress.country_id;
           let determinedZoneId = newAddress.zone_id;
           let determinedStateName = data.state || newAddress.state;
-          
+
           if (defaultCountryId && data.state && zones.length > 0) {
-            const matchedZone = zones.find((z: any) => 
-              z.name.toLowerCase().includes(data.state.toLowerCase()) || 
+            const matchedZone = zones.find((z: any) =>
+              z.name.toLowerCase().includes(data.state.toLowerCase()) ||
               data.state.toLowerCase().includes(z.name.toLowerCase())
             );
             if (matchedZone) {
@@ -408,16 +408,16 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
           <div className="bg-background rounded-2xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col p-6 animate-in fade-in zoom-in-95 duration-200">
             <h3 className="text-xl font-bold text-foreground mb-3 font-serif">{lang === 'ar' ? 'حذف العنوان' : 'Delete Address'}</h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">{t('confirm_delete_addr', lang)}</p>
-            
+
             <div className="flex gap-3">
-              <button 
+              <button
                 onClick={() => setAddressToDelete(null)}
                 className="flex-1 px-4 py-2.5 rounded-xl border border-border font-medium text-foreground hover:bg-secondary transition-colors"
                 disabled={isDeletingAddress !== null}
               >
                 {t('cancel', lang)}
               </button>
-              <button 
+              <button
                 onClick={() => addressToDelete && confirmDeleteAddress(addressToDelete)}
                 disabled={isDeletingAddress !== null}
                 className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white font-medium hover:bg-red-700 transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
