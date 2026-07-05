@@ -153,42 +153,44 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
         <h2 className="font-serif text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{t("my_orders", lang)}</h2>
       </div>
 
-      <div className="overflow-x-auto custom-scrollbar bg-background rounded-3xl border border-border shadow-sm">
+      <div className="overflow-x-auto custom-scrollbar bg-card rounded-3xl border border-border shadow-sm">
         <table className="w-full text-start border-collapse min-w-[600px]">
           <thead>
-            <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1a1a1a]">
-              <th className="py-5 px-6 font-semibold text-start text-gray-500 dark:text-gray-400">{t('order_id', lang)}</th>
-              <th className="py-5 px-6 font-semibold text-start text-gray-500 dark:text-gray-400">{t('order_date', lang)}</th>
-              <th className="py-5 px-6 font-semibold text-start text-gray-500 dark:text-gray-400">{t('order_status', lang)}</th>
-              <th className="py-5 px-6 font-semibold text-start text-gray-500 dark:text-gray-400">{t('order_total', lang)}</th>
-              <th className="py-5 px-6 font-semibold text-end text-gray-500 dark:text-gray-400">{t('order_actions', lang)}</th>
+            {/* 👈 تم التعديل: جعل الخلفية فاتحة تماماً في الوضع العادي، وداكنة في الوضع المظلم */}
+            <tr className="border-b border-border bg-muted/50 dark:bg-[#1a1a1a]">
+              {/* 👈 تم التعديل: تحويل نصوص العناوين إلى text-foreground في الوضع الفاتح لضمان ظهورها بالأسود */}
+              <th className="py-5 px-6 font-semibold text-start text-foreground/80 dark:text-gray-400">{t('order_id', lang)}</th>
+              <th className="py-5 px-6 font-semibold text-start text-foreground/80 dark:text-gray-400">{t('order_date', lang)}</th>
+              <th className="py-5 px-6 font-semibold text-start text-foreground/80 dark:text-gray-400">{t('order_status', lang)}</th>
+              <th className="py-5 px-6 font-semibold text-start text-foreground/80 dark:text-gray-400">{t('order_total', lang)}</th>
+              <th className="py-5 px-6 font-semibold text-end text-foreground/80 dark:text-gray-400">{t('order_actions', lang)}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+          <tbody className="divide-y divide-border">
             {orders.map((order) => {
               const { isNotPricedYet, finalTotal } = calculateOrderTotals(order, taxRate, pricesIncludeTax);
 
               return (
-                <tr key={order.id} className="group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                <tr key={order.id} className="group hover:bg-muted/30 dark:hover:bg-white/5 transition-colors">
                   <td className="py-5 px-6">
-                    <span className="font-bold text-gray-900 dark:text-white">#{order.order_number}</span>
+                    <span className="font-bold text-foreground">#{order.order_number}</span>
                   </td>
-                  <td className="py-5 px-6 text-gray-500 dark:text-gray-400 text-sm font-medium">
+                  <td className="py-5 px-6 text-muted-foreground text-sm font-medium">
                     {new Date(order.created_at).toLocaleDateString()}
                   </td>
                   <td className="py-5 px-6">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold capitalize
-                      ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400' : ''}
-                      ${order.status === 'processing' ? 'bg-[#093f89]/10 text-[#093f89] dark:bg-[#093f89]/20 dark:text-blue-400' : ''}
-                      ${order.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400' : ''}
-                      ${order.status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400' : ''}
-                      ${order.status === 'in_way' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400' : ''}
-                      ${order.status === 'awaiting_payment' ? 'bg-orange-100 text-orange-700 dark:bg-orange-500/10 dark:text-orange-400' : ''}
-                    `}>
+            ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400' : ''}
+            ${order.status === 'processing' ? 'bg-[#093f89]/10 text-[#093f89] dark:bg-[#093f89]/20 dark:text-blue-400' : ''}
+            ${order.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400' : ''}
+            ${order.status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400' : ''}
+            ${order.status === 'in_way' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400' : ''}
+            ${order.status === 'awaiting_payment' ? 'bg-orange-100 text-orange-700 dark:bg-orange-500/10 dark:text-orange-400' : ''}
+          `}>
                       {t(order.status as any, lang)}
                     </span>
                   </td>
-                  <td className="py-5 px-6 font-bold text-gray-900 dark:text-white">
+                  <td className="py-5 px-6 font-bold text-foreground">
                     {!isNotPricedYet ? (
                       <span className="flex items-center text-lg">
                         {renderCurrency()}
@@ -200,7 +202,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                         {awaitingPricingText}
                       </span>
                     )}
-                    <span className="text-xs text-gray-500 dark:text-gray-400 block mt-1 font-medium">
+                    <span className="text-xs text-muted-foreground block mt-1 font-medium">
                       {order.items?.length || 0} {t('order_items', lang)}
                     </span>
                   </td>
@@ -213,10 +215,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       >
                         <Eye className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                       </button>
-                      <div className="w-px h-5 bg-gray-200 dark:bg-gray-700"></div>
+                      <div className="w-px h-5 bg-border"></div>
                       <Link
                         href={`/track?query=${order.order_number}`}
-                        className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group/btn"
+                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors group/btn"
                         title={t('track_order', lang)}
                       >
                         <Truck className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
@@ -441,6 +443,6 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </div >
   );
 }
