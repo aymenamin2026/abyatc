@@ -152,6 +152,7 @@ export default function CartPage() {
             <div className="divide-y divide-border/50">
               <AnimatePresence>
                 {items.map((item) => {
+                  console.log(item);
                   const itemName = typeof item.name === 'object' && item.name !== null
                     ? (item.name[lang] || item.name.en || "Product Name")
                     : (item.name || "Product Name");
