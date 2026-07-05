@@ -112,7 +112,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                             className="w-6 h-6 flex items-center justify-center text-lg hover:text-primary transition-colors"
                           >+</button>
                         </div>
-                        <div className="font-semibold flex items-center gap-1">
+                        {/* <div className="font-semibold flex items-center gap-1">
                           {currencySymbol === '/riyal-light.svg' || currencySymbol === '/riyal-dark.svg' ? (
                             <>
                               <Image src="/riyal-dark.svg" alt="SAR" width={12} height={12} className="inline-block theme-light-only" />
@@ -122,7 +122,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                             <span>{currencySymbol}</span>
                           )}
                           {(item.price * item.quantity).toFixed(2)}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
