@@ -87,7 +87,7 @@ export default function CartPage() {
         </div>
         <h1 className="font-serif text-3xl font-bold mb-4">{t('your_cart', lang)}</h1>
         <p className="text-muted-foreground mb-8 max-w-sm">
-          {t('empty_cart', lang)}
+          {t('empty_cart', lang)}ss
         </p>
         <Link
           href="/shop"
