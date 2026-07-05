@@ -310,16 +310,24 @@ export default function Checkout() {
       let data;
 
       if (isLogin) {
-        // في حالة تسجيل الدخول نرسل البيانات كالمعتاد
         data = await authLogin(credentials);
+
+        // تسجيل المستخدم
+        login(data.customer, data.access_token);
+
+        // مزامنة السلة
+        await syncCart();
+
+        // العودة إلى صفحة Checkout
+        router.refresh(); // أو أزلها إذا لم تكن تحتاجها
+
+        return;
       } else {
-        // في حالة التسجيل، نقوم بتجهيز البيانات وإضافة كود الدولة phone_code
         const registerPayload = {
           ...credentials,
-          phone_code: selectedCountryCode, // الكود المختار من الـ Dropdown (مثال: +966)
-          // إذا كان الباك-إند يتوقع الرقم بدون الصفر الأول، يمكنك تفعيل السطر التالي:
-          // phone: credentials.phone.replace(/^0+/, '')
+          phone_code: selectedCountryCode,
         };
+
         const data = await authRegister(registerPayload);
 
         const email = data.customer?.email || credentials.email;
@@ -338,10 +346,7 @@ export default function Checkout() {
 
 
 
-      localStorage.setItem("after_verify_redirect", "checkout");
-      localStorage.setItem("auth_mode", "verify");
 
-      router.push("/login");
     } catch (err: any) {
       setAuthError(err.message);
     }
