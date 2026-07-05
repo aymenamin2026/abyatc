@@ -136,8 +136,12 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
 
         {!isAddingNewAddress && (
           <button
-            onClick={() => { setIsAddingNewAddress(true); setEditingAddressId(null); setNewAddress({ first_name: user?.first_name || "", last_name: user?.last_name || "", address_1: "", address_2: "", city: "", postcode: "", state: "", country_id: "", zone_id: "", latitude: "", longitude: "", is_default: false, address_type: "home" }); }}
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
+            onClick={() => {
+              setIsAddingNewAddress(true);
+              setEditingAddressId(null);
+              setNewAddress({ first_name: user?.first_name || "", last_name: user?.last_name || "", address_1: "", address_2: "", city: "", postcode: "", state: "", country_id: "", zone_id: "", latitude: "", longitude: "", is_default: false, address_type: "home" });
+            }}
+            className="flex items-center gap-2 !bg-[#fbc70f] !text-[#093f89] dark:!bg-[#093f89] dark:!text-[#fbc70f] hover:brightness-95 dark:hover:brightness-110 px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm"
           >
             <Plus className="w-4 h-4" /> {t('add_new_address', lang)}
           </button>
