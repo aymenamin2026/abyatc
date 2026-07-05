@@ -233,7 +233,6 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
       </div>
 
       {/* 3. نافذة تفاصيل الطلب */}
-      {/* 3. نافذة تفاصيل الطلب */}
       <AnimatePresence>
         {selectedOrder && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md">
@@ -242,9 +241,11 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              /* 👈 تم التعديل: إجبار الخلفية الكبرى على اللون الأبيض في الفاتح والأسود في المظلم */
               className="bg-white dark:bg-[#121212] text-slate-900 dark:text-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-gray-100 dark:border-zinc-800"
             >
               {/* Modal Header */}
+              {/* 👈 تم التعديل: رمادي فاتح جداً في الفاتح وأسود في المظلم */}
               <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between bg-gray-50 dark:bg-[#1a1a1a]">
                 <div>
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white font-serif">{t('order_details', lang)}</h3>
@@ -262,7 +263,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-white dark:bg-[#121212]">
 
                 {/* Order Info Bar */}
-                {/* 👈 تم التعديل: إجبار الخلفية على اللون الرمادي الفاتح جداً في الفاتح، والأسود في المظلم */}
+                {/* 👈 تم التعديل: رمادي فاتح جداً في الفاتح وأسود داكن في المظلم */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-2xl border border-gray-100 dark:border-zinc-800/50 shadow-sm">
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('order_status', lang)}</div>
@@ -306,7 +307,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       const isItemUnpriced = basePrice === 0;
 
                       return (
-                        /* 👈 تم التعديل: جعل خلفية كرت المنتج بيضاء تماماً في الفاتح وداكنة في المظلم لتأمين التباين للنصوص */
+                        /* 👈 تم التعديل: كرت المنتج يصبح أبيض تماماً في الوضع الفاتح */
                         <div key={item.id} className="flex gap-4 items-center p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
                           <div className="w-16 h-20 rounded-xl bg-gray-50 dark:bg-zinc-900 overflow-hidden shrink-0 border border-gray-100 dark:border-zinc-800">
                             <img
@@ -318,7 +319,6 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            {/* 👈 هنا اسم المنتج أصبح text-slate-900 ليظهر بالأسود الصريح */}
                             <div className="text-sm font-bold text-slate-900 dark:text-white truncate">
                               {item.product?.name ? (item.product.name[lang as keyof typeof item.product.name] || item.product.name.en || item.product.name) : (item.name || 'Product')}
                             </div>
@@ -371,7 +371,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 </div>
 
                 {/* Shipping & Delivery */}
-                {/* 👈 تم التعديل: تحسين كتل الأسعار السفلية لتصبح بخلفية فاتحة متناسقة تماماً ومقروءة */}
+                {/* 👈 تم التعديل: إجبار الصندوق المالي السفلي على رمادي فاتح في الفاتح وأسود في المظلم */}
                 <div className="space-y-4 text-sm bg-gray-50 dark:bg-[#0a0a0a] p-6 rounded-2xl border border-gray-100 dark:border-zinc-800/50">
                   {(() => {
                     const { isNotPricedYet, shipping, finalTax, finalSubtotal, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
