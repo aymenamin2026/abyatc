@@ -235,217 +235,246 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
       {/* 3. نافذة تفاصيل الطلب */}
       <AnimatePresence>
         {selectedOrder && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              /* 👈 إجبار الحاوية الرئيسية على اللون الأبيض الناصع في وضع الفاتح والرمادي الأسود في الداكن */
-              className="bg-white dark:bg-[#121212] text-slate-900 dark:text-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-gray-100 dark:border-zinc-800"
-            >
-              {/* Header */}
-              <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between bg-gray-50 dark:bg-[#1a1a1a]">
-                <div>
-                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white font-serif">{t('order_details', lang)}</h3>
-                  <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1 font-medium">{t('order_id', lang)} #{selectedOrder.order_number}</p>
-                </div>
-                <button
-                  onClick={() => setSelectedOrder(null)}
-                  className="p-2 hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-400 dark:text-zinc-500 rounded-full transition-colors"
+          {(() => {
+            // 🔍 فحص برمي ومباشر لحالة النظام لضمان تخطي أي مشكلة في شجرة الـ DOM
+            const isDarkMode = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+
+            // إعداد الألوان كـ Inline Styles لضمان تفعيلها حتى لو لم تستجب كلاسات Tailwind
+            const modalBg = isDarkMode ? '#121212' : '#ffffff';
+            const subBoxBg = isDarkMode ? '#0a0a0a' : '#f9fafb'; // bg-gray-50
+            const textColor = isDarkMode ? '#ffffff' : '#0f172a'; // text-slate-900
+            const textMuted = isDarkMode ? '#a1a1aa' : '#6b7280'; // text-gray-500
+            const borderColor = isDarkMode ? '#27272a' : '#f3f4f6'; // border-gray-100
+
+            return (
+              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                  style={{ backgroundColor: modalBg, color: textColor, borderColor: borderColor }}
+                  className="rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border"
                 >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              {/* Body */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-white dark:bg-[#121212]">
-
-                {/* Order Info Bar */}
-                {/* 👈 تم التعديل: إجبار الحاويات الفرعية على الفاتح الصريح bg-gray-50 بدلاً من bg-background المبهم */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-2xl border border-gray-100 dark:border-zinc-800/50 shadow-sm">
-                  <div>
-                    <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('order_status', lang)}</div>
-                    <div className="text-sm font-bold capitalize text-[#093f89] dark:text-[#fbc70f]">{t(selectedOrder.status as any, lang)}</div>
+                  {/* Header */}
+                  <div
+                    style={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#f9fafb', borderColor: borderColor }}
+                    className="p-6 border-b flex items-center justify-between"
+                  >
+                    <div>
+                      <h3 style={{ color: textColor }} className="text-2xl font-bold font-serif">{t('order_details', lang)}</h3>
+                      <p style={{ color: textMuted }} className="text-sm mt-1 font-medium">{t('order_id', lang)} #{selectedOrder.order_number}</p>
+                    </div>
+                    <button
+                      onClick={() => setSelectedOrder(null)}
+                      className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
+                      style={{ color: textMuted }}
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
                   </div>
-                  <div>
-                    <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('order_date', lang)}</div>
-                    <div className="text-sm font-bold text-slate-900 dark:text-white">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('contact_det', lang)}</div>
-                    <div className="text-sm font-bold capitalize text-slate-900 dark:text-white">{selectedOrder.payment_method || '-'}</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('order_total', lang)}</div>
-                    {(() => {
-                      const { isNotPricedYet, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
-                      return isNotPricedYet ? (
-                        <span className="inline-block text-[11px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-0.5 rounded border border-[#fbc70f]/20 font-bold">
-                          {awaitingPricingText}
-                        </span>
-                      ) : (
-                        <div className="text-sm font-bold flex items-center text-slate-900 dark:text-white">
-                          {renderCurrency()}
-                          {finalTotal.toFixed(2)}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                </div>
 
-                {/* Items List */}
-                <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 text-lg">
-                    <Package className="w-5 h-5 text-[#093f89] dark:text-[#fbc70f]" />
-                    {t('order_items', lang)} ({selectedOrder.items?.length || 0})
-                  </h4>
-                  <div className="space-y-3">
-                    {selectedOrder.items?.map((item: any) => {
-                      const basePrice = parseFloat(String(item.unit_price || item.price || '0'));
-                      const isItemUnpriced = basePrice === 0;
+                  {/* Body */}
+                  <div style={{ backgroundColor: modalBg }} className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
 
-                      return (
-                        /* 👈 تم التعديل: الكرت الداخلي تم إجباره على bg-white للفاتح لتجنب السواد الموروث */
-                        <div key={item.id} className="flex gap-4 items-center p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
-                          <div className="w-16 h-20 rounded-xl bg-gray-50 dark:bg-zinc-900 overflow-hidden shrink-0 border border-gray-100 dark:border-zinc-800">
-                            <img
-                              src={getImageUrl(item.product?.images?.[0] || item.product?.image || item.image)}
-                              alt="Product"
-                              loading="lazy"
-                              decoding="async"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                              {item.product?.name ? (item.product.name[lang as keyof typeof item.product.name] || item.product.name.en || item.product.name) : (item.name || 'Product')}
+                    {/* Order Info Bar */}
+                    <div
+                      style={{ backgroundColor: subBoxBg, borderColor: borderColor }}
+                      className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl border shadow-sm"
+                    >
+                      <div>
+                        <div style={{ color: textMuted }} className="text-[10px] uppercase tracking-wider mb-1 font-bold">{t('order_status', lang)}</div>
+                        <div className="text-sm font-bold capitalize text-[#093f89] dark:text-[#fbc70f]">{t(selectedOrder.status as any, lang)}</div>
+                      </div>
+                      <div>
+                        <div style={{ color: textMuted }} className="text-[10px] uppercase tracking-wider mb-1 font-bold">{t('order_date', lang)}</div>
+                        <div style={{ color: textColor }} className="text-sm font-bold">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
+                      </div>
+                      <div>
+                        <div style={{ color: textMuted }} className="text-[10px] uppercase tracking-wider mb-1 font-bold">{t('contact_det', lang)}</div>
+                        <div style={{ color: textColor }} className="text-sm font-bold capitalize">{selectedOrder.payment_method || '-'}</div>
+                      </div>
+                      <div>
+                        <div style={{ color: textMuted }} className="text-[10px] uppercase tracking-wider mb-1 font-bold">{t('order_total', lang)}</div>
+                        {(() => {
+                          const { isNotPricedYet, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
+                          return isNotPricedYet ? (
+                            <span className="inline-block text-[11px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-0.5 rounded border border-[#fbc70f]/20 font-bold">
+                              {awaitingPricingText}
+                            </span>
+                          ) : (
+                            <div style={{ color: textColor }} className="text-sm font-bold flex items-center">
+                              {renderCurrency()}
+                              {finalTotal.toFixed(2)}
                             </div>
-                            {(item.color || item.size) && (
-                              <div className="text-xs text-gray-400 dark:text-zinc-500 mt-1 font-medium">
-                                {item.color} {item.color && item.size && '|'} {item.size}
+                          );
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* Items List */}
+                    <div>
+                      <h4 style={{ color: textColor }} className="font-bold mb-4 flex items-center gap-2 text-lg">
+                        <Package className="w-5 h-5 text-[#093f89] dark:text-[#fbc70f]" />
+                        {t('order_items', lang)} ({selectedOrder.items?.length || 0})
+                      </h4>
+                      <div className="space-y-3">
+                        {selectedOrder.items?.map((item: any) => {
+                          const basePrice = parseFloat(String(item.unit_price || item.price || '0'));
+                          const isItemUnpriced = basePrice === 0;
+
+                          return (
+                            <div
+                              key={item.id}
+                              style={{ backgroundColor: subBoxBg, borderColor: borderColor }}
+                              className="flex gap-4 items-center p-4 rounded-2xl border hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+                            >
+                              <div style={{ backgroundColor: modalBg, borderColor: borderColor }} className="w-16 h-20 rounded-xl overflow-hidden shrink-0 border">
+                                <img
+                                  src={getImageUrl(item.product?.images?.[0] || item.product?.image || item.image)}
+                                  alt="Product"
+                                  loading="lazy"
+                                  decoding="async"
+                                  className="w-full h-full object-cover"
+                                />
                               </div>
-                            )}
-                            <div className="text-xs font-bold text-[#093f89] dark:text-[#fbc70f] mt-2 flex items-center gap-1">
-                              Qty: {item.quantity} ×
-                              {isItemUnpriced ? (
-                                <span className="text-[10px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-1.5 py-0.5 rounded border border-[#fbc70f]/20">
-                                  {awaitingPricingText}
-                                </span>
-                              ) : (
-                                <>
-                                  {renderCurrency()}
-                                  {(() => {
-                                    if (pricesIncludeTax && selectedOrder.items?.length > 0) {
-                                      const itemTaxShare = taxRate / selectedOrder.items.length;
-                                      return Math.max(0, basePrice - (itemTaxShare / item.quantity)).toFixed(2);
-                                    }
-                                    return basePrice.toFixed(2);
-                                  })()}
-                                </>
-                              )}
+                              <div className="flex-1 min-w-0">
+                                <div style={{ color: textColor }} className="text-sm font-bold truncate">
+                                  {item.product?.name ? (item.product.name[lang as keyof typeof item.product.name] || item.product.name.en || item.product.name) : (item.name || 'Product')}
+                                </div>
+                                {(item.color || item.size) && (
+                                  <div style={{ color: textMuted }} className="text-xs mt-1 font-medium">
+                                    {item.color} {item.color && item.size && '|'} {item.size}
+                                  </div>
+                                )}
+                                <div className="text-xs font-bold text-[#093f89] dark:text-[#fbc70f] mt-2 flex items-center gap-1">
+                                  Qty: {item.quantity} ×
+                                  {isItemUnpriced ? (
+                                    <span className="text-[10px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-1.5 py-0.5 rounded border border-[#fbc70f]/20">
+                                      {awaitingPricingText}
+                                    </span>
+                                  ) : (
+                                    <>
+                                      {renderCurrency()}
+                                      {(() => {
+                                        if (pricesIncludeTax && selectedOrder.items?.length > 0) {
+                                          const itemTaxShare = taxRate / selectedOrder.items.length;
+                                          return Math.max(0, basePrice - (itemTaxShare / item.quantity)).toFixed(2);
+                                        }
+                                        return basePrice.toFixed(2);
+                                      })()}
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                              <div style={{ color: textColor }} className="text-base font-bold whitespace-nowrap flex items-center">
+                                {isItemUnpriced ? (
+                                  <span className="text-xs text-yellow-600 dark:text-[#fbc70f]">-</span>
+                                ) : (
+                                  <>
+                                    {renderCurrency()}
+                                    {(() => {
+                                      const itemTotal = parseFloat(String(item.total || (basePrice * item.quantity)));
+                                      if (pricesIncludeTax && selectedOrder.items?.length > 0) {
+                                        const itemTaxShare = taxRate / selectedOrder.items.length;
+                                        return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
+                                      }
+                                      return itemTotal.toFixed(2);
+                                    })()}
+                                  </>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                          <div className="text-base font-bold text-slate-900 dark:text-white whitespace-nowrap flex items-center">
-                            {isItemUnpriced ? (
-                              <span className="text-xs text-yellow-600 dark:text-[#fbc70f]">-</span>
-                            ) : (
-                              <>
-                                {renderCurrency()}
-                                {(() => {
-                                  const itemTotal = parseFloat(String(item.total || (basePrice * item.quantity)));
-                                  if (pricesIncludeTax && selectedOrder.items?.length > 0) {
-                                    const itemTaxShare = taxRate / selectedOrder.items.length;
-                                    return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
-                                  }
-                                  return itemTotal.toFixed(2);
-                                })()}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                          );
+                        })}
+                      </div>
+                    </div>
 
-                {/* Shipping & Delivery */}
-                {/* 👈 تم التعديل: صندوق الحسابات السفلي تم تثبيته على bg-gray-50 للفاتح و bg-[#0a0a0a] للداكن */}
-                <div className="space-y-4 text-sm bg-gray-50 dark:bg-[#0a0a0a] p-6 rounded-2xl border border-gray-100 dark:border-zinc-800/50">
-                  {(() => {
-                    const { isNotPricedYet, shipping, finalTax, finalSubtotal, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
+                    {/* Shipping & Delivery */}
+                    <div
+                      style={{ backgroundColor: subBoxBg, borderColor: borderColor }}
+                      className="space-y-4 text-sm p-6 rounded-2xl border"
+                    >
+                      {(() => {
+                        const { isNotPricedYet, shipping, finalTax, finalSubtotal, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
 
-                    return (
-                      <>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-500 dark:text-zinc-400 font-medium">{t('subtotal', lang)}</span>
-                          <span className="text-slate-900 dark:text-white font-bold flex items-center">
-                            {isNotPricedYet ? (
-                              <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
-                            ) : (<>{renderCurrency()}{finalSubtotal.toFixed(2)}</>)}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-500 dark:text-zinc-400 font-medium">{t('processing_fees', lang)}</span>
-                          <span className="text-green-600 dark:text-green-400 font-bold flex items-center">
-                            {isNotPricedYet ? (
-                              <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
-                            ) : shipping > 0 ? (
-                              <>{renderCurrency()}{shipping.toFixed(2)}</>
-                            ) : 'Free'}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-500 dark:text-zinc-400 font-medium">
-                            {t('taxes', lang)} {pricesIncludeTax && !isNotPricedYet ? <span className="text-xs opacity-70">({t('included', lang) || 'شاملة'})</span> : ''}
-                          </span>
-                          <span className="text-slate-900 dark:text-white font-bold flex items-center">
-                            {isNotPricedYet ? (
-                              <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
-                            ) : (<>{renderCurrency()}{finalTax.toFixed(2)}</>)}
-                          </span>
-                        </div>
-
-                        <div className="h-px bg-gray-200 dark:bg-zinc-800 my-4"></div>
-
-                        <div className="flex justify-between items-center text-base">
-                          <span className="font-bold text-slate-900 dark:text-white">{t('total', lang)}</span>
-                          <span className="font-bold text-[#093f89] dark:text-[#fbc70f] flex items-center text-xl">
-                            {isNotPricedYet ? (
-                              <span className="text-sm bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-3 py-1.5 rounded-lg border border-[#fbc70f]/20 flex items-center gap-1.5">
-                                <AlertCircle className="w-4 h-4" />
-                                {awaitingPricingText}
+                        return (
+                          <>
+                            <div className="flex justify-between items-center">
+                              <span style={{ color: textMuted }} className="font-medium">{t('subtotal', lang)}</span>
+                              <span style={{ color: textColor }} className="font-bold flex items-center">
+                                {isNotPricedYet ? (
+                                  <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
+                                ) : (<>{renderCurrency()}{finalSubtotal.toFixed(2)}</>)}
                               </span>
-                            ) : (<>{renderCurrency()}{finalTotal.toFixed(2)}</>)}
-                          </span>
-                        </div>
-                      </>
-                    );
-                  })()}
-                </div>
-              </div>
+                            </div>
 
-              {/* Footer */}
-              <div className="p-6 border-t border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-[#1a1a1a] flex gap-3">
-                <Link
-                  href={`/track?query=${selectedOrder.order_number}`}
-                  className="flex-1 bg-[#093f89] dark:bg-[#fbc70f] text-white dark:text-black py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#093f89]/20 dark:shadow-[#fbc70f]/20 hover:-translate-y-0.5 active:scale-95"
-                >
-                  <Truck className="w-5 h-5" />
-                  {t('track_order', lang)}
-                </Link>
-                <button
-                  onClick={() => setSelectedOrder(null)}
-                  className="px-8 py-3.5 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl font-bold hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all active:scale-95"
-                >
-                  {t('cancel', lang)}
-                </button>
+                            <div className="flex justify-between items-center">
+                              <span style={{ color: textMuted }} className="font-medium">{t('processing_fees', lang)}</span>
+                              <span className="text-green-600 dark:text-green-400 font-bold flex items-center">
+                                {isNotPricedYet ? (
+                                  <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
+                                ) : shipping > 0 ? (
+                                  <>{renderCurrency()}{shipping.toFixed(2)}</>
+                                ) : 'Free'}
+                              </span>
+                            </div>
+
+                            <div className="flex justify-between items-center">
+                              <span style={{ color: textMuted }} className="font-medium">
+                                {t('taxes', lang)} {pricesIncludeTax && !isNotPricedYet ? <span className="text-xs opacity-70">({t('included', lang) || 'شاملة'})</span> : ''}
+                              </span>
+                              <span style={{ color: textColor }} className="font-bold flex items-center">
+                                {isNotPricedYet ? (
+                                  <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
+                                ) : (<>{renderCurrency()}{finalTax.toFixed(2)}</>)}
+                              </span>
+                            </div>
+
+                            <div style={{ backgroundColor: borderColor }} className="h-px my-4"></div>
+
+                            <div className="flex justify-between items-center text-base">
+                              <span style={{ color: textColor }} className="font-bold">{t('total', lang)}</span>
+                              <span className="font-bold text-[#093f89] dark:text-[#fbc70f] flex items-center text-xl">
+                                {isNotPricedYet ? (
+                                  <span className="text-sm bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-3 py-1.5 rounded-lg border border-[#fbc70f]/20 flex items-center gap-1.5">
+                                    <AlertCircle className="w-4 h-4" />
+                                    {awaitingPricingText}
+                                  </span>
+                                ) : (<>{renderCurrency()}{finalTotal.toFixed(2)}</>)}
+                              </span>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div
+                    style={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#f9fafb', borderColor: borderColor }}
+                    className="p-6 border-t flex gap-3"
+                  >
+                    <Link
+                      href={`/track?query=${selectedOrder.order_number}`}
+                      className="flex-1 bg-[#093f89] dark:bg-[#fbc70f] text-white dark:text-black py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg hover:-translate-y-0.5 active:scale-95"
+                    >
+                      <Truck className="w-5 h-5" />
+                      {t('track_order', lang)}
+                    </Link>
+                    <button
+                      onClick={() => setSelectedOrder(null)}
+                      style={{ backgroundColor: modalBg, color: textColor, borderColor: borderColor }}
+                      className="px-8 py-3.5 border rounded-xl font-bold hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all active:scale-95"
+                    >
+                      {t('cancel', lang)}
+                    </button>
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
-        )}
+            );
+          })()}
+  )}
       </AnimatePresence>
     </div >
   );

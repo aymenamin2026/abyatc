@@ -89,8 +89,8 @@ export default function ProductCard({
   const whatsappNumber = rawNumber ? String(rawNumber).replace(/\D/g, "") : "966500000000";
 
   const messageText = shouldShowPrice
-    ? `مرحباً، أود الاستفسار عن منتج: ${name}\nرابط المنتج: ${productUrl}`
-    : `مرحباً، أود طلب تسعيرة للمنتج: ${name}\nالسعر غير معروض بالمتجر.\nرابط المنتج: ${productUrl}`;
+    ? `مرحبا شركه لمعة ابيات للمقاولات : ${name}\nرابط المنتج: ${productUrl}`
+    : `مرحبا شركة لمعة ابيات للمقاولات  أود طلب عرض سعر للمعدة: ${name}\nالسعر يتطلب تسعيرة خاصة وغير معروض في الموقع .\nرابط المعدة: ${productUrl}`;
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
@@ -130,8 +130,8 @@ export default function ProductCard({
             onClick={handleWishlistToggle}
             disabled={isTogglingThis}
             className={`absolute top-4 end-4 z-20 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md shadow-sm ${isFav
-                ? "bg-red-500/90 text-white border-red-500 hover:bg-red-600"
-                : "bg-white/70 dark:bg-gray-900/70 text-muted-foreground border-white/40 dark:border-white/10 hover:bg-white dark:hover:bg-gray-800 hover:text-red-500 hover:border-red-200"
+              ? "bg-red-500/90 text-white border-red-500 hover:bg-red-600"
+              : "bg-white/70 dark:bg-gray-900/70 text-muted-foreground border-white/40 dark:border-white/10 hover:bg-white dark:hover:bg-gray-800 hover:text-red-500 hover:border-red-200"
               } ${isTogglingThis ? "scale-90 opacity-70 cursor-wait" : "hover:scale-110 active:scale-95"}`}
             title={isFav ? t("remove_from_wishlist", lang) : t("add_to_wishlist", lang)}
             aria-label="Toggle Wishlist"
