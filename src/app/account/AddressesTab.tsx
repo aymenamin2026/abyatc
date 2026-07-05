@@ -136,13 +136,14 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
 
         {!isAddingNewAddress && (
           <button
-            onClick={() => {
-              setIsAddingNewAddress(true);
-              setEditingAddressId(null);
-              setNewAddress({ first_name: user?.first_name || "", last_name: user?.last_name || "", address_1: "", address_2: "", city: "", postcode: "", state: "", country_id: "", zone_id: "", latitude: "", longitude: "", is_default: false, address_type: "home" });
-            }}
-            // 👈 تم استخدام bg-[#fbc70f] وتغيير النص إلى الأسود، مع إضافة تأثير hover أغمق قليلاً بنسبة 5%
-            className="flex items-center gap-2 bg-[#fbc70f] text-black px-4 py-2.5 rounded-xl text-sm font-medium hover:brightness-95 transition-all shadow-sm"
+            onClick={() => { /* كود الأكشن الخاص بك */ }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm
+    
+    /* ☀️ وردية النهار (الوضع العادي) */
+    bg-[#fbc70f] text-black hover:bg-[#e2b20d]
+    
+    /* 🌙 وردية الليل (الوضع المظلم) */
+    dark:bg-[#093f89] dark:text-[#fbc70f] dark:hover:bg-[#07326d]"
           >
             <Plus className="w-4 h-4" /> {t('add_new_address', lang)}
           </button>
