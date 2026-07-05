@@ -23,9 +23,9 @@ interface MapPickerModalProps {
 }
 
 export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initialLat, initialLng }: MapPickerModalProps) {
-  const [position, setPosition] = useState({ 
-    lat: initialLat ? parseFloat(initialLat) : 24.7136, 
-    lng: initialLng ? parseFloat(initialLng) : 46.6753 
+  const [position, setPosition] = useState({
+    lat: initialLat ? parseFloat(initialLat) : 24.7136,
+    lng: initialLng ? parseFloat(initialLng) : 46.6753
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -37,9 +37,9 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
   useEffect(() => {
     if (isOpen) {
       if (initialLat && initialLng) {
-        setPosition({ 
-          lat: parseFloat(initialLat), 
-          lng: parseFloat(initialLng) 
+        setPosition({
+          lat: parseFloat(initialLat),
+          lng: parseFloat(initialLng)
         });
         setZoom(16);
       } else {
@@ -75,10 +75,23 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
 
   const handleSearch = async () => {
     if (!searchQuery || searchQuery.length < 3) return;
-    
+
     setIsSearching(true);
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5&accept-language=en,ar&countrycodes=sa&viewbox=36,16,56,32&bounded=1`);
+      // 1. جعل البحث مفتوحاً وذكياً، وإزالة القيود الصارمة السابقة ليعمل في اليمن والسعودية وأي مكان
+      // يمكنك تمرير رمز الدولة ديناميكياً إذا أردت لاحقاً مثل: &countrycodes=sa,ye
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5&accept-language=ar,en`;
+
+      const response = await fetch(url, {
+        headers: {
+          'Accept-Language': 'ar, en',
+          // إضافة User-Agent لضمان عدم حظر الطلبات من خوادم Nominatim المجانية
+          'User-Agent': 'Abyatc_ECommerce_Store_Application'
+        }
+      });
+
+      if (!response.ok) throw new Error('Network response was not ok');
+
       const data = await response.json();
       setSearchResults(data);
     } catch (e) {
@@ -90,10 +103,10 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
 
   const handleSelectResult = (result: any) => {
     setPosition({ lat: parseFloat(result.lat), lng: parseFloat(result.lon) });
+    setZoom(16); // رفع مستوى التقريب ليرى العميل الشارع والحي بوضوح
     setSearchQuery(result.display_name);
     setSearchResults([]);
   };
-
   const handleGeolocate = () => {
     setIsLocating(true);
     if (navigator.geolocation) {
@@ -119,14 +132,14 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}&accept-language=en,ar`);
       const data = await res.json();
-      
+
       let address_1 = '';
       let city = '';
       let postcode = '';
       let country_code = '';
       let state = '';
       let region = '';
-      
+
       if (data && data.address) {
         const road = data.address.road || data.address.pedestrian || '';
         const suburb = data.address.suburb || data.address.neighbourhood || '';
@@ -171,13 +184,13 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         <div className="p-4 flex flex-col gap-4 overflow-y-auto">
           <div className="flex gap-2 relative">
             <div className="relative flex-1">
-              <input 
-                type="text" 
-                placeholder="Search location..." 
+              <input
+                type="text"
+                placeholder="Search location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -185,15 +198,15 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
               />
               <Search className="absolute left-3 top-2.5 w-5 h-5 text-muted-foreground" />
             </div>
-            <button 
-              onClick={handleSearch} 
+            <button
+              onClick={handleSearch}
               disabled={isSearching}
               className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50"
             >
               {isSearching ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Search'}
             </button>
-            <button 
-              onClick={handleGeolocate} 
+            <button
+              onClick={handleGeolocate}
               disabled={isLocating}
               className="px-4 py-2 border border-border text-foreground rounded-lg font-medium hover:bg-secondary/50 transition-colors disabled:opacity-50 flex items-center justify-center"
               title="Use my current location"
@@ -204,7 +217,7 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
             {searchResults.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-10 overflow-hidden">
                 {searchResults.map((result, idx) => (
-                  <button 
+                  <button
                     key={idx}
                     onClick={() => handleSelectResult(result)}
                     className="w-full text-left px-4 py-3 hover:bg-secondary/50 border-b border-border last:border-0 text-sm transition-colors text-foreground"
@@ -225,8 +238,8 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
           <button onClick={onClose} className="px-5 py-2.5 rounded-lg border border-border font-medium text-foreground hover:bg-secondary transition-colors">
             Cancel
           </button>
-          <button 
-            onClick={handleConfirmLocation} 
+          <button
+            onClick={handleConfirmLocation}
             disabled={isConfirming}
             className="px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
           >
