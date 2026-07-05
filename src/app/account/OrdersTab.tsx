@@ -241,11 +241,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              /* 👈 تم التعديل: إجبار الخلفية الكبرى على اللون الأبيض في الفاتح والأسود في المظلم */
+              /* 👈 إجبار الحاوية الرئيسية على اللون الأبيض الناصع في وضع الفاتح والرمادي الأسود في الداكن */
               className="bg-white dark:bg-[#121212] text-slate-900 dark:text-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-gray-100 dark:border-zinc-800"
             >
-              {/* Modal Header */}
-              {/* 👈 تم التعديل: رمادي فاتح جداً في الفاتح وأسود في المظلم */}
+              {/* Header */}
               <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between bg-gray-50 dark:bg-[#1a1a1a]">
                 <div>
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white font-serif">{t('order_details', lang)}</h3>
@@ -259,11 +258,11 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 </button>
               </div>
 
-              {/* Modal Body */}
+              {/* Body */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-white dark:bg-[#121212]">
 
                 {/* Order Info Bar */}
-                {/* 👈 تم التعديل: رمادي فاتح جداً في الفاتح وأسود داكن في المظلم */}
+                {/* 👈 تم التعديل: إجبار الحاويات الفرعية على الفاتح الصريح bg-gray-50 بدلاً من bg-background المبهم */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-2xl border border-gray-100 dark:border-zinc-800/50 shadow-sm">
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-1 font-bold">{t('order_status', lang)}</div>
@@ -307,7 +306,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       const isItemUnpriced = basePrice === 0;
 
                       return (
-                        /* 👈 تم التعديل: كرت المنتج يصبح أبيض تماماً في الوضع الفاتح */
+                        /* 👈 تم التعديل: الكرت الداخلي تم إجباره على bg-white للفاتح لتجنب السواد الموروث */
                         <div key={item.id} className="flex gap-4 items-center p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
                           <div className="w-16 h-20 rounded-xl bg-gray-50 dark:bg-zinc-900 overflow-hidden shrink-0 border border-gray-100 dark:border-zinc-800">
                             <img
@@ -371,7 +370,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 </div>
 
                 {/* Shipping & Delivery */}
-                {/* 👈 تم التعديل: إجبار الصندوق المالي السفلي على رمادي فاتح في الفاتح وأسود في المظلم */}
+                {/* 👈 تم التعديل: صندوق الحسابات السفلي تم تثبيته على bg-gray-50 للفاتح و bg-[#0a0a0a] للداكن */}
                 <div className="space-y-4 text-sm bg-gray-50 dark:bg-[#0a0a0a] p-6 rounded-2xl border border-gray-100 dark:border-zinc-800/50">
                   {(() => {
                     const { isNotPricedYet, shipping, finalTax, finalSubtotal, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
@@ -428,7 +427,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                 </div>
               </div>
 
-              {/* Modal Footer */}
+              {/* Footer */}
               <div className="p-6 border-t border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-[#1a1a1a] flex gap-3">
                 <Link
                   href={`/track?query=${selectedOrder.order_number}`}
