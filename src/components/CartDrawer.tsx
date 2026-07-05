@@ -96,7 +96,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                         </button>
                       </div>
                       <div className="text-sm text-muted-foreground mb-4">
-                        {typeof item.color === 'object' && item.color !== null ? (item.color[lang] || item.color.en) : item.color} | {lang === 'ar' ? 'المقاس' : 'Size'} {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
+                        {typeof item.color === 'object' && item.color !== null ? (item.color[lang] || item.color.en) : item.color} | {typeof item.size === 'object' && item.size !== null ? (item.size[lang] || item.size.en) : item.size}
                       </div>
 
                       <div className="mt-auto flex items-center justify-between">
