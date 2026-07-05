@@ -9,8 +9,6 @@ import { t } from "@/lib/translations";
 import Link from "next/link";
 import { useCart } from "@/components/CartContext";
 import { FcGoogle } from 'react-icons/fc';
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Mail, Lock, User, Phone, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,6 +32,7 @@ export default function LoginPage() {
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationEmail, setVerificationEmail] = useState("");
 
+  // Country code state
   const [countries, setCountries] = useState<any[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<any>(null);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
@@ -45,14 +44,18 @@ export default function LoginPage() {
         const [countriesData, settingsData] = await Promise.all([
           fetchCountries(),
           fetchSettings(),
+
         ]);
+        console.log("Countries API:", countriesData);
 
         const withCodes = countriesData || [];
         setCountries(withCodes);
 
+        // تحديد الدولة الافتراضية بشكل سليم دون تكرار متعارض
         if (settingsData?.default_country) {
           setSelectedCountry(settingsData.default_country);
         } else if (withCodes.length > 0) {
+          // البحث عن السعودية كخيار افتراضي أولاً، وإلا نأخذ أول دولة في القائمة
           const ksa = withCodes.find((c: any) => c.phone_code === "+966");
           setSelectedCountry(ksa || withCodes[0]);
         }
@@ -66,7 +69,7 @@ export default function LoginPage() {
     };
     loadData();
   }, []);
-
+  // Redirect if already logged in
   useEffect(() => {
     if (user) {
       router.push("/account");
@@ -86,6 +89,7 @@ export default function LoginPage() {
     }
 
     try {
+      // Prepend country code to phone for registration
       const submitData = isLogin ? credentials : {
         ...credentials,
         phone: (selectedCountry?.phone_code || "+966") + credentials.phone.replace(/^0+/, '')
@@ -95,10 +99,13 @@ export default function LoginPage() {
 
       if (data.requires_verification) {
         const emailFromRequest = credentials.email;
+
         setVerificationEmail(emailFromRequest);
         localStorage.setItem("pending_email", emailFromRequest);
         localStorage.setItem("auth_mode", "verify");
+
         setAuthMode("verify");
+
       } else {
         login(data.customer, data.access_token);
         await syncCart();
@@ -118,17 +125,23 @@ export default function LoginPage() {
 
     try {
       const email = localStorage.getItem("pending_email");
+
       if (!email) {
         setAuthError("Email not found. Please register again.");
         return;
       }
 
       const data = await verifyRegistration(email, verificationCode);
+
       login(data.customer, data.access_token);
       await syncCart();
 
       localStorage.removeItem("pending_email");
+      console.log("verificationEmail state:", verificationEmail);
+      console.log("localStorage email:", localStorage.getItem("pending_email"));
+      console.log("credentials email:", credentials.email);
       const redirect = localStorage.getItem("after_verify_redirect");
+
       localStorage.removeItem("after_verify_redirect");
 
       if (redirect === "checkout") {
@@ -160,319 +173,277 @@ export default function LoginPage() {
       (c?.iso_code_2 || "").toLowerCase().includes(countrySearch.toLowerCase())
     );
   });
-
   useEffect(() => {
     const mode = localStorage.getItem("auth_mode");
+
     if (mode === "verify") {
       setAuthMode("verify");
     }
+
     localStorage.removeItem("auth_mode");
   }, []);
 
   if (user) return null;
 
-  // Variants for Framer Motion
-  const containerVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.1 } },
-    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.3 } }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0b1120] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-muted/20 flex flex-col items-center justify-center p-4">
+      <Link href="/" className="font-serif text-3xl font-bold tracking-tight text-primary mb-8">
+        {siteName}
+      </Link>
 
-      {/* Background Ambient Glow Effects */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#093f89]/20 dark:bg-[#093f89]/30 blur-[120px] rounded-full pointer-events-none z-0" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-[#fbc70f]/10 dark:bg-[#fbc70f]/15 blur-[100px] rounded-full pointer-events-none z-0" />
-
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="relative z-10 mb-8 text-center"
-      >
-        <Link href="/" className="font-serif text-4xl sm:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#093f89] to-[#07326d] dark:from-white dark:to-slate-300">
-          {siteName}
-        </Link>
-        <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">{t('welcome_back', lang) || "أهلاً بك مجدداً في عالم الفخامة"}</p>
-      </motion.div>
-
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="w-full max-w-[28rem] relative z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-8 sm:p-10 rounded-[2.5rem] shadow-2xl border border-white/40 dark:border-slate-800"
-      >
+      <div className="w-full max-w-md bg-background p-8 rounded-2xl shadow-sm border border-border/50">
         {authMode !== "verify" ? (
-          <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-2xl w-full mb-8 relative">
+          <div className="flex bg-muted/30 border border-border rounded-xl p-1 mb-6">
             <button
               onClick={() => { setAuthMode("login"); setAuthError(""); }}
-              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 z-10 ${authMode === "login" ? "text-white dark:text-slate-900 shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"}`}
+              className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${authMode === "login" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               {t('login', lang)}
             </button>
             <button
               onClick={() => { setAuthMode("register"); setAuthError(""); }}
-              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 z-10 ${authMode === "register" ? "text-white dark:text-slate-900 shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"}`}
+              className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${authMode === "register" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               {t('create_account', lang)}
             </button>
-            {/* Animated Active Background */}
-            <motion.div
-              layoutId="activeTab"
-              className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-gradient-to-r from-[#093f89] to-[#07326d] dark:from-[#fbc70f] dark:to-[#e5b50d] rounded-xl z-0"
-              initial={false}
-              animate={{
-                left: authMode === "login" ? (lang === 'ar' ? "auto" : "6px") : (lang === 'ar' ? "6px" : "auto"),
-                right: authMode === "login" ? (lang === 'ar' ? "6px" : "auto") : (lang === 'ar' ? "auto" : "6px"),
-              }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            />
+
           </div>
         ) : (
-          <motion.div variants={itemVariants} className="mb-8 text-center flex flex-col items-center">
-            <div className="w-16 h-16 bg-[#093f89]/10 dark:bg-[#fbc70f]/10 rounded-full flex items-center justify-center mb-4">
-              <ShieldCheck className="w-8 h-8 text-[#093f89] dark:text-[#fbc70f]" />
-            </div>
-            <h2 className="text-2xl font-bold font-serif text-slate-900 dark:text-white mb-2">{t('verify_email', lang)}</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{t('verification_sent_msg', lang).replace('{email}', verificationEmail)}</p>
-          </motion.div>
+          <div className="mb-6 text-center">
+            <h2 className="text-2xl font-bold font-serif text-foreground mb-2">{t('verify_email', lang)}</h2>
+            <p className="text-sm text-muted-foreground">{t('verification_sent_msg', lang).replace('{email}', verificationEmail)}</p>
+          </div>
         )}
 
-        <AnimatePresence mode="wait">
-          {authError && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm mb-6 border border-red-200 dark:border-red-800/50 flex items-center gap-3 font-medium"
+        {authError && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 border border-red-200">
+            {authError}
+          </div>
+        )}
+
+        {authMode === "verify" ? (
+          <form onSubmit={handleVerifySubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('verification_code', lang)}</label>
+              <input
+                type="text"
+                required
+                maxLength={6}
+                placeholder="000000"
+                value={verificationCode}
+                onChange={e => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
+                className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent text-center text-2xl tracking-[0.5em] font-mono"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || verificationCode.length !== 6}
+              className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-medium mt-4 shadow-sm hover:shadow-md transition-all disabled:opacity-50"
             >
-              <span className="w-2 h-2 rounded-full bg-red-500 shrink-0 animate-pulse"></span>
-              {authError}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              {loading ? t('verifying', lang) : t('verify_code', lang)}
+            </button>
 
-        <AnimatePresence mode="wait">
-          {authMode === "verify" ? (
-            <motion.form key="verify-form" variants={containerVariants} initial="hidden" animate="visible" exit="exit" onSubmit={handleVerifySubmit} className="space-y-5">
-              <motion.div variants={itemVariants}>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">{t('verification_code', lang)}</label>
-                <input
-                  type="text"
-                  required
-                  maxLength={6}
-                  placeholder="000000"
-                  value={verificationCode}
-                  onChange={e => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
-                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-4 focus:outline-none focus:border-[#093f89] focus:ring-1 focus:ring-[#093f89] dark:focus:border-[#fbc70f] dark:focus:ring-[#fbc70f] transition-all text-center text-3xl tracking-[0.5em] font-mono text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600"
-                  dir="ltr"
-                />
-              </motion.div>
-
-              <motion.button
-                variants={itemVariants}
-                type="submit"
-                disabled={loading || verificationCode.length !== 6}
-                className="w-full bg-gradient-to-r from-[#093f89] to-[#07326d] dark:from-[#fbc70f] dark:to-[#e5b50d] text-white dark:text-slate-900 py-4 rounded-2xl font-bold mt-2 shadow-lg hover:shadow-xl transition-all transform active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={handleResendCode}
+                className="text-sm text-primary hover:underline font-medium"
               >
-                {loading ? <span className="animate-pulse">{t('verifying', lang)}</span> : t('verify_code', lang)}
-              </motion.button>
+                {t('resend_code', lang)}
+              </button>
+            </div>
 
-              <motion.div variants={itemVariants} className="flex flex-col items-center gap-3 pt-4">
-                <button type="button" onClick={handleResendCode} className="text-sm text-[#093f89] dark:text-[#fbc70f] hover:underline font-bold transition-all">
-                  {t('resend_code', lang)}
-                </button>
-                <button type="button" onClick={() => setAuthMode("register")} className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors font-medium">
-                  {t('change_email_back', lang)}
-                </button>
-              </motion.div>
-            </motion.form>
-          ) : (
-            <motion.form key={authMode} variants={containerVariants} initial="hidden" animate="visible" exit="exit" onSubmit={handleAuthSubmit} className="space-y-5">
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={() => setAuthMode("register")}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {t('change_email_back', lang)}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={handleAuthSubmit} className="space-y-4">
+            {authMode === "register" && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('first_name', lang)}</label>
+                  <input
+                    type="text"
+                    required
+                    value={credentials.first_name}
+                    onChange={e => setCredentials({ ...credentials, first_name: e.target.value })}
+                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('last_name', lang)}</label>
+                  <input
+                    type="text"
+                    required
+                    value={credentials.last_name}
+                    onChange={e => setCredentials({ ...credentials, last_name: e.target.value })}
+                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                  />
+                </div>
+              </div>
+            )}
 
-              {authMode === "register" && (
-                <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('auth_email', lang)}</label>
+              <input
+                type="email"
+                required
+                value={credentials.email}
+                onChange={e => setCredentials({ ...credentials, email: e.target.value })}
+                className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+              />
+            </div>
+
+            {authMode === "register" && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('mobile_number', lang)}</label>
+                <div className="flex gap-0">
+                  {/* Country Code Selector */}
                   <div className="relative">
-                    <User className="absolute top-4 left-4 w-5 h-5 text-slate-400 pointer-events-none" />
-                    <input
-                      type="text"
-                      required
-                      placeholder={t('first_name', lang)}
-                      value={credentials.first_name}
-                      onChange={e => setCredentials({ ...credentials, first_name: e.target.value })}
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl pl-11 pr-4 py-4 focus:outline-none focus:border-[#093f89] focus:ring-1 focus:ring-[#093f89] dark:focus:border-[#fbc70f] dark:focus:ring-[#fbc70f] transition-all text-sm text-slate-900 dark:text-white"
-                    />
-                  </div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      placeholder={t('last_name', lang)}
-                      value={credentials.last_name}
-                      onChange={e => setCredentials({ ...credentials, last_name: e.target.value })}
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-4 focus:outline-none focus:border-[#093f89] focus:ring-1 focus:ring-[#093f89] dark:focus:border-[#fbc70f] dark:focus:ring-[#fbc70f] transition-all text-sm text-slate-900 dark:text-white"
-                    />
-                  </div>
-                </motion.div>
-              )}
-
-              <motion.div variants={itemVariants} className="relative">
-                <Mail className={`absolute top-4 ${lang === 'ar' ? 'right-4' : 'left-4'} w-5 h-5 text-slate-400 pointer-events-none`} />
-                <input
-                  type="email"
-                  required
-                  placeholder={t('auth_email', lang)}
-                  value={credentials.email}
-                  onChange={e => setCredentials({ ...credentials, email: e.target.value })}
-                  className={`w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 focus:outline-none focus:border-[#093f89] focus:ring-1 focus:ring-[#093f89] dark:focus:border-[#fbc70f] dark:focus:ring-[#fbc70f] transition-all text-sm text-slate-900 dark:text-white ${lang === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'}`}
-                />
-              </motion.div>
-
-              {authMode === "register" && (
-                <motion.div variants={itemVariants}>
-                  <div className="flex bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus-within:border-[#093f89] focus-within:ring-1 focus-within:ring-[#093f89] dark:focus-within:border-[#fbc70f] dark:focus-within:ring-[#fbc70f] transition-all relative">
-
-                    {/* Country Selector */}
                     <button
                       type="button"
                       onClick={() => setShowCountryDropdown(!showCountryDropdown)}
-                      className="flex items-center gap-2 px-4 py-4 border-l rtl:border-r rtl:border-l-0 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors rounded-l-2xl rtl:rounded-r-2xl rtl:rounded-l-none"
+                      className="flex items-center gap-1.5 border border-border border-r-0 rounded-l-lg px-3 py-3 bg-muted/30 transition-colors min-w-[90px] justify-center hover:bg-muted/50 cursor-pointer"
                     >
-                      <span className="text-sm font-bold text-slate-900 dark:text-white" dir="ltr">
+                      <span className="text-sm font-semibold text-foreground">
                         {selectedCountry?.phone_code || "+966"}
                       </span>
-                      <ChevronDown className="w-4 h-4 text-slate-400" />
+                      <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </button>
 
-                    {/* Dropdown Menu */}
-                    <AnimatePresence>
-                      {showCountryDropdown && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                          className="absolute top-[110%] left-0 w-72 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden"
-                        >
-                          <div className="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
-                            <input
-                              type="text"
-                              placeholder={t('search_country', lang)}
-                              value={countrySearch}
-                              onChange={e => setCountrySearch(e.target.value)}
-                              className="w-full px-4 py-2.5 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-[#093f89] dark:focus:border-[#fbc70f] text-slate-900 dark:text-white transition-all"
-                              autoFocus
-                            />
-                          </div>
-                          <div className="max-h-56 overflow-y-auto custom-scrollbar">
-                            {filteredCountries.map((country: any) => (
-                              <button
-                                key={country.id || country.phone_code}
-                                type="button"
-                                onClick={() => {
-                                  setSelectedCountry(country);
-                                  setCountrySearch("");
-                                  setShowCountryDropdown(false);
-                                }}
-                                className={`w-full flex items-center justify-between px-5 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${selectedCountry?.id === country.id ? 'bg-[#093f89]/5 text-[#093f89] dark:bg-[#fbc70f]/10 dark:text-[#fbc70f] font-bold' : 'text-slate-700 dark:text-slate-300'}`}
-                              >
-                                <span>{country.name}</span>
-                                <span className="font-mono text-slate-400" dir="ltr">{country.phone_code || "—"}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    {/* Phone Input */}
-                    <input
-                      type="tel"
-                      required
-                      placeholder={selectedCountry?.min_digits === selectedCountry?.max_digits ? t('enter_digits', lang).replace('{digits}', selectedCountry?.min_digits) : t('mobile_number', lang)}
-                      value={credentials.phone}
-                      minLength={selectedCountry?.min_digits}
-                      maxLength={selectedCountry?.max_digits}
-                      onChange={e => {
-                        const val = e.target.value.replace(/[^0-9]/g, '');
-                        if (selectedCountry?.max_digits && val.length > selectedCountry.max_digits) return;
-                        setCredentials({ ...credentials, phone: val });
-                      }}
-                      className="flex-1 bg-transparent px-4 py-4 focus:outline-none text-sm text-slate-900 dark:text-white w-full min-w-0"
-                      dir="ltr"
-                    />
+                    {/* Dropdown */}
+                    {showCountryDropdown && (
+                      <div className="absolute top-full left-0 mt-1 w-72 bg-background border border-border rounded-xl shadow-xl z-50 overflow-visible">
+                        <div className="p-2 border-b border-border">
+                          <input
+                            type="text"
+                            placeholder={t('search_country', lang)}
+                            value={countrySearch}
+                            onChange={e => setCountrySearch(e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                            autoFocus
+                          />
+                        </div>
+                        <div className="max-h-48 overflow-y-auto">
+                          {filteredCountries.map((country: any) => (
+                            <button
+                              key={country.id || country.phone_code}
+                              type="button"
+                              onClick={() => {
+                                console.log("Selected country:", country);
+                                setSelectedCountry(country);
+                                setCountrySearch("");
+                                setShowCountryDropdown(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-muted/50 transition-colors ${selectedCountry?.id === country.id ? 'bg-primary/5 text-primary' : 'text-foreground'
+                                }`}
+                            >
+                              <span>{country.name}</span>
+                              <span className="font-mono text-muted-foreground">
+                                {country.phone_code || "—"}
+                              </span>
+                            </button>
+                          ))}
+                          {filteredCountries.length === 0 && (
+                            <div className="px-4 py-3 text-sm text-muted-foreground text-center">
+                              {t('no_countries_found', lang)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </motion.div>
-              )}
 
-              <motion.div variants={itemVariants} className="relative">
-                <Lock className={`absolute top-4 ${lang === 'ar' ? 'right-4' : 'left-4'} w-5 h-5 text-slate-400 pointer-events-none`} />
-                <input
-                  type="password"
-                  required
-                  placeholder={t('auth_password', lang)}
-                  value={credentials.password}
-                  onChange={e => setCredentials({ ...credentials, password: e.target.value })}
-                  className={`w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 focus:outline-none focus:border-[#093f89] focus:ring-1 focus:ring-[#093f89] dark:focus:border-[#fbc70f] dark:focus:ring-[#fbc70f] transition-all text-sm text-slate-900 dark:text-white ${lang === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'}`}
-                />
+                  {/* Phone Input */}
+                  <input
+                    type="tel"
+                    required
+                    placeholder={selectedCountry?.min_digits === selectedCountry?.max_digits ? t('enter_digits', lang).replace('{digits}', selectedCountry?.min_digits) : t('mobile_number', lang)}
+                    value={credentials.phone}
+                    minLength={selectedCountry?.min_digits}
+                    maxLength={selectedCountry?.max_digits}
+                    onChange={e => {
+                      const val = e.target.value.replace(/[^0-9]/g, '');
+                      if (selectedCountry?.max_digits && val.length > selectedCountry.max_digits) return;
+                      setCredentials({ ...credentials, phone: val });
+                    }}
+                    className="flex-1 border border-border rounded-r-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('auth_password', lang)}</label>
                 {authMode === "login" && (
-                  <Link href="/forgot-password" title={t('forgot_password', lang)} className={`absolute top-4 ${lang === 'ar' ? 'left-4' : 'right-4'} text-xs text-[#093f89] dark:text-[#fbc70f] hover:underline font-bold transition-all z-10`}>
+                  <Link href="/forgot-password" title={t('forgot_password', lang)} className="text-[10px] text-primary hover:underline font-medium uppercase tracking-wider">
                     {t('forgot_password', lang)}
                   </Link>
                 )}
-              </motion.div>
+              </div>
+              <input
+                type="password"
+                required
+                value={credentials.password}
+                onChange={e => setCredentials({ ...credentials, password: e.target.value })}
+                className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+              />
+            </div>
 
-              {authMode === "register" && (
-                <motion.div variants={itemVariants} className="relative">
-                  <Lock className={`absolute top-4 ${lang === 'ar' ? 'right-4' : 'left-4'} w-5 h-5 text-slate-400 pointer-events-none`} />
-                  <input
-                    type="password"
-                    required
-                    placeholder={t('confirm_password', lang)}
-                    value={credentials.password_confirmation}
-                    onChange={e => setCredentials({ ...credentials, password_confirmation: e.target.value })}
-                    className={`w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 focus:outline-none focus:border-[#093f89] focus:ring-1 focus:ring-[#093f89] dark:focus:border-[#fbc70f] dark:focus:ring-[#fbc70f] transition-all text-sm text-slate-900 dark:text-white ${lang === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'}`}
-                  />
-                </motion.div>
-              )}
+            {authMode === "register" && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{t('confirm_password', lang)}</label>
+                <input
+                  type="password"
+                  required
+                  value={credentials.password_confirmation}
+                  onChange={e => setCredentials({ ...credentials, password_confirmation: e.target.value })}
+                  className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent"
+                />
+              </div>
+            )}
 
-              <motion.button
-                variants={itemVariants}
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-[#093f89] to-[#07326d] dark:from-[#fbc70f] dark:to-[#e5b50d] text-white dark:text-slate-900 py-4 rounded-2xl font-bold mt-2 shadow-lg shadow-[#093f89]/20 dark:shadow-[#fbc70f]/10 hover:shadow-xl transition-all transform active:scale-[0.98] disabled:opacity-70 flex justify-center items-center gap-2"
-              >
-                {loading && <span className="w-5 h-5 border-2 border-white/30 dark:border-slate-900/30 border-t-white dark:border-t-slate-900 rounded-full animate-spin"></span>}
-                {loading ? t('please_wait', lang) : (authMode === "login" ? t('login', lang) : t('create_account', lang))}
-              </motion.button>
-
-            </motion.form>
-          )}
-        </AnimatePresence>
-
-        {/* Google Authentication - Styled Elegantly */}
-        {authMode !== "verify" && (
-          <motion.div variants={itemVariants} initial="hidden" animate="visible" className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-            <a
-              href="https://api.abyatc.com/api/auth/google"
-              onClick={() => {
-                const nextUrl = new URLSearchParams(window.location.search).get('next') || window.location.pathname;
-                sessionStorage.setItem('redirect_after_login', nextUrl);
-              }}
-              className="group w-full flex items-center justify-center gap-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 py-4 px-6 rounded-2xl font-bold transition-all duration-300 active:scale-[0.98] shadow-sm hover:shadow-md text-sm text-slate-700 dark:text-slate-200"
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-medium mt-4 shadow-sm hover:shadow-md transition-all disabled:opacity-50"
             >
-              <FcGoogle className="w-6 h-6 transition-transform duration-300 group-hover:scale-110 shrink-0" />
-              <span>
-                {lang === 'ar' ? 'المتابعة باستخدام جوجل' : 'Continue with Google'}
-              </span>
-            </a>
-          </motion.div>
-        )}
-      </motion.div>
+              {loading ? t('please_wait', lang) : (authMode === "login" ? t('login', lang) : t('create_account', lang))}
+            </button>
 
+          </form>
+        )}
+        {/* زر جوجل الاحترافي الجديد - مصلح ومضمون الظهور */}
+        <a
+          href="https://api.abyatc.com/api/auth/google"
+          onClick={() => {
+            // حفظ الرابط الحالي أو رابط الصفحة السابقة (Referrer)
+            const nextUrl = new URLSearchParams(window.location.search).get('next') || window.location.pathname;
+            sessionStorage.setItem('redirect_after_login', nextUrl);
+          }}
+          className="mt-4 group w-full flex items-center justify-center gap-3 border border-gray-200 bg-white hover:bg-gray-50 py-3.5 px-6 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow-md text-sm text-gray-700 dir-rtl"
+        >
+          {/* أيقونة جوجل الرسمية كـ SVG مدمج يظهر فوراً بدون استدعاء روابط خارجية */}
+          <FcGoogle className="w-5 h-5 transition-transform duration-200 group-hover:scale-105 shrink-0" />
+
+          <span className="font-semibold text-gray-800">
+            {lang === 'ar' ? 'تسجيل الدخول بواسطة جوجل' : 'Sign in with Google'}
+          </span>
+        </a>
+      </div>
+
+      {/* Close dropdown on outside click */}
       {showCountryDropdown && (
         <div className="fixed inset-0 z-40" onClick={() => { setShowCountryDropdown(false); setCountrySearch(""); }} />
       )}
