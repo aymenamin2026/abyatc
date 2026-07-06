@@ -685,7 +685,7 @@ export default function Checkout() {
       lang === "ar"
         ? `مرحباً شركة لمعة أبيات للمقاولات،
 
-أود الاستفسار عن سعر وتفاصيل المعدات التالية:
+أود طلب عرض سعر وتفاصيل استئجار المعدات والآلات التالية:
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -693,7 +693,7 @@ ${cartSummaryText}
 
 ━━━━━━━━━━━━━━━━━━
 
-شكراً لكم 🌹`
+يرجئ تزويدنا بعرض سعر شامل وموعد التوفير ولكم جزيل الشكر`
         : `Hello,
 
 I would like to inquire about the following equipment:
@@ -1585,7 +1585,7 @@ Thank you.`;
                       isPlacingOrder ||
                       cartItems.length === 0
                     }
-                    className="w-full bg-[#fbc70f] text-primary-foreground py-5 rounded-xl font-medium text-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-[#fbc70f] text-primary-foreground py-5 rounded-xl font-medium text-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl mt-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isPlacingOrder ? (
                       <div className="flex items-center gap-2">

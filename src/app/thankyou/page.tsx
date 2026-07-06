@@ -127,8 +127,11 @@ export default function ThankYouPage() {
                   <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">
                     {lang === 'ar' ? 'التوصيل المتوقع' : 'Estimated Delivery'}
                   </div>
-                  <div className="flex items-center gap-2 text-foreground font-medium">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
+
+                  <div className="flex items-center gap-2 text-white font-medium">
+                    {/* جعل الأيقونة بيضاء أيضاً عبر text-white/80 لإعطائها مظهر ناعم ومتناسق */}
+                    <Calendar className="w-4 h-4 text-white/80" />
+
                     {/* طباعة القيمة القادمة من السيرفر أوتوماتيكياً أو وضع قيمة افتراضية احتياطية */}
                     <span>
                       {estimatedDelivery || (lang === 'ar' ? '3 - 5 أيام عمل' : '3 - 5 Business Days')}
