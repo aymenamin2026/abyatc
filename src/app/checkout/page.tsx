@@ -1318,17 +1318,17 @@ Thank you.`;
                     <section className="bg-background p-8 rounded-2xl shadow-sm border border-border/50 mb-8 relative">
                       {isLoadingRates && (
                         <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl">
-                          {/* 👈 تم التعديل: تغيير لون سبينر التحميل إلى fbc70f */}
+                          {/* 👈 تم تعديل لون بوردر التحميل */}
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#fbc70f]"></div>
                         </div>
                       )}
                       <h2 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                        {/* 👈 تم التعديل: تلوين الأيقونة بالأزرق/الأصفر التوافقي */}
+                        {/* 👈 تم تعديل لون الأيقونة */}
                         <Truck className="w-5 h-5 text-[#093f89] dark:text-[#fbc70f]" /> {t('shipping_method', lang)}
                       </h2>
 
                       {shippingRates.length === 0 && !isLoadingRates ? (
-                        <div className="text-sm text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/20 p-4 rounded-xl border border-yellow-200 dark:border-yellow-900/50 font-medium">
+                        <div className="text-sm text-yellow-600 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                           {t('no_shipping_methods', lang)}
                         </div>
                       ) : (
@@ -1336,33 +1336,34 @@ Thank you.`;
                           {shippingRates.map((method: any) => (
                             <label
                               key={method.code}
-                              /* 👈 تم التعديل: حدود وخلفية fbc70f عند التحديد و hover ذكي متناسق */
+                              /* 👈 تم تعديل لون البوردر والخلفية والـ ring عند التحديد */
                               className={`relative flex flex-col p-5 border rounded-xl cursor-pointer transition-all overflow-hidden group
-            ${selectedShippingMethod === method.code
-                                  ? "border-[#fbc70f] bg-[#fbc70f]/5 dark:bg-[#fbc70f]/10 ring-1 ring-[#fbc70f] shadow-md"
-                                  : "border-border hover:border-[#fbc70f]/50 hover:bg-secondary/40"
+                              ${selectedShippingMethod === method.code
+                                  ? "border-[#fbc70f] bg-[#fbc70f]/5 ring-1 ring-[#fbc70f] shadow-md"
+                                  : "border-border hover:border-[#fbc70f]/50 hover:bg-secondary/20"
                                 }`}
                             >
                               <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-3">
-                                  {/* 👈 تم التعديل: زر الاختيار الدائري المخصص (Custom Radio) باللون الجديد */}
                                   <div
+                                    /* 👈 تم تعديل لون الراديو المخصص الداخلي */
                                     className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${selectedShippingMethod === method.code
                                       ? "border-[#fbc70f] bg-[#fbc70f]"
-                                      : "border-gray-300 dark:border-zinc-700 bg-transparent"
+                                      : "border-gray-300"
                                       }`}
                                   >
                                     {selectedShippingMethod === method.code && (
-                                      <div className="w-2 h-2 rounded-full bg-slate-900"></div>
+                                      <div className="w-2 h-2 rounded-full bg-white"></div>
                                     )}
                                   </div>
-                                  <span className="font-bold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">
+                                  {/* 👈 تم تعديل لون نصوص الهوفر التفاعلية للميثود */}
+                                  <span className="font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">
                                     {typeof method.name === 'object' && method.name !== null
                                       ? (method.name[lang] || method.name.en || method.name)
                                       : (method.name || 'Standard Shipping')}
                                   </span>
                                 </div>
-                                {/* 👈 تم التعديل: سعر الشحن باللون المتناسق للوضعين */}
+                                {/* 👈 تم تعديل لون النص للسعر */}
                                 <span className="font-bold text-lg text-[#093f89] dark:text-[#fbc70f] flex items-center gap-1">
                                   {method.cost === 0 ? t('free', lang) : (
                                     <>
@@ -1376,12 +1377,12 @@ Thank you.`;
                                   )}
                                 </span>
                               </div>
-                              <p className="text-sm text-muted-foreground pl-8 font-medium">
+                              <p className="text-sm text-muted-foreground pl-8">
                                 {typeof method.description === 'object' && method.description !== null
                                   ? (method.description[lang] || method.description.en || method.description)
                                   : (method.description || t('standard_delivery', lang))}
                               </p>
-                              <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 pl-8 mt-2">
+                              <p className="text-xs font-medium text-emerald-600 pl-8 mt-2">
                                 {t('est_delivery', lang)}: {typeof method.estimated_days === 'object' && method.estimated_days !== null
                                   ? (method.estimated_days[lang] || method.estimated_days.en || method.estimated_days)
                                   : (method.estimated_days || '3-5 Business Days')}
@@ -1408,10 +1409,10 @@ Thank you.`;
                       <h2 className="font-serif text-2xl font-bold text-foreground">{t('payment_method', lang)}</h2>
                       <Lock className="w-5 h-5 text-muted-foreground" />
                     </div>
-                    <p className="text-sm text-muted-foreground mb-6 font-medium">{t('secure_payment_msg', lang)}</p>
+                    <p className="text-sm text-muted-foreground mb-6">{t('secure_payment_msg', lang)}</p>
 
                     {paymentMethods.length === 0 ? (
-                      <div className="p-4 border border-border rounded-xl text-center text-sm text-muted-foreground bg-secondary/20 font-medium">
+                      <div className="p-4 border border-border rounded-xl text-center text-sm text-muted-foreground bg-secondary/30">
                         {t('loading_payment_options', lang)}
                       </div>
                     ) : (
@@ -1419,9 +1420,9 @@ Thank you.`;
                         {paymentMethods.map((method) => (
                           <label
                             key={method.id}
-                            /* 👈 تم التعديل: حدود وخلفية fbc70f لخيار الدفع النشط والمحدد */
+                            /* 👈 تم تعديل لون البوردر والخلفية لخيار الدفع النشط والـ hover */
                             className={`flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all
-        ${selectedMethod === method.code ? 'border-[#fbc70f] bg-[#fbc70f]/5 dark:bg-[#fbc70f]/10 shadow-sm' : 'border-border hover:border-[#fbc70f]/50'}`}
+                          ${selectedMethod === method.code ? 'border-[#fbc70f] bg-[#fbc70f]/5 shadow-sm' : 'border-border hover:border-[#fbc70f]/50'}`}
                           >
                             <div className="flex items-center h-6">
                               <input
@@ -1430,32 +1431,32 @@ Thank you.`;
                                 value={method.code}
                                 checked={selectedMethod === method.code}
                                 onChange={() => setSelectedMethod(method.code)}
-                                /* 👈 تم التعديل: تلوين راديو الدفع باللون الجديد والفوكس */
-                                className="w-4 h-4 text-[#fbc70f] focus:ring-[#fbc70f] border-gray-300 dark:border-zinc-700 bg-transparent"
+                                /* 👈 تم تعديل لون الراديو الافتراضي و فوكس الحواف لخيارات الدفع */
+                                className="w-4 h-4 text-[#fbc70f] focus:ring-[#fbc70f] border-gray-300"
                               />
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center justify-between">
-                                <h3 className="font-bold text-foreground">{method.name}</h3>
+                                <h3 className="font-medium text-foreground">{method.name}</h3>
                                 {method.code === 'tamara' && (
-                                  <span className="text-xs bg-pink-100 dark:bg-pink-950/40 text-pink-700 dark:text-pink-400 font-bold px-2.5 py-1 rounded-lg">Tamara</span>
+                                  <span className="text-xs bg-pink-100 text-pink-700 font-bold px-2 py-1 rounded">Tamara</span>
                                 )}
                                 {method.code === 'tabby' && (
-                                  <span className="text-xs bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold px-2.5 py-1 rounded-lg">Tabby</span>
+                                  <span className="text-xs bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded">Tabby</span>
                                 )}
                                 {method.code === 'cod' && (
-                                  <span className="text-xs bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 font-bold px-2.5 py-1 rounded-lg">COD</span>
+                                  <span className="text-xs bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded">COD</span>
                                 )}
                               </div>
                               {method.description && (
                                 <div
-                                  className="text-sm text-muted-foreground mt-1 font-medium"
+                                  className="text-sm text-muted-foreground mt-1"
                                   dangerouslySetInnerHTML={{ __html: method.description }}
                                 />
                               )}
                               {(selectedMethod === 'tabby' && method.code === 'tabby' || selectedMethod === 'tamara' && method.code === 'tamara') && (
                                 <div className={`mt-4 animate-in fade-in slide-in-from-top-2 duration-300`}>
-                                  <label className={`block text-xs font-bold mb-1.5 uppercase tracking-wider ${selectedMethod === 'tabby' ? 'text-emerald-700 dark:text-emerald-400' : 'text-pink-700 dark:text-pink-400'}`}>
+                                  <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wider ${selectedMethod === 'tabby' ? 'text-emerald-700' : 'text-pink-700'}`}>
                                     {selectedMethod === 'tabby'
                                       ? (lang === 'ar' ? 'رقم الجوال لـ Tabby' : 'Tabby Mobile Number')
                                       : (lang === 'ar' ? 'رقم الجوال لـ Tamara' : 'Tamara Mobile Number')
@@ -1472,27 +1473,26 @@ Thank you.`;
                                       maxLength={10}
                                       minLength={10}
                                       placeholder="05xxxxxxxx"
-                                      /* 👈 تم التعديل: تحسين مظهر مدخلات هواتف تمارا وتابي لتناسب حقول التصميم الجديد */
-                                      className={`w-full bg-transparent border-2 rounded-xl px-4 py-3 text-sm text-foreground focus:ring-0 outline-none transition-all tracking-[2px] 
-                      ${selectedMethod === 'tabby'
-                                          ? 'border-emerald-100 dark:border-emerald-900/30 focus:border-emerald-500 group-hover:border-emerald-300'
-                                          : 'border-pink-100 dark:border-pink-900/30 focus:border-pink-500 group-hover:border-pink-300'}`}
+                                      className={`w-full bg-white border-2 rounded-xl px-4 py-3 text-sm focus:ring-0 outline-none transition-all uppercase tracking-[2px] 
+                                        ${selectedMethod === 'tabby'
+                                          ? 'border-emerald-100 focus:border-emerald-500 group-hover:border-emerald-200'
+                                          : 'border-pink-100 focus:border-pink-500 group-hover:border-pink-200'}`}
                                     />
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-30 pointer-events-none">
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
                                       {selectedMethod === 'tabby' ? (
                                         <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                         </svg>
                                       ) : (
                                         <svg className="w-5 h-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                         </svg>
                                       )}
                                     </div>
                                   </div>
-                                  <p className={`text-[10px] font-bold mt-1.5 flex items-center gap-1 ${selectedMethod === 'tabby' ? 'text-emerald-600/80 dark:text-emerald-400/80' : 'text-pink-600/80 dark:text-pink-400/80'}`}>
+                                  <p className={`text-[10px] mt-1.5 flex items-center gap-1 ${selectedMethod === 'tabby' ? 'text-emerald-600/70' : 'text-pink-600/70'}`}>
                                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     {lang === 'ar' ? 'مطلوب لاستلام رمز التحقق (OTP)' : 'Required for receiving OTP code'}
                                   </p>
