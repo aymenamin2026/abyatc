@@ -1064,8 +1064,7 @@ Thank you.`;
                               setNewAddress({ first_name: "", last_name: "", address_1: "", address_2: "", city: "", postcode: "", state: "", country_id: "", zone_id: "", latitude: "", longitude: "", is_default: false, address_type: "home" });
                             }
                           }}
-                          /* 👈 تعديل رابط الإضافة أو الإلغاء ليتناسق في كلا الوضعين */
-                          className="text-sm font-bold text-[#093f89] dark:text-[#fbc70f] hover:underline"
+                          className="text-sm text-primary hover:underline"
                         >
                           {isAddingNewAddress ? t('cancel', lang) : `+ ${t('add_new_address', lang)}`}
                         </button>
@@ -1078,9 +1077,7 @@ Thank you.`;
                           <label
                             key={addr.id}
                             className={`flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all
-            ${selectedAddressId === addr.id
-                                ? 'border-[#fbc70f] bg-[#fbc70f]/5 dark:bg-[#fbc70f]/10 shadow-sm'
-                                : 'border-border hover:border-[#fbc70f]/50'}`}
+                          ${selectedAddressId === addr.id ? 'border-primary bg-primary/5 shadow-sm' : 'border-border hover:border-primary/50'}`}
                           >
                             <div className="flex items-center h-5 mt-0.5">
                               <input
@@ -1089,19 +1086,17 @@ Thank you.`;
                                 value={addr.id}
                                 checked={selectedAddressId === addr.id}
                                 onChange={() => setSelectedAddressId(addr.id)}
-                                /* 👈 الراديو باللون الجديد عند الاختيار */
-                                className="w-4 h-4 text-[#fbc70f] focus:ring-[#fbc70f] border-gray-300 dark:border-zinc-700 bg-transparent"
+                                className="w-4 h-4 text-primary focus:ring-primary border-gray-300"
                               />
                             </div>
                             <div className="flex-1">
                               <div className="flex justify-between items-start">
-                                <h3 className="font-bold text-foreground">{addr.first_name} {addr.last_name}</h3>
+                                <h3 className="font-medium text-foreground">{addr.first_name} {addr.last_name}</h3>
                                 <div className="flex items-center gap-3">
                                   <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleEditAddressClick(addr); }}
-                                    /* 👈 تعديل زر التعديل */
-                                    className="text-xs text-[#093f89] dark:text-[#fbc70f] hover:opacity-80 font-bold"
+                                    className="text-xs text-primary hover:text-primary/70 font-semibold"
                                   >
                                     {t('edit', lang)}
                                   </button>
@@ -1109,13 +1104,13 @@ Thank you.`;
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAddressToDelete(addr.id); }}
                                     disabled={isDeletingAddress === addr.id}
-                                    className="text-xs text-red-600 hover:text-red-500 font-bold disabled:opacity-50"
+                                    className="text-xs text-red-600 hover:text-red-500 font-semibold disabled:opacity-50"
                                   >
                                     {isDeletingAddress === addr.id ? t('deleting', lang) : t('delete', lang)}
                                   </button>
                                 </div>
                               </div>
-                              <div className="text-sm text-muted-foreground mt-1 font-medium">
+                              <div className="text-sm text-muted-foreground mt-1">
                                 {addr.address_1} {addr.address_2 && `, ${addr.address_2}`}<br />
                                 {addr.city}, {addr.state} {addr.postcode}
                               </div>
@@ -1126,20 +1121,19 @@ Thank you.`;
                     ) : (
                       <div className="space-y-4">
                         {addressError && (
-                          <div className="bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm border border-red-200 dark:border-red-900/50 font-medium">
+                          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
                             {addressError}
                           </div>
                         )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
-                            {/* حاوية اختيار نوع العنوان (منزل / مكتب) بستايل عصري متناسق */}
-                            <div className="flex bg-secondary/40 dark:bg-zinc-900 border border-border rounded-xl p-1 w-full max-w-sm">
+                            <div className="flex bg-secondary/30 border border-border rounded-lg p-1 w-full max-w-sm">
                               {['home', 'office', 'other'].map(type => (
                                 <button
                                   key={type}
                                   type="button"
                                   onClick={() => setNewAddress({ ...newAddress, address_type: type })}
-                                  className={`flex-1 py-2 text-sm text-center rounded-lg font-bold capitalize transition-all ${newAddress.address_type === type ? 'bg-background shadow-sm text-foreground border border-border/50' : 'text-muted-foreground hover:text-foreground'}`}
+                                  className={`flex-1 py-2 text-sm text-center rounded-md font-medium capitalize transition-all ${newAddress.address_type === type ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                                 >
                                   {t(type as any, lang)}
                                 </button>
@@ -1147,22 +1141,22 @@ Thank you.`;
                             </div>
                           </div>
 
-                          {/* حقول الإدخال مع التركيز باللون الأصفر الفخم focus:ring-[#fbc70f]/40 */}
                           <div>
-                            <input type="text" placeholder={t('first_name', lang)} value={newAddress.first_name} onChange={e => setNewAddress({ ...newAddress, first_name: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/40 focus:border-[#fbc70f] transition-all bg-transparent text-foreground placeholder:text-muted-foreground/70" />
+                            <input type="text" placeholder={t('first_name', lang)} value={newAddress.first_name} onChange={e => setNewAddress({ ...newAddress, first_name: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
                           </div>
                           <div>
-                            <input type="text" placeholder={t('last_name', lang)} value={newAddress.last_name} onChange={e => setNewAddress({ ...newAddress, last_name: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/40 focus:border-[#fbc70f] transition-all bg-transparent text-foreground placeholder:text-muted-foreground/70" />
+                            <input type="text" placeholder={t('last_name', lang)} value={newAddress.last_name} onChange={e => setNewAddress({ ...newAddress, last_name: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
                           </div>
                           <div className="md:col-span-2">
-                            <input type="text" placeholder={t('address', lang)} value={newAddress.address_1} onChange={e => setNewAddress({ ...newAddress, address_1: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/40 focus:border-[#fbc70f] transition-all bg-transparent text-foreground placeholder:text-muted-foreground/70" />
+                            <input type="text" placeholder={t('address', lang)} value={newAddress.address_1} onChange={e => setNewAddress({ ...newAddress, address_1: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
                           </div>
                           <div className="md:col-span-2">
-                            <input type="text" placeholder={t('apartment', lang)} value={newAddress.address_2} onChange={e => setNewAddress({ ...newAddress, address_2: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/40 focus:border-[#fbc70f] transition-all bg-transparent text-foreground placeholder:text-muted-foreground/70" />
+                            <input type="text" placeholder={t('apartment', lang)} value={newAddress.address_2} onChange={e => setNewAddress({ ...newAddress, address_2: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
                           </div>
-
+                          {/* Hidden input always carries the country value */}
                           <input type="hidden" name="country_id" value={newAddress.country_id} />
 
+                          {/* Only show country selector if no store-level default is configured */}
                           {!defaultCountryId && (
                             <div className="md:col-span-2 relative z-50">
                               <Combobox value={newAddress.country_id || ""} onChange={async (val) => {
@@ -1176,7 +1170,7 @@ Thank you.`;
                               }}>
                                 <div className="relative">
                                   <Combobox.Input
-                                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/40 focus:border-[#fbc70f] transition-all bg-transparent text-foreground placeholder:text-muted-foreground/70"
+                                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent text-foreground"
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCountryQuery(event.target.value)}
                                     displayValue={(countryId: string) => countries.find((c: any) => c.id.toString() === countryId)?.name || ''}
                                     placeholder={t('select_country', lang)}
@@ -1185,9 +1179,9 @@ Thank you.`;
                                     <ChevronRight className={`h-5 w-5 text-gray-400 ${lang === 'ar' ? 'rotate-180' : ''}`} aria-hidden="true" />
                                   </Combobox.Button>
                                 </div>
-                                <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-md bg-background py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 border border-border focus:outline-none sm:text-sm">
+                                <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                   {filteredCountries.length === 0 && countryQuery !== '' ? (
-                                    <div className="relative cursor-default select-none py-2 px-4 text-muted-foreground">
+                                    <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                       {t('nothing_found', lang)}
                                     </div>
                                   ) : (
@@ -1195,17 +1189,21 @@ Thank you.`;
                                       <Combobox.Option
                                         key={country.id}
                                         className={({ active }) =>
-                                          `relative cursor-default select-none py-2 pl-10 pr-4 font-medium ${active ? 'bg-[#fbc70f] text-slate-900' : 'text-foreground'}`
+                                          `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-primary text-white' : 'text-gray-900'
+                                          }`
                                         }
                                         value={country.id.toString()}
                                       >
                                         {({ selected, active }) => (
                                           <>
-                                            <span className={`block truncate ${selected ? 'font-bold' : 'font-medium'}`}>
+                                            <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                               {country.name}
                                             </span>
                                             {selected ? (
-                                              <span className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-slate-900' : 'text-[#fbc70f]'}`}>
+                                              <span
+                                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-primary'
+                                                  }`}
+                                              >
                                                 <Check className="h-5 w-5" aria-hidden="true" />
                                               </span>
                                             ) : null}
@@ -1220,17 +1218,17 @@ Thank you.`;
                           )}
 
                           <div>
-                            <input type="text" placeholder={t('city', lang)} value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/40 focus:border-[#fbc70f] transition-all bg-transparent text-foreground" />
+                            <input type="text" placeholder={t('city', lang)} value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="relative z-50">
                               <Combobox value={newAddress.zone_id || ""} onChange={(val) => {
                                 const selectedZone = zones.find(z => z.id.toString() === val);
-                                NewAddress({ ...newAddress, zone_id: val || '', state: selectedZone ? selectedZone.name : '' });
+                                setNewAddress({ ...newAddress, zone_id: val || '', state: selectedZone ? selectedZone.name : '' });
                               }} disabled={zones.length === 0}>
                                 <div className="relative">
                                   <Combobox.Input
-                                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/40 focus:border-[#fbc70f] transition-all bg-transparent text-foreground disabled:opacity-50"
+                                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent text-foreground disabled:opacity-50"
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setZoneQuery(event.target.value)}
                                     displayValue={(zoneId: string) => zones.find((z) => z.id.toString() === zoneId)?.name || ''}
                                     placeholder={t('select_state', lang)}
@@ -1239,9 +1237,9 @@ Thank you.`;
                                     <ChevronRight className="h-5 w-5 text-gray-400" aria-hidden="true" />
                                   </Combobox.Button>
                                 </div>
-                                <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-md bg-background py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 border border-border focus:outline-none sm:text-sm">
+                                <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                   {filteredZones.length === 0 && zoneQuery !== '' ? (
-                                    <div className="relative cursor-default select-none py-2 px-4 text-muted-foreground">
+                                    <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                       {t('nothing_found', lang)}
                                     </div>
                                   ) : (
@@ -1249,17 +1247,21 @@ Thank you.`;
                                       <Combobox.Option
                                         key={zone.id}
                                         className={({ active }) =>
-                                          `relative cursor-default select-none py-2 pl-10 pr-4 font-medium ${active ? 'bg-[#fbc70f] text-slate-900' : 'text-foreground'}`
+                                          `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-primary text-white' : 'text-gray-900'
+                                          }`
                                         }
                                         value={zone.id.toString()}
                                       >
                                         {({ selected, active }) => (
                                           <>
-                                            <span className={`block truncate ${selected ? 'font-bold' : 'font-medium'}`}>
+                                            <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                               {zone.name}
                                             </span>
                                             {selected ? (
-                                              <span className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-slate-900' : 'text-[#fbc70f]'}`}>
+                                              <span
+                                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-primary'
+                                                  }`}
+                                              >
                                                 <Check className="h-5 w-5" aria-hidden="true" />
                                               </span>
                                             ) : null}
@@ -1271,12 +1273,11 @@ Thank you.`;
                                 </Combobox.Options>
                               </Combobox>
                             </div>
-                            <input type="text" placeholder={t('zip_code', lang)} value={newAddress.postcode} onChange={e => setNewAddress({ ...newAddress, postcode: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#fbc70f]/40 focus:border-[#fbc70f] transition-all bg-transparent text-foreground" />
+                            <input type="text" placeholder={t('zip_code', lang)} value={newAddress.postcode} onChange={e => setNewAddress({ ...newAddress, postcode: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
                           </div>
 
-                          {/* زر تحديد الموقع على الخارطة */}
                           <div className="md:col-span-2 flex items-center justify-between pb-2 border-b border-border">
-                            <button type="button" onClick={() => setShowMapModal(true)} className="flex items-center gap-2 px-4 py-2 bg-[#fbc70f]/10 dark:bg-[#fbc70f]/15 text-[#093f89] dark:text-[#fbc70f] hover:bg-[#fbc70f]/20 rounded-xl text-sm font-bold transition-colors border border-[#fbc70f]/20">
+                            <button type="button" onClick={() => setShowMapModal(true)} className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg text-sm font-medium transition-colors border border-primary/20">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"></path>
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -1285,24 +1286,22 @@ Thank you.`;
                             </button>
                           </div>
 
-                          {/* مفتاح التبديل (Toggle Switch) للعنوان الافتراضي */}
                           <div className="space-y-3 md:col-span-2 pt-2">
                             <label className="flex items-center gap-3 cursor-pointer group w-fit">
-                              <button type="button" onClick={() => setNewAddress({ ...newAddress, is_default: !newAddress.is_default })} className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-2 ring-transparent focus:ring-[#fbc70f]/50 ${newAddress.is_default ? 'bg-[#fbc70f]' : 'bg-secondary/80 dark:bg-zinc-800'}`}>
+                              <button type="button" onClick={() => setNewAddress({ ...newAddress, is_default: !newAddress.is_default })} className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-2 ring-transparent focus:ring-primary/50 ${newAddress.is_default ? 'bg-primary' : 'bg-secondary'}`}>
                                 <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${newAddress.is_default ? (lang === 'ar' ? '-translate-x-5' : 'translate-x-5') : 'translate-x-0'}`}></span>
                               </button>
-                              <span className="text-sm font-bold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">{t('default_address', lang)}</span>
+                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{t('default_address', lang)}</span>
                             </label>
                           </div>
 
-                          {/* زر حفظ العنوان بالخلفية الصفراء الثابتة والنص الداكن لمنع كسر التباين */}
                           {user && isAddingNewAddress && (
                             <div className="md:col-span-2 pt-2 flex justify-end">
                               <button
                                 type="button"
                                 onClick={handleSaveAddress}
                                 disabled={isSavingAddress || !newAddress.first_name || !newAddress.last_name || !newAddress.address_1 || !newAddress.city || !newAddress.postcode}
-                                className="bg-[#fbc70f] text-slate-900 px-6 py-2.5 rounded-xl font-bold hover:bg-[#e0b00d] transition-all shadow-md active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center gap-2"
+                                className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2"
                               >
                                 {isSavingAddress ? t('saving', lang) : (editingAddressId ? t('edit_address', lang) : t('save_address', lang))}
                               </button>
@@ -1318,13 +1317,11 @@ Thank you.`;
                     <section className="bg-background p-8 rounded-2xl shadow-sm border border-border/50 mb-8 relative">
                       {isLoadingRates && (
                         <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl">
-                          {/* 👈 تم تعديل لون بوردر التحميل */}
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#fbc70f]"></div>
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
                       )}
                       <h2 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                        {/* 👈 تم تعديل لون الأيقونة */}
-                        <Truck className="w-5 h-5 text-[#093f89] dark:text-[#fbc70f]" /> {t('shipping_method', lang)}
+                        <Truck className="w-5 h-5 text-primary" /> {t('shipping_method', lang)}
                       </h2>
 
                       {shippingRates.length === 0 && !isLoadingRates ? (
@@ -1336,19 +1333,17 @@ Thank you.`;
                           {shippingRates.map((method: any) => (
                             <label
                               key={method.code}
-                              /* 👈 تم تعديل لون البوردر والخلفية والـ ring عند التحديد */
                               className={`relative flex flex-col p-5 border rounded-xl cursor-pointer transition-all overflow-hidden group
                               ${selectedShippingMethod === method.code
-                                  ? "border-[#fbc70f] bg-[#fbc70f]/5 ring-1 ring-[#fbc70f] shadow-md"
-                                  : "border-border hover:border-[#fbc70f]/50 hover:bg-secondary/20"
+                                  ? "border-primary bg-primary/5 ring-1 ring-primary shadow-md"
+                                  : "border-border hover:border-primary/50 hover:bg-secondary/20"
                                 }`}
                             >
                               <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-3">
                                   <div
-                                    /* 👈 تم تعديل لون الراديو المخصص الداخلي */
                                     className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${selectedShippingMethod === method.code
-                                      ? "border-[#fbc70f] bg-[#fbc70f]"
+                                      ? "border-primary bg-primary"
                                       : "border-gray-300"
                                       }`}
                                   >
@@ -1356,15 +1351,13 @@ Thank you.`;
                                       <div className="w-2 h-2 rounded-full bg-white"></div>
                                     )}
                                   </div>
-                                  {/* 👈 تم تعديل لون نصوص الهوفر التفاعلية للميثود */}
-                                  <span className="font-semibold text-foreground group-hover:text-[#093f89] dark:group-hover:text-[#fbc70f] transition-colors">
+                                  <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
                                     {typeof method.name === 'object' && method.name !== null
                                       ? (method.name[lang] || method.name.en || method.name)
                                       : (method.name || 'Standard Shipping')}
                                   </span>
                                 </div>
-                                {/* 👈 تم تعديل لون النص للسعر */}
-                                <span className="font-bold text-lg text-[#093f89] dark:text-[#fbc70f] flex items-center gap-1">
+                                <span className="font-bold text-lg text-primary flex items-center gap-1">
                                   {method.cost === 0 ? t('free', lang) : (
                                     <>
                                       {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
@@ -1420,9 +1413,8 @@ Thank you.`;
                         {paymentMethods.map((method) => (
                           <label
                             key={method.id}
-                            /* 👈 تم تعديل لون البوردر والخلفية لخيار الدفع النشط والـ hover */
                             className={`flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all
-                          ${selectedMethod === method.code ? 'border-[#fbc70f] bg-[#fbc70f]/5 shadow-sm' : 'border-border hover:border-[#fbc70f]/50'}`}
+                          ${selectedMethod === method.code ? 'border-primary bg-primary/5 shadow-sm' : 'border-border hover:border-primary/50'}`}
                           >
                             <div className="flex items-center h-6">
                               <input
@@ -1431,8 +1423,7 @@ Thank you.`;
                                 value={method.code}
                                 checked={selectedMethod === method.code}
                                 onChange={() => setSelectedMethod(method.code)}
-                                /* 👈 تم تعديل لون الراديو الافتراضي و فوكس الحواف لخيارات الدفع */
-                                className="w-4 h-4 text-[#fbc70f] focus:ring-[#fbc70f] border-gray-300"
+                                className="w-4 h-4 text-primary focus:ring-primary border-gray-300"
                               />
                             </div>
                             <div className="flex-1">
@@ -1481,18 +1472,18 @@ Thank you.`;
                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
                                       {selectedMethod === 'tabby' ? (
                                         <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                         </svg>
                                       ) : (
                                         <svg className="w-5 h-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                         </svg>
                                       )}
                                     </div>
                                   </div>
                                   <p className={`text-[10px] mt-1.5 flex items-center gap-1 ${selectedMethod === 'tabby' ? 'text-emerald-600/70' : 'text-pink-600/70'}`}>
                                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     {lang === 'ar' ? 'مطلوب لاستلام رمز التحقق (OTP)' : 'Required for receiving OTP code'}
                                   </p>
@@ -1745,8 +1736,17 @@ Thank you.`;
             }
           }
 
-          /* ⬇️ السطر رقم 1229 بعد التعديل والإصلاح ⬇️ */
-          setNewAddress({ ...newAddress, zone_id: val || '', state: selectedZone ? selectedZone.name : '' });
+          setNewAddress({
+            ...newAddress,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            address_1: data.address_1 || newAddress.address_1,
+            city: data.city || newAddress.city,
+            postcode: data.postcode || newAddress.postcode,
+            country_id: determinedCountryId,
+            zone_id: determinedZoneId,
+            state: determinedStateName
+          });
         }}
       />
 
