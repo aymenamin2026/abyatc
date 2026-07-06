@@ -1335,188 +1335,222 @@ Thank you.`;
 
                   {/* Shipping Methods */}
                   {((user && addresses.length > 0 && !isAddingNewAddress) || (!selectedAddressId || isAddingNewAddress)) && (
-                    <section className="bg-background p-8 rounded-2xl shadow-sm border border-border/50 mb-8 relative">
+                    <section className="bg-background p-6 md:p-8 rounded-2xl shadow-sm border border-border/60 mb-8 relative transition-colors duration-200">
+                      {/* مؤشر التحميل متوافق مع الخلفية المظلمة واللون المخصص */}
                       {isLoadingRates && (
-                        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <div className="absolute inset-0 bg-background/60 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderBottomColor: '#fbc70f' }}></div>
                         </div>
                       )}
-                      <h2 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                        <Truck className="w-5 h-5 text-primary" /> {t('shipping_method', lang)}
+
+                      <h2 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
+                        <Truck className="w-6 h-6" style={{ color: '#fbc70f' }} /> {t('shipping_method', lang)}
                       </h2>
 
                       {shippingRates.length === 0 && !isLoadingRates ? (
-                        <div className="text-sm text-yellow-600 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        /* تحسين وضوح نص التنبيه في الوضعين العادي والمظلم */
+                        <div className="text-sm rounded-xl p-4 border bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/40">
                           {t('no_shipping_methods', lang)}
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {shippingRates.map((method: any) => (
-                            <label
-                              key={method.code}
-                              className={`relative flex flex-col p-5 border rounded-xl cursor-pointer transition-all overflow-hidden group
-                              ${selectedShippingMethod === method.code
-                                  ? "border-primary bg-primary/5 ring-1 ring-primary shadow-md"
-                                  : "border-border hover:border-primary/50 hover:bg-secondary/20"
-                                }`}
-                            >
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <div
-                                    className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${selectedShippingMethod === method.code
-                                      ? "border-primary bg-primary"
-                                      : "border-gray-300"
-                                      }`}
-                                  >
-                                    {selectedShippingMethod === method.code && (
-                                      <div className="w-2 h-2 rounded-full bg-white"></div>
-                                    )}
+                          {shippingRates.map((method: any) => {
+                            const isSelected = selectedShippingMethod === method.code;
+                            return (
+                              <label
+                                key={method.code}
+                                className="relative flex flex-col p-5 border rounded-xl cursor-pointer transition-all overflow-hidden group bg-card text-card-foreground hover:shadow-md"
+                                style={{
+                                  borderColor: isSelected ? '#fbc70f' : 'var(--border)',
+                                  backgroundColor: isSelected ? 'rgba(251, 199, 15, 0.05)' : '',
+                                  boxShadow: isSelected ? '0 0 0 1px #fbc70f' : ''
+                                }}
+                              >
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-3">
+                                    <div
+                                      className="w-5 h-5 rounded-full border flex items-center justify-center transition-colors"
+                                      style={{
+                                        borderColor: isSelected ? '#fbc70f' : 'var(--border)',
+                                        backgroundColor: isSelected ? '#fbc70f' : 'transparent'
+                                      }}
+                                    >
+                                      {isSelected && (
+                                        <div className="w-2 h-2 rounded-full bg-white dark:bg-zinc-900"></div>
+                                      )}
+                                    </div>
+                                    <span
+                                      className="font-semibold text-foreground transition-colors group-hover:opacity-80"
+                                      style={{ color: isSelected ? '#fbc70f' : '' }}
+                                    >
+                                      {typeof method.name === 'object' && method.name !== null
+                                        ? (method.name[lang] || method.name.en || method.name)
+                                        : (method.name || 'Standard Shipping')}
+                                    </span>
                                   </div>
-                                  <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                                    {typeof method.name === 'object' && method.name !== null
-                                      ? (method.name[lang] || method.name.en || method.name)
-                                      : (method.name || 'Standard Shipping')}
+                                  <span className="font-bold text-lg flex items-center gap-1 text-foreground">
+                                    {method.cost === 0 ? (
+                                      <span className="text-emerald-600 dark:text-emerald-400">{t('free', lang)}</span>
+                                    ) : (
+                                      <>
+                                        {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
+                                          <img src={finalCurrencySymbol} alt="Currency" className="h-4 w-auto object-contain inline-block dark:invert" />
+                                        ) : (
+                                          <span className="text-muted-foreground text-sm font-normal">{finalCurrencySymbol}</span>
+                                        )}
+                                        <span>{parseFloat(method.cost).toFixed(2)}</span>
+                                      </>
+                                    )}
                                   </span>
                                 </div>
-                                <span className="font-bold text-lg text-primary flex items-center gap-1">
-                                  {method.cost === 0 ? t('free', lang) : (
-                                    <>
-                                      {finalCurrencySymbol.includes('.svg') || finalCurrencySymbol.includes('.png') ? (
-                                        <img src={finalCurrencySymbol} alt="Currency" className="h-4 w-auto object-contain inline-block" />
-                                      ) : (
-                                        <span>{finalCurrencySymbol}</span>
-                                      )}
-                                      <span>{parseFloat(method.cost).toFixed(2)}</span>
-                                    </>
-                                  )}
-                                </span>
-                              </div>
-                              <p className="text-sm text-muted-foreground pl-8">
-                                {typeof method.description === 'object' && method.description !== null
-                                  ? (method.description[lang] || method.description.en || method.description)
-                                  : (method.description || t('standard_delivery', lang))}
-                              </p>
-                              <p className="text-xs font-medium text-emerald-600 pl-8 mt-2">
-                                {t('est_delivery', lang)}: {typeof method.estimated_days === 'object' && method.estimated_days !== null
-                                  ? (method.estimated_days[lang] || method.estimated_days.en || method.estimated_days)
-                                  : (method.estimated_days || '3-5 Business Days')}
-                              </p>
 
-                              <input
-                                type="radio"
-                                name="shipping_method"
-                                value={method.code}
-                                checked={selectedShippingMethod === method.code}
-                                onChange={() => setSelectedShippingMethod(method.code)}
-                                className="hidden"
-                              />
-                            </label>
-                          ))}
+                                <p className="text-sm text-muted-foreground pl-8 rtl:pl-0 rtl:pr-8 leading-relaxed">
+                                  {typeof method.description === 'object' && method.description !== null
+                                    ? (method.description[lang] || method.description.en || method.description)
+                                    : (method.description || t('standard_delivery', lang))}
+                                </p>
+
+                                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 pl-8 rtl:pl-0 rtl:pr-8 mt-2 flex items-center gap-1">
+                                  <span>{t('est_delivery', lang)}:</span>
+                                  <span className="text-foreground/80">
+                                    {typeof method.estimated_days === 'object' && method.estimated_days !== null
+                                      ? (method.estimated_days[lang] || method.estimated_days.en || method.estimated_days)
+                                      : (method.estimated_days || '3-5 Business Days')}
+                                  </span>
+                                </p>
+
+                                <input
+                                  type="radio"
+                                  name="shipping_method"
+                                  value={method.code}
+                                  checked={isSelected}
+                                  onChange={() => setSelectedShippingMethod(method.code)}
+                                  className="hidden"
+                                />
+                              </label>
+                            );
+                          })}
                         </div>
                       )}
                     </section>
                   )}
 
                   {/* Payment Info */}
-                  <section className="bg-background p-8 rounded-2xl shadow-sm border border-border/50 mb-8">
-                    <div className="flex justify-between items-center mb-6">
-                      <h2 className="font-serif text-2xl font-bold text-foreground">{t('payment_method', lang)}</h2>
+                  <section className="bg-background p-6 md:p-8 rounded-2xl shadow-sm border border-border/60 mb-8 transition-colors duration-200">
+                    <div className="flex justify-between items-center mb-4 border-b border-border/40 pb-4">
+                      <div className="flex items-center gap-3">
+                        {/* خط جانبي باللون المخصص ليطابق بقية الأقسام */}
+                        <span className="w-1.5 h-7 rounded-full" style={{ backgroundColor: '#fbc70f' }}></span>
+                        <h2 className="font-serif text-2xl font-bold text-foreground">{t('payment_method', lang)}</h2>
+                      </div>
                       <Lock className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <p className="text-sm text-muted-foreground mb-6">{t('secure_payment_msg', lang)}</p>
 
                     {paymentMethods.length === 0 ? (
-                      <div className="p-4 border border-border rounded-xl text-center text-sm text-muted-foreground bg-secondary/30">
+                      <div className="p-5 border border-border rounded-xl text-center text-sm text-muted-foreground bg-secondary/20">
                         {t('loading_payment_options', lang)}
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        {paymentMethods.map((method) => (
-                          <label
-                            key={method.id}
-                            className={`flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all
-                          ${selectedMethod === method.code ? 'border-primary bg-primary/5 shadow-sm' : 'border-border hover:border-primary/50'}`}
-                          >
-                            <div className="flex items-center h-6">
-                              <input
-                                type="radio"
-                                name="payment_method"
-                                value={method.code}
-                                checked={selectedMethod === method.code}
-                                onChange={() => setSelectedMethod(method.code)}
-                                className="w-4 h-4 text-primary focus:ring-primary border-gray-300"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center justify-between">
-                                <h3 className="font-medium text-foreground">{method.name}</h3>
-                                {method.code === 'tamara' && (
-                                  <span className="text-xs bg-pink-100 text-pink-700 font-bold px-2 py-1 rounded">Tamara</span>
+                        {paymentMethods.map((method) => {
+                          const isSelected = selectedMethod === method.code;
+                          return (
+                            <label
+                              key={method.id}
+                              className="flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all bg-card text-card-foreground hover:shadow-md"
+                              style={{
+                                borderColor: isSelected ? '#fbc70f' : 'var(--border)',
+                                backgroundColor: isSelected ? 'rgba(251, 199, 15, 0.05)' : '',
+                                boxShadow: isSelected ? '0 0 0 1px #fbc70f' : ''
+                              }}
+                            >
+                              <div className="flex items-center h-6">
+                                <input
+                                  type="radio"
+                                  name="payment_method"
+                                  value={method.code}
+                                  checked={isSelected}
+                                  onChange={() => setSelectedMethod(method.code)}
+                                  className="w-4 h-4 focus:ring-offset-background"
+                                  style={{ color: '#fbc70f', accentColor: '#fbc70f' }}
+                                />
+                              </div>
+                              <div className="flex-1 w-full">
+                                <div className="flex items-center justify-between gap-2 flex-wrap">
+                                  <h3 className="font-semibold text-foreground">{method.name}</h3>
+
+                                  {/* تحسين الـ Badges لتتوافق مع الوضع المظلم والعادي */}
+                                  {method.code === 'tamara' && (
+                                    <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-pink-100 text-pink-700 dark:bg-pink-950/40 dark:text-pink-300">Tamara</span>
+                                  )}
+                                  {method.code === 'tabby' && (
+                                    <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">Tabby</span>
+                                  )}
+                                  {method.code === 'cod' && (
+                                    <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">COD</span>
+                                  )}
+                                </div>
+
+                                {method.description && (
+                                  <div
+                                    className="text-sm text-muted-foreground mt-2 leading-relaxed prosc-sm"
+                                    dangerouslySetInnerHTML={{ __html: method.description }}
+                                  />
                                 )}
-                                {method.code === 'tabby' && (
-                                  <span className="text-xs bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded">Tabby</span>
-                                )}
-                                {method.code === 'cod' && (
-                                  <span className="text-xs bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded">COD</span>
+
+                                {/* حقول إدخال الهاتف المخصصة لـ تابي وتمارا */}
+                                {((selectedMethod === 'tabby' && method.code === 'tabby') || (selectedMethod === 'tamara' && method.code === 'tamara')) && (
+                                  <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300 border-t border-border/40 pt-4">
+                                    <label className={`block text-xs font-bold mb-2 uppercase tracking-wider ${selectedMethod === 'tabby' ? 'text-emerald-600 dark:text-emerald-400' : 'text-pink-600 dark:text-pink-400'}`}>
+                                      {selectedMethod === 'tabby'
+                                        ? (lang === 'ar' ? 'رقم الجوال لـ Tabby' : 'Tabby Mobile Number')
+                                        : (lang === 'ar' ? 'رقم الجوال لـ Tamara' : 'Tamara Mobile Number')
+                                      }
+                                    </label>
+                                    <div className="relative group max-w-md">
+                                      <input
+                                        type="tel"
+                                        value={tabbyPhone}
+                                        onChange={(e) => {
+                                          const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                          setTabbyPhone(val);
+                                        }}
+                                        maxLength={10}
+                                        minLength={10}
+                                        placeholder="05xxxxxxxx"
+                                        className={`w-full bg-background border rounded-xl px-4 py-3 text-sm focus:ring-0 outline-none transition-all tracking-[2px] text-foreground placeholder:text-muted-foreground/60
+                        ${selectedMethod === 'tabby'
+                                            ? 'border-emerald-200 dark:border-emerald-900/60 focus:border-emerald-500'
+                                            : 'border-pink-200 dark:border-pink-900/60 focus:border-pink-500'}`}
+                                      />
+                                      <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-40 pointer-events-none rtl:left-3 rtl:right-auto">
+                                        {selectedMethod === 'tabby' ? (
+                                          <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                          </svg>
+                                        ) : (
+                                          <svg className="w-5 h-5 text-pink-600 dark:text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                          </svg>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <p className={`text-[11px] font-medium mt-2 flex items-center gap-1.5 ${selectedMethod === 'tabby' ? 'text-emerald-600/80 dark:text-emerald-400/80' : 'text-pink-600/80 dark:text-pink-400/80'}`}>
+                                      <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                      {lang === 'ar' ? 'مطلوب لاستلام رمز التحقق (OTP)' : 'Required for receiving OTP code'}
+                                    </p>
+                                  </div>
                                 )}
                               </div>
-                              {method.description && (
-                                <div
-                                  className="text-sm text-muted-foreground mt-1"
-                                  dangerouslySetInnerHTML={{ __html: method.description }}
-                                />
-                              )}
-                              {(selectedMethod === 'tabby' && method.code === 'tabby' || selectedMethod === 'tamara' && method.code === 'tamara') && (
-                                <div className={`mt-4 animate-in fade-in slide-in-from-top-2 duration-300`}>
-                                  <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wider ${selectedMethod === 'tabby' ? 'text-emerald-700' : 'text-pink-700'}`}>
-                                    {selectedMethod === 'tabby'
-                                      ? (lang === 'ar' ? 'رقم الجوال لـ Tabby' : 'Tabby Mobile Number')
-                                      : (lang === 'ar' ? 'رقم الجوال لـ Tamara' : 'Tamara Mobile Number')
-                                    }
-                                  </label>
-                                  <div className="relative group">
-                                    <input
-                                      type="tel"
-                                      value={tabbyPhone}
-                                      onChange={(e) => {
-                                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                        setTabbyPhone(val);
-                                      }}
-                                      maxLength={10}
-                                      minLength={10}
-                                      placeholder="05xxxxxxxx"
-                                      className={`w-full bg-white border-2 rounded-xl px-4 py-3 text-sm focus:ring-0 outline-none transition-all uppercase tracking-[2px] 
-                                        ${selectedMethod === 'tabby'
-                                          ? 'border-emerald-100 focus:border-emerald-500 group-hover:border-emerald-200'
-                                          : 'border-pink-100 focus:border-pink-500 group-hover:border-pink-200'}`}
-                                    />
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
-                                      {selectedMethod === 'tabby' ? (
-                                        <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                        </svg>
-                                      ) : (
-                                        <svg className="w-5 h-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                        </svg>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <p className={`text-[10px] mt-1.5 flex items-center gap-1 ${selectedMethod === 'tabby' ? 'text-emerald-600/70' : 'text-pink-600/70'}`}>
-                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    {lang === 'ar' ? 'مطلوب لاستلام رمز التحقق (OTP)' : 'Required for receiving OTP code'}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          </label>
-                        ))}
+                            </label>
+                          );
+                        })}
                       </div>
                     )}
                   </section>
-
                   <AnimatePresence>
                     {checkoutError && (
                       <motion.div
