@@ -195,8 +195,7 @@ export default function TrackOrderPage() {
   const finalShipping = Number(order?.shipping_amount || 0);
 
   // إذا كان المجموع الكلي متوفر في API نستخدمه، وإن لم يكن نجمع: (المجموع الفرعي + الضريبة + الشحن)
-  const finalTotal = order?.total_amount ? Number(order.total_amount) : (calculatedSubtotal + finalTax + finalShipping);
-
+  const finalTotal = calculatedSubtotal + finalTax + finalShipping;
   return (
     <main className="min-h-screen pt-36 pb-24 bg-background relative overflow-hidden flex flex-col items-center">
 
