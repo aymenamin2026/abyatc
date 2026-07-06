@@ -168,6 +168,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
           </thead>
           <tbody className="divide-y divide-border">
             {orders.map((order) => {
+              console.log(order);
               const { isNotPricedYet, finalTotal } = calculateOrderTotals(order, taxRate, pricesIncludeTax);
 
               return (
