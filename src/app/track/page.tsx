@@ -21,8 +21,8 @@ interface OrderItem {
   quantity: number;
   unit_price: number;
   total: number;
-  product_size?: string; // أضفنا هذه بناءً على مخرجاتك
-  product_color?: string; // أضفنا هذه بناءً على مخرجاتك
+  product_size?: string;
+  product_color?: string;
   product?: {
     id: number;
     name: any;
@@ -183,10 +183,19 @@ export default function TrackOrderPage() {
   };
 
   // ----------------------------------------------------------------------
-  // منطق التحقق من حالة التسعير (إذا كان المجموع الفرعي 0 فإنه قيد التسعير)
+  // منطق التسعير والضرائب الجديد بنسبة 15%
   // ----------------------------------------------------------------------
+  const TAX_RATE = 0.15; // 15% الضريبة المضافة
+
   const calculatedSubtotal = order ? (order.subtotal ?? order.items.reduce((acc, item) => acc + (Number(item.unit_price) * item.quantity), 0)) : 0;
   const isAwaitingPricing = calculatedSubtotal === 0;
+
+  // الحسبة النهائية
+  const finalTax = order?.tax_amount ? Number(order.tax_amount) : (calculatedSubtotal * TAX_RATE);
+  const finalShipping = Number(order?.shipping_amount || 0);
+
+  // إذا كان المجموع الكلي متوفر في API نستخدمه، وإن لم يكن نجمع: (المجموع الفرعي + الضريبة + الشحن)
+  const finalTotal = order?.total_amount ? Number(order.total_amount) : (calculatedSubtotal + finalTax + finalShipping);
 
   return (
     <main className="min-h-screen pt-36 pb-24 bg-background relative overflow-hidden flex flex-col items-center">
@@ -310,13 +319,13 @@ export default function TrackOrderPage() {
                 </div>
 
                 <h3 className="text-lg font-bold text-foreground mb-8 font-serif">{isRtl ? 'مسار الطلب' : 'Tracking Journey'}</h3>
-                {/* نقوم بتعريف مصفوفة العرض: إذا كان هناك histories من الـ API نستخدمها، وإذا لم يكن، نستخدم الحالة الحالية كنقطة بداية */}
+                {/* استخدام histories هنا */}
                 {(() => {
                   const displayHistories = order.histories && order.histories.length > 0
                     ? order.histories
                     : [
                       {
-                        id: 9999, // ID وهمي للواجهة
+                        id: 9999,
                         status: order.status,
                         tracking_number: order.tracking_number,
                         created_at: order.created_at
@@ -329,9 +338,6 @@ export default function TrackOrderPage() {
 
                       <div className="space-y-10">
                         {displayHistories.map((history, idx) => {
-                          console.log(order.histories);
-                          console.log(order);
-
                           const isLatest = idx === 0;
                           const visual = getStatusVisuals(history.status);
                           const StatusIcon = visual.icon;
@@ -435,7 +441,6 @@ export default function TrackOrderPage() {
 
                 {/* Financial Calculation */}
                 {isAwaitingPricing ? (
-                  // الشاشة البديلة عند انتظار التسعير
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -460,24 +465,24 @@ export default function TrackOrderPage() {
                     </div>
                   </motion.div>
                 ) : (
-                  // الحسبة المالية الطبيعية إذا كان هناك سعر
                   <div className="mt-8 pt-6 border-t-2 border-border/60 space-y-4">
                     <div className="flex justify-between items-center text-muted-foreground font-medium">
                       <span>{isRtl ? 'المجموع الفرعي' : 'Subtotal'}</span>
                       <CurrencyFormat className="text-foreground" amount={calculatedSubtotal} />
                     </div>
 
-                    {order.tax_amount !== undefined && Number(order.tax_amount) > 0 && (
+                    {/* عرض الضريبة - محسوبة الآن 15% إذا لم تكن قادمة من الـ API */}
+                    {finalTax > 0 && (
                       <div className="flex justify-between items-center text-muted-foreground font-medium">
-                        <span>{isRtl ? 'الضريبة المضافة' : 'VAT'}</span>
-                        <CurrencyFormat className="text-foreground" amount={order.tax_amount} />
+                        <span>{isRtl ? 'الضريبة المضافة (15%)' : 'VAT (15%)'}</span>
+                        <CurrencyFormat className="text-foreground" amount={finalTax} />
                       </div>
                     )}
 
-                    {order.shipping_amount !== undefined && Number(order.shipping_amount) > 0 && (
+                    {finalShipping > 0 && (
                       <div className="flex justify-between items-center text-muted-foreground font-medium">
                         <span>{isRtl ? 'الشحن' : 'Shipping'}</span>
-                        <CurrencyFormat className="text-foreground" amount={order.shipping_amount} />
+                        <CurrencyFormat className="text-foreground" amount={finalShipping} />
                       </div>
                     )}
 
@@ -485,11 +490,7 @@ export default function TrackOrderPage() {
                       <span className="text-lg font-bold text-foreground">{isRtl ? 'المجموع الكلي' : 'Total Amount'}</span>
                       <CurrencyFormat
                         className="text-[#093f89] dark:text-[#fbc70f] text-xl"
-                        amount={
-                          calculatedSubtotal +
-                          Number(order.tax_amount ?? 0) +
-                          Number(order.shipping_amount ?? 0)
-                        }
+                        amount={finalTotal}
                         size={18}
                       />
                     </div>

@@ -374,7 +374,7 @@ ${currentUrl}
                   <div key={attr.id} className="mb-8 bg-secondary/10 p-4 rounded-2xl border border-border/50">
                     <div className="flex justify-between items-center mb-4">
                       <span className="font-medium text-foreground text-lg">
-                        {attrName}: <span className="text-primary font-bold ml-2">
+                        {attrName}: <span className="text-[#093f89] dark:text-[#fbc70f] font-bold ml-2">
                           {displayValues.find((c: any) => (c.value?.en || c.value) === selectedAttributes[attrSlug])?.value?.[lang] || selectedAttributes[attrSlug]}
                         </span>
                       </span>
@@ -390,7 +390,8 @@ ${currentUrl}
                           <button
                             key={color.id}
                             onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: cEn }))}
-                            className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${bgClass} ${isSelected ? 'ring-4 ring-primary/50 ring-offset-2 ring-offset-background scale-110 shadow-lg' : 'hover:scale-110 hover:shadow-md'}`}
+                            /* 👈 تم التعديل: استبدال الـ ring باللون الذهبي الجديد fbc70f وتأمين وضوح علامة الصح */
+                            className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${bgClass} ${isSelected ? 'ring-4 ring-[#fbc70f]/70 ring-offset-2 ring-offset-background scale-110 shadow-lg' : 'hover:scale-110 hover:shadow-md'}`}
                             title={cLocal}
                           >
                             {isSelected && <Check className={`w-6 h-6 ${bgClass.includes('white') || bgClass.includes('yellow') ? 'text-black' : 'text-white'}`} />}
@@ -406,7 +407,7 @@ ${currentUrl}
                 <div key={attr.id} className="mb-8">
                   <div className="flex justify-between items-center mb-4">
                     <span className="font-medium text-foreground text-lg">{attrName}</span>
-                    {attrSlug === 'size' && <Link href="#" className="text-sm text-primary hover:underline">{lang === 'ar' ? 'دليل المقاسات' : 'Size Guide'}</Link>}
+                    {attrSlug === 'size' && <Link href="#" className="text-sm text-[#093f89] dark:text-[#fbc70f] hover:underline">{lang === 'ar' ? 'دليل المقاسات' : 'Size Guide'}</Link>}
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                     {displayValues.map((val: any) => {
@@ -418,8 +419,11 @@ ${currentUrl}
                         <button
                           key={val.id}
                           onClick={() => setSelectedAttributes(prev => ({ ...prev, [attrSlug]: vEn }))}
+                          /* 👈 تم التعديل: عند اختيار المقاس تظهر خلفية ذهبية شفافة بحدود ذهبية صلبة، ولون نص متناسق تماماً بالفاتح والمظلم */
                           className={`py-3 px-2 rounded-xl border-2 text-sm font-bold transition-all duration-200 flex items-center justify-center
-                            ${isSelected ? 'border-primary bg-primary/10 text-primary shadow-sm scale-105' : 'border-border bg-card hover:border-primary/50 text-foreground hover:bg-secondary/50'}`}
+                ${isSelected
+                              ? 'border-[#fbc70f] bg-[#fbc70f]/15 text-slate-900 dark:text-[#fbc70f] shadow-sm scale-105'
+                              : 'border-border bg-card hover:border-[#fbc70f]/50 text-foreground hover:bg-secondary/50'}`}
                         >
                           {vLocal}
                         </button>
@@ -431,37 +435,54 @@ ${currentUrl}
             })}
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-6 mt-4">
-              <div className="flex items-center border-2 border-border rounded-2xl px-2 h-16 bg-background sm:w-1/3">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-secondary rounded-xl transition-colors">-</button>
-                <span className="flex-1 text-center font-bold text-lg">{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)} className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-secondary rounded-xl transition-colors">+</button>
-              </div>
-
+            <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
               <button
-                onClick={handleAddToCart}
-                className={`flex-1 h-16 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg flex items-center justify-center gap-3
-                  ${isAddedToCart ? 'bg-green-500 text-white shadow-green-500/25 scale-[0.98]' : 'bg-[#fbc70f] text-primary-foreground hover:bg-primary/90 hover:shadow-primary/25 hover:-translate-y-1'}`}
-                disabled={isAddedToCart || (hasVariations && productAttributes.some(attr => !selectedAttributes[attr.slug || attr.name?.en?.toLowerCase()]))}
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="w-6 h-6 flex items-center justify-center text-xl text-muted-foreground hover:text-foreground transition-colors"
               >
-                {isAddedToCart ? (
-                  <>
-                    <Check className="w-6 h-6 animate-in zoom-in" />
-                    {t('add_to_cart', lang) === 'Add to Quote Request' ? 'Added Successfully' : 'تمت الإضافة بنجاح'}
-                  </>
-                ) : (
-                  <>
-
-                    {t('add_to_cart', lang)}
-                  </>
-                )}
+                -
               </button>
-
-              <button className="w-16 h-16 bg-secondary/50 flex items-center justify-center rounded-2xl text-foreground hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all border-2 border-transparent">
-                <Heart className="w-6 h-6" />
+              {/* 👈 ضبط لون نص عدّاد الكمية ليتناسق مع الوضعين */}
+              <span className="w-10 text-center font-bold text-foreground">{quantity}</span>
+              <button
+                onClick={() => setQuantity(quantity + 1)}
+                className="w-6 h-6 flex items-center justify-center text-xl text-muted-foreground hover:text-foreground transition-colors"
+              >
+                +
               </button>
             </div>
 
+            {/* زر إضافة للسلة يظهر فقط إذا كان السعر متاحاً */}
+            <button
+              onClick={handleAddToCart}
+              /* 👈 تم التعديل: استبدال كلاسات bg-btn-bg باللون fbc70f الثابت وإجبار النص على اللون الداكن لتباين ممتاز */
+              className={`flex-1 h-14 rounded-full font-bold text-lg transition-all shadow-lg flex items-center justify-center
+    ${isAddedToCart
+                  ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-600/20'
+                  : 'bg-[#fbc70f] hover:bg-[#e0b00d] text-slate-900 dark:text-slate-900 hover:shadow-xl hover:-translate-y-0.5 shadow-[#fbc70f]/20'
+                }`}
+              disabled={
+                isAddedToCart ||
+                (hasVariations &&
+                  productAttributes.some(
+                    attr =>
+                      !selectedAttributes[
+                      attr.slug || attr.name?.en?.toLowerCase()
+                      ]
+                  ))
+              }
+            >
+              {isAddedToCart ? (
+                <span className="flex items-center gap-2">
+                  <Check className="w-5 h-5" />
+                  {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}
+                </span>
+              ) : (
+                <>
+                  {t('add_to_cart', lang)}
+                </>
+              )}
+            </button>
             {/* زر الواتساب الديناميكي */}
             <div className="mb-10">
               <a
