@@ -1488,7 +1488,7 @@ Thank you.`;
                                     <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">Tabby</span>
                                   )}
                                   {method.code === 'cod' && (
-                                    <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">COD</span>
+                                    <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">{t('cod', lang)}</span>
                                   )}
                                 </div>
 

@@ -198,6 +198,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     size: "Size",
     privacy:"Polci Privacy",
     termst:"Termst",
+    cod:"cash",
     
     // Auth & Checkout
     login: "Login",
@@ -305,7 +306,7 @@ easy_care_desc: "We provide innovative solutions that meet the needs of our cust
     order_summary: "ملخص الطلب",
     no_orders: "لا توجد طلبات بعد",
     no_orders_desc: "يبدو أنك لم تقم بأي عمليات شراء بعد.",
-
+    cod:"كاش",
     // Addresses
     add_new_address: "إضافة عنوان جديد",
     edit_address: "تعديل العنوان",
