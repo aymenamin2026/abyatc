@@ -1745,17 +1745,8 @@ Thank you.`;
             }
           }
 
-          setNewAddress({
-            ...newAddress,
-            latitude: data.latitude,
-            longitude: data.longitude,
-            address_1: data.address_1 || newAddress.address_1,
-            city: data.city || newAddress.city,
-            postcode: data.postcode || newAddress.postcode,
-            country_id: determinedCountryId,
-            zone_id: determinedZoneId,
-            state: determinedStateName
-          });
+          /* ⬇️ السطر رقم 1229 بعد التعديل والإصلاح ⬇️ */
+          setNewAddress({ ...newAddress, zone_id: val || '', state: selectedZone ? selectedZone.name : '' });
         }}
       />
 
