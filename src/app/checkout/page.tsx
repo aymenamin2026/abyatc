@@ -1051,9 +1051,13 @@ Thank you.`;
                   </section>
 
                   {/* Shipping Address */}
-                  <section className="bg-background p-8 rounded-2xl shadow-sm border border-border/50 mb-8">
-                    <div className="flex justify-between items-center mb-6">
-                      <h2 className="font-serif text-2xl font-bold text-foreground">{t('shipping_address', lang)}</h2>
+                  <section className="bg-background p-6 md:p-8 rounded-2xl shadow-sm border border-border/60 mb-8 transition-colors duration-200">
+                    <div className="flex justify-between items-center mb-6 border-b border-border/40 pb-4">
+                      <div className="flex items-center gap-3">
+                        {/* خط جانبي باللون المخصص ليميز العنوان الرئيسي */}
+                        <span className="w-1.5 h-7 rounded-full" style={{ backgroundColor: '#fbc70f' }}></span>
+                        <h2 className="font-serif text-2xl font-bold text-foreground">{t('shipping_address', lang)}</h2>
+                      </div>
                       {user && addresses.length > 0 && (
                         <button
                           onClick={() => {
@@ -1064,7 +1068,8 @@ Thank you.`;
                               setNewAddress({ first_name: "", last_name: "", address_1: "", address_2: "", city: "", postcode: "", state: "", country_id: "", zone_id: "", latitude: "", longitude: "", is_default: false, address_type: "home" });
                             }
                           }}
-                          className="text-sm text-primary hover:underline"
+                          className="text-sm font-medium transition-colors hover:opacity-80"
+                          style={{ color: '#fbc70f' }}
                         >
                           {isAddingNewAddress ? t('cancel', lang) : `+ ${t('add_new_address', lang)}`}
                         </button>
@@ -1073,67 +1078,75 @@ Thank you.`;
 
                     {user && !isAddingNewAddress && addresses.length > 0 ? (
                       <div className="space-y-4">
-                        {addresses.map((addr) => (
-                          <label
-                            key={addr.id}
-                            className={`flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all
-                          ${selectedAddressId === addr.id ? 'border-primary bg-primary/5 shadow-sm' : 'border-border hover:border-primary/50'}`}
-                          >
-                            <div className="flex items-center h-5 mt-0.5">
-                              <input
-                                type="radio"
-                                name="delivery_address"
-                                value={addr.id}
-                                checked={selectedAddressId === addr.id}
-                                onChange={() => setSelectedAddressId(addr.id)}
-                                className="w-4 h-4 text-primary focus:ring-primary border-gray-300"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex justify-between items-start">
-                                <h3 className="font-medium text-foreground">{addr.first_name} {addr.last_name}</h3>
-                                <div className="flex items-center gap-3">
-                                  <button
-                                    type="button"
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleEditAddressClick(addr); }}
-                                    className="text-xs text-primary hover:text-primary/70 font-semibold"
-                                  >
-                                    {t('edit', lang)}
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAddressToDelete(addr.id); }}
-                                    disabled={isDeletingAddress === addr.id}
-                                    className="text-xs text-red-600 hover:text-red-500 font-semibold disabled:opacity-50"
-                                  >
-                                    {isDeletingAddress === addr.id ? t('deleting', lang) : t('delete', lang)}
-                                  </button>
+                        {addresses.map((addr) => {
+                          const isSelected = selectedAddressId === addr.id;
+                          return (
+                            <label
+                              key={addr.id}
+                              className="flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all bg-card text-card-foreground hover:shadow-md"
+                              style={{
+                                borderColor: isSelected ? '#fbc70f' : 'var(--border)',
+                                backgroundColor: isSelected ? 'rgba(251, 199, 15, 0.05)' : ''
+                              }}
+                            >
+                              <div className="flex items-center h-5 mt-0.5">
+                                <input
+                                  type="radio"
+                                  name="delivery_address"
+                                  value={addr.id}
+                                  checked={isSelected}
+                                  onChange={() => setSelectedAddressId(addr.id)}
+                                  className="w-4 h-4 focus:ring-offset-background"
+                                  style={{ color: '#fbc70f', accentColor: '#fbc70f' }}
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex justify-between items-start">
+                                  <h3 className="font-semibold text-foreground">{addr.first_name} {addr.last_name}</h3>
+                                  <div className="flex items-center gap-3">
+                                    <button
+                                      type="button"
+                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleEditAddressClick(addr); }}
+                                      className="text-xs font-semibold hover:opacity-80 transition-opacity"
+                                      style={{ color: '#fbc70f' }}
+                                    >
+                                      {t('edit', lang)}
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAddressToDelete(addr.id); }}
+                                      disabled={isDeletingAddress === addr.id}
+                                      className="text-xs text-red-600 dark:text-red-400 hover:text-red-500 font-semibold disabled:opacity-50"
+                                    >
+                                      {isDeletingAddress === addr.id ? t('deleting', lang) : t('delete', lang)}
+                                    </button>
+                                  </div>
+                                </div>
+                                <div className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                                  {addr.address_1} {addr.address_2 && `, ${addr.address_2}`}<br />
+                                  {addr.city}, {addr.state} {addr.postcode}
                                 </div>
                               </div>
-                              <div className="text-sm text-muted-foreground mt-1">
-                                {addr.address_1} {addr.address_2 && `, ${addr.address_2}`}<br />
-                                {addr.city}, {addr.state} {addr.postcode}
-                              </div>
-                            </div>
-                          </label>
-                        ))}
+                            </label>
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="space-y-4">
                         {addressError && (
-                          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
+                          <div className="bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm border border-red-200 dark:border-red-900/50">
                             {addressError}
                           </div>
                         )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
-                            <div className="flex bg-secondary/30 border border-border rounded-lg p-1 w-full max-w-sm">
+                            <div className="flex bg-secondary/40 dark:bg-zinc-800/60 border border-border rounded-xl p-1 w-full max-w-sm">
                               {['home', 'office', 'other'].map(type => (
                                 <button
                                   key={type}
                                   type="button"
                                   onClick={() => setNewAddress({ ...newAddress, address_type: type })}
-                                  className={`flex-1 py-2 text-sm text-center rounded-md font-medium capitalize transition-all ${newAddress.address_type === type ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                  className={`flex-1 py-2 text-sm text-center rounded-lg font-medium capitalize transition-all ${newAddress.address_type === type ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                                 >
                                   {t(type as any, lang)}
                                 </button>
@@ -1142,21 +1155,21 @@ Thank you.`;
                           </div>
 
                           <div>
-                            <input type="text" placeholder={t('first_name', lang)} value={newAddress.first_name} onChange={e => setNewAddress({ ...newAddress, first_name: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
+                            <input type="text" placeholder={t('first_name', lang)} value={newAddress.first_name} onChange={e => setNewAddress({ ...newAddress, first_name: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-offset-background transition-all bg-background text-foreground placeholder:text-muted-foreground" style={{ '--tw-ring-color': '#fbc70f' } as any} />
                           </div>
                           <div>
-                            <input type="text" placeholder={t('last_name', lang)} value={newAddress.last_name} onChange={e => setNewAddress({ ...newAddress, last_name: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
+                            <input type="text" placeholder={t('last_name', lang)} value={newAddress.last_name} onChange={e => setNewAddress({ ...newAddress, last_name: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-offset-background transition-all bg-background text-foreground placeholder:text-muted-foreground" style={{ '--tw-ring-color': '#fbc70f' } as any} />
                           </div>
                           <div className="md:col-span-2">
-                            <input type="text" placeholder={t('address', lang)} value={newAddress.address_1} onChange={e => setNewAddress({ ...newAddress, address_1: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
+                            <input type="text" placeholder={t('address', lang)} value={newAddress.address_1} onChange={e => setNewAddress({ ...newAddress, address_1: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-offset-background transition-all bg-background text-foreground placeholder:text-muted-foreground" style={{ '--tw-ring-color': '#fbc70f' } as any} />
                           </div>
                           <div className="md:col-span-2">
-                            <input type="text" placeholder={t('apartment', lang)} value={newAddress.address_2} onChange={e => setNewAddress({ ...newAddress, address_2: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
+                            <input type="text" placeholder={t('apartment', lang)} value={newAddress.address_2} onChange={e => setNewAddress({ ...newAddress, address_2: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-offset-background transition-all bg-background text-foreground placeholder:text-muted-foreground" style={{ '--tw-ring-color': '#fbc70f' } as any} />
                           </div>
-                          {/* Hidden input always carries the country value */}
+
                           <input type="hidden" name="country_id" value={newAddress.country_id} />
 
-                          {/* Only show country selector if no store-level default is configured */}
+                          {/* إصلاح قوائم الاختيار لتناسب الثيم المظلم */}
                           {!defaultCountryId && (
                             <div className="md:col-span-2 relative z-50">
                               <Combobox value={newAddress.country_id || ""} onChange={async (val) => {
@@ -1170,18 +1183,19 @@ Thank you.`;
                               }}>
                                 <div className="relative">
                                   <Combobox.Input
-                                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent text-foreground"
+                                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-offset-background transition-all bg-background text-foreground"
+                                    style={{ '--tw-ring-color': '#fbc70f' } as any}
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCountryQuery(event.target.value)}
                                     displayValue={(countryId: string) => countries.find((c: any) => c.id.toString() === countryId)?.name || ''}
                                     placeholder={t('select_country', lang)}
                                   />
                                   <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                                    <ChevronRight className={`h-5 w-5 text-gray-400 ${lang === 'ar' ? 'rotate-180' : ''}`} aria-hidden="true" />
+                                    <ChevronRight className={`h-5 w-5 text-muted-foreground ${lang === 'ar' ? 'rotate-180' : ''}`} aria-hidden="true" />
                                   </Combobox.Button>
                                 </div>
-                                <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-lg bg-white dark:bg-zinc-900 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm border border-border">
                                   {filteredCountries.length === 0 && countryQuery !== '' ? (
-                                    <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                                    <div className="relative cursor-default select-none py-2 px-4 text-muted-foreground">
                                       {t('nothing_found', lang)}
                                     </div>
                                   ) : (
@@ -1189,21 +1203,17 @@ Thank you.`;
                                       <Combobox.Option
                                         key={country.id}
                                         className={({ active }) =>
-                                          `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-primary text-white' : 'text-gray-900'
-                                          }`
+                                          `relative cursor-default select-none py-2 pl-10 pr-4 transition-colors ${active ? 'bg-secondary text-foreground' : 'text-foreground'}`
                                         }
                                         value={country.id.toString()}
                                       >
                                         {({ selected, active }) => (
                                           <>
-                                            <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                            <span className={`block truncate ${selected ? 'font-semibold' : 'font-normal'}`}>
                                               {country.name}
                                             </span>
                                             {selected ? (
-                                              <span
-                                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-primary'
-                                                  }`}
-                                              >
+                                              <span className="absolute inset-y-0 left-0 flex items-center pl-3" style={{ color: '#fbc70f' }}>
                                                 <Check className="h-5 w-5" aria-hidden="true" />
                                               </span>
                                             ) : null}
@@ -1218,7 +1228,7 @@ Thank you.`;
                           )}
 
                           <div>
-                            <input type="text" placeholder={t('city', lang)} value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
+                            <input type="text" placeholder={t('city', lang)} value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-offset-background transition-all bg-background text-foreground placeholder:text-muted-foreground" style={{ '--tw-ring-color': '#fbc70f' } as any} />
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="relative z-50">
@@ -1228,18 +1238,19 @@ Thank you.`;
                               }} disabled={zones.length === 0}>
                                 <div className="relative">
                                   <Combobox.Input
-                                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent text-foreground disabled:opacity-50"
+                                    className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-offset-background transition-all bg-background text-foreground disabled:opacity-40"
+                                    style={{ '--tw-ring-color': '#fbc70f' } as any}
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setZoneQuery(event.target.value)}
                                     displayValue={(zoneId: string) => zones.find((z) => z.id.toString() === zoneId)?.name || ''}
                                     placeholder={t('select_state', lang)}
                                   />
                                   <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2" disabled={zones.length === 0}>
-                                    <ChevronRight className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                                   </Combobox.Button>
                                 </div>
-                                <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                <Combobox.Options className="absolute z-[100] mt-1 max-h-60 w-full overflow-y-auto rounded-lg bg-white dark:bg-zinc-900 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm border border-border">
                                   {filteredZones.length === 0 && zoneQuery !== '' ? (
-                                    <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                                    <div className="relative cursor-default select-none py-2 px-4 text-muted-foreground">
                                       {t('nothing_found', lang)}
                                     </div>
                                   ) : (
@@ -1247,21 +1258,17 @@ Thank you.`;
                                       <Combobox.Option
                                         key={zone.id}
                                         className={({ active }) =>
-                                          `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-primary text-white' : 'text-gray-900'
-                                          }`
+                                          `relative cursor-default select-none py-2 pl-10 pr-4 transition-colors ${active ? 'bg-secondary text-foreground' : 'text-foreground'}`
                                         }
                                         value={zone.id.toString()}
                                       >
                                         {({ selected, active }) => (
                                           <>
-                                            <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                            <span className={`block truncate ${selected ? 'font-semibold' : 'font-normal'}`}>
                                               {zone.name}
                                             </span>
                                             {selected ? (
-                                              <span
-                                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-primary'
-                                                  }`}
-                                              >
+                                              <span className="absolute inset-y-0 left-0 flex items-center pl-3" style={{ color: '#fbc70f' }}>
                                                 <Check className="h-5 w-5" aria-hidden="true" />
                                               </span>
                                             ) : null}
@@ -1273,11 +1280,16 @@ Thank you.`;
                                 </Combobox.Options>
                               </Combobox>
                             </div>
-                            <input type="text" placeholder={t('zip_code', lang)} value={newAddress.postcode} onChange={e => setNewAddress({ ...newAddress, postcode: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-transparent" />
+                            <input type="text" placeholder={t('zip_code', lang)} value={newAddress.postcode} onChange={e => setNewAddress({ ...newAddress, postcode: e.target.value })} className="w-full border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-offset-background transition-all bg-background text-foreground placeholder:text-muted-foreground" style={{ '--tw-ring-color': '#fbc70f' } as any} />
                           </div>
 
-                          <div className="md:col-span-2 flex items-center justify-between pb-2 border-b border-border">
-                            <button type="button" onClick={() => setShowMapModal(true)} className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg text-sm font-medium transition-colors border border-primary/20">
+                          <div className="md:col-span-2 flex items-center justify-between pb-2 border-b border-border/40">
+                            <button
+                              type="button"
+                              onClick={() => setShowMapModal(true)}
+                              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:opacity-90 border"
+                              style={{ backgroundColor: 'rgba(251, 199, 15, 0.1)', color: '#fbc70f', borderColor: 'rgba(251, 199, 15, 0.3)' }}
+                            >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"></path>
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -1288,10 +1300,18 @@ Thank you.`;
 
                           <div className="space-y-3 md:col-span-2 pt-2">
                             <label className="flex items-center gap-3 cursor-pointer group w-fit">
-                              <button type="button" onClick={() => setNewAddress({ ...newAddress, is_default: !newAddress.is_default })} className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-2 ring-transparent focus:ring-primary/50 ${newAddress.is_default ? 'bg-primary' : 'bg-secondary'}`}>
+                              <button
+                                type="button"
+                                onClick={() => setNewAddress({ ...newAddress, is_default: !newAddress.is_default })}
+                                className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-2 ring-transparent ring-offset-background"
+                                style={{
+                                  backgroundColor: newAddress.is_default ? '#fbc70f' : 'var(--secondary)',
+                                  '--tw-ring-color': '#fbc70f'
+                                } as any}
+                              >
                                 <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${newAddress.is_default ? (lang === 'ar' ? '-translate-x-5' : 'translate-x-5') : 'translate-x-0'}`}></span>
                               </button>
-                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{t('default_address', lang)}</span>
+                              <span className="text-sm font-medium text-foreground group-hover:opacity-80 transition-opacity">{t('default_address', lang)}</span>
                             </label>
                           </div>
 
@@ -1301,7 +1321,8 @@ Thank you.`;
                                 type="button"
                                 onClick={handleSaveAddress}
                                 disabled={isSavingAddress || !newAddress.first_name || !newAddress.last_name || !newAddress.address_1 || !newAddress.city || !newAddress.postcode}
-                                className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2"
+                                className="text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-sm active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center gap-2 hover:brightness-105"
+                                style={{ backgroundColor: '#fbc70f' }}
                               >
                                 {isSavingAddress ? t('saving', lang) : (editingAddressId ? t('edit_address', lang) : t('save_address', lang))}
                               </button>
