@@ -36,7 +36,7 @@ interface Order {
   items: OrderItem[];
 }
 
-// 2. المحاسبة والمنطق
+// 2. المحاسبة والمنطق - تم إصلاحه وتجاهل القيمة القديمة الخاطئة
 const calculateOrderTotals = (order: Order, taxRate: number, pricesIncludeTax: boolean) => {
   const itemsSubtotal = order.items?.reduce((sum: number, item: OrderItem) => {
     const price = parseFloat(String(item.unit_price || item.price || '0'));
@@ -58,18 +58,26 @@ const calculateOrderTotals = (order: Order, taxRate: number, pricesIncludeTax: b
   }
 
   // إذا تم التسعير، نكمل الحسابات بشكل طبيعي
-  let shipping = parseFloat(String(order.shipping_amount || '0'));
-  let tax = (order.tax_amount !== undefined && order.tax_amount !== null)
-    ? parseFloat(String(order.tax_amount))
-    : taxRate;
+  const shipping = parseFloat(String(order.shipping_amount || '0'));
 
   let finalSubtotal = itemsSubtotal;
-  let finalTax = tax;
-  let finalTotal = itemsSubtotal + shipping + tax;
+  let finalTax = 0;
+  let finalTotal = itemsSubtotal + shipping;
 
-  if (pricesIncludeTax) {
-    finalSubtotal = Math.max(0, itemsSubtotal - tax);
-    finalTotal = itemsSubtotal + shipping;
+  // الحساب الديناميكي للضريبة بناءً على النسبة المئوية وتجاهل order.tax_amount
+  if (taxRate > 0) {
+    if (pricesIncludeTax) {
+      // الضريبة مشمولة داخل أسعار المنتجات
+      const beforeTax = itemsSubtotal / (1 + (taxRate / 100));
+      finalTax = itemsSubtotal - beforeTax;
+      finalSubtotal = beforeTax;
+      // الإجمالي النهائي يظل كما هو لأن السعر يشمل الضريبة
+    } else {
+      // الضريبة تضاف فوق أسعار المنتجات
+      finalTax = itemsSubtotal * (taxRate / 100);
+      finalSubtotal = itemsSubtotal;
+      finalTotal = itemsSubtotal + shipping + finalTax;
+    }
   }
 
   return {
@@ -156,9 +164,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
       <div className="overflow-x-auto custom-scrollbar bg-card rounded-3xl border border-border shadow-sm">
         <table className="w-full text-start border-collapse min-w-[600px]">
           <thead>
-            {/* 👈 تم التعديل: جعل الخلفية فاتحة تماماً في الوضع العادي، وداكنة في الوضع المظلم */}
             <tr className="border-b border-border bg-muted/50 dark:bg-[#1a1a1a]">
-              {/* 👈 تم التعديل: تحويل نصوص العناوين إلى text-foreground في الوضع الفاتح لضمان ظهورها بالأسود */}
               <th className="py-5 px-6 font-semibold text-start text-foreground/80 dark:text-gray-400">{t('order_id', lang)}</th>
               <th className="py-5 px-6 font-semibold text-start text-foreground/80 dark:text-gray-400">{t('order_date', lang)}</th>
               <th className="py-5 px-6 font-semibold text-start text-foreground/80 dark:text-gray-400">{t('order_status', lang)}</th>
@@ -168,7 +174,6 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
           </thead>
           <tbody className="divide-y divide-border">
             {orders.map((order) => {
-              console.log(order);
               const { isNotPricedYet, finalTotal } = calculateOrderTotals(order, taxRate, pricesIncludeTax);
 
               return (
@@ -237,7 +242,6 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
       <AnimatePresence>
         {selectedOrder && (
           (() => {
-            // 🔍 فحص برمي ومباشر وصارم لحالة كلاس dark لتغيير الستايل تلقائياً
             const isDarkMode = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
 
             const modalBg = isDarkMode ? '#121212' : '#ffffff';
@@ -357,9 +361,9 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                                     <>
                                       {renderCurrency()}
                                       {(() => {
-                                        if (pricesIncludeTax && selectedOrder.items?.length > 0) {
-                                          const itemTaxShare = taxRate / selectedOrder.items.length;
-                                          return Math.max(0, basePrice - (itemTaxShare / item.quantity)).toFixed(2);
+                                        // إصلاح المنطق الرياضي لاستخراج السعر الأساسي للمنتج
+                                        if (pricesIncludeTax && taxRate > 0) {
+                                          return (basePrice / (1 + (taxRate / 100))).toFixed(2);
                                         }
                                         return basePrice.toFixed(2);
                                       })()}
@@ -375,9 +379,9 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                                     {renderCurrency()}
                                     {(() => {
                                       const itemTotal = parseFloat(String(item.total || (basePrice * item.quantity)));
-                                      if (pricesIncludeTax && selectedOrder.items?.length > 0) {
-                                        const itemTaxShare = taxRate / selectedOrder.items.length;
-                                        return Math.max(0, itemTotal - itemTaxShare).toFixed(2);
+                                      // إصلاح المنطق الرياضي لاستخراج إجمالي سعر المنتج قبل الضريبة
+                                      if (pricesIncludeTax && taxRate > 0) {
+                                        return (itemTotal / (1 + (taxRate / 100))).toFixed(2);
                                       }
                                       return itemTotal.toFixed(2);
                                     })()}
