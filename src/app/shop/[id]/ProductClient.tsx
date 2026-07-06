@@ -507,18 +507,27 @@ ${currentUrl}
             </div>
 
             {/* Guarantees Section (أضيف لتعزيز ثقة العميل) */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-6 border-t border-border/60">
-              {/* <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-secondary/20">
-                <ShieldCheck className="w-8 h-8 text-primary mb-2" />
-                <span className="text-sm font-medium text-foreground">{lang === 'ar' ? 'دفع آمن 100%' : 'Secure Checkout'}</span>
-              </div> */}
-              <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-secondary/20">
-                <Truck className="w-8 h-8 text-primary mb-2" />
-                <span className="text-sm font-medium text-foreground">{lang === 'ar' ? 'شحن سريع وموثوق' : 'Fast Shipping'}</span>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-6 border-t border-border/60 w-full">
+              {/* 1. ميزة الشحن السريع */}
+              {/* 👈 تم التعديل: جعل الخلفية مرنة ومريحة في كلا الوضعين bg-muted/40 أو bg-gray-50/80 في الفاتح */}
+              <div className="flex flex-col items-center justify-center text-center p-4 rounded-xl bg-gray-50 dark:bg-zinc-900/50 border border-gray-100 dark:border-zinc-800/50 shadow-sm">
+                {/* 👈 تم التعديل: تلوين الأيقونة بالأصفر fbc70f وفي المظلم تضيء بشكل رائع */}
+                <Truck className="w-8 h-8 text-[#093f89] dark:text-[#fbc70f] mb-2 transition-transform duration-300 hover:scale-110" />
+                <span className="text-sm font-bold text-foreground">{lang === 'ar' ? 'شحن سريع وموثوق' : 'Fast Shipping'}</span>
               </div>
-              <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-secondary/20 col-span-2 md:col-span-1">
-                <Clock className="w-8 h-8 text-primary mb-2" />
-                <span className="text-sm font-medium text-foreground">{lang === 'ar' ? 'دعم فني متواصل' : '24/7 Support'}</span>
+
+              {/* 2. ميزة الدعم الفني */}
+              {/* 👈 تم التعديل: جعل كرت الدعم الفني يأخذ العرض الكامل بالتوازي على الهواتف من خلال التحكم بـ col-span-1 */}
+              <div className="flex flex-col items-center justify-center text-center p-4 rounded-xl bg-gray-50 dark:bg-zinc-900/50 border border-gray-100 dark:border-zinc-800/50 shadow-sm col-span-1 md:col-span-1">
+                {/* 👈 تم التعديل: استخدام اللون الأزرق أو الأصفر التوافقي */}
+                <Clock className="w-8 h-8 text-[#093f89] dark:text-[#fbc70f] mb-2 transition-transform duration-300 hover:scale-110" />
+                <span className="text-sm font-bold text-foreground">{lang === 'ar' ? 'دعم فني متواصل' : '24/7 Support'}</span>
+              </div>
+
+              {/* 3. ميزة الدفع الآمن (إذا رغبت في إعادة تفعيلها مستقبلاً ستكون متناسقة تلقائياً) */}
+              <div className="flex flex-col items-center justify-center text-center p-4 rounded-xl bg-gray-50 dark:bg-zinc-900/50 border border-gray-100 dark:border-zinc-800/50 shadow-sm col-span-2 md:col-span-1">
+                <ShieldCheck className="w-8 h-8 text-[#093f89] dark:text-[#fbc70f] mb-2 transition-transform duration-300 hover:scale-110" />
+                <span className="text-sm font-bold text-foreground">{lang === 'ar' ? 'دفع آمن 100%' : 'Secure Checkout'}</span>
               </div>
             </div>
 
