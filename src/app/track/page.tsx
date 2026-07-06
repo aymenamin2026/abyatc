@@ -329,6 +329,9 @@ export default function TrackOrderPage() {
 
                       <div className="space-y-10">
                         {displayHistories.map((history, idx) => {
+                          console.log(order.histories);
+                          console.log(order);
+
                           const isLatest = idx === 0;
                           const visual = getStatusVisuals(history.status);
                           const StatusIcon = visual.icon;

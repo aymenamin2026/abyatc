@@ -239,6 +239,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
       </div>
 
       {/* 3. نافذة تفاصيل الطلب */}
+      {/* 3. نافذة تفاصيل الطلب */}
       <AnimatePresence>
         {selectedOrder && (
           (() => {
@@ -251,63 +252,65 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
             const borderColor = isDarkMode ? '#27272a' : '#f3f4f6';
 
             return (
-              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md">
+              // تم رفع z-[9999] لضمان عدم تداخل النافذة مع القائمة العلوية
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 20 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300 }}
                   style={{ backgroundColor: modalBg, color: textColor, borderColor: borderColor }}
-                  className="rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border"
+                  // تم تصغير العرض إلى max-w-xl وتقليل انحناء الحواف قليلاً لتبدو أرتب
+                  className="rounded-[1.5rem] shadow-2xl w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col border"
                 >
                   {/* Header */}
                   <div
                     style={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#f9fafb', borderColor: borderColor }}
-                    className="p-6 border-b flex items-center justify-between"
+                    className="p-4 md:p-5 border-b flex items-center justify-between"
                   >
                     <div>
-                      <h3 style={{ color: textColor }} className="text-2xl font-bold font-serif">{t('order_details', lang)}</h3>
-                      <p style={{ color: textMuted }} className="text-sm mt-1 font-medium">{t('order_id', lang)} #{selectedOrder.order_number}</p>
+                      <h3 style={{ color: textColor }} className="text-xl font-bold font-serif">{t('order_details', lang)}</h3>
+                      <p style={{ color: textMuted }} className="text-xs mt-0.5 font-medium">{t('order_id', lang)} #{selectedOrder.order_number}</p>
                     </div>
                     <button
                       onClick={() => setSelectedOrder(null)}
-                      className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
+                      className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
                       style={{ color: textMuted }}
                     >
-                      <X className="w-6 h-6" />
+                      <X className="w-5 h-5" />
                     </button>
                   </div>
 
                   {/* Body */}
-                  <div style={{ backgroundColor: modalBg }} className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+                  <div style={{ backgroundColor: modalBg }} className="flex-1 overflow-y-auto p-4 md:p-5 space-y-5 custom-scrollbar">
 
                     {/* Order Info Bar */}
                     <div
                       style={{ backgroundColor: subBoxBg, borderColor: borderColor }}
-                      className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl border shadow-sm"
+                      className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl border shadow-sm"
                     >
                       <div>
                         <div style={{ color: textMuted }} className="text-[10px] uppercase tracking-wider mb-1 font-bold">{t('order_status', lang)}</div>
-                        <div className="text-sm font-bold capitalize text-[#093f89] dark:text-[#fbc70f]">{t(selectedOrder.status as any, lang)}</div>
+                        <div className="text-xs md:text-sm font-bold capitalize text-[#093f89] dark:text-[#fbc70f]">{t(selectedOrder.status as any, lang)}</div>
                       </div>
                       <div>
                         <div style={{ color: textMuted }} className="text-[10px] uppercase tracking-wider mb-1 font-bold">{t('order_date', lang)}</div>
-                        <div style={{ color: textColor }} className="text-sm font-bold">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
+                        <div style={{ color: textColor }} className="text-xs md:text-sm font-bold">{new Date(selectedOrder.created_at).toLocaleDateString()}</div>
                       </div>
                       <div>
                         <div style={{ color: textMuted }} className="text-[10px] uppercase tracking-wider mb-1 font-bold">{t('contact_det', lang)}</div>
-                        <div style={{ color: textColor }} className="text-sm font-bold capitalize">{selectedOrder.payment_method || '-'}</div>
+                        <div style={{ color: textColor }} className="text-xs md:text-sm font-bold capitalize">{selectedOrder.payment_method || '-'}</div>
                       </div>
                       <div>
                         <div style={{ color: textMuted }} className="text-[10px] uppercase tracking-wider mb-1 font-bold">{t('order_total', lang)}</div>
                         {(() => {
                           const { isNotPricedYet, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
                           return isNotPricedYet ? (
-                            <span className="inline-block text-[11px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-0.5 rounded border border-[#fbc70f]/20 font-bold">
+                            <span className="inline-block text-[10px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-0.5 rounded border border-[#fbc70f]/20 font-bold">
                               {awaitingPricingText}
                             </span>
                           ) : (
-                            <div style={{ color: textColor }} className="text-sm font-bold flex items-center">
+                            <div style={{ color: textColor }} className="text-xs md:text-sm font-bold flex items-center">
                               {renderCurrency()}
                               {finalTotal.toFixed(2)}
                             </div>
@@ -318,11 +321,11 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
 
                     {/* Items List */}
                     <div>
-                      <h4 style={{ color: textColor }} className="font-bold mb-4 flex items-center gap-2 text-lg">
-                        <Package className="w-5 h-5 text-[#093f89] dark:text-[#fbc70f]" />
+                      <h4 style={{ color: textColor }} className="font-bold mb-3 flex items-center gap-2 text-base">
+                        <Package className="w-4 h-4 text-[#093f89] dark:text-[#fbc70f]" />
                         {t('order_items', lang)} ({selectedOrder.items?.length || 0})
                       </h4>
-                      <div className="space-y-3">
+                      <div className="space-y-2.5">
                         {selectedOrder.items?.map((item: any) => {
                           const basePrice = parseFloat(String(item.unit_price || item.price || '0'));
                           const isItemUnpriced = basePrice === 0;
@@ -331,9 +334,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                             <div
                               key={item.id}
                               style={{ backgroundColor: subBoxBg, borderColor: borderColor }}
-                              className="flex gap-4 items-center p-4 rounded-2xl border hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+                              className="flex gap-3 items-center p-3 rounded-xl border hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
                             >
-                              <div style={{ backgroundColor: modalBg, borderColor: borderColor }} className="w-16 h-20 rounded-xl overflow-hidden shrink-0 border">
+                              {/* تم تصغير صورة المنتج هنا لتصبح w-12 h-12 في الموبايل و w-14 h-14 في الديسكتوب */}
+                              <div style={{ backgroundColor: modalBg, borderColor: borderColor }} className="w-12 h-12 md:w-14 md:h-14 rounded-lg overflow-hidden shrink-0 border">
                                 <img
                                   src={getImageUrl(item.product?.images?.[0] || item.product?.image || item.image)}
                                   alt="Product"
@@ -347,11 +351,11 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                                   {item.product?.name ? (item.product.name[lang as keyof typeof item.product.name] || item.product.name.en || item.product.name) : (item.name || 'Product')}
                                 </div>
                                 {(item.color || item.size) && (
-                                  <div style={{ color: textMuted }} className="text-xs mt-1 font-medium">
+                                  <div style={{ color: textMuted }} className="text-[11px] mt-0.5 font-medium">
                                     {item.color} {item.color && item.size && '|'} {item.size}
                                   </div>
                                 )}
-                                <div className="text-xs font-bold text-[#093f89] dark:text-[#fbc70f] mt-2 flex items-center gap-1">
+                                <div className="text-[11px] font-bold text-[#093f89] dark:text-[#fbc70f] mt-1 flex items-center gap-1">
                                   Qty: {item.quantity} ×
                                   {isItemUnpriced ? (
                                     <span className="text-[10px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-1.5 py-0.5 rounded border border-[#fbc70f]/20">
@@ -361,7 +365,6 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                                     <>
                                       {renderCurrency()}
                                       {(() => {
-                                        // إصلاح المنطق الرياضي لاستخراج السعر الأساسي للمنتج
                                         if (pricesIncludeTax && taxRate > 0) {
                                           return (basePrice / (1 + (taxRate / 100))).toFixed(2);
                                         }
@@ -371,7 +374,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                                   )}
                                 </div>
                               </div>
-                              <div style={{ color: textColor }} className="text-base font-bold whitespace-nowrap flex items-center">
+                              <div style={{ color: textColor }} className="text-sm md:text-base font-bold whitespace-nowrap flex items-center">
                                 {isItemUnpriced ? (
                                   <span className="text-xs text-yellow-600 dark:text-[#fbc70f]">-</span>
                                 ) : (
@@ -379,7 +382,6 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                                     {renderCurrency()}
                                     {(() => {
                                       const itemTotal = parseFloat(String(item.total || (basePrice * item.quantity)));
-                                      // إصلاح المنطق الرياضي لاستخراج إجمالي سعر المنتج قبل الضريبة
                                       if (pricesIncludeTax && taxRate > 0) {
                                         return (itemTotal / (1 + (taxRate / 100))).toFixed(2);
                                       }
@@ -394,10 +396,10 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                       </div>
                     </div>
 
-                    {/* Shipping & Delivery */}
+                    {/* Shipping & Delivery - Summary */}
                     <div
                       style={{ backgroundColor: subBoxBg, borderColor: borderColor }}
-                      className="space-y-4 text-sm p-6 rounded-2xl border"
+                      className="space-y-3 text-xs md:text-sm p-4 md:p-5 rounded-xl border"
                     >
                       {(() => {
                         const { isNotPricedYet, shipping, finalTax, finalSubtotal, finalTotal } = calculateOrderTotals(selectedOrder, taxRate, pricesIncludeTax);
@@ -408,7 +410,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                               <span style={{ color: textMuted }} className="font-medium">{t('subtotal', lang)}</span>
                               <span style={{ color: textColor }} className="font-bold flex items-center">
                                 {isNotPricedYet ? (
-                                  <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
+                                  <span className="text-[10px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-0.5 rounded border border-[#fbc70f]/20">{awaitingPricingText}</span>
                                 ) : (<>{renderCurrency()}{finalSubtotal.toFixed(2)}</>)}
                               </span>
                             </div>
@@ -417,7 +419,7 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                               <span style={{ color: textMuted }} className="font-medium">{t('processing_fees', lang)}</span>
                               <span className="text-green-600 dark:text-green-400 font-bold flex items-center">
                                 {isNotPricedYet ? (
-                                  <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
+                                  <span className="text-[10px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-0.5 rounded border border-[#fbc70f]/20">{awaitingPricingText}</span>
                                 ) : shipping > 0 ? (
                                   <>{renderCurrency()}{shipping.toFixed(2)}</>
                                 ) : 'Free'}
@@ -426,23 +428,23 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
 
                             <div className="flex justify-between items-center">
                               <span style={{ color: textMuted }} className="font-medium">
-                                {t('taxes', lang)} {pricesIncludeTax && !isNotPricedYet ? <span className="text-xs opacity-70">({t('included', lang) || 'شاملة'})</span> : ''}
+                                {t('taxes', lang)} {pricesIncludeTax && !isNotPricedYet ? <span className="text-[10px] opacity-70">({t('included', lang) || 'شاملة'})</span> : ''}
                               </span>
                               <span style={{ color: textColor }} className="font-bold flex items-center">
                                 {isNotPricedYet ? (
-                                  <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-md border border-[#fbc70f]/20">{awaitingPricingText}</span>
+                                  <span className="text-[10px] bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-0.5 rounded border border-[#fbc70f]/20">{awaitingPricingText}</span>
                                 ) : (<>{renderCurrency()}{finalTax.toFixed(2)}</>)}
                               </span>
                             </div>
 
-                            <div style={{ backgroundColor: borderColor }} className="h-px my-4"></div>
+                            <div style={{ backgroundColor: borderColor }} className="h-px my-3"></div>
 
-                            <div className="flex justify-between items-center text-base">
+                            <div className="flex justify-between items-center text-sm md:text-base">
                               <span style={{ color: textColor }} className="font-bold">{t('total', lang)}</span>
-                              <span className="font-bold text-[#093f89] dark:text-[#fbc70f] flex items-center text-xl">
+                              <span className="font-bold text-[#093f89] dark:text-[#fbc70f] flex items-center text-lg md:text-xl">
                                 {isNotPricedYet ? (
-                                  <span className="text-sm bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-3 py-1.5 rounded-lg border border-[#fbc70f]/20 flex items-center gap-1.5">
-                                    <AlertCircle className="w-4 h-4" />
+                                  <span className="text-xs bg-[#fbc70f]/10 text-yellow-700 dark:text-[#fbc70f] px-2 py-1 rounded-lg border border-[#fbc70f]/20 flex items-center gap-1">
+                                    <AlertCircle className="w-3.5 h-3.5" />
                                     {awaitingPricingText}
                                   </span>
                                 ) : (<>{renderCurrency()}{finalTotal.toFixed(2)}</>)}
@@ -457,19 +459,19 @@ export default function OrdersTab({ lang }: { lang: "en" | "ar" }) {
                   {/* Footer */}
                   <div
                     style={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#f9fafb', borderColor: borderColor }}
-                    className="p-6 border-t flex gap-3"
+                    className="p-4 md:p-5 border-t flex gap-3"
                   >
                     <Link
                       href={`/track?query=${selectedOrder.order_number}`}
-                      className="flex-1 bg-[#093f89] dark:bg-[#fbc70f] text-white dark:text-black py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg hover:-translate-y-0.5 active:scale-95"
+                      className="flex-1 bg-[#093f89] dark:bg-[#fbc70f] text-white dark:text-black py-2.5 md:py-3 rounded-xl text-sm md:text-base font-bold flex items-center justify-center gap-2 transition-all shadow-md hover:-translate-y-0.5 active:scale-95"
                     >
-                      <Truck className="w-5 h-5" />
+                      <Truck className="w-4 h-4 md:w-5 md:h-5" />
                       {t('track_order', lang)}
                     </Link>
                     <button
                       onClick={() => setSelectedOrder(null)}
                       style={{ backgroundColor: modalBg, color: textColor, borderColor: borderColor }}
-                      className="px-8 py-3.5 border rounded-xl font-bold hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all active:scale-95"
+                      className="px-6 md:px-8 py-2.5 md:py-3 border rounded-xl text-sm md:text-base font-bold hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all active:scale-95"
                     >
                       {t('cancel', lang)}
                     </button>
