@@ -435,54 +435,62 @@ ${currentUrl}
             })}
 
             {/* Actions */}
-            <div className="flex items-center border border-border rounded-full px-4 h-14 bg-background">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6 mt-4 w-full">
+              {/* 1. عدّاد الكمية - تحسين العرض على الهاتف ليكون ممتداً بشكل مريح */}
+              <div className="flex items-center border-2 border-border rounded-2xl px-3 h-16 bg-background w-full sm:w-1/3 shrink-0">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-secondary rounded-xl transition-colors text-muted-foreground hover:text-foreground"
+                >
+                  -
+                </button>
+                <span className="flex-1 text-center font-bold text-lg text-foreground">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-secondary rounded-xl transition-colors text-muted-foreground hover:text-foreground"
+                >
+                  +
+                </button>
+              </div>
+
+              {/* 2. زر إضافة للسلة - إصلاح مشكلة عدم العمل وتحسين الحجم والتوافق */}
               <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-6 h-6 flex items-center justify-center text-xl text-muted-foreground hover:text-foreground transition-colors"
+                onClick={handleAddToCart}
+                /* 👈 تم التعديل: w-full ليمتد على الهاتف، وتثبيت النص الداكن slate-900 ليتناسق تماماً مع الخلفية الذهبية */
+                className={`w-full sm:flex-1 h-16 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg flex items-center justify-center gap-3 shrink-0 active:scale-95
+      ${isAddedToCart
+                    ? 'bg-green-500 text-white shadow-green-500/25 scale-[0.98]'
+                    : 'bg-[#fbc70f] text-slate-900 hover:bg-[#e0b00d] hover:shadow-xl hover:-translate-y-0.5 shadow-[#fbc70f]/20'
+                  }
+      ${(hasVariations && productAttributes.some(attr => !selectedAttributes[(attr.slug || attr.name?.en || "").toLowerCase()])) ? 'opacity-60 cursor-not-allowed' : ''}
+    `}
+                /* 👈 تم التعديل: تحويل مفاتيح الـ slug إلى لور كيس (toLowerCase) لإنهاء تضارب الـ Attributes وضمان تفعيل النقر */
+                disabled={
+                  isAddedToCart ||
+                  (hasVariations && productAttributes.some(attr => {
+                    const slugKey = (attr.slug || attr.name?.en || attr.name || "").toLowerCase();
+                    return !selectedAttributes[slugKey];
+                  }))
+                }
               >
-                -
+                {isAddedToCart ? (
+                  <>
+                    <Check className="w-6 h-6 animate-in zoom-in" />
+                    {t('add_to_cart', lang) === 'Add to Quote Request' ? 'Added Successfully' : 'تمت الإضافة بنجاح'}
+                  </>
+                ) : (
+                  <>
+                    {t('add_to_cart', lang)}
+                  </>
+                )}
               </button>
-              {/* 👈 ضبط لون نص عدّاد الكمية ليتناسق مع الوضعين */}
-              <span className="w-10 text-center font-bold text-foreground">{quantity}</span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="w-6 h-6 flex items-center justify-center text-xl text-muted-foreground hover:text-foreground transition-colors"
-              >
-                +
+
+              {/* 3. زر المفضلة - يظهر بشكل رائع ومتناسق بجانبهم */}
+              <button className="w-full sm:w-16 h-16 bg-secondary/50 flex items-center justify-center rounded-2xl text-foreground hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all border-2 border-transparent shrink-0">
+                <Heart className="w-6 h-6" />
               </button>
             </div>
 
-            {/* زر إضافة للسلة يظهر فقط إذا كان السعر متاحاً */}
-            <button
-              onClick={handleAddToCart}
-              /* 👈 تم التعديل: استبدال كلاسات bg-btn-bg باللون fbc70f الثابت وإجبار النص على اللون الداكن لتباين ممتاز */
-              className={`flex-1 h-14 rounded-full font-bold text-lg transition-all shadow-lg flex items-center justify-center
-    ${isAddedToCart
-                  ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-600/20'
-                  : 'bg-[#fbc70f] hover:bg-[#e0b00d] text-slate-900 dark:text-slate-900 hover:shadow-xl hover:-translate-y-0.5 shadow-[#fbc70f]/20'
-                }`}
-              disabled={
-                isAddedToCart ||
-                (hasVariations &&
-                  productAttributes.some(
-                    attr =>
-                      !selectedAttributes[
-                      attr.slug || attr.name?.en?.toLowerCase()
-                      ]
-                  ))
-              }
-            >
-              {isAddedToCart ? (
-                <span className="flex items-center gap-2">
-                  <Check className="w-5 h-5" />
-                  {t('add_to_cart', lang) === 'Add to Cart' ? 'Added to Cart' : 'تمت الإضافة'}
-                </span>
-              ) : (
-                <>
-                  {t('add_to_cart', lang)}
-                </>
-              )}
-            </button>
             {/* زر الواتساب الديناميكي */}
             <div className="mb-10">
               <a
