@@ -82,13 +82,7 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
       // يمكنك تمرير رمز الدولة ديناميكياً إذا أردت لاحقاً مثل: &countrycodes=sa,ye
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5&accept-language=ar,en`;
 
-      const response = await fetch(url, {
-        headers: {
-          'Accept-Language': 'ar, en',
-          // إضافة User-Agent لضمان عدم حظر الطلبات من خوادم Nominatim المجانية
-          'User-Agent': 'Abyatc_ECommerce_Store_Application'
-        }
-      });
+      const response = await fetch(url);
 
       if (!response.ok) throw new Error('Network response was not ok');
 
@@ -130,7 +124,9 @@ export default function MapPickerModal({ isOpen, onClose, onAddressSelect, initi
   const handleConfirmLocation = async () => {
     setIsConfirming(true);
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}&accept-language=en,ar`);
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}&accept-language=en,ar`
+      );
       const data = await res.json();
 
       let address_1 = '';
