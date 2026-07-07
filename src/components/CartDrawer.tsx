@@ -159,7 +159,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                 <Link
                   href="/cart"
                   onClick={onClose}
-                  className="w-full flex items-center justify-center gap-2 bg-secondary text-secondary-foreground py-3 rounded-full font-medium text-lg hover:bg-secondary/80 transition-all border border-border"
+                  className="w-full flex items-center justify-center gap-2 bg-[#fbc70f] text-[#093f89] py-3 rounded-full font-semibold text-lg hover:bg-[#e2b30d] transition-all border border-[#fbc70f] dark:bg-[#fbc70f] dark:text-[#093f89] dark:hover:bg-[#e2b30d] shadow-sm"
                 >
                   {t('view_cart', lang)}
                 </Link>
