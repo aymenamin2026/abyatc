@@ -1,22 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #1c1917;
+  /* قراءة القيم الديناميكية المحقونة من الـ layout للوضع الفاتح */
+  --background: var(--bg-light, #ffffff);
+  --foreground: var(--text-light, #1c1917);
 
-  --primary: #cda485;
+  --primary: #093f89;
   --primary-foreground: #ffffff;
   
+  --btn-bg: var(--btn-bg-light, #093f89);
+  --btn-text: var(--btn-text-light, #ffffff);
+
   --secondary: #f4ece6;
   --secondary-foreground: #4a3b2c;
-
-  --accent: #eaddcf;
-  --accent-foreground: #2b2118;
-
-  --muted: #f9fafb;
-  --muted-foreground: #6b7280;
-
   --border: #e5e7eb;
+}
+
+.dark {
+  color-scheme: dark;
+  /* قراءة القيم الديناميكية المحقونة من الـ layout للوضع الداكن */
+  --background: var(--bg-dark, #1c1917);
+  --foreground: var(--text-dark, #fafafa);
+
+  --btn-bg: var(--btn-bg-dark, #fbc70f);
+  --btn-text: var(--btn-text-dark, #093f89);
+
+  --border: #374151;
 }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }

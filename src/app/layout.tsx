@@ -97,14 +97,23 @@ export default async function RootLayout({
   const lang = (localeCookie?.value === "en" ? "en" : "ar");
   const dir = lang === "ar" ? "rtl" : "ltr";
 
+  // إعداد متغيرات الألوان بناءً على الحقول الجديدة الديناميكية لوجود الوضعين
   const themeStyles = {
     '--royal-blue': '#093f89',
     '--golden-yellow': '#fbc70f',
     '--primary': settings?.primary_color || '#093f89',
-    '--btn-bg': settings?.button_bg_color || '#093f89',
-    '--btn-text': settings?.button_text_color || "#ffffff",
-    ...(settings?.text_color && { '--foreground': settings.text_color }),
-    ...(settings?.background_color && { '--background': settings.background_color }),
+
+    // ألوان الوضع الفاتح الافتراضية أو القادمة من قاعدة البيانات
+    '--bg-light': settings?.bg_color_light || '#ffffff',
+    '--text-light': settings?.text_color_light || '#1c1917',
+    '--btn-bg-light': settings?.btn_bg_light || '#093f89',
+    '--btn-text-light': settings?.btn_text_light || '#ffffff',
+
+    // ألوان الوضع الداكن الافتراضية أو القادمة من قاعدة البيانات
+    '--bg-dark': settings?.bg_color_dark || '#1c1917',
+    '--text-dark': settings?.text_color_dark || '#fafafa',
+    '--btn-bg-dark': settings?.btn_bg_dark || '#fbc70f',
+    '--btn-text-dark': settings?.btn_text_dark || '#093f89',
   } as React.CSSProperties;
 
   return (
