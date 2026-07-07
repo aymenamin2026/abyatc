@@ -1,53 +1,23 @@
 @import "tailwindcss";
 
-/* القيم الافتراضية كحماية (Fallback) في حال تأخر الـ API */
 :root {
-  --bg-color: #ffffff;
-  --text-color: #1c1917;
-  --btn-bg: #093f89;
-  --btn-text: #ffffff;
-  --btn-hover: #062a5c;
+  --background: #ffffff;
+  --foreground: #1c1917;
+
+  --primary: #cda485;
+  --primary-foreground: #ffffff;
   
-  --brand-blue: #093f89;
-  --brand-gold: #fbc70f;
+  --secondary: #f4ece6;
+  --secondary-foreground: #4a3b2c;
+
+  --accent: #eaddcf;
+  --accent-foreground: #2b2118;
+
+  --muted: #f9fafb;
+  --muted-foreground: #6b7280;
+
+  --border: #e5e7eb;
 }
-
-.dark {
-  color-scheme: dark;
-  --bg-color: #1c1917;
-  --text-color: #fafafa;
-  --btn-bg: #fbc70f;
-  --btn-text: #093f89;
-  --btn-hover: #d4a70a;
-}
-
-@theme inline {
-  /* ربط الألوان الديناميكية */
-  --color-background: var(--bg-color);
-  --color-foreground: var(--text-color);
-  
-  --color-btn-bg: var(--btn-bg);
-  --color-btn-text: var(--btn-text);
-  --color-btn-hover: var(--btn-hover);
-  
-  /* ألوان الهوية الثابتة للتأثيرات والتدرجات */
-  --color-brand-blue: var(--brand-blue);
-  --color-brand-gold: var(--brand-gold);
-
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-playfair);
-}
-
-body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  font-family: var(--font-sans), sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Animations & Glassmorphism */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -56,7 +26,70 @@ body {
 .animate-fadeUp {
   animation: fadeUp 0.8s ease-out forwards;
 }
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-text: var(--btn-text);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
 
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #1c1917;
+  --foreground: #fafafa;
+
+  --primary: #cda485;
+  --primary-foreground: #ffffff;
+
+  --secondary: #2b2118;
+  --secondary-foreground: #f4ece6;
+
+  --accent: #4a3b2c;
+  --accent-foreground: #eaddcf;
+
+  --muted: #374151;
+  --muted-foreground: #9ca3af;
+
+  --border: #374151;
+}
+
+/* Explicit Image Toggles for Next-themes */
+html.dark .theme-light-only {
+  display: none !important;
+}
+html:not(.dark) .theme-dark-only {
+  display: none !important;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* في ملف globals.css */
+.glass-panel {
+  @apply bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-lg;
+}
 @keyframes spin-border {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -64,10 +97,3 @@ body {
 .animate-spin-border {
   animation: spin-border 3s linear infinite;
 }
-
-.glass-panel {
-  @apply bg-background/70 backdrop-blur-xl border border-foreground/10 shadow-lg;
-}
-
-html.dark .theme-light-only { display: none !important; }
-html:not(.dark) .theme-dark-only { display: none !important; }

@@ -21,8 +21,17 @@ import { WishlistProvider } from "@/components/WishlistContext";
 import { fetchSettings, fetchPopups, getImageUrl } from "@/lib/api";
 import "./globals.css";
 
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
-const playfair = Playfair_Display({ variable: "--font-playfair", subsets: ["latin"], display: "swap" });
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const defaultTitle = "لمعة ابيات | Lamaa Abyat";
@@ -35,50 +44,73 @@ export async function generateMetadata(): Promise<Metadata> {
     const favicon = settings?.favicon_path ? getImageUrl(settings.favicon_path) : undefined;
 
     return {
-      title: { default: siteName, template: `%s | ${siteName}` },
+      title: {
+        default: siteName,
+        template: `%s | ${siteName}`,
+      },
       description: desc,
       icons: favicon ? { icon: favicon, apple: favicon } : undefined,
       keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform", "الزي الموحد الخبر", "لمعة ابيات"],
-      verification: { google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U" },
+      verification: {
+        google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U",
+      },
       robots: {
-        index: true, follow: true,
-        googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 },
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
     };
   } catch (error) {
-    return { title: defaultTitle, description: defaultDesc, robots: "index, follow" };
+    console.error("Error generating metadata:", error);
+    return {
+      title: defaultTitle,
+      description: defaultDesc,
+      keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform"],
+      robots: "index, follow",
+    };
   }
 }
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [settings, popups, cookieStore] = await Promise.all([fetchSettings(), fetchPopups(), cookies()]);
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const settingsPromise = fetchSettings();
+  const popupsPromise = fetchPopups();
+  const cookieStorePromise = cookies();
+
+  const [settings, popups, cookieStore] = await Promise.all([
+    settingsPromise,
+    popupsPromise,
+    cookieStorePromise,
+  ]);
 
   const localeCookie = cookieStore.get("NEXT_LOCALE");
+  const fallbackLang = settings?.default_language || "ar";
   const lang = (localeCookie?.value === "en" ? "en" : "ar");
   const dir = lang === "ar" ? "rtl" : "ltr";
 
-  // حقن الألوان الديناميكية من الـ API (الوضع الفاتح والداكن)
-  const dynamicThemeCSS = `
-    :root {
-      --bg-color: ${settings?.bg_color_light || '#ffffff'};
-      --text-color: ${settings?.text_color_light || '#1c1917'};
-      --btn-bg: ${settings?.btn_bg_light || '#093f89'};
-      --btn-text: ${settings?.btn_text_light || '#ffffff'};
-      --btn-hover: ${settings?.btn_hover_light || '#062a5c'};
-    }
-    .dark {
-      --bg-color: ${settings?.bg_color_dark || '#1c1917'};
-      --text-color: ${settings?.text_color_dark || '#fafafa'};
-      --btn-bg: ${settings?.btn_bg_dark || '#fbc70f'};
-      --btn-text: ${settings?.btn_text_dark || '#093f89'};
-      --btn-hover: ${settings?.btn_hover_dark || '#d4a70a'};
-    }
-  `;
+  const themeStyles = {
+    '--royal-blue': '#093f89',
+    '--golden-yellow': '#fbc70f',
+    '--primary': settings?.primary_color || '#093f89',
+    '--btn-bg': settings?.button_bg_color || '#093f89',
+    '--btn-text': settings?.button_text_color || "#ffffff",
+    ...(settings?.text_color && { '--foreground': settings.text_color }),
+    ...(settings?.background_color && { '--background': settings.background_color }),
+  } as React.CSSProperties;
 
   return (
+    // إضافة scroll-smooth لتجربة تنقل ناعمة بين أقسام الصفحة
     <html lang={lang} dir={dir} className="scroll-smooth" suppressHydrationWarning>
       <head>
-        <style dangerouslySetInnerHTML={{ __html: dynamicThemeCSS }} />
         <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js" strategy="beforeInteractive" />
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`
@@ -90,8 +122,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           `}
         </Script>
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-brand-gold/30 selection:text-brand-blue dark:selection:text-brand-gold dark:selection:bg-brand-blue/50 transition-colors duration-300`}>
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P69C8QCM" height="0" width="0" className="hidden invisible"></iframe></noscript>
+      <body
+        className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-[#fbc70f]/30 selection:text-[#093f89] dark:selection:text-[#fbc70f] dark:selection:bg-[#093f89]/50`}
+        style={themeStyles}
+      >
+        <noscript>
+          <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P69C8QCM" height="0" width="0" className="hidden invisible"></iframe>
+        </noscript>
 
         <ThemeProvider attribute="class" defaultTheme={settings?.default_theme || "system"} enableSystem disableTransitionOnChange>
           <LanguageProvider lang={lang}>
@@ -100,8 +137,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                 <WishlistProvider>
                   <Navbar settings={settings} />
                   <main className="flex-1 w-full flex flex-col relative z-0 overflow-x-hidden">
-                    {/* طبقة إضاءة خلفية ناعمة لتعزيز الفخامة بالاعتماد على الألوان الأساسية */}
-                    <div className="absolute inset-0 z-[-1] pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-blue/10 via-background to-background dark:from-brand-blue/15 dark:via-background dark:to-background"></div>
+                    {/* طبقة إضاءة خلفية ناعمة لتعزيز الفخامة في الوضعين الداكن والفاتح */}
+                    <div className="absolute inset-0 z-[-1] pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#093f89]/10 via-background to-background dark:from-[#093f89]/15 dark:via-background dark:to-background"></div>
                     {children}
                   </main>
                   <Footer settings={settings} />
