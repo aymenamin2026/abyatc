@@ -89,7 +89,7 @@ export default function ProductCard({
   const whatsappNumber = rawNumber ? String(rawNumber).replace(/\D/g, "") : "966500000000";
 
   const messageText = shouldShowPrice
-    ? `مرحبا شركه لمعة ابيات للمقاولات : ${name}\nرابط المنتج: ${productUrl}`
+    ? `مرحبا شركه لمعة ابيات للمقاولات : ${name}\nرابط المعدة : ${productUrl}`
     : `مرحبا شركة لمعة ابيات للمقاولات  أود طلب عرض سعر للمعدة: ${name}\nالسعر يتطلب تسعيرة خاصة وغير معروض في الموقع .\nرابط المعدة: ${productUrl}`;
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;

@@ -34,11 +34,11 @@ const playfair = Playfair_Display({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const defaultTitle = "لمعة ابيات | Lamaa Abyat";
-  const defaultDesc = "وجهتكم الأولى في السعودية للزي الموحد الطبي، المدرسي، الفندقي، وزي الشركات بجودة استثنائية.";
+  const defaultTitle = "شركة لمعة أبيات للمقاولات | Lamea Abyat";
+  const defaultDesc = "شركة متخصصة في مجالات المقاولات والتشييد والبناء في مدينة الرياض. نقدم خدمات إدارة المشاريع، التصميم، وتأجير المعدات الثقيلة بجميع أنواعها.";
 
   try {
-    const settings = await fetchSettings();
+    const settings = await fetchSettings(); // تأكد من أن هذه الدالة تجلب البيانات من Laravel API بنجاح
     const siteName = settings?.site_name || defaultTitle;
     const desc = settings?.site_description || defaultDesc;
     const favicon = settings?.favicon_path ? getImageUrl(settings.favicon_path) : undefined;
@@ -50,9 +50,26 @@ export async function generateMetadata(): Promise<Metadata> {
       },
       description: desc,
       icons: favicon ? { icon: favicon, apple: favicon } : undefined,
-      keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform", "الزي الموحد الخبر", "لمعة ابيات"],
+      keywords: [
+        "شركة لمعة أبيات",
+        "شركة مقاولات الرياض",
+        "التشييد والبناء",
+        "تأجير معدات ثقيلة",
+        "موبايل كرين",
+        "بوم ترك",
+        "حفارات للإيجار",
+        "سطحة لوبد",
+        "Lamea Abyat"
+      ],
       verification: {
-        google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U",
+        google: "lmIKN52OiFTPztUqMTFK-x0V2-HjS-13VkITipqkc3U", // رمز التحقق الخاص بك
+      },
+      openGraph: {
+        title: siteName,
+        description: desc,
+        siteName: siteName,
+        locale: 'ar_SA',
+        type: 'website',
       },
       robots: {
         index: true,
@@ -68,10 +85,11 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch (error) {
     console.error("Error generating metadata:", error);
+    // بيانات احتياطية في حال فشل الاتصال بالباك اند
     return {
       title: defaultTitle,
       description: defaultDesc,
-      keywords: ["زي موحد", "سكراب طبي", "زي مدرسي السعودية", "لبس مهني", "Luluh Uniform"],
+      keywords: ["شركة لمعة أبيات", "مقاولات", "تأجير معدات ثقيلة الرياض", "بناء وتشييد"],
       robots: "index, follow",
     };
   }

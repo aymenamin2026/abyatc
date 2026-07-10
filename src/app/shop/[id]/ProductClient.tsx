@@ -102,7 +102,7 @@ ${selectedOptionsText}`
 📦 اسم المعدة:
 ${productName}${attributesPart}
 
-🔗 رابط المنتج:
+🔗 رابط المعدة:
 ${currentUrl}
 
 شكراً لكم 🌹`;
@@ -334,7 +334,7 @@ ${currentUrl}
               }
               return currentSku ? (
                 <div className="text-sm text-muted-foreground mb-6 bg-secondary/30 w-fit px-3 py-1 rounded-md border border-border">
-                  <span className="font-medium">{lang === 'ar' ? 'رمز المنتج' : 'SKU'}:</span> <span className="font-mono tracking-wider">{currentSku}</span>
+                  <span className="font-medium">{lang === 'ar' ? 'رمز المعدة' : 'SKU'}:</span> <span className="font-mono tracking-wider">{currentSku}</span>
                 </div>
               ) : null;
             })()}
@@ -650,7 +650,7 @@ ${currentUrl}
                         <div className="text-center py-16 bg-secondary/20 rounded-3xl border border-border border-dashed">
                           <Star className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
                           <h5 className="text-lg font-bold text-foreground mb-2">{lang === 'ar' ? 'لا توجد تقييمات بعد' : 'No reviews yet'}</h5>
-                          <p className="text-muted-foreground">{lang === 'ar' ? 'كن أول من يقيم هذا المنتج!' : 'Be the first to review this product!'}</p>
+                          <p className="text-muted-foreground">{lang === 'ar' ? 'كن أول من يقيم هذا المعدة!' : 'Be the first to review this product!'}</p>
                         </div>
                       )}
                     </div>
@@ -661,7 +661,7 @@ ${currentUrl}
           </div>
         </div>
 
-        {/* قسم المنتجات ذات الصلة (Related Products) */}
+        {/* قسم المعدةات ذات الصلة (Related Products) */}
         {relatedProducts && relatedProducts.length > 0 && (
           <div className="mt-32 pt-16 border-t border-border">
             <div className="flex items-center justify-between mb-10">

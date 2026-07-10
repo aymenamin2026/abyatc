@@ -31,16 +31,16 @@ const colorClassMap: Record<string, string> = {
   "light mauve": "bg-fuchsia-200"
 };
 
-export default function SearchClient({ 
-  categories = [], 
+export default function SearchClient({
+  categories = [],
   products = [],
   attributes = [],
   currencySymbol = "$"
-}: { 
-  categories: any[], 
+}: {
+  categories: any[],
   products: any[],
   attributes?: any[],
-  currencySymbol?: string 
+  currencySymbol?: string
 }) {
   const { lang } = useLanguage();
   const searchParams = useSearchParams();
@@ -62,17 +62,17 @@ export default function SearchClient({
   const filteredProducts = products.filter((p: any) => {
     // 1. Search Query Match
     const searchStr = query.toLowerCase();
-    const nameMatch = (p.name?.en || "").toLowerCase().includes(searchStr) || 
-                      (p.name?.ar || "").toLowerCase().includes(searchStr) ||
-                      (typeof p.name === 'string' && p.name.toLowerCase().includes(searchStr));
-    
-    const descMatch = (p.description?.en || "").toLowerCase().includes(searchStr) || 
-                      (p.description?.ar || "").toLowerCase().includes(searchStr) ||
-                      (typeof p.description === 'string' && p.description.toLowerCase().includes(searchStr));
+    const nameMatch = (p.name?.en || "").toLowerCase().includes(searchStr) ||
+      (p.name?.ar || "").toLowerCase().includes(searchStr) ||
+      (typeof p.name === 'string' && p.name.toLowerCase().includes(searchStr));
+
+    const descMatch = (p.description?.en || "").toLowerCase().includes(searchStr) ||
+      (p.description?.ar || "").toLowerCase().includes(searchStr) ||
+      (typeof p.description === 'string' && p.description.toLowerCase().includes(searchStr));
 
     // SKU match (product SKU + variation SKUs)
     const skuMatch = (p.sku || "").toLowerCase().includes(searchStr) ||
-                     (p.variations || []).some((v: any) => (v.sku || "").toLowerCase().includes(searchStr));
+      (p.variations || []).some((v: any) => (v.sku || "").toLowerCase().includes(searchStr));
 
     if (!nameMatch && !descMatch && !skuMatch) return false;
 
@@ -109,10 +109,10 @@ export default function SearchClient({
 
   return (
     <>
-      <ProductQuickView 
-        isOpen={!!quickViewProduct} 
-        onClose={() => setQuickViewProduct(null)} 
-        product={quickViewProduct} 
+      <ProductQuickView
+        isOpen={!!quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        product={quickViewProduct}
       />
 
       <div className="py-8 border-b border-border mb-8">
@@ -128,7 +128,7 @@ export default function SearchClient({
         {/* Mobile Filter Toggle */}
         <div className="lg:hidden flex items-center justify-between mb-4">
           <span className="font-medium">{sortedProducts.length} {t('results', lang)}</span>
-          <button 
+          <button
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
             className="flex items-center gap-2 text-sm font-medium border border-border px-4 py-2 rounded-md hover:bg-muted transition-colors"
           >
@@ -149,8 +149,8 @@ export default function SearchClient({
                   const sEn = size.value?.en || size.value;
                   const sLocal = size.value?.[lang] || sEn;
                   return (
-                    <button 
-                      key={size.id} 
+                    <button
+                      key={size.id}
                       onClick={() => setSelectedSize(prev => prev === sEn ? null : sEn)}
                       className={`border rounded-md text-sm py-2 px-1 text-center transition-colors 
                         ${selectedSize === sEn ? 'border-primary text-primary bg-primary/5 font-medium' : 'border-border hover:border-primary hover:text-primary'}`}
@@ -174,10 +174,10 @@ export default function SearchClient({
                   const cEn = color.value?.en || color.value;
                   const cLocal = color.value?.[lang] || cEn;
                   const bgClass = colorClassMap[cEn.toLowerCase()] || "bg-gray-200 border border-gray-300";
-                  
+
                   return (
-                    <button 
-                      key={color.id} 
+                    <button
+                      key={color.id}
                       title={cLocal}
                       onClick={() => setSelectedColor(prev => prev === cEn ? null : cEn)}
                       className={`relative w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-all 
@@ -199,7 +199,7 @@ export default function SearchClient({
             <span className="font-medium text-muted-foreground text-sm">{sortedProducts.length} {t('results', lang)}</span>
             <div className="flex items-center gap-2 text-sm">
               <span>{t('sort_by', lang)}</span>
-              <select 
+              <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
                 className="bg-transparent border-b border-border pb-1 font-medium focus:outline-none focus:border-primary"
@@ -215,7 +215,7 @@ export default function SearchClient({
           {sortedProducts.length === 0 ? (
             <div className="text-center py-20 text-muted-foreground bg-muted/20 rounded-3xl border border-dashed border-border">
               <p className="text-lg font-medium mb-1">
-                {lang === 'en' ? 'No products found' : 'لم يتم العثور على منتجات'}
+                {lang === 'en' ? 'No products found' : 'لم يتم العثور على المعدة'}
               </p>
               <p className="text-sm">
                 {lang === 'en' ? 'Try adjusting your search or filters' : 'حاول تعديل البحث أو التصنيفات'}
@@ -224,10 +224,10 @@ export default function SearchClient({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {sortedProducts.map((product: any, index: number) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  currencySymbol={currencySymbol} 
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  currencySymbol={currencySymbol}
                   index={index}
                 />
               ))}

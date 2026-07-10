@@ -139,8 +139,8 @@ export default function MobileBottomNav() {
                   <div className="relative z-10">
                     <Icon
                       className={`w-[22px] h-[22px] transition-all duration-300 ${active
-                          ? "text-[#093f89] dark:text-[#fbc70f] scale-110"
-                          : "text-muted-foreground group-hover:text-foreground"
+                        ? "text-[#093f89] dark:text-[#fbc70f] scale-110"
+                        : "text-muted-foreground group-hover:text-foreground"
                         }`}
                       strokeWidth={active ? 2.5 : 2}
                     />
@@ -154,8 +154,8 @@ export default function MobileBottomNav() {
 
                   <span
                     className={`relative z-10 text-[10px] leading-tight transition-all duration-300 ${active
-                        ? "font-bold text-[#093f89] dark:text-[#fbc70f]"
-                        : "font-medium text-muted-foreground group-hover:text-foreground"
+                      ? "font-bold text-[#093f89] dark:text-[#fbc70f]"
+                      : "font-medium text-muted-foreground group-hover:text-foreground"
                       }`}
                   >
                     {tab.label}
@@ -195,7 +195,7 @@ export default function MobileBottomNav() {
               <div className="w-12 h-1.5 bg-muted rounded-full mx-auto mb-4" />
 
               <div className="flex justify-between items-center mb-5 shrink-0">
-                <h3 className="text-xl font-serif font-bold text-foreground">{isRtl ? "البحث في المتجر" : "Search Store"}</h3>
+                <h3 className="text-xl font-serif font-bold text-foreground">{isRtl ? "البحث " : "Search"}</h3>
                 <button onClick={() => setShowSearch(false)} className="p-2 rounded-full bg-muted/50 text-foreground hover:bg-muted transition-colors">
                   <X className="w-5 h-5" />
                 </button>
@@ -207,7 +207,7 @@ export default function MobileBottomNav() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={isRtl ? "ابحث عن منتج، علامة تجارية..." : "Search for a product..."}
+                  placeholder={isRtl ? "ابحث عن معدة، علامة تجارية..." : "Search for a tools..."}
                   className="w-full bg-background border border-border/80 rounded-2xl h-14 px-5 text-sm focus:outline-none focus:ring-2 focus:ring-[#093f89]/30 dark:focus:ring-[#fbc70f]/30 text-foreground shadow-inner transition-all"
                 />
                 <button type="submit" className="absolute end-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-[#093f89] dark:hover:text-[#fbc70f]">

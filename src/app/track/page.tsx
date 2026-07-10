@@ -232,7 +232,7 @@ export default function TrackOrderPage() {
             transition={{ delay: 0.2 }}
             className="text-muted-foreground text-sm sm:text-base font-light"
           >
-            {isRtl ? 'أدخل رقم الطلب أو رقم التتبع للتحقق من حالة الشحنة الخاصة بك لحظة بلحظة.' : 'Enter your order number or tracking number to check the live status of your shipment.'}
+            {isRtl ? 'أدخل رقم الطلب أو رقم التتبع للتحقق من حالة الطلب الخاصة بك لحظة بلحظة.' : 'Enter your order number or tracking number to check the live status of your orders.'}
           </motion.p>
         </div>
 
