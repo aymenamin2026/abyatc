@@ -10,6 +10,10 @@ import { useCart } from "@/components/CartContext";
 import ProductCard from "@/components/ProductCard";
 import { useLanguage } from "@/components/LanguageContext";
 import { t } from "@/lib/translations";
+import { useRouter } from "next/navigation";
+import { useWishlist } from "@/components/WishlistContext";
+import { useAuth } from "@/components/AuthContext";
+
 
 // خريطة ألوان افتراضية للمتغيرات (Colors)
 const colorClassMap: Record<string, string> = {
@@ -49,6 +53,23 @@ export default function ProductClient({
   settings?: any;
 }) {
   const { lang } = useLanguage();
+  const router = useRouter();
+  const { isInWishlist, toggleWishlist, isToggling } = useWishlist();
+  const { user } = useAuth();
+
+  // التحقق مما إذا كان المنتج الحالي في المفضلة
+  const isFav = isInWishlist(product.id);
+  const isTogglingThis = isToggling === product.id;
+
+  // دالة الإضافة/الإزالة للمفضلة (مع توجيه غير المسجلين لصفحة الدخول)
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    toggleWishlist(product.id);
+  };
   const shouldShowPrice = product.show_price !== false && product.show_price !== 0;
 
   // تجهيز الصور
@@ -485,9 +506,25 @@ ${currentUrl}
                 )}
               </button>
 
-              {/* 3. زر المفضلة - يظهر بشكل رائع ومتناسق بجانبهم */}
-              <button className="w-full sm:w-16 h-16 bg-secondary/50 flex items-center justify-center rounded-2xl text-foreground hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all border-2 border-transparent shrink-0">
-                <Heart className="w-6 h-6" />
+              {/* 3. زر المفضلة - مربوط برمجياً بنظام الموقع */}
+              <button
+                onClick={handleWishlistToggle}
+                disabled={isTogglingThis}
+                className={`w-full sm:w-16 h-16 flex items-center justify-center rounded-2xl transition-all duration-300 border-2 shrink-0 active:scale-95
+    ${isFav
+                    ? 'bg-red-50 text-red-500 border-red-200 shadow-sm dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-400'
+                    : 'bg-secondary/50 text-foreground border-transparent hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-500/10 dark:hover:border-red-500/30'
+                  }
+    ${isTogglingThis ? 'opacity-70 cursor-wait' : ''}
+  `}
+                title={isFav ? (lang === 'ar' ? 'إزالة من المفضلة' : 'Remove from Wishlist') : (lang === 'ar' ? 'إضافة للمفضلة' : 'Add to Wishlist')}
+              >
+                <Heart
+                  className={`w-6 h-6 transition-all duration-300 
+      ${isFav ? 'fill-current scale-110' : 'scale-100'} 
+      ${isTogglingThis ? 'animate-pulse' : ''}
+    `}
+                />
               </button>
             </div>
 

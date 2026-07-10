@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const product = await fetchProductBySlug(slug);
 
   if (!product) {
-    return { title: 'المنتج غير متوفر | Product Not Found' };
+    return { title: 'المعدة غير متوفر | Product Not Found' };
   }
 
   // استخدام اللغة الإنجليزية كاحتياطي في حال عدم توفر العربية للـ Metadata
@@ -69,7 +69,7 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
     notFound();
   }
 
-  // فلترة المنتجات ذات الصلة بكفاءة عالية
+  // فلترة المعدةات ذات الصلة بكفاءة عالية
   const categoryId = product.categories?.[0]?.id;
   const relatedProducts = Array.isArray(allProducts)
     ? allProducts
@@ -82,7 +82,7 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
   const productImage = product.images?.[0] ? getImageUrl(product.images[0]) : '';
   const productPrice = product.base_price || product.price || (product.variations?.[0]?.price) || 0;
 
-  // 3. إضافة البيانات المهيكلة (JSON-LD) ليقوم جوجل بعرض السعر وصورة المنتج مباشرة في صفحة البحث (Rich Snippets)
+  // 3. إضافة البيانات المهيكلة (JSON-LD) ليقوم جوجل بعرض السعر وصورة المعدة مباشرة في صفحة البحث (Rich Snippets)
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
