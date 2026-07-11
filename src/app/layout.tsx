@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { cookies } from "next/headers";
 import Script from "next/script";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Components
 import Navbar from "@/components/Navbar";
@@ -177,6 +178,7 @@ export default async function RootLayout({
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
