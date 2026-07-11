@@ -193,7 +193,13 @@ ${currentUrl}
     if (newReview.comment.length < 5) return;
     setIsSubmittingReview(true);
     try {
-      await submitReview({ product_id: product.id, rating: newReview.rating, comment: newReview.comment });
+      await submitReview({
+        product_id: product.id,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        customer_name: `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || "عميل مسجل"
+      });
+
       const updatedRevs = await fetchReviews(product.id);
       setReviews(updatedRevs);
       setNewReview({ rating: 5, comment: "" });
