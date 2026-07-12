@@ -6,8 +6,13 @@ import { Download, X } from "lucide-react";
 export default function PwaPrompt() {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [showPrompt, setShowPrompt] = useState(false);
+    // 1. أضفنا هذا المتغير لنتأكد أن الكود يعمل في المتصفح فقط
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
+        // 2. بمجرد تحميل المكون في المتصفح، نجعل القيمة true
+        setIsMounted(true);
+
         // التقاط حدث التثبيت التلقائي من المتصفح
         const handleBeforeInstallPrompt = (e: Event) => {
             e.preventDefault();
@@ -57,7 +62,8 @@ export default function PwaPrompt() {
         localStorage.setItem("pwa_prompt_dismissed", "true");
     };
 
-    if (!showPrompt) return null;
+    // 3. التعديل الأهم: إذا لم يتم التحميل في المتصفح بعد، لا ترجع أي شيء (وهذا يمنع إيرور الـ Hydration)
+    if (!isMounted || !showPrompt) return null;
 
     return (
         <div className="fixed bottom-4 left-4 right-4 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-xl shadow-2xl flex flex-col gap-3 md:hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -69,7 +75,6 @@ export default function PwaPrompt() {
             </button>
 
             <div className="flex items-center gap-3">
-                {/* يمكنك استبدال هذا الحرف بشعار موقعك الفعلي */}
                 <div className="w-12 h-12 bg-[#093f89] rounded-xl flex items-center justify-center text-[#fbc70f] font-bold text-xl shadow-md">
                     ل
                 </div>

@@ -140,6 +140,7 @@ export default async function RootLayout({
     <html lang={lang} dir={dir} className="scroll-smooth" suppressHydrationWarning>
       <head>
         <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js" strategy="beforeInteractive" />
+        <link rel="manifest" href="/manifest.json" />
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
