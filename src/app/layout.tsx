@@ -10,6 +10,7 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 import PopupManager from "@/components/PopupManager";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import PwaPrompt from "@/components/PwaPrompt";
 
 // Context Providers
 import { LanguageProvider } from "@/components/LanguageContext";
@@ -172,6 +173,7 @@ export default async function RootLayout({
                   <MobileBottomNav />
                   <PopupManager popups={popups} settings={settings} />
                   <WhatsAppFloat settings={settings} />
+                  <PwaPrompt />
                 </WishlistProvider>
               </CartProvider>
             </AuthProvider>
