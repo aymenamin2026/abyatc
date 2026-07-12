@@ -1,0 +1,22 @@
+{
+  "name": "شركة لمعة أبيات للمقاولات",
+  "short_name": "لمعة أبيات",
+  "description": "تأجير المعدات الثقيلة والمقاولات العامة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#093f89",
+  "theme_color": "#093f89",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

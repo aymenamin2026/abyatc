@@ -1,44 +1,66 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Share, PlusSquare, X } from "lucide-react"; // تأكد من وجود lucide-react أو استبدلها بأيقوناتك
+import { Download, X } from "lucide-react";
 
 export default function PwaPrompt() {
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [showPrompt, setShowPrompt] = useState(false);
-    const [isIos, setIsIos] = useState(false);
 
     useEffect(() => {
-        // 1. التحقق من أن المستخدم يتصفح من الجوال
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        // التقاط حدث التثبيت التلقائي من المتصفح
+        const handleBeforeInstallPrompt = (e: Event) => {
+            e.preventDefault();
+            // حفظ الحدث لاستخدامه عند الضغط على الزر
+            setDeferredPrompt(e);
 
-        // 2. التحقق مما إذا كان الموقع مثبتاً بالفعل كـ تطبيق
-        const isStandalone = window.matchMedia("(display-mode: standalone)").matches
-            || (navigator as any).standalone;
+            // التحقق مما إذا كان المستخدم قد أغلق الإشعار سابقاً اليوم
+            const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
+            if (!isDismissed) {
+                setShowPrompt(true);
+            }
+        };
 
-        // 3. التحقق من نوع النظام لإظهار إرشادات مخصصة (خصوصاً لـ iOS)
-        const isApple = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        setIsIos(isApple);
+        window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
-        // إذا كان جوال وغير مثبت مسبقاً، نتحقق من الكاش المحلي حتى لا نكاد نضايق المستخدم في كل صفحة
-        const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
+        // إخفاء الزر إذا تم تثبيت التطبيق بنجاح
+        window.addEventListener("appinstalled", () => {
+            setShowPrompt(false);
+            setDeferredPrompt(null);
+        });
 
-        if (isMobile && !isStandalone && !isDismissed) {
-            // إظهار الإشعار بعد 5 ثوانٍ من دخول الموقع ليعطي تجربة مستخدم مريحة
-            const timer = setTimeout(() => setShowPrompt(true), 5000);
-            return () => clearTimeout(timer);
-        }
+        return () => {
+            window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+        };
     }, []);
+
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+
+        // إظهار نافذة التثبيت الرسمية الخاصة بالنظام (اسم الموقع + الشعار)
+        deferredPrompt.prompt();
+
+        // انتظار رد فعل المستخدم (موافق / إلغاء)
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === "accepted") {
+            console.log("User accepted the install prompt");
+        }
+
+        // تنظيف المتغير وإخفاء الإشعار
+        setDeferredPrompt(null);
+        setShowPrompt(false);
+    };
 
     const handleDismiss = () => {
         setShowPrompt(false);
-        // حفظ خيار المستخدم لمدة يومين مثلاً حتى لا يظهر له فوراُ
+        // كتم الإشعار مؤقتاً في جلسة التصفح الحالية
         localStorage.setItem("pwa_prompt_dismissed", "true");
     };
 
     if (!showPrompt) return null;
 
     return (
-        <div className="fixed bottom-4 left-4 right-4 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-850 p-4 rounded-xl shadow-2xl flex flex-col gap-3 md:hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-4 left-4 right-4 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-xl shadow-2xl flex flex-col gap-3 md:hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
             <button
                 onClick={handleDismiss}
                 className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
@@ -47,33 +69,23 @@ export default function PwaPrompt() {
             </button>
 
             <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md">
-                    أ
+                {/* يمكنك استبدال هذا الحرف بشعار موقعك الفعلي */}
+                <div className="w-12 h-12 bg-[#093f89] rounded-xl flex items-center justify-center text-[#fbc70f] font-bold text-xl shadow-md">
+                    ل
                 </div>
                 <div>
-                    <h4 className="font-bold text-sm text-gray-900 dark:text-white">تصفح لمعة أبيات كـ تطبيق!</h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">أضف الموقع للشاشة الرئيسية للوصول السريع للمعدات.</p>
+                    <h4 className="font-bold text-sm text-gray-900 dark:text-white">تثبيت تطبيق لمعة أبيات</h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">تصفح أسرع للمعدات والخدمات بضغطة زر واحدة.</p>
                 </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-800 p-2.5 rounded-lg text-xs text-gray-600 dark:text-gray-300 border border-gray-150 dark:border-gray-750">
-                {isIos ? (
-                    <div className="flex flex-wrap items-center gap-1.5 direction-rtl">
-                        <span>اضغط على زر المشاركة</span>
-                        <Share size={16} className="text-blue-500 inline" />
-                        <span>ثم اختر</span>
-                        <span className="font-bold">"إضافة إلى الشاشة الرئيسية"</span>
-                        <PlusSquare size={16} className="inline" />
-                    </div>
-                ) : (
-                    <div className="flex flex-wrap items-center gap-1.5 direction-rtl">
-                        <span>اضغط على خيارات المتصفح (三 أو ⁝) ثم اختر</span>
-                        <span className="font-bold">"تثبيت التطبيق"</span>
-                        <span>أو</span>
-                        <span className="font-bold">"إضافة إلى الشاشة الرئيسية"</span>
-                    </div>
-                )}
-            </div>
+            <button
+                onClick={handleInstallClick}
+                className="w-full bg-[#093f89] hover:bg-[#072e63] text-white font-medium text-sm py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-250 shadow-sm"
+            >
+                <Download size={16} />
+                اضغط لتثبيت التطبيق على جهازك
+            </button>
         </div>
     );
 }
