@@ -283,7 +283,7 @@ export async function fetchSettings() {
   try {
     const res = await fetch(`${API_URL}/settings`, { 
       headers: getHeaders(),
-      next: { revalidate: 0, tags: ['settings'] }
+      next: { tags: ['settings'] }
     });
     
     if (!res.ok) throw new Error('Failed to fetch settings');
