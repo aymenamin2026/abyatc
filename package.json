@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
+    "@vercel/speed-insights": "^2.0.0",
     "cookies-next": "^6.1.1",
     "framer-motion": "^12.36.0",
     "leaflet": "^1.9.4",
