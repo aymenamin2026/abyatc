@@ -1,25 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Download, X } from "lucide-react";
+import { Download, X, Chrome } from "lucide-react";
 
 export default function PwaPrompt() {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [showPrompt, setShowPrompt] = useState(false);
-    // 1. أضفنا هذا المتغير لنتأكد أن الكود يعمل في المتصفح فقط
     const [isMounted, setIsMounted] = useState(false);
+    const [isInsideInAppBrowser, setIsInsideInAppBrowser] = useState(false);
 
     useEffect(() => {
-        // 2. بمجرد تحميل المكون في المتصفح، نجعل القيمة true
         setIsMounted(true);
 
-        // التقاط حدث التثبيت التلقائي من المتصفح
+        // كشف ما إذا كان المستخدم يفتح الموقع من متصفح داخلي لتطبيقات التواصل (سناب، فيسبوك، إلخ)
+        const ua = window.navigator.userAgent || "";
+        const isInApp = /FBAN|FBAV|Instagram|Snapchat|FBIOS|Twitter/i.test(ua);
+        setIsInsideInAppBrowser(isInApp);
+
         const handleBeforeInstallPrompt = (e: Event) => {
             e.preventDefault();
-            // حفظ الحدث لاستخدامه عند الضغط على الزر
             setDeferredPrompt(e);
 
-            // التحقق مما إذا كان المستخدم قد أغلق الإشعار سابقاً اليوم
             const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
             if (!isDismissed) {
                 setShowPrompt(true);
@@ -28,7 +29,6 @@ export default function PwaPrompt() {
 
         window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
-        // إخفاء الزر إذا تم تثبيت التطبيق بنجاح
         window.addEventListener("appinstalled", () => {
             setShowPrompt(false);
             setDeferredPrompt(null);
@@ -42,27 +42,22 @@ export default function PwaPrompt() {
     const handleInstallClick = async () => {
         if (!deferredPrompt) return;
 
-        // إظهار نافذة التثبيت الرسمية الخاصة بالنظام (اسم الموقع + الشعار)
         deferredPrompt.prompt();
 
-        // انتظار رد فعل المستخدم (موافق / إلغاء)
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === "accepted") {
             console.log("User accepted the install prompt");
         }
 
-        // تنظيف المتغير وإخفاء الإشعار
         setDeferredPrompt(null);
         setShowPrompt(false);
     };
 
     const handleDismiss = () => {
         setShowPrompt(false);
-        // كتم الإشعار مؤقتاً في جلسة التصفح الحالية
         localStorage.setItem("pwa_prompt_dismissed", "true");
     };
 
-    // 3. التعديل الأهم: إذا لم يتم التحميل في المتصفح بعد، لا ترجع أي شيء (وهذا يمنع إيرور الـ Hydration)
     if (!isMounted || !showPrompt) return null;
 
     return (
@@ -80,17 +75,28 @@ export default function PwaPrompt() {
                 </div>
                 <div>
                     <h4 className="font-bold text-sm text-gray-900 dark:text-white">تثبيت تطبيق لمعة أبيات</h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">تصفح أسرع للمعدات والخدمات بضغطة زر واحدة.</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        {isInsideInAppBrowser
+                            ? "انسخ الرابط وافتحه في متصفح Chrome لتثبيت آمن وسريع."
+                            : "تصفح أسرع للمعدات والخدمات بضغطة زر واحدة."}
+                    </p>
                 </div>
             </div>
 
-            <button
-                onClick={handleInstallClick}
-                className="w-full bg-[#093f89] hover:bg-[#072e63] text-white font-medium text-sm py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-250 shadow-sm"
-            >
-                <Download size={16} />
-                اضغط لتثبيت التطبيق على جهازك
-            </button>
+            {isInsideInAppBrowser ? (
+                <div className="w-full bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 text-xs p-2.5 rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-center gap-2">
+                    <Chrome size={16} className="shrink-0" />
+                    <span>يرجى فتح الموقع عبر متصفح <b>Chrome</b> لتجنب تحذيرات النظام وتثبيت التطبيق بنجاح.</span>
+                </div>
+            ) : (
+                <button
+                    onClick={handleInstallClick}
+                    className="w-full bg-[#093f89] hover:bg-[#072e63] text-white font-medium text-sm py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-250 shadow-sm"
+                >
+                    <Download size={16} />
+                    اضغط لتثبيت التطبيق على جهازك
+                </button>
+            )}
         </div>
     );
 }
