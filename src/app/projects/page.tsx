@@ -21,10 +21,24 @@ const categoryColorMap: Record<string, string> = {
 function PremiumProjectCard({ project, index, lang }: { project: any; index: number; lang: 'ar' | 'en' }) {
   const [imgSrc, setImgSrc] = useState(getImageUrl(project.image) || '/no-image.jpg');
 
-  const title = project.title?.[lang] || project.title?.en || project.title;
-  const excerpt = project.excerpt?.[lang] || project.excerpt?.en || project.excerpt;
-  const authorName = project.author?.name?.[lang] || project.author?.name?.en || 'Admin';
-  const categoryName = project.category?.name?.[lang] || project.category?.name?.en || 'General';
+  // ✅ الكود المعدل والآمن
+  const title = typeof project.title === 'object'
+    ? (project.title?.[lang] || project.title?.en || '')
+    : (project.title || '');
+
+  const excerpt = typeof project.excerpt === 'object'
+    ? (project.excerpt?.[lang] || project.excerpt?.en || '')
+    : (project.excerpt || '');
+
+  // معالجة اسم الكاتب سواء كان String أو Object (JSON)
+  const authorName = typeof project.author?.name === 'object'
+    ? (project.author?.name?.[lang] || project.author?.name?.en || 'Admin')
+    : (project.author?.name || 'Admin');
+
+  // معالجة اسم القسم بنفس الطريقة
+  const categoryName = typeof project.category?.name === 'object'
+    ? (project.category?.name?.[lang] || project.category?.name?.en || 'General')
+    : (project.category?.name || 'General');
   const catKey = (project.category?.slug || 'general').toLowerCase();
   const gradientClass = categoryColorMap[catKey] || "from-[#093f89] to-[#fbc70f]";
 
@@ -36,7 +50,6 @@ function PremiumProjectCard({ project, index, lang }: { project: any; index: num
       transition={{ duration: 0.6, delay: Math.min(index * 0.1, 0.4), ease: "easeOut" }}
       className="group relative flex flex-col justify-between overflow-hidden rounded-[32px] border border-border/40 dark:border-white/5 bg-card/40 backdrop-blur-xl p-4 shadow-lg hover:shadow-[0_20px_40px_-15px_rgba(9,63,137,0.2)] dark:hover:shadow-[0_20px_40px_-15px_rgba(251,199,15,0.1)] transition-all duration-500 h-full w-full"
     >
-      {/* إطار مضيء يظهر عند تمرير الماوس (Hover Glow) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[32px] bg-gradient-to-br from-[#093f89]/20 via-transparent to-[#fbc70f]/20" />
 
       {/* Image Container */}

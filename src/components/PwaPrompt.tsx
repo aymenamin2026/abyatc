@@ -125,7 +125,6 @@ export default function PwaPrompt() {
                     </ol>
                 </div>
             ) : (
-                /* السيناريو الثالث: زائر أندرويد طبيعي */
                 <button
                     onClick={handleInstallClick}
                     className="w-full bg-[#093f89] hover:bg-[#072e63] text-white font-medium text-sm py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-250 shadow-sm"
