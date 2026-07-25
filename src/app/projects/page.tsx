@@ -33,7 +33,7 @@ function PremiumProjectCard({ project, index, lang }: { project: any; index: num
   // معالجة اسم الكاتب سواء كان String أو Object (JSON)
   const authorName = typeof project.author?.name === 'object'
     ? (project.author?.name?.[lang] || project.author?.name?.en || 'Team')
-    : (project.author?.name || 'Admin');
+    : (project.author?.name || 'Team');
 
   // معالجة اسم القسم بنفس الطريقة
   const categoryName = typeof project.category?.name === 'object'
