@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ShieldCheck, ChevronRight, Lock, CreditCard, Mail, User } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -11,12 +12,16 @@ import { useLanguage } from "@/components/LanguageContext";
 import { useAuth } from "@/components/AuthContext";
 import { t } from "@/lib/translations";
 import { useCart } from "@/components/CartContext";
-import MapPickerModal from "@/components/MapPickerModal";
 import { Combobox } from '@headlessui/react';
 import { Check, Truck } from 'lucide-react';
 import { fetchShippingRates } from "@/lib/api";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FcGoogle } from 'react-icons/fc';
+
+const MapPickerModal = dynamic(
+  () => import("@/components/MapPickerModal"),
+  { ssr: false, loading: () => null }
+);
 
 const cartItems = [
   {
@@ -1743,7 +1748,7 @@ Thank you.`;
         </div>
       </div>
 
-      <MapPickerModal
+      {showMapModal && <MapPickerModal
         isOpen={showMapModal}
         onClose={() => setShowMapModal(false)}
         initialLat={newAddress.latitude}
@@ -1803,7 +1808,7 @@ Thank you.`;
             state: determinedStateName
           });
         }}
-      />
+      />}
 
       {/* Delete Address Warning Modal */}
       {addressToDelete && (

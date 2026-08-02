@@ -1,14 +1,19 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ChevronDown, SlidersHorizontal, Check, X, ArrowDownWideNarrow } from "lucide-react";
 
 import { t } from "@/lib/translations";
 import { useLanguage } from "@/components/LanguageContext";
-import ProductQuickView from "@/components/ProductQuickView";
 import ProductCard from "@/components/ProductCard";
+
+const ProductQuickView = dynamic(
+  () => import("@/components/ProductQuickView"),
+  { ssr: false, loading: () => null }
+);
 
 const colorClassMap: Record<string, string> = {
   "navy blue": "bg-[#0a192f]", // Deep Navy
@@ -152,11 +157,13 @@ export default function ShopClient({
 
   return (
     <>
-      <ProductQuickView
-        isOpen={!!quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-        product={quickViewProduct}
-      />
+      {quickViewProduct && (
+        <ProductQuickView
+          isOpen
+          onClose={() => setQuickViewProduct(null)}
+          product={quickViewProduct}
+        />
+      )}
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative select-none w-full">
 

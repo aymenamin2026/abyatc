@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { fetchCustomerAddresses, createCustomerAddress, updateCustomerAddress, deleteCustomerAddress, fetchCountries, fetchZones, fetchSettings } from "@/lib/api";
 import { t } from "@/lib/translations";
 import { Combobox } from '@headlessui/react';
 import { Check, ChevronRight, MapPin, Plus } from 'lucide-react';
-import MapPickerModal from "@/components/MapPickerModal";
+
+const MapPickerModal = dynamic(
+  () => import("@/components/MapPickerModal"),
+  { ssr: false, loading: () => null }
+);
 
 export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: any }) {
   const [addresses, setAddresses] = useState<any[]>([]);
@@ -376,7 +381,7 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
         </div>
       )}
 
-      <MapPickerModal
+      {showMapModal && <MapPickerModal
         isOpen={showMapModal}
         onClose={() => setShowMapModal(false)}
         initialLat={newAddress.latitude}
@@ -410,7 +415,7 @@ export default function AddressesTab({ lang, user }: { lang: "en" | "ar", user: 
             state: determinedStateName
           });
         }}
-      />
+      />}
 
       {/* Delete Address Warning Modal */}
       {addressToDelete && (

@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal, ChevronDown, Check } from "lucide-react";
 import { t } from "@/lib/translations";
 import { useLanguage } from "@/components/LanguageContext";
 import ProductCard from "@/components/ProductCard";
-import ProductQuickView from "@/components/ProductQuickView";
+
+const ProductQuickView = dynamic(
+  () => import("@/components/ProductQuickView"),
+  { ssr: false, loading: () => null }
+);
 
 const colorClassMap: Record<string, string> = {
   "navy blue": "bg-blue-900",
@@ -109,11 +114,13 @@ export default function SearchClient({
 
   return (
     <>
-      <ProductQuickView
-        isOpen={!!quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-        product={quickViewProduct}
-      />
+      {quickViewProduct && (
+        <ProductQuickView
+          isOpen
+          onClose={() => setQuickViewProduct(null)}
+          product={quickViewProduct}
+        />
+      )}
 
       <div className="py-8 border-b border-border mb-8">
         <h1 className="font-serif text-3xl font-bold text-foreground mb-2">

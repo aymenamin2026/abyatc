@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 :root {
+  --font-inter: "Segoe UI", Tahoma, Arial, sans-serif;
+  --font-playfair: Georgia, "Times New Roman", serif;
+
   /* قراءة القيم الديناميكية المحقونة من الـ layout للوضع الفاتح */
   --background: var(--bg-light, #ffffff);
   --foreground: var(--text-light, #1c1917);

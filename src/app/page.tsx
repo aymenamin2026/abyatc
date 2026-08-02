@@ -8,9 +8,9 @@ import { fetchCategories, fetchProducts, fetchSettings, getImageUrl, fetchSlider
 import { t } from "@/lib/translations";
 
 // Components
-import HomeClientWrapper, { FeaturedProductsGrid } from "@/components/HomeClientWrapper";
+import { FeaturedProductsGrid } from "@/components/HomeClientWrapper";
 import Slider from "@/components/Slider";
-import TestimonialsSlider from "@/components/TestimonialsSlider";
+import DeferredTestimonials from "@/components/DeferredTestimonials";
 import CategoriesSlider from "@/components/CategoriesSlider";
 
 export default async function Home() {
@@ -40,11 +40,9 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col w-full">
-      <HomeClientWrapper featuredProducts={featuredProducts} currencySymbol={currencySymbol} lang={lang} />
-
       {/* Hero Section */}
       {hasSliders ? (
-        <Slider position="home_hero" lang={lang} />
+        <Slider position="home_hero" lang={lang} initialSliders={sliders} />
       ) : (
         <section className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-slate-950">
           <div className="absolute inset-0 z-0">
@@ -54,7 +52,7 @@ export default async function Home() {
               fill
               sizes="100vw"
               className="object-cover object-center opacity-40 scale-105 animate-[pulse_15s_ease-in-out_infinite_alternate]"
-              priority
+              preload
             />
             {/* تدرج لوني يدمج الأزرق الملكي بقوة مع الظلام لإبراز النصوص */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#093f89]/50 via-black/70 to-black/95" />
@@ -178,7 +176,7 @@ export default async function Home() {
 
       {/* Testimonials Slider */}
       {Array.isArray(testimonials) && testimonials.length > 0 && (
-        <TestimonialsSlider testimonials={testimonials} lang={lang} />
+        <DeferredTestimonials testimonials={testimonials} lang={lang} />
       )}
 
       {/* Why Choose Us - Ultimate Glassmorphism & Brand Integration */}

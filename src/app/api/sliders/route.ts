@@ -18,12 +18,24 @@ export async function GET(request: Request) {
     const res = await fetch(targetUrl, {
       headers: {
         'Accept': 'application/json',
-        'x-api-key': process.env.NEXT_PUBLIC_SECRET_KEY || '',
+        'x-api-key': process.env.API_SECRET_KEY || process.env.NEXT_PUBLIC_SECRET_KEY || '',
       },
+      next: { revalidate: 300, tags: ['sliders'] },
     });
 
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: 'Upstream request failed' },
+        { status: res.status }
+      );
+    }
+
     const data = await res.json();
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=86400',
+      },
+    });
     
   } catch (error: any) {
     console.error("Proxy Error:", error);

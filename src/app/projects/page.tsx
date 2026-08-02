@@ -8,6 +8,7 @@ import { Calendar, User, ArrowLeft, ArrowRight, Eye, Sparkles } from "lucide-rea
 
 import { fetchProjects, getImageUrl } from "@/lib/api";
 import { useLanguage } from "@/components/LanguageContext";
+// التدرجات اللونية للشارات بناءً على الهوية البصرية للموقع
 
 const categoryColorMap: Record<string, string> = {
   general: "from-[#093f89] to-[#093f89]/80",
@@ -20,6 +21,7 @@ const categoryColorMap: Record<string, string> = {
 function PremiumProjectCard({ project, index, lang }: { project: any; index: number; lang: 'ar' | 'en' }) {
   const [imgSrc, setImgSrc] = useState(getImageUrl(project.image) || '/no-image.jpg');
 
+  // ✅ الكود المعدل والآمن
   const title = typeof project.title === 'object'
     ? (project.title?.[lang] || project.title?.en || '')
     : (project.title || '');
@@ -28,10 +30,12 @@ function PremiumProjectCard({ project, index, lang }: { project: any; index: num
     ? (project.excerpt?.[lang] || project.excerpt?.en || '')
     : (project.excerpt || '');
 
+  // معالجة اسم الكاتب سواء كان String أو Object (JSON)
   const authorName = typeof project.author?.name === 'object'
     ? (project.author?.name?.[lang] || project.author?.name?.en || 'Admin')
     : (project.author?.name || 'Admin');
 
+  // معالجة اسم القسم بنفس الطريقة
   const categoryName = typeof project.category?.name === 'object'
     ? (project.category?.name?.[lang] || project.category?.name?.en || 'General')
     : (project.category?.name || 'General');

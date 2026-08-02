@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
 import { cookies } from "next/headers";
 import Script from "next/script";
 
@@ -7,10 +6,8 @@ import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MobileBottomNav from "@/components/MobileBottomNav";
-import PopupManager from "@/components/PopupManager";
-import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import PwaPrompt from "@/components/PwaPrompt";
+import DeferredClientUI from "@/components/DeferredClientUI";
 
 // Context Providers
 import { LanguageProvider } from "@/components/LanguageContext";
@@ -19,20 +16,8 @@ import { CartProvider } from "@/components/CartContext";
 import { WishlistProvider } from "@/components/WishlistContext";
 
 // Utils & APIs
-import { fetchSettings, fetchPopups, getImageUrl } from "@/lib/api";
+import { fetchSettings, getImageUrl } from "@/lib/api";
 import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   const defaultTitle = "شركة لمعة أبيات للمقاولات | Lamea Abyat";
@@ -102,12 +87,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const settingsPromise = fetchSettings();
-  const popupsPromise = fetchPopups();
   const cookieStorePromise = cookies();
 
-  const [settings, popups, cookieStore] = await Promise.all([
+  const [settings, cookieStore] = await Promise.all([
     settingsPromise,
-    popupsPromise,
     cookieStorePromise,
   ]);
 
@@ -139,9 +122,9 @@ export default async function RootLayout({
     // إضافة scroll-smooth لتجربة تنقل ناعمة بين أقسام الصفحة
     <html lang={lang} dir={dir} className="scroll-smooth" suppressHydrationWarning>
       <head>
-        <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js" strategy="beforeInteractive" />
+        <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js" strategy="afterInteractive" />
         <link rel="manifest" href="/manifest.json" />
-        <Script id="google-tag-manager" strategy="afterInteractive">
+        <Script id="google-tag-manager" strategy="lazyOnload">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -152,7 +135,7 @@ export default async function RootLayout({
         </Script>
       </head>
       <body
-        className={`${inter.variable} ${playfair.variable} font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-[#fbc70f]/30 selection:text-[#093f89] dark:selection:text-[#fbc70f] dark:selection:bg-[#093f89]/50`}
+        className="font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-[#fbc70f]/30 selection:text-[#093f89] dark:selection:text-[#fbc70f] dark:selection:bg-[#093f89]/50"
         style={themeStyles}
       >
         <noscript>
@@ -172,9 +155,7 @@ export default async function RootLayout({
                   </main>
                   <Footer settings={settings} />
                   <MobileBottomNav />
-                  <PopupManager popups={popups} settings={settings} />
-                  <WhatsAppFloat settings={settings} />
-                  <PwaPrompt />
+                  <DeferredClientUI settings={settings} />
                 </WishlistProvider>
               </CartProvider>
             </AuthProvider>
