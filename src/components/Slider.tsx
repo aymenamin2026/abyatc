@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
-import { fetchSliders, getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/lib/api";
 
 interface Slide {
   id: number;
@@ -25,20 +25,28 @@ interface Slide {
 interface SliderProps {
   position: string;
   lang: 'en' | 'ar';
-  initialSliders?: any[]; // <-- أضف هذا السطر
+  initialSliders: any[];
 }
 
 export default function Slider({ position, lang, initialSliders }: SliderProps) {
-  const [slides, setSlides] = useState<Slide[]>([]);
   const [current, setCurrent] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [isHovered, setIsHovered] = useState(false); // 1. إضافة حالة التوقف عند التحويم
+  const [isHovered, setIsHovered] = useState(false);
 
-  const [sliderSettings, setSliderSettings] = useState({
-    cover_header: false,
-    animation: 'fade',
-    height: 'medium'
-  });
+  const activeSlider = useMemo(
+    () => initialSliders.find((slider: any) => slider.is_active) || initialSliders[0],
+    [initialSliders]
+  );
+
+  const slides = useMemo<Slide[]>(
+    () => initialSliders.flatMap((slider: any) => slider.slides || []),
+    [initialSliders]
+  );
+
+  const sliderSettings = useMemo(() => ({
+    cover_header: activeSlider?.cover_header || position === 'home_hero',
+    animation: activeSlider?.animation || 'fade',
+    height: activeSlider?.height || (position === 'home_hero' ? 'full' : 'medium')
+  }), [activeSlider, position]);
 
   const isRtl = lang === 'ar';
 
@@ -73,32 +81,6 @@ export default function Slider({ position, lang, initialSliders }: SliderProps) 
     center: 'text-center items-center',
     right: 'text-end items-end',
   };
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadSliders = async () => {
-      try {
-        const fetchedSliders = await fetchSliders(position);
-        if (isMounted && fetchedSliders.length > 0) {
-          const activeSlider = fetchedSliders.find((s: any) => s.is_active) || fetchedSliders[0];
-          setSliderSettings({
-            cover_header: activeSlider.cover_header || position === 'home_hero',
-            animation: activeSlider.animation || 'fade',
-            height: activeSlider.height || (position === 'home_hero' ? 'full' : 'medium')
-          });
-
-          const allSlides = fetchedSliders.flatMap((slider: any) => slider.slides || []);
-          setSlides(allSlides);
-        }
-      } catch (error) {
-        console.error("Error loading sliders:", error);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-    loadSliders();
-    return () => { isMounted = false; };
-  }, [position]);
 
   // 2. تحسين مؤقت التمرير التلقائي ليتوقف عند قراءة المستخدم (Pause on Hover)
   useEffect(() => {
@@ -144,20 +126,20 @@ export default function Slider({ position, lang, initialSliders }: SliderProps) 
   const animProps = getAnimationProps();
   const heightClass = sliderSettings.cover_header ? 'h-[100dvh]' : (heightMap[sliderSettings.height] || 'h-[70vh]');
 
-  // 3. دعم الوضع الداكن في شاشة التحميل (Skeleton Loader)
-  if (loading) return <div className={`${heightClass} w-full bg-muted dark:bg-card animate-pulse`} />;
   if (slides.length === 0) return null;
 
   return (
     <section
       className={`relative w-full overflow-hidden ${heightClass} group/slider`}
+      aria-roledescription={isRtl ? "عارض شرائح" : "carousel"}
+      aria-label={isRtl ? "العروض الرئيسية" : "Featured offers"}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
       <div className={sliderSettings.cover_header ? "pt-20" : ""}></div>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         {slides.map((slide, index) => {
           const vAlign = slide.settings?.v_align || 'center';
           const hAlign = slide.settings?.h_align || 'center';
@@ -175,9 +157,15 @@ export default function Slider({ position, lang, initialSliders }: SliderProps) 
                     src={getImageUrl(slide.image_path)}
                     alt={slide.title?.[lang] || slide.title?.en || 'Slide Image'}
                     fill
-                    sizes="100vw" // 4. تحسين جذري لأداء LCP وتجاوب الصور
+                    sizes="100vw"
+                    quality={70}
+                    // The uploaded hero is already a small WebP. Sending it
+                    // directly avoids a cold Vercel image-optimizer hop.
+                    unoptimized={index === 0}
                     className="object-cover object-center"
-                    priority={index === 0} // تحميل الصورة الأولى فقط مسبقاً لمنع استهلاك الداتا
+                    {...(index === 0
+                      ? { preload: true }
+                      : { loading: "lazy" as const })}
                   />
                 ) : (
                   <div className="relative w-full h-full pointer-events-none overflow-hidden">
@@ -261,9 +249,10 @@ export default function Slider({ position, lang, initialSliders }: SliderProps) 
         <>
           {/* 5. استخدام start-6 و end-6 لتتوافق الأزرار مع اتجاه اللغة تلقائياً */}
           <button
+            type="button"
             onClick={prevSlide}
-            aria-label="Previous slide"
-            className="absolute start-4 sm:start-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-xl border border-white/20 hover:bg-white hover:text-black transition-all duration-300 group opacity-0 md:group-hover/slider:opacity-100 focus:opacity-100 focus:outline-none"
+            aria-label={isRtl ? "الشريحة السابقة" : "Previous slide"}
+            className="absolute start-4 sm:start-6 top-1/2 -translate-y-1/2 z-20 size-12 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-xl border border-white/20 hover:bg-white hover:text-black transition-all duration-300 group opacity-0 md:group-hover/slider:opacity-100 focus:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             {isRtl ? (
               <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:scale-110" />
@@ -273,9 +262,10 @@ export default function Slider({ position, lang, initialSliders }: SliderProps) 
           </button>
 
           <button
+            type="button"
             onClick={nextSlide}
-            aria-label="Next slide"
-            className="absolute end-4 sm:end-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-xl border border-white/20 hover:bg-white hover:text-black transition-all duration-300 group opacity-0 md:group-hover/slider:opacity-100 focus:opacity-100 focus:outline-none"
+            aria-label={isRtl ? "الشريحة التالية" : "Next slide"}
+            className="absolute end-4 sm:end-6 top-1/2 -translate-y-1/2 z-20 size-12 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-xl border border-white/20 hover:bg-white hover:text-black transition-all duration-300 group opacity-0 md:group-hover/slider:opacity-100 focus:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             {isRtl ? (
               <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:scale-110" />
@@ -285,14 +275,21 @@ export default function Slider({ position, lang, initialSliders }: SliderProps) 
           </button>
 
           {/* Indicators */}
-          <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-2 sm:gap-3">
+          <div className="absolute bottom-2 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex" aria-label={isRtl ? "اختيار الشريحة" : "Choose slide"}>
             {slides.map((_, i) => (
               <button
                 key={i}
+                type="button"
                 onClick={() => setCurrent(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className={`h-1.5 sm:h-2 rounded-full transition-all duration-500 ${i === current ? 'w-8 sm:w-12 bg-white' : 'w-2 sm:w-3 bg-white/40 hover:bg-white/70'}`}
-              />
+                aria-label={isRtl ? `الانتقال إلى الشريحة ${i + 1}` : `Go to slide ${i + 1}`}
+                aria-current={i === current ? "true" : undefined}
+                className="grid size-12 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`h-2 rounded-full transition-all duration-500 ${i === current ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'}`}
+                />
+              </button>
             ))}
           </div>
         </>

@@ -122,6 +122,8 @@ export default async function RootLayout({
     // إضافة scroll-smooth لتجربة تنقل ناعمة بين أقسام الصفحة
     <html lang={lang} dir={dir} className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://api.abyatc.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="//api.abyatc.com" />
         <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/61f1305000a86ee6e3a1f93f/script.js" strategy="afterInteractive" />
         <link rel="manifest" href="/manifest.json" />
         <Script id="google-tag-manager" strategy="lazyOnload">
