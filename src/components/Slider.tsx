@@ -25,9 +25,10 @@ interface Slide {
 interface SliderProps {
   position: string;
   lang: 'en' | 'ar';
+  initialSliders?: any[]; // <-- أضف هذا السطر
 }
 
-export default function Slider({ position, lang }: SliderProps) {
+export default function Slider({ position, lang, initialSliders }: SliderProps) {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
